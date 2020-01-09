@@ -1,0 +1,118 @@
+syntax = "proto3";
+package basepb;
+
+import "basepb/metapb.proto";
+
+enum TaskState {
+    Init         = 0;
+    Running      = 1;
+    Rollingback  = 2;
+    Success      = 3;
+    Failed       = 4;
+}
+
+enum OpType {
+    CreateCatalog             = 0;
+    DropCatalog               = 1;
+    CreateTable               = 2;
+    DropTable                 = 3;
+    TruncateTable             = 4;
+    RenameTable               = 5;
+    AddColumn                 = 6;
+    DropColumn                = 7;
+    AlterColumn               = 8;
+    SetDefault                = 9;
+    AddIndex                  = 10;
+    DropIndex                 = 11;
+    RenameIndex               = 12;
+    AlterTable                = 13;
+    AlterAutoInitId           = 14;
+
+    PriGrant                  = 15;
+    PriRevoke                 = 16;
+    PriCreateUser             = 17;
+    PriDropUser               = 18;
+    PriUpdateUser             = 19;
+    PriSetPassword            = 20;
+    PriFlush                  = 21;
+}
+
+message Task {
+    int64         id             = 1;
+    int32         db_id          = 2;
+    int32         table_id       = 3;
+    int64         meta_version   = 4;
+    OpType        op             = 5;
+    bytes         data           = 6;
+    string        error_code     = 7;
+    string        error          = 8;
+    uint64        create_time    = 9;
+    int32         retry_num      = 10;
+    TaskState     state          = 11;
+    MetaState     meta_state     = 12;
+}
+
+message IndexReorg {
+    int32         index_id       = 1;
+    int32         offset         = 2;
+    bytes         start_key      = 3;
+    bytes         end_key        = 4;
+    bytes         last_key       = 5;
+}
+
+message AddIndexInfo {
+    int32        id              = 1;
+    string       name            = 2;
+    bool         unique          = 3;
+    bool         primary         = 4;
+    repeated     string columns  = 5;
+    uint64       create_time     = 6;
+    string       comment         = 7;
+    IndexType    type            = 8;
+    MetaState    state           = 9;
+}
+
+message AddColumnInfo {
+    string       name          = 1;
+    string       after_name    = 2;
+    bool         first         = 3;
+    SQLType      sql_type      = 4;
+    bool         has_default   = 5;
+    bytes        default_value = 6;
+    bytes        reorg_value   = 7;
+    uint64       create_time   = 8;
+    string       comment       = 9;
+    MetaState    state         = 10;
+}
+
+message AlterTableInfo {
+    OpType          type       = 1;
+    string          db_name    = 2;
+    string          table_name = 3;
+    bytes           item       = 4;
+    MetaState       state      = 5;
+}
+
+message PrivilegeOp {
+    repeated        string privileges   = 1;
+    PriOn           on                  = 2;
+    repeated        PriUser users       = 3;
+}
+
+message PriUser {
+    string          name                = 1;
+    string          host                = 2;
+    string          password            = 3;
+}
+
+enum PriLevel {
+    Global                      = 0;
+    DB                          = 1;
+    Table                       = 2;
+}
+
+message PriOn {
+    PriLevel        level              = 1;
+    string          db                 = 2;
+    string          table              = 3;
+}

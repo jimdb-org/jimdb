@@ -1,0 +1,166 @@
+syntax = "proto3";
+
+package dspb;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+import "github.com/chubaodb/chubaodb/proto/basepb/basepb.proto";
+import "dspb/error.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+message SchRequest {
+    message Header {
+        uint64 cluster_id = 1;
+    }
+
+    Header header = 1;
+    oneof req {
+        CreateRangeRequest create_range = 2;
+        DeleteRangeRequest delete_range = 3;
+        TransferRangeLeaderRequest transfer_range_leader = 4;
+        GetPeerInfoRequest get_peer_info = 5;
+        IsAliveRequest is_alive = 6;
+        NodeInfoRequest node_info = 7;
+        ChangeRaftMemberRequest change_raft_member = 8;
+    }
+}
+
+message SchResponse {
+    message Header {
+        uint64 cluster_id = 1;
+        Error error = 2;
+    }
+
+    Header header = 1;
+    oneof resp {
+        CreateRangeResponse create_range = 2;
+        DeleteRangeResponse delete_range = 3;
+        TransferRangeLeaderResponse transfer_range_leader = 4;
+        GetPeerInfoResponse get_peer_info = 5;
+        IsAliveResponse is_alive = 6;
+        NodeInfoResponse node_info = 7;
+        ChangeRaftMemberResponse change_raft_member = 8;
+    }
+}
+
+
+// CreateRange
+message CreateRangeRequest {
+    basepb.Range range = 1;
+    uint64 leader = 2; // range initial leader
+}
+
+message CreateRangeResponse {
+}
+
+
+// DeleteRange
+message DeleteRangeRequest {
+    uint64 range_id = 1;
+    uint64 peer_id = 2;
+}
+
+message DeleteRangeResponse {
+}
+
+
+// TransferRangeLeader
+message TransferRangeLeaderRequest {
+    uint64 range_id = 1;
+}
+
+message TransferRangeLeaderResponse {
+}
+
+// GetPeerInfo
+message GetPeerInfoRequest {
+    uint64 range_id = 1;
+}
+
+message GetPeerInfoResponse {
+    basepb.Replica replica = 1;
+    uint64 index = 2;
+    uint64 term = 3;
+    uint64 commit = 4;
+}
+
+
+// IsAlive
+message IsAliveRequest {
+}
+
+message IsAliveResponse {
+    bool alive = 1;
+}
+
+// NodeInfo
+message NodeInfoRequest {
+}
+
+message RangeStats {
+    uint64 write_bytes_per_sec = 1;
+    uint64 write_keys_per_sec = 2;
+    uint64 read_bytess_per_sec = 3;
+    uint64 read_keys_per_sec = 4;
+    uint64 approximate_size = 5;
+    uint64 kv_count = 6;
+    uint64 requests_per_sec = 7;
+}
+
+message RangeInfo {
+    basepb.Range range                          = 1;
+    // range metric stats
+    RangeStats stats                            = 2;
+    // leader term
+    uint64 term                                 = 3;
+    // replica status
+    repeated basepb.PeerStatus peers_status     = 4;
+}
+
+message NodeStats {
+    uint32 range_count = 1;
+    uint32 range_split_count = 2;
+    uint32 snap_sending_count = 3;
+    uint32 snap_applying_count = 4;
+
+    uint32 range_leader_count = 6;
+
+    uint64 capacity = 7;
+    uint64 used_size = 8;
+
+    uint64 write_bytes_per_sec = 10;
+    uint64 write_keys_per_sec = 11;
+    uint64 read_bytess_per_sec = 12;
+    uint64 read_keys_per_sec = 13;
+    uint64 requests_per_sec = 14;
+}
+
+message NodeInfoResponse {
+    //node info
+    uint64 node_id                        = 1;
+    NodeStats stats                       = 2;
+    // Isolated replica list, not received leader heartbeat for more than an hour
+    repeated uint64 isolated_replicas     = 3;
+
+    //range info
+    repeated RangeInfo range_infos = 4;
+}
+
+message ChangeRaftMemberRequest {
+    enum ChangeType {
+        CT_INVALID = 0;
+        CT_ADD = 1;
+        CT_REMOVE = 2;
+    }
+
+    uint64 range_id = 1;
+    basepb.RangeEpoch range_epoch = 2; // current epoch for verification
+    ChangeType change_type = 3;
+    basepb.Peer target_peer = 4;
+}
+
+message ChangeRaftMemberResponse {
+}

@@ -1,0 +1,109 @@
+syntax = "proto3";
+package dspb;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "dspb/expr.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+enum ProcessorType {
+    TABLE_READ_TYPE    = 0;
+    INDEX_READ_TYPE    = 1;
+    SELECTION_TYPE     = 2;
+    PROJECTION_TYPE    = 3;
+    AGGREGATION_TYPE   = 4;
+    STREAM_AGGREGATION_TYPE   = 5;
+    ORDER_BY_TYPE      = 6;
+    LIMIT_TYPE         = 7;
+    DATA_SAMPLE_TYPE   = 8;
+
+}
+
+message Processor {
+    ProcessorType type = 1;
+    TableRead table_read = 2;
+    IndexRead index_read = 3;
+    Selection selection = 4;
+    Projection projection = 5;
+    Aggregation aggregation = 6;
+    Aggregation stream_aggregation = 7;
+    Ordering ordering = 8;
+    Limit limit = 9;
+    DataSample data_sample = 10;
+}
+
+message TableRead {
+    repeated ColumnInfo columns = 1;
+    KeyType type = 2;
+    KeyRange range = 3;
+    repeated bytes pk_keys = 4;
+    bool desc = 5;
+}
+
+enum KeyType {
+    DEFAULT_RANGE_TYPE  = 0;
+    PRIMARY_KEY_TYPE    = 1;
+    KEYS_RANGE_TYPE     = 2;
+}
+
+message KeyRange {
+    bytes start_key = 1;
+    bytes end_key   = 2;
+}
+
+message IndexRead {
+    repeated ColumnInfo columns = 1;
+    KeyType type                = 2;
+    KeyRange range              = 3;
+    repeated bytes index_keys   = 4;
+    bool desc                   = 5;
+    bool unique                 = 6;
+    bool pks_flag               = 7;
+}
+
+message Selection {
+    repeated Expr filter = 1;
+}
+
+message Projection {
+    repeated Expr columns = 1;
+}
+
+message Ordering {
+    repeated OrderByColumn columns = 1;
+    uint64   count                 = 2;
+}
+
+message Aggregation {
+    repeated Expr func    = 1;
+    repeated Expr group_by = 2;
+}
+
+message Limit {
+    uint64   offset     = 1;
+    uint64   count      = 2;
+}
+
+message DataSample {
+    enum SampleMethod{
+        RESERVIOR_SAMPLING = 0;
+    }
+
+    SampleMethod method         = 1;
+    repeated ColumnInfo columns = 2;
+    KeyRange range              = 3;
+    double ratio                = 4;
+}
+
+message OrderByColumn {
+    Expr expr = 1;
+    bool asc  = 2;
+}
+
+message ProcessorTrace {
+    uint64 processed_rows = 1;
+    // nanosecond
+    uint64 elapse_time = 2;
+}

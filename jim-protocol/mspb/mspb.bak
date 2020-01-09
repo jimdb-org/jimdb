@@ -1,0 +1,315 @@
+syntax = "proto3";
+package mspb;
+
+import "github.com/chubaodb/chubaodb/proto/basepb/basepb.proto";
+import "github.com/chubaodb/chubaodb/proto/dspb/schedule.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+// some message types is from tidb, RequestHeader, ResponseHeader, AskSplitRequest etc.
+// and is and is licensed under the Apache Public License v2.
+// Source code can be found here: https://github.com/pingcap/pd
+
+enum ErrorType {
+    No = 0;
+    UnDefine = 1;
+    ClusterIDNotSame = 2;
+    NoSelectedNode = 3;
+    InternalError = 4;
+    GenID = 5;
+    DupDatabase = 6;
+    DupTable = 7;
+    NotRuningTable = 8;
+    NotExistDatabase = 9;
+    NotExistTable = 10;
+    NotExistNode = 11;
+    NotActiveNode = 12;
+    NotExistRange = 13;
+    ExistsRange = 14;
+    NotExistPeer = 15;
+    NotEnoughResources = 16;
+    InvalidParam = 17;
+    InvalidColumn = 18;
+    InvalidIndex = 19;
+    ColumnNameTooLong = 20;
+    ColumnNotExist = 21;
+    DupColumnName = 22;
+    PkMustNotNull = 23;
+    MissingPk = 24;
+    PkMustNotSetDefaultValue = 25;
+    NodeRejectNewPeer = 26;
+    NodeBlocked = 27;
+    NodeStateConfused = 28;
+    NodeNotEnough = 29;
+    SchedulerExisted = 30;
+    SchedulerNotFound = 31;
+    WorkerExisted = 32;
+    WorkerNotFound = 33;
+    SqlReservedWord = 34;
+    SQLSyntaxError = 35;
+    RangeMetaConflict = 36;
+    NotFound = 37;
+    NotAllowSplit = 38;
+    NotCancel = 39;
+    NotAllowDelete = 40;
+    ClientIPNotSet = 41;
+    DatabaseNotEmpty = 42;
+    NodeStateNotExpected = 43;
+    WatcherMasterHashErr = 44;
+}
+
+enum StorageEngine {
+    STE_Invalid = 0;
+    STE_MassTree = 1;
+    STE_RocksDB = 2;
+}
+
+message ClusterInfoRequest {
+    RequestHeader header = 1;
+}
+
+message ClusterInfoResponse {
+    ResponseHeader header = 1;
+    string build_version = 2;
+    string build_time = 3;
+    string commit_id = 4;
+}
+
+message RangeHeartbeatRequest {
+    RequestHeader header = 1;
+    basepb.Range range = 2;
+    uint64 term = 3;
+    repeated basepb.PeerStatus peers_status = 4;
+}
+
+message RangeHeartbeatResponse {
+    ResponseHeader header = 1;
+    uint64 range_id = 2;
+    basepb.RangeEpoch epoch = 3;
+}
+
+message ChangeRangeStoreTypeRequest {
+    RequestHeader header = 1;
+    int32 table_id = 2;
+    uint64 range_id = 3;
+    basepb.StoreType store_type = 4;
+}
+
+message ChangeRangeStoreTypeResponse {
+    ResponseHeader header = 1;
+}
+
+message PeerMoveRequest {
+    RequestHeader header = 1;
+    int32 table_id = 2;
+    uint64 range_id = 3;
+    basepb.StoreType store_type = 4;
+}
+
+message PeerMoveResponse {
+    ResponseHeader header = 1;
+}
+
+message NodeHeartbeatRequest {
+    RequestHeader header = 1;
+    uint64 node_id = 2;
+}
+
+message NodeHeartbeatResponse {
+    ResponseHeader header = 1;
+    uint64 node_id = 2;
+}
+
+message WatcherEventRequest {
+    RequestHeader header = 1;
+    uint64 version = 2;
+    string master = 3;
+}
+
+message WatcherEventResponse {
+    ResponseHeader header = 1;
+    repeated basepb.WatcherEvent events = 2;
+}
+
+message AskSplitRequest {
+    RequestHeader header = 1;
+
+    basepb.Range range = 2;
+
+    bytes split_key = 3;
+    bool force = 4;
+}
+
+message AskSplitResponse {
+    ResponseHeader header = 1;
+
+    basepb.Range range = 2;
+    uint64 new_range_id = 3;
+    repeated uint64 new_peer_ids = 4;
+    bytes split_key = 5;
+}
+
+// Fingerprint is used to verfiy if range is valid
+message RangeFingerprint {
+    uint64 range_id = 1;
+    basepb.RangeEpoch range_epoch = 2;
+    int32 db_id = 3;
+    int32 table_id = 4;
+    uint64 peer_id = 5;
+}
+
+message RegisterNodeRequest {
+    RequestHeader header = 1;
+    uint32 server_port = 2;
+    uint32 raft_port = 3;
+    uint32 admin_port = 4;
+    string version = 5;
+    StorageEngine st_engine = 6;
+    repeated RangeFingerprint ranges = 7;
+}
+
+message RegisterNodeResponse {
+    ResponseHeader header = 1;
+    uint64 node_id = 2;
+    repeated uint64 invalid_ranges = 3; // invalid ranges will be purged by dataserver
+}
+
+message GetRouteRequest {
+    RequestHeader header = 1;
+    int32 db_id = 2;
+    int32 table_id = 3;
+    bytes key = 4;
+    uint32 max = 5;
+    basepb.RangeType rangeType = 6;
+    bool has_all = 7;
+}
+
+message GetRouteResponse {
+    ResponseHeader header = 1;
+    repeated basepb.Range routes = 2;
+    string master = 3;
+    uint64 version = 4;
+}
+
+message GetNodesRequest {
+    RequestHeader header = 1;
+}
+
+message GetNodesResponse {
+    ResponseHeader header = 1;
+    repeated basepb.Node nodes = 2;
+}
+
+message GetNodeRequest {
+    RequestHeader header = 1;
+    uint64 id = 2;
+}
+
+message GetNodeResponse {
+    ResponseHeader header = 1;
+    basepb.Node node = 2;
+}
+
+message ChangeNodeStateRequest {
+    RequestHeader header = 1;
+    uint64 id = 2;
+    basepb.NodeState state = 3;
+}
+
+message ChangeNodeStateResponse {
+    ResponseHeader header = 1;
+    basepb.Node node = 2;
+}
+
+message CheckNodeStateRequest {
+    RequestHeader header = 1;
+    uint64 id = 2;
+}
+
+message CheckNodeStateResponse {
+    ResponseHeader header = 1;
+    uint64 range_num = 2;
+    uint64 leader_num = 3;
+    basepb.NodeState state = 4;
+}
+
+message GetDBRequest {
+    RequestHeader header = 1;
+    string name = 2;
+}
+
+message CreateRangesRequest {
+    RequestHeader header = 1;
+    int32 db_id = 2;
+    int32 table_id = 3;
+    int32 replicas = 4;
+    repeated basepb.Range ranges = 5;
+}
+
+message DeleteRangesRequest {
+    RequestHeader header = 1;
+    int32 db_id = 2;    // delete db if only has db_id
+    int32 table_id = 3;
+    basepb.RangeType range_type = 4;
+    int32 index_id = 5;
+}
+
+message GeneralResponse {
+    ResponseHeader header = 1;
+}
+
+message Counter {
+    int32 db_id = 1;
+    int32 table_id = 2;
+    uint64 count = 3;
+    string db_name = 4;
+    string table_name = 5;
+}
+
+message GetTableRequest {
+    RequestHeader header = 1;
+    int32 db_id = 2;
+    string db_name = 3;
+    int32 table_id = 4;
+    string table_name = 5;
+}
+
+message GetNodeInfoRequest {
+    RequestHeader header = 1;
+}
+
+message GetNodeInfoResponse {
+    ResponseHeader header = 1;
+    repeated GetNodeInfo nodeInfos = 2;
+}
+
+message GetNodeInfo {
+    string err = 1;
+    basepb.Node node = 2;
+    dspb.NodeInfoResponse info = 3;
+}
+
+message GetColumnRequest {
+    RequestHeader header = 1;
+    int32 db_id = 2;
+    int32 table_id = 3;
+    uint64 col_id = 4;
+    string col_name = 5;
+}
+
+message RequestHeader {
+    uint64 cluster_id = 1;
+}
+
+message ResponseHeader {
+    uint64 cluster_id = 1;
+    Error error = 2;
+}
+
+message Error {
+    uint32 code = 1;
+    string message = 2;
+}

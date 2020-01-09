@@ -1,0 +1,271 @@
+syntax = "proto3";
+
+package dspb;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+import "dspb/expr.proto";
+import "dspb/processorpb.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+enum OpType {
+    INSERT  = 0;
+    DELETE  = 1;
+    LOCK    = 2;
+}
+
+message TxnIntent {
+    OpType typ          = 1;
+    bytes key           = 2; // encoding pk
+    bytes value         = 3; // Encoded column values (all non-primary key columns)
+    bool  check_unique  = 4; // for unique index or insert check pk duplicate
+    uint64 expected_ver = 5; // if 0 not check version
+    bool is_primary     = 6; // is primary row
+}
+
+enum TxnStatus {
+    TXN_INIT = 0;
+    COMMITTED = 1;
+    ABORTED = 2;
+}
+
+
+message TxnValue {
+    string txn_id               = 1;
+    TxnIntent intent            = 2;
+    bytes primary_key           = 3;
+    uint64 expired_at           = 4;
+    uint64 version              = 5; // version when prepare
+
+    // only exists in primary row, used as txn record
+    TxnStatus txn_status          = 10;
+    repeated bytes secondary_keys = 11;
+}
+
+message LockInfo {
+    string txn_id = 1;
+    bool timeout = 2;
+
+    // 1) If the current key is primary, is_primary is true and returns status and secondary_keys
+    // 2) If not, is_primary is false and returns the primary key
+    bool is_primary                 = 10;
+    bytes primary_key               = 11;
+    TxnStatus status                = 12;
+    repeated bytes secondary_keys   = 13;
+}
+
+message LockError {
+    bytes key       = 1;
+    LockInfo info   = 2;
+}
+
+// When expected_ver is set to the Intent, the version check is not passed, usually due to write conflicts
+message UnexpectedVer {
+    bytes key           = 1;
+    uint64 expected_ver = 2;
+    uint64 actual_ver   = 3;
+}
+
+// when the transaction state is not INIT, the update fails and returns the current state
+// For example, the ABORTED status cannot be updated to COMMITTED
+message StatusConflict {
+    TxnStatus status = 1;
+}
+
+message ServerError {
+    int32 code = 1;
+    string msg = 2;
+}
+
+message NotFound {
+    bytes key = 1;
+}
+
+// Such as Insert when the row already exists or when the unique index already exists
+message NotUnique {
+    bytes key = 1;
+}
+
+message TxnConflict {
+    string expected_txn_id = 1; // Expected transaction id
+    string actual_txn_id = 2; // ds now transaction id
+}
+
+message TxnError {
+    enum ErrType {
+        UNKNOWN = 0;
+        SERVER_ERROR = 1;
+        LOCKED = 2;
+        UNEXPECTED_VER = 3;
+        STATUS_CONFLICT = 4;
+        NOT_FOUND = 5;
+        NOT_UNIQUE = 6;
+        TXN_CONFLICT = 7;
+    }
+
+    ErrType err_type = 1;
+    ServerError server_err = 2;
+    LockError lock_err = 3;
+    UnexpectedVer unexpected_ver = 4;
+    StatusConflict status_conflict = 5;
+    NotFound not_found = 6;
+    NotUnique not_unique = 7;
+    TxnConflict txn_conflict = 8;
+}
+
+
+// Prepare
+message PrepareRequest {
+    string txn_id                        = 1;
+    bool local                           = 2;
+    repeated TxnIntent intents           = 3;
+    bytes primary_key                    = 4;
+    uint64 lock_ttl                      = 5;  // ms
+    repeated bytes secondary_keys        = 6;  // only send primary row
+
+    bool strict_check                    = 16; // check
+}
+
+message PrepareResponse {
+    repeated TxnError errors  = 1;
+}
+
+
+// Commit or Rollback
+message DecideRequest {
+    string txn_id       = 1;
+    TxnStatus status    = 2;
+    repeated bytes keys = 3;
+    bool recover        = 4; // if  recover=true，send primary request and return secondary keys
+    bool is_primary     = 5;
+}
+
+message DecideResponse {
+    TxnError err                  = 1;
+    repeated bytes secondary_keys = 2;
+}
+
+
+
+message ClearupRequest {
+    string txn_id       = 1;
+    bytes primary_key   = 2;
+}
+
+message ClearupResponse {
+    TxnError err = 1;
+}
+
+
+
+message GetLockInfoRequest {
+    bytes key = 1;
+    string txn_id = 2; // txID== null return current lock
+}
+
+message GetLockInfoResponse {
+    TxnError err = 1;
+    LockInfo info = 2;
+}
+
+
+message SelectField {
+    enum Type {
+        Column = 0;
+        AggreFunction = 1;
+    }
+
+    Type typ                  = 1;
+    string aggre_func         = 2;
+    ColumnInfo column  = 3; // select column(if typ is Column) or aggregate function parameter(is typ is AggreFunction)
+}
+
+message Scope {
+    bytes  start     = 1;
+    bytes  limit     = 2;
+}
+
+// Select
+message SelectRequest {
+    bytes key                                   = 1;
+    Scope scope                                 = 2;
+    repeated SelectField field_list             = 3;      // select filed list
+    Expr where_expr                             = 4;      // extend where condition
+    Limit limit                                 = 5;      // max range query num, 0 means no limit
+}
+
+message RowValue {
+    bytes fields                 = 1;              // encoded fields
+    uint64 version               = 2;              // version
+}
+
+message RowIntent {
+    OpType op_type          = 1;
+    string txn_id           = 2;
+    bytes primary_key       = 3;
+    bool timeout            = 4;
+    RowValue value          = 10;
+}
+
+message Row {
+    bytes key        = 1;
+    RowValue value   = 2;
+    RowIntent intent = 3;
+    bytes pks        = 4;
+}
+
+message SelectResponse {
+    int32 code        = 1;
+    repeated Row rows = 2;
+    uint64 offset     = 3;
+}
+
+// select flow
+message SelectFlowRequest {
+    repeated Processor processors   = 1;
+    repeated uint32 output_offsets  = 2;
+    bool gather_trace               = 3;
+}
+
+message SelectFlowResponse {
+    // 0: success 1: not leader 2: raft busy 3: raft stop 4: read only 5: other error
+    // >= 1000 SQL server error code
+    // >= 2000 SQL client error code
+    int32 code                     = 1;
+    repeated Row rows              = 2;
+    // for limit, offset in the range
+    bytes last_key                 = 3;
+    repeated ProcessorTrace traces = 4;
+}
+
+// Scan API
+message ValueIntent {
+    OpType op_type          = 1;
+    string txn_id           = 2;
+    bytes primary_key       = 3;
+    bool timeout            = 4;
+    uint64 version          = 5;
+    bytes value             = 10;
+}
+
+message KeyValue {
+    bytes key           = 1;
+    bytes value         = 2;
+    uint64 version      = 3;
+    ValueIntent intent  = 10;
+}
+
+message ScanRequest {
+    bytes start_key     = 1;
+    bytes end_key       = 2;
+    int64 max_count     = 3;
+    bool only_one       = 4; // scan only one key(start_key)
+}
+
+message ScanResponse {
+    int32 code              = 1;
+    repeated KeyValue kvs   = 2;
+}

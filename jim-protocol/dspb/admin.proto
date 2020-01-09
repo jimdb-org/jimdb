@@ -1,0 +1,174 @@
+syntax = "proto3";
+
+package dspb;
+
+message AdminAuth {
+    enum AuthMethod {
+        MD5_DIGEST = 0;
+    }
+
+    AuthMethod method = 1; // not used, keep default is ok
+    int64 epoch = 2;   // time since 1970 in seconds
+    string sign = 3;    // md5(admin_type, epoch, token)
+};
+
+message AdminRequest {
+    AdminAuth auth = 1;
+
+    oneof req {
+        SetConfigRequest set_cfg = 10;
+        GetConfigRequest get_cfg = 11;
+        GetInfoRequest get_info = 12;
+        ForceSplitRequest force_split = 13;
+        CompactionRequest compaction = 14;
+        ClearQueueRequest clear_queue = 15;
+        GetPendingsRequest get_pendings = 16;
+        FlushDBRequest flush_db = 17;
+        ProfileRequest profile = 18;
+        DumpRequest dump = 19;
+    }
+}
+
+message AdminResponse {
+    uint32 code       = 1;
+    string error_msg  = 2;
+
+    oneof resp {
+        SetConfigResponse set_cfg = 10;
+        GetConfigResponse get_cfg = 11;
+        GetInfoResponse get_info = 12;
+        ForceSplitResponse force_split = 13;
+        CompactionResponse compaction = 14;
+        ClearQueueResponse clear_queue = 15;
+        GetPendingsResponse get_pendings = 16;
+        FlushDBResponse flush_db = 17;
+        ProfileResponse profile = 18;
+        DumpResponse dump = 19;
+    }
+}
+
+
+message ConfigKey {
+    string section = 1;
+    string name    = 2;
+}
+
+message ConfigItem {
+    ConfigKey key  = 1;
+    string value   = 2;
+}
+
+message SetConfigRequest {
+    repeated ConfigItem configs = 1;
+}
+
+message SetConfigResponse {
+}
+
+message GetConfigRequest {
+    repeated ConfigKey key = 1;
+}
+
+message GetConfigResponse {
+    repeated ConfigItem configs = 1;
+}
+
+// path: diffent types that caller care about
+// eg: rocksdb, rocksdb.cache-usage, 
+//     server, server.version, server.start
+//     raft, raft.{range_id}
+// if path is empty, will return server's status summary
+message GetInfoRequest {
+    string path = 1; 
+}
+
+message GetInfoResponse {
+    string data = 1; // json data
+}
+
+
+message ForceSplitRequest {
+    uint64 range_id = 1;
+    uint64 version = 2; // current RangeEpoch version
+}
+
+message ForceSplitResponse {
+    bytes split_key = 1;
+}
+
+
+message CompactionRequest {
+    uint64 range_id = 1; // if range_id equals zero means to compact full db
+    int64 transaction_id = 2; // for retry
+}
+
+message CompactionResponse {
+    bytes begin_key = 1;
+    bytes end_key   = 2;
+}
+
+
+message ClearQueueRequest {
+    enum QueueType {
+        ALL = 0;
+        FAST_WORKER = 1;
+        SLOW_WORKER = 2;
+    }
+    QueueType queue_type = 1;
+}
+
+message ClearQueueResponse {
+    uint64 cleared = 1;
+}
+
+
+message GetPendingsRequest {
+    enum PendingType {
+        ALL = 0;
+        INSERT = 1;
+        SELECT = 2;
+        PONIT_SELECT = 3;
+        RANGE_SELECT = 4;
+    }
+
+    PendingType ptype = 1;
+    uint64 count = 2;
+}
+
+message GetPendingsResponse {
+    string desc = 1; // description in json
+}
+
+
+message FlushDBRequest {
+    bool wait = 1;   // If true, the flush will wait until the flush is done.
+}
+
+message FlushDBResponse {
+}
+
+message ProfileRequest {
+    enum ProfileType {
+        CPU = 0;
+        HEAP = 1;
+        ROCKSDB = 2;
+    }
+
+    enum ProfileOp {
+        PROFILE_START = 0;
+        PROFILE_STOP = 1;
+    }
+
+    ProfileType ptype   = 1;
+    string output_path  = 2;
+    ProfileOp op = 3;
+}
+
+message ProfileResponse {
+}
+
+message DumpRequest {
+}
+
+message DumpResponse {
+}

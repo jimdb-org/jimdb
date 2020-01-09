@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package dspb;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+import "github.com/chubaodb/chubaodb/proto/basepb/basepb.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+
+message Error {
+    // cluster_id(in request header) is mismatched
+    message ClusterMismatched {
+        uint64 request_cluster = 1;
+        uint64 actual_cluster = 2;
+    }
+
+    message NotLeader {
+        uint64 range_id             = 1;
+        basepb.Peer leader          = 2;
+        uint64 term                 = 3;
+        basepb.RangeEpoch epoch     = 4;
+    }
+
+    message RaftFail {
+        string reason = 1;
+    }
+
+    message RangeNotFound {
+        uint64 range_id         = 1;
+    }
+
+    message OutOfBound {
+        bytes key              = 1;
+        uint64 range_id        = 2;
+        bytes range_start      = 3;
+        bytes range_limit      = 4;
+    }
+
+    message StaleEpoch {
+        basepb.Range old_range = 1;
+        basepb.Range new_range = 2;
+    }
+
+    message NoLeftSpace {
+    }
+
+    // all other unspecified error
+    message ServerError {
+        string msg = 1;
+    }
+
+    oneof err {
+        ClusterMismatched cluster_mismatch = 1;
+        NotLeader not_leader = 2;
+        RaftFail raft_fail = 3;
+        RangeNotFound range_not_found = 4;
+        OutOfBound out_of_bound = 5;
+        StaleEpoch stale_epoch = 6;
+        NoLeftSpace no_left_space = 7;
+        ServerError server_error = 8;
+    }
+    string detail = 100; // extre message, maybe empty
+}

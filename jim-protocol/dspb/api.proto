@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package dspb;
+
+import "github.com/chubaodb/chubaodb/proto/basepb/basepb.proto";
+
+import "dspb/error.proto";
+import "dspb/kv.proto";
+import "dspb/txn.proto";
+
+// RangeRequest data request to a range
+message RangeRequest {
+    message Header {
+        uint64 cluster_id              = 1;
+        uint64 trace_id                = 2;
+        uint64 range_id                = 3;
+        basepb.RangeEpoch range_epoch  = 4;
+    }
+
+    Header header = 1;
+    oneof req {
+        // sql txn api
+        PrepareRequest prepare = 2;
+        DecideRequest decide = 3;
+        ClearupRequest clear_up = 4;
+        GetLockInfoRequest get_lock_info = 5;
+        SelectRequest select = 6;
+        ScanRequest scan = 7;
+        SelectFlowRequest select_flow = 8;
+
+        // kv api
+        KvGetRequest kv_get = 20;
+        KvPutRequest kv_put = 21;
+        KvDeleteRequest kv_delete = 22;
+        KvScanRequest kv_scan = 23;
+        KvDelRangeRequest kv_del_range = 24;
+        RedisRequest redis = 25;
+    }
+}
+
+message RangeResponse {
+    message Header {
+        uint64 cluster_id      = 1;
+        uint64 trace_id        = 2;
+        Error error            = 3;
+    }
+
+    Header header = 1;
+    oneof resp {
+        // sql txn api
+        PrepareResponse prepare = 2;
+        DecideResponse decide = 3;
+        ClearupResponse clear_up = 4;
+        GetLockInfoResponse get_lock_info = 5;
+        SelectResponse select = 6;
+        ScanResponse scan = 7;
+        SelectFlowResponse select_flow = 8;
+
+        // kv api
+        KvGetResponse kv_get = 20;
+        KvPutResponse kv_put = 21;
+        KvDeleteResponse kv_delete = 22;
+        KvScanReponse kv_scan = 23;
+        KvDelRangeResponse kv_del_range = 24;
+        RedisResponse redis = 25;
+    }
+}

@@ -1,0 +1,210 @@
+syntax = "proto3";
+package basepb;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+
+enum DataType {
+    Invalid        = 0;
+
+    // 8 bit interger
+    TinyInt        = 1;
+    // 16 bit interger
+    SmallInt       = 2;
+    // 24 bit integer
+    MediumInt      = 3;
+    // 32 bit interger
+    Int            = 4;
+    // 64 bit interger
+    BigInt         = 5;
+    Bit            = 6;
+
+    // 32 bit float
+    Float          = 10;
+    // 64 bit float
+    Double         = 11;
+    Decimal        = 12;
+
+    Date           = 20;
+    TimeStamp      = 21;
+    DateTime       = 22;
+    Time           = 23;
+    Year           = 24;
+
+    // string UTF-8 max size 64 KB
+    Varchar        = 30;
+    // Blob max size 64 KB
+    Binary         = 31;
+    Char           = 32;
+    NChar          = 33;
+    Text           = 34;
+    VarBinary      = 35;
+
+    Json           = 40;
+
+    Null           = 50;
+}
+
+enum StoreType {
+    Store_Invalid = 0;
+    Store_Hot = 1;
+    Store_Warm = 2;
+    Store_Mix = 3;
+}
+
+enum RangeType {
+    RNG_Invalid = 0; //invalid range type
+    RNG_Index = 1; //index range
+    RNG_Data = 2; //data range
+}
+
+// 1. Under any conditions, ms should initialize the new and old ds nodes into an Initial state after they are added to the cluster, except for the nodes that have been Logout.
+// after ds self-inspection is completed, the data read-write service is officially launched via NodeLogin report
+// Logout node，need to Initial by person
+enum NodeState {
+    N_Invalid = 0;
+    N_Online = 1;
+    N_Offline = 2;
+    N_Updating = 3; // it will move all leader to other node
+    N_Offlining = 4; // it will move all range to other node
+}
+
+enum RangePeerState {
+    RPS_Invalid = 0;
+    RPS_NoLeader = 1;
+    RPS_Follower = 2;
+    RPS_Leader = 3;
+}
+
+message RangePeer {
+    uint64 range_id = 1;
+    uint64 peer_id = 2;
+    RangePeerState state = 3;
+}
+
+message Node {
+    uint64 id = 1;
+    string ip = 2;
+    uint32 server_port = 3;
+    uint32 raft_port = 4;
+    uint32 admin_port = 5;
+    NodeState state = 6;
+    int64 version = 7;
+    repeated RangePeer range_peers = 8;
+    int64 last_update_time = 9;
+    StoreType type = 10;
+}
+
+enum PeerType {
+    PeerType_Invalid = 0;
+    PeerType_Normal = 1;
+    PeerType_Learner = 2;
+}
+
+message Peer {
+    uint64 id = 1;
+    uint64 node_id = 2;
+    PeerType type = 3;
+}
+
+message PeerStatus {
+    Peer peer = 1;
+    uint64 index = 2;
+    uint64 commit = 3;
+    uint64 down_seconds = 4;
+    bool snapshotting = 5;
+    uint64 applied = 6;
+}
+
+message Replica {
+    uint64 range_id = 1;
+    Peer peer = 2;
+    bytes start_key = 3;
+    bytes end_key = 4;
+}
+
+// RegionEpoch is from tidb, and is and is licensed under the Apache Public License v2.
+// Source code can be found here: https://github.com/pingcap/pd
+message RangeEpoch {
+    // Conf change version, auto increment when add or remove peer
+    uint64 conf_ver = 1;
+    // Range version, auto increment when split or merge
+    uint64 version = 2;
+}
+
+// indicate range key's structure
+// describe how to interpret key bytes, used for dataserver to decode key
+message KeySchema {
+    message ColumnInfo {
+        int32 id = 1;
+        DataType type = 2;
+        bool unsigned = 3;
+    }
+
+    // primarykey columns for data range, or index columns info for index range
+    // order is sensitive for multi cols
+    repeated ColumnInfo key_cols = 1;      
+    // only valid when range is a index range, to indicate whether index is unique or not
+    bool unique_index = 2;
+    // only valid when range is a index range, 
+    // extra_cols are table's primary key, order is sensitive  for multi cols
+    repeated ColumnInfo extra_cols = 3;
+}
+
+message Range {
+    uint64 id = 1;
+    // Range key range [start_key, end_key).
+    // key by: prefix + table_id + real key
+    bytes start_key = 2;
+    bytes end_key = 3;
+    RangeEpoch range_epoch = 4;
+    //default first peer is leader
+    repeated Peer peers = 5;
+    int32  db_id = 6;
+    int32  table_id = 7;
+    KeySchema key_schema = 8;
+    uint64 leader = 9; //leader node id
+    RangeType range_type = 10;
+    StoreType store_type = 11;
+    uint64 term = 12;
+    uint64 parent_range_id = 13;
+    int32 index_id = 14;
+}
+
+message Leader {
+    uint64 range_id = 1;
+    uint64 node_id = 2;
+    string node_addr = 3;
+}
+
+enum EventType {
+    Event_Type_Invalid = 0;
+    Event_Type_PUT = 1;
+    Event_Type_DELETE = 2;
+}
+enum WatcherType {
+    Watcher_Type_Invalid = 0;
+    Watcher_Type_Node = 1;
+    Watcher_Type_Database = 2;
+    Watcher_Type_Table = 3;
+    Watcher_Type_Range = 4;
+}
+
+//node event has nodeID
+//db event has dbID
+//table event has dbID,tableID
+//range event has tableID, rangeID
+message WatcherEvent {
+    WatcherType watcher_type = 1;
+    EventType event_type = 2;
+    uint64 node_id = 3;
+    int32  db_id = 4;
+    int32  table_id = 5;
+    uint64 range_id = 6;
+    bytes value = 7;
+    uint64 version = 8;
+}

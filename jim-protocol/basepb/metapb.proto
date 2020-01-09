@@ -1,0 +1,97 @@
+syntax = "proto3";
+package basepb;
+
+import "basepb/basepb.proto";
+
+enum MetaState {
+    Absent      = 0;
+    WriteOnly   = 1;
+    DeleteOnly  = 2;
+    WriteReorg  = 3;
+    DeleteReorg = 4;
+    Public      = 5;
+}
+
+message SQLType {
+    DataType     type      = 1;
+    bool         unsigned  = 2;
+    bool         binary    = 3;
+    bool         not_null  = 4;
+    bool         on_update = 5;
+    bool         on_init   = 6;
+    int32        precision = 7;
+    int32        scale     = 8;
+    string       charset   = 9;
+    string       collate   = 10;
+    bool         zerofill  = 11;
+}
+
+message CatalogInfo {
+    int32        id          = 1;
+    string       name        = 2;
+    uint64       create_time = 3;
+    uint64       delete_time = 4;
+    string       comment     = 5;
+    MetaState    state       = 6;
+}
+
+message TableInfo {
+    int32        id                       = 1;
+    int32        db_id                    = 2;
+    string       name                     = 3;
+    int32        max_column_id            = 4;
+    int32        replicas                 = 5;
+    uint64       auto_init_id             = 6;
+    int32        split_num                = 7;
+    repeated     string      split_keys   = 8;
+    uint64       create_time              = 9;
+    uint64       delete_time              = 10;
+    StoreType    type                     = 11;
+    repeated     ColumnInfo columns       = 12;
+    repeated     int32      primarys      = 13;
+    repeated     IndexInfo  indices       = 14;
+    string       comment                  = 15;
+    MetaState    state                    = 16;
+}
+
+enum IndexType {
+    BTree    = 0;
+    Hash     = 1;
+}
+
+message IndexInfo {
+    int32        id                       = 1;
+    int32        table_id                 = 2;
+    string       name                     = 3;
+    bool         unique                   = 4;
+    bool         primary                  = 5;
+    uint64       create_time              = 6;
+    uint64       delete_time              = 7;
+    IndexType    type                     = 8;
+    repeated     int32 columns            = 9;
+    string       comment                  = 10;
+    MetaState    state                    = 11;
+}
+
+message ColumnInfo {
+    int32        id            = 1;
+    string       name          = 2;
+    SQLType      sql_type      = 3;
+    bool         primary       = 4;
+    bool         auto_incr     = 5;
+    int32        key_flag      = 6;
+    int32        offset        = 7;
+    bool         has_default   = 8;
+    bytes        default_value = 9;
+    bytes        reorg_value   = 10;
+    uint64       create_time   = 11;
+    uint64       delete_time   = 12;
+    string       comment       = 13;
+    MetaState    state         = 14;
+}
+
+message AutoIdInfo {
+    uint64   init_id       = 1;
+    uint64   step          = 2;
+    repeated uint64 start  = 3;
+}

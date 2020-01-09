@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package dspb;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+import "github.com/chubaodb/chubaodb/proto/basepb/basepb.proto";
+
+import "dspb/kv.proto";
+import "dspb/txn.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+message SplitCommand {
+    uint64 leader              = 1;
+    bytes split_key            = 2;
+    basepb.RangeEpoch epoch    = 3;
+    basepb.Range new_range     = 4;
+
+    message StatsInfo{
+        uint64 left_count      = 1;
+        uint64 right_count     = 2;
+        uint64 left_size       = 3;
+        uint64 right_size      = 4;
+    }
+
+    StatsInfo info             = 5;
+}
+
+message UpdateStatsCommand {
+    uint64 real_size           = 1;
+    uint64 kv_count            = 2;
+}
+
+message CmdID {
+    uint64 node_id = 1;
+    uint64 seq     = 2;
+}
+
+enum CmdType {
+    Invalid_Cmd   = 0;
+
+    TxnPrepare    = 1;
+    TxnDecide     = 2;
+    TxnClearup    = 3;
+    TxnSelect     = 4;
+    TxnScan       = 5;
+    TxnSelectFlow = 6;
+
+    KvGet         = 20;
+    KvPut         = 21;
+    KvDelete      = 22;
+    KvScan        = 23;
+    KvDelRange    = 24;
+
+    AdminSplit    = 100;
+    UpdateStats   = 101;
+}
+
+message Command {
+    CmdID cmd_id                          = 1;
+    CmdType cmd_type                      = 2;
+    basepb.RangeEpoch verify_epoch        = 3;
+
+    PrepareRequest txn_prepare_req        = 4;
+    DecideRequest txn_decide_req          = 5;
+    ClearupRequest txn_clearup_req        = 6;
+    SelectRequest txn_select_req          = 7;
+    ScanRequest   txn_scan_req            = 8;
+    SelectFlowRequest txn_select_flow_req = 9;
+
+    KvGetRequest kv_get_req               = 20;
+    KvPutRequest kv_put_req               = 21;
+    KvDeleteRequest kv_delete_req         = 22;
+    KvScanRequest kv_scan_req             = 23;
+    KvDelRangeRequest kv_del_range_req    = 24;
+    RedisRequest redis_req                = 25;
+
+    SplitCommand split_cmd                = 100;
+    UpdateStatsCommand update_stats_cmd   = 101;
+
+    uint32 cmd_flags                      = 1001;
+}
+
+message PeerTask {
+    basepb.RangeEpoch  verify_epoch   = 1;
+    basepb.Peer        peer           = 2;
+}
+
+enum CFType {
+    CF_DEFAULT = 0;
+    CF_TXN = 1;
+}
+
+message SnapshotKVPair {
+    bytes key   = 1;
+    bytes value = 2;
+    CFType cf_type = 3;
+}
+
+message SnapshotContext {
+    basepb.Range meta = 1;
+}

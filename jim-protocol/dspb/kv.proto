@@ -1,0 +1,224 @@
+syntax = "proto3";
+
+package dspb;
+
+enum RedisCmdType {
+    //db
+    DEL                 = 0;
+    EXISTS              = 1;
+    EXPIRE              = 2;
+    EXPIREAT            = 3;
+    KEYS                = 4;
+    OBJECT              = 5;
+    PERSIST             = 6;
+    PEXPIRE             = 7;
+    PEXPIREAT           = 8;
+    PTTL                = 9;
+    RANDOMKEY           = 10;
+    RENAME              = 11;
+    RENAMENX            = 12;
+    SORT                = 13;
+    TTL                 = 14;
+    TYPE                = 15;
+    SCAN                = 16;
+    //string
+    APPEND              = 17;
+    BITCOUNT            = 18;
+    BITOP               = 19;
+    BITPOS              = 20;
+    DECR                = 21;
+    DECRBY              = 22;
+    GET                 = 23;
+    GETBIT              = 24;
+    GETRANGE            = 25;
+    SUBSTR              = 26;
+    GETSET              = 27;
+    INCR                = 28;
+    INCRBY              = 29;
+    INCRBYFLOAT         = 30;
+    MGET                = 31;
+    MSET                = 32;
+    MSETNX              = 33;
+    PSETEX              = 34;
+    SET                 = 35;
+    SETBIT              = 36;
+    SETEX               = 37;
+    SETNX               = 38;
+    SETRANGE            = 39;
+    STRLEN              = 40;
+    //hash
+    HDEL                = 41;
+    HEXISTS             = 42;
+    HGET                = 43;
+    HGETALL             = 44;
+    HINCRBY             = 45;
+    HINCRBYFLOAT        = 46;
+    HKEYS               = 47;
+    HLEN                = 48;
+    HMGET               = 49;
+    HMSET               = 50;
+    HSET                = 51;
+    HSETNX              = 52;
+    HVALS               = 53;
+    HSCAN               = 54;
+    //list
+    BLPOP               = 55;
+    BRPOP               = 56;
+    BRPOPLPUSH          = 57;
+    LINDEX              = 58;
+    LINSERT             = 59;
+    LLEN                = 60;
+    LPOP                = 61;
+    LPUSH               = 62;
+    LPUSHX              = 63;
+    LRANGE              = 64;
+    LREM                = 65;
+    LSET                = 66;
+    LTRIM               = 67;
+    RPOP                = 68;
+    RPOPLPUSH           = 69;
+    RPUSH               = 70;
+    RPUSHX              = 71;
+    SADD                = 72;
+    SCARD               = 73;
+    SDIFF               = 74;
+    SDIFFSTORE          = 75;
+    SINTER              = 76;
+    SINTERSTORE         = 77;
+    SISMEMBER           = 78;
+    SMEMBERS            = 79;
+    SMOVE               = 80;
+    SPOP                = 81;
+    SRANDMEMBER         = 82;
+    SREM                = 83;
+    SUNION              = 84;
+    SUNIONSTORE         = 85;
+    SSCAN               = 86;
+    ZADD                = 87;
+    ZCARD               = 88;
+    ZCOUNT              = 89;
+    ZINCRBY             = 90;
+    ZRANGE              = 91;
+    ZRANGEBYSCORE       = 92;
+    ZRANK               = 93;
+    ZREM                = 94;
+    ZREMRANGEBYRANK     = 95;
+    ZREMRANGEBYSCORE    = 96;
+    ZREVRANGE           = 97;
+    ZREVRANGEBYSCORE    = 98;
+    ZREVRANK            = 99;
+    ZSCORE              = 100;
+    ZUNIONSTORE         = 101;
+    ZINTERSTORE         = 102;
+    ZSCAN               = 103;
+    ZRANGEBYLEX         = 104;
+    ZLEXCOUNT           = 105;
+    ZREMRANGEBYLEX      = 106;
+    ZREVRANGEBYLEX      = 107;
+    PFADD               = 108;
+    PFCOUNT             = 109;
+    PFMERGE             = 110;
+    PFSELFTEST          = 111;
+    PFDEBUG             = 112;
+    DISCARD             = 113;
+    EXEC                = 115;
+    MULTI               = 116;
+    UNWATCH             = 117;
+    WATCH               = 118;
+    EVAL                = 119;
+    EVALSHA             = 120;
+    SCRIPT              = 121;
+    AUTH                = 122;
+    PING                = 123;
+    CLIENT              = 124;
+    CONFIG              = 125;
+    DBSIZE              = 126;
+    DEBUG               = 127;
+    FLUSHDB             = 128;
+    FLUSHALL            = 129;
+    INFO                = 130;
+    PSYNC               = 131;
+    SLOWLOG             = 132;
+    SYNC                = 133;
+    TIME                = 134;
+}
+
+enum RedisReplyType {
+    STATUS              = 0;
+    INTEGER             = 1;
+    STRING              = 2;
+    ERROR               = 3;
+    NIL                 = 4;
+    ARRAY               = 5;
+}
+
+message RedisRequest {
+    RedisCmdType type   = 1;
+    repeated bytes args = 2;
+}
+
+message RedisResponse {
+    RedisReplyType type = 1;
+    bytes str = 2;
+    int32 integer = 3;
+    repeated RedisResponse elements = 4;
+}
+
+// KvGet
+message KvGetRequest {
+    bytes key               = 1;
+}
+
+message KvGetResponse {
+    int32 code              = 1;
+    bytes value             = 2;
+}
+
+
+
+// KvScanRequest
+message KvScanRequest {
+    bytes start_key         = 1;
+    bytes end_key           = 2;
+}
+
+message KvValue {
+    bytes key               = 1;
+    bytes value             = 2;
+}
+
+message KvScanReponse {
+    int32 code              = 1;
+    repeated KvValue values = 2;
+}
+
+// KvPut
+message KvPutRequest {
+    bytes key               = 1;
+    bytes value             = 2;
+}
+
+message KvPutResponse {
+    int32 code              = 1;
+}
+
+
+// KvDelete
+message KvDeleteRequest {
+    bytes key               = 1;
+}
+
+message KvDeleteResponse {
+    int32  code             = 1;
+}
+
+// KvDeleteRange
+message KvDelRangeRequest {
+    bytes start_key         = 1;
+    bytes end_key           = 2;
+}
+
+message KvDelRangeResponse {
+    int32 code              = 1;
+    int64 count             = 2;
+}

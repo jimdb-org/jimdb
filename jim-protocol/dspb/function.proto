@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package dspb;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+enum FunctionID {
+    kFuncHeartbeat        = 0;
+    kFuncRangeRequest     = 1;
+    kFuncSchedule         = 2;
+    kFuncAdmin            = 3;
+}
