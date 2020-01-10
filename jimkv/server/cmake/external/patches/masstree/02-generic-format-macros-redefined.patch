@@ -1,0 +1,14 @@
+diff --git a/compiler.hh b/compiler.hh
+index 7f085ce..3f3f121 100644
+--- a/compiler.hh
++++ b/compiler.hh
+@@ -16,7 +16,9 @@
+ #ifndef MASSTREE_COMPILER_HH
+ #define MASSTREE_COMPILER_HH 1
+ #include <stdint.h>
++#ifndef __STDC_FORMAT_MACROS
+ #define __STDC_FORMAT_MACROS
++#endif
+ #include <inttypes.h>
+ #include <arpa/inet.h>
+ #if HAVE_TYPE_TRAITS

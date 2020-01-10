@@ -1,0 +1,13 @@
+diff --git a/kvthread.hh b/kvthread.hh
+index fc03339..c648bcf 100644
+--- a/kvthread.hh
++++ b/kvthread.hh
+@@ -259,7 +259,7 @@ class threadinfo {
+     }
+ 
+     // RCU
+-    enum { rcu_free_count = 128 }; // max # of entries to free per rcu_quiesce() call
++    enum { rcu_free_count = 10000000}; // max # of entries to free per rcu_quiesce() call
+     void rcu_start() {
+         if (gc_epoch_ != globalepoch)
+             gc_epoch_ = globalepoch;

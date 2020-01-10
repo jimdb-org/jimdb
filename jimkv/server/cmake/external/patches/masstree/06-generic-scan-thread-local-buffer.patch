@@ -1,0 +1,53 @@
+diff --git a/masstree_scan.hh b/masstree_scan.hh
+index bccf7b6..5ba991c 100644
+--- a/masstree_scan.hh
++++ b/masstree_scan.hh
+@@ -15,6 +15,7 @@
+  */
+ #ifndef MASSTREE_SCAN_HH
+ #define MASSTREE_SCAN_HH
++#include <vector>
+ #include "masstree_tcursor.hh"
+ #include "masstree_struct.hh"
+ namespace Masstree {
+@@ -183,7 +184,7 @@ int scanstackelt<P>::find_initial(H& helper, key_type& ka, bool emit_equal,
+ {
+     key_indexed_position kx;
+     int keylenx = 0;
+-    char suffixbuf[MASSTREE_MAXKEYLEN];
++    thread_local std::vector<char> suffixbuf(MASSTREE_MAXKEYLEN);
+     Str suffix;
+ 
+  retry_root:
+@@ -203,8 +204,8 @@ int scanstackelt<P>::find_initial(H& helper, key_type& ka, bool emit_equal,
+         entry.prefetch(keylenx);
+         if (n_->keylenx_has_ksuf(keylenx)) {
+             suffix = n_->ksuf(kx.p);
+-            memcpy(suffixbuf, suffix.s, suffix.len);
+-            suffix.s = suffixbuf;
++            memcpy(suffixbuf.data(), suffix.s, suffix.len);
++            suffix.s = suffixbuf.data();
+         }
+     }
+     if (n_->has_changed(v_)) {
+@@ -315,13 +316,13 @@ int basic_table<P>::scan(H helper,
+     typedef typename P::ikey_type ikey_type;
+     typedef typename node_type::key_type key_type;
+     typedef typename node_type::leaf_type::leafvalue_type leafvalue_type;
+-    union {
+-        ikey_type x[(MASSTREE_MAXKEYLEN + sizeof(ikey_type) - 1)/sizeof(ikey_type)];
+-        char s[MASSTREE_MAXKEYLEN];
+-    } keybuf;
+-    masstree_precondition(firstkey.len <= (int) sizeof(keybuf));
+-    memcpy(keybuf.s, firstkey.s, firstkey.len);
+-    key_type ka(keybuf.s, firstkey.len);
++
++    thread_local std::vector<char> keybuf(
++        (MASSTREE_MAXKEYLEN + sizeof(ikey_type) - 1)/sizeof(ikey_type) * sizeof(ikey_type));
++
++    masstree_precondition(firstkey.len <= (int) (keybuf.size()));
++    memcpy(keybuf.data(), firstkey.s, firstkey.len);
++    key_type ka(keybuf.data(), firstkey.len);
+ 
+     typedef scanstackelt<P> mystack_type;
+     mystack_type stack;

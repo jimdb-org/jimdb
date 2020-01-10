@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package jimkv.ds.storage.pb;
+
+message InternalTag {
+    string txn_id = 1;
+}

@@ -1,0 +1,6 @@
+_Pragma("once");
+
+#cmakedefine GIT_DESC "@GIT_DESC@"
+#cmakedefine BUILD_DATE @BUILD_DATE@
+#cmakedefine BUILD_TYPE "@BUILD_TYPE@"
+#cmakedefine BUILD_FLAGS "@BUILD_FLAGS@"

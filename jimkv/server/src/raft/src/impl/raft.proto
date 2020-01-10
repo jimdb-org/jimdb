@@ -1,0 +1,151 @@
+// Copyright 2015 The etcd Authors
+// Portions Copyright 2019 The JimDB Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+// implied. See the License for the specific language governing
+// permissions and limitations under the License.
+
+syntax = "proto3";
+
+package jimkv.raft.impl.pb;
+
+enum PeerType {
+    PEER_NORMAL       = 0;
+    PEER_LEARNER      = 1;
+}
+
+message Peer {
+    PeerType type         = 1;
+    uint64 node_id        = 2;
+    uint64 peer_id        = 3;
+}
+
+enum ConfChangeType {
+    CONF_ADD_PEER         = 0;
+    CONF_REMOVE_PEER      = 1;
+    CONF_PROMOTE_PEER     = 2;
+}
+
+message ConfChange {
+    ConfChangeType type   = 1;
+    Peer Peer             = 2;
+    bytes context         = 3;
+}
+
+enum EntryType {
+    ENTRY_TYPE_INVALID    = 0;
+    ENTRY_NORMAL          = 1;
+    ENTRY_CONF_CHANGE     = 2;
+}
+
+message Entry {
+    EntryType type    = 1;
+    uint64 index      = 2;
+    uint64 term       = 3;
+    bytes data        = 4;
+    uint32 flags      = 5;
+}
+
+enum MessageType {
+    MESSAGE_TYPE_INVALID      = 0;
+
+    APPEND_ENTRIES_REQUEST    = 1;
+    APPEND_ENTRIES_RESPONSE   = 2;
+
+    VOTE_REQUEST              = 3;
+    VOTE_RESPONSE             = 4;
+
+    HEARTBEAT_REQUEST         = 5;
+    HEARTBEAT_RESPONSE        = 6;
+
+    SNAPSHOT_REQUEST          = 7;
+    SNAPSHOT_ACK              = 9;
+
+    LOCAL_MSG_HUP             = 10;
+    LOCAL_MSG_PROP            = 11;
+    LOCAL_MSG_TICK            = 12;
+
+    PRE_VOTE_REQUEST          = 13;
+    PRE_VOTE_RESPONSE         = 14;
+
+    LOCAL_SNAPSHOT_STATUS     = 15;
+    LOCAL_MSG_READ_INDEX      = 16;
+    READ_INDEX_REQUEST        = 17;
+    READ_INDEX_RESPONSE       = 18;
+}
+
+message HeartbeatContext { 
+    repeated uint64 ids     = 1; 
+};
+
+message SnapshotMeta {
+    uint64 index          = 1;
+    uint64 term           = 2;
+    repeated Peer peers   = 3;
+    bytes context         = 4;
+}
+
+message Snapshot {
+    uint64 uuid           = 1;
+    SnapshotMeta meta     = 2;
+    repeated bytes datas  = 3;
+    bool final            = 4;
+    int64 seq             = 5;
+};
+
+message Message {
+    MessageType type          = 1;
+    uint64 id                 = 2; // message id
+    uint64 from               = 3; // node_id of from
+    uint64 to                 = 4; // node_id of to
+    uint64 term               = 5; // current term
+    uint64 commit             = 6; // current commit
+    uint64 read_sequence      = 7; // read unit sequence
+    // for request
+    uint64 log_term           = 8;
+    uint64 log_index          = 9;
+    repeated Entry entries    = 10;
+
+    // for response
+    bool reject               = 12;
+    uint64 reject_hint        = 13;
+
+    // for heartbeat
+    HeartbeatContext hb_ctx   = 14;
+
+    // for snapshot request
+    Snapshot snapshot         = 15;
+}
+
+
+// HardState is the repl state,must persist to the storage.
+message HardState {
+    uint64 term       = 1;
+    uint64 commit     = 2;
+    uint64 vote       = 3;
+}
+
+message TruncateMeta {
+    uint64 index      = 1;
+    uint64 term       = 2;
+}
+
+// log storage
+message IndexItem {
+    uint64 index      = 1;
+    uint64 term       = 2;
+    uint32 offset     = 3;
+};
+
+// log storage
+message LogIndex { 
+    repeated IndexItem items    = 1; 
+};
