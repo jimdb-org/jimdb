@@ -1,0 +1,43 @@
+diff --git a/masstree_remove.hh b/masstree_remove.hh
+index c015481..efeee8e 100644
+--- a/masstree_remove.hh
++++ b/masstree_remove.hh
+@@ -65,7 +65,14 @@ bool tcursor<P>::gc_layer(threadinfo& ti)
+             goto unlock_layer;
+ 
+         node_type *child = in->child_[0];
++        if (!child->try_lock(*child)) {
++            in->unlock();
++            ti.lock_fence(child->isleaf() ? tc_leaf_lock : tc_internode_lock);
++            continue;
++        }
++        // child is locked now
+         child->make_layer_root();
++        child->unlock();
+         n_->lv_[kx_.p] = child;
+         in->mark_split();
+         in->set_parent(child);  // ensure concurrent reader finds true root
+diff --git a/nodeversion.hh b/nodeversion.hh
+index 8ad1b66..c538e9f 100644
+--- a/nodeversion.hh
++++ b/nodeversion.hh
+@@ -107,6 +107,19 @@ class nodeversion {
+         return expected;
+     }
+ 
++    bool try_lock(nodeversion<P> expected) {
++        if ((expected.v_ & P::lock_bit)
++            || !bool_cmpxchg(&v_, expected.v_,
++                            expected.v_ | P::lock_bit)) {
++            return false;
++        }
++        masstree_invariant(!(expected.v_ & P::dirty_mask));
++        expected.v_ |= P::lock_bit;
++        acquire_fence();
++        masstree_invariant(expected.v_ == v_);
++        return true;
++    }
++
+     void unlock() {
+         unlock(*this);
+     }

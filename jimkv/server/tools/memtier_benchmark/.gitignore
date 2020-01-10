@@ -1,0 +1,11 @@
+*.o
+autom4te.cache
+compile
+config.log
+config.h
+config.status
+libtool
+memtier_benchmark
+stamp-h1
+.deps
+Makefile
