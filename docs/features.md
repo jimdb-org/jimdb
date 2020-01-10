@@ -1,6 +1,6 @@
 # Key Features
 
-ChubaoDB is a cloud native distributed database with intelligent storage tiering. 
+JIMDB is a cloud native distributed database with intelligent storage tiering. 
 
 Our motivation is to build a scalable and fast enough database system which makes the frontend caching cluster not needed, but itself does not use too many RAM nodes. 
 
