@@ -1,3 +1,3 @@
 # JIMDB
 
-JIMDB: a key-value and NewSQL distributed database with intelligent storage tiering.
+JIMDB is a cloud-native key-value and SQL database with intelligent storage tiering.
