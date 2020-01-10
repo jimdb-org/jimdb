@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The JimDB Authors.
+ * Copyright 2019 The JIMDB Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import io.jimdb.mysql.constant.MySQLCommandType;
 import io.jimdb.mysql.constant.MySQLVariables;
 import io.jimdb.mysql.handshake.HandshakeInfo;
 import io.jimdb.mysql.handshake.HandshakeResult;
-import io.jimdb.mysql.prepare.NullBitMap;
+import io.jimdb.mysql.util.NullBitMap;
 import io.jimdb.mysql.util.CodecUtil;
 import io.jimdb.pb.Metapb.SQLType;
 import io.jimdb.core.plugin.PluginFactory;

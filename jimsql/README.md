@@ -1,4 +1,4 @@
-#JIMDB Proxy
+#JimDB Proxy
 is a computing engine for distributed online transaction processing.
 
 ## Overview

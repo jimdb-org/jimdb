@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The JimDB Authors.
+ * Copyright 2019 The JIMDB Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.List;
 
 import io.jimdb.test.mysql.SqlTestBase;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -58,12 +57,16 @@ public final class InsertTest extends SqlTestBase {
 
   @Before
   public void tearUp() {
-    String SQL_CLEAR = "delete from %s where id > 0";
-    execUpdate(String.format(SQL_CLEAR, TABLENAME), true);
+    for (String id : deleteIDS) {
+      String SQL_CLEAR = "delete from %s where id = %s";
+      execUpdate(String.format(SQL_CLEAR, TABLENAME, id), true);
+    }
+    this.deleteIDS.clear();
   }
 
   @Test
   public void testInsertAll() {
+    this.deleteIDS.add("111");
     execUpdate("INSERT INTO sqltest VALUES(111, 'testInsertAll', 28)", 1, true);
 
     List<String> expected = new ArrayList<>();
@@ -73,6 +76,7 @@ public final class InsertTest extends SqlTestBase {
 
   @Test
   public void testInsertPartial() {
+    this.deleteIDS.add("111");
     execUpdate("INSERT INTO sqltest(id,name) VALUES(111, 'testInsertPartial')", 1, true);
 
     List<String> expected = new ArrayList<>();
@@ -82,6 +86,7 @@ public final class InsertTest extends SqlTestBase {
 
   @Test
   public void testInsertNull() {
+    this.deleteIDS.add("111");
     execUpdate("INSERT INTO sqltest(id,name,age) VALUES(111, '中国', null)", 1, true);
 
     List<String> expected = new ArrayList<>();
@@ -91,6 +96,12 @@ public final class InsertTest extends SqlTestBase {
 
   @Test
   public void testInsertMultiValue() {
+    this.deleteIDS.add("111");
+    this.deleteIDS.add("222");
+    this.deleteIDS.add("333");
+    this.deleteIDS.add("444");
+    this.deleteIDS.add("555");
+    this.deleteIDS.add("666");
     execUpdate("INSERT INTO sqltest VALUES(111, 'testInsertMultiValue1', 28),(222, 'testInsertMultiValue2', 28),(333, 'testInsertMultiValue3', 28)", 3, true);
     execUpdate("INSERT INTO sqltest(id,name) VALUES(444, 'testInsertMultiValue4'),(555, 'testInsertMultiValue5'),(666, 'testInsertMultiValue6')", 3, true);
 
@@ -106,6 +117,7 @@ public final class InsertTest extends SqlTestBase {
 
   @Test
   public void testInsertSet() {
+    this.deleteIDS.add("11111");
     execUpdate("INSERT INTO sqltest set id=11111, name='testInsertPartial', age=18", 1, true);
 
     List<String> expected = new ArrayList<>();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The JimDB Authors.
+ * Copyright 2019 The JIMDB Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,11 @@ final class DDLException extends JimException {
   }
 
   DDLException(ErrorType type, ErrorCode code, String... params) {
-    super(ErrorModule.DDL, code, message(code, params), null);
+    this(type, code, true, params);
+  }
+
+  DDLException(ErrorType type, ErrorCode code, boolean format, String... params) {
+    super(ErrorModule.DDL, code, format ? message(code, params) : params[0], null);
     this.type = type;
   }
 

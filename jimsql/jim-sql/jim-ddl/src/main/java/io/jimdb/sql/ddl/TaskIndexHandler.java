@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The JimDB Authors.
+ * Copyright 2019 The JIMDB Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,31 +16,36 @@
 package io.jimdb.sql.ddl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 
-import io.jimdb.core.context.ReorgContext;
+import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
+import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
-import io.jimdb.core.model.meta.Catalog;
 import io.jimdb.core.model.meta.Index;
+import io.jimdb.core.model.meta.MetaData;
+import io.jimdb.core.model.meta.RangeInfo;
 import io.jimdb.core.model.meta.Table;
+import io.jimdb.core.plugin.MetaStore;
+import io.jimdb.core.plugin.MetaStore.TaskType;
+import io.jimdb.core.plugin.RouterStore;
+import io.jimdb.core.plugin.store.Engine;
 import io.jimdb.pb.Basepb;
-import io.jimdb.pb.Ddlpb;
 import io.jimdb.pb.Ddlpb.AddIndexInfo;
-import io.jimdb.pb.Metapb;
+import io.jimdb.pb.Ddlpb.IndexReorg;
+import io.jimdb.pb.Ddlpb.Task;
+import io.jimdb.pb.Ddlpb.TaskState;
 import io.jimdb.pb.Metapb.ColumnInfo;
 import io.jimdb.pb.Metapb.IndexInfo;
 import io.jimdb.pb.Metapb.MetaState;
 import io.jimdb.pb.Metapb.TableInfo;
 import io.jimdb.pb.Mspb;
-import io.jimdb.core.plugin.MetaStore;
-import io.jimdb.core.plugin.RouterStore;
-import io.jimdb.core.plugin.store.Engine;
+
+import com.google.protobuf.NettyByteString;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -53,7 +58,7 @@ final class TaskIndexHandler {
   }
 
   static AddIndexInfo addIndex(MetaStore metaStore, RouterStore routerStore, Engine storeEngine,
-                               TableInfo tableInfo, AddIndexInfo addIndexInfo) {
+                               long taskId, TableInfo tableInfo, AddIndexInfo addIndexInfo) {
     int pos = 0;
     IndexInfo index = null;
     TableInfo.Builder tableBuilder = tableInfo.toBuilder();
@@ -110,28 +115,7 @@ final class TaskIndexHandler {
         return addIndexInfo.toBuilder().setState(MetaState.WriteReorg).build();
 
       case WriteReorg:
-        //todo store reorg context
-        ReorgContext context = new ReorgContext();
-
-        Catalog catalog = new Catalog(Metapb.CatalogInfo.newBuilder().setId(tableInfo.getDbId()).build(), null);
-        Table table = new Table(catalog, tableInfo);
-        final String indexName = index.getName();
-        Optional<Index> any = Arrays.stream(table.getWritableIndices())
-                .filter(tt -> tt.getName().equals(indexName)).findAny();
-
-        try {
-          storeEngine.reOrganize(context, table, any.get(), Ddlpb.OpType.AddIndex);
-        } catch (Throwable e) {
-          errorHandler(e);
-        }
-        if (context.isFailed()) {
-          Throwable e = context.getErr();
-          if (e == null) {
-            throw new DDLException(DDLException.ErrorType.FAILED, "reorg data failed");
-          }
-          errorHandler(e);
-        }
-
+        doReorg(taskId, tableInfo, index, metaStore, storeEngine);
         index = index.toBuilder()
                 .setState(MetaState.Public)
                 .build();
@@ -140,9 +124,11 @@ final class TaskIndexHandler {
           throw new DDLException(DDLException.ErrorType.CONCURRENT, String.format("Table[%d] occur concurrent process error", tableInfo.getId()));
         }
 
+        metaStore.removeTask(TaskType.INDEXTASK, taskId);
         return addIndexInfo.toBuilder().setState(MetaState.Public).build();
 
       case Public:
+        metaStore.removeTask(TaskType.INDEXTASK, taskId);
         return addIndexInfo.toBuilder().setState(MetaState.Public).build();
 
       default:
@@ -351,5 +337,106 @@ final class TaskIndexHandler {
             .setRangeType(Basepb.RangeType.RNG_Index);
 
     routerStore.deleteRange(builder.build());
+  }
+
+  private static void doReorg(long taskId, TableInfo tableInfo, IndexInfo indexInfo, MetaStore metaStore, Engine storeEngine) {
+    Task task = metaStore.getTask(TaskType.INDEXTASK, Task.newBuilder().setId(taskId).build());
+    if (task == null) {
+      createReorgTask(taskId, tableInfo, indexInfo, metaStore, storeEngine);
+    }
+
+    waitReorgComplete(taskId, tableInfo.getId(), metaStore);
+  }
+
+  private static void waitReorgComplete(long taskId, int tableId, MetaStore metaStore) {
+    while (true) {
+      Task tableTask = Task.newBuilder()
+              .setId(taskId)
+              .setTableId(tableId)
+              .build();
+      if (!metaStore.tryLock(TaskType.SCHEMATASK, tableTask)) {
+        throw new DDLException(DDLException.ErrorType.CONCURRENT, "lost the ddl task worker lock");
+      }
+
+      Task indexTask = metaStore.getTask(TaskType.INDEXTASK, Task.newBuilder().setId(taskId).build());
+      if (indexTask == null) {
+        throw new DDLException(DDLException.ErrorType.CONCURRENT, String.format("Table[%d] occur concurrent process error", tableId));
+      }
+      if (indexTask.getState() != TaskState.Running) {
+        throw new DDLException(DDLException.ErrorType.ROLLACK, ErrorCode.valueOf(indexTask.getErrorCode()), false, indexTask.getError());
+      }
+
+      List<Task> indexTasks = metaStore.getTasks(TaskType.INDEXTASK, Task.newBuilder().setId(taskId).build());
+      if (indexTasks == null || indexTasks.isEmpty()) {
+        throw new DDLException(DDLException.ErrorType.CONCURRENT, String.format("Table[%d] occur concurrent process error", tableId));
+      }
+
+      boolean isComplete = true;
+      for (Task task : indexTasks) {
+        if (task.getState() != TaskState.Success) {
+          isComplete = false;
+          break;
+        }
+      }
+      tableTask = null;
+      indexTask = null;
+      indexTasks = null;
+
+      if (isComplete) {
+        return;
+      }
+
+      try {
+        Thread.sleep(5000);
+      } catch (InterruptedException ex) {
+        throw DBException.get(ErrorModule.DDL, ErrorCode.ER_INTERNAL_ERROR, ex);
+      }
+    }
+  }
+
+  private static void createReorgTask(long taskId, TableInfo tableInfo, IndexInfo indexInfo, MetaStore metaStore, Engine storeEngine) {
+    try {
+      Thread.sleep(10000);
+    } catch (InterruptedException ex) {
+      throw DBException.get(ErrorModule.DDL, ErrorCode.ER_INTERNAL_ERROR, ex);
+    }
+
+    Index index = null;
+    Table table = MetaData.Holder.getMetaData().getTable(tableInfo.getDbId(), tableInfo.getId());
+    if (table != null) {
+      final String indexName = indexInfo.getName();
+      for (Index idx : table.getWritableIndices()) {
+        if (idx.getName().equalsIgnoreCase(indexName)) {
+          index = idx;
+          break;
+        }
+      }
+    }
+    if (index == null) {
+      throw new DDLException(DDLException.ErrorType.CONCURRENT, String.format("Table[%d] occur concurrent process error", tableInfo.getId()));
+    }
+
+    Set<RangeInfo> ranges = storeEngine.getRanges(table);
+    List<Task> indexTasks = new ArrayList<>(ranges.size());
+    int i = 0;
+    for (RangeInfo range : ranges) {
+      IndexReorg reorg = IndexReorg.newBuilder()
+              .setIndexId(indexInfo.getId())
+              .setOffset(++i)
+              .setStartKey(NettyByteString.wrap(range.getStartKey()))
+              .setEndKey(NettyByteString.wrap(range.getEndKey()))
+              .setLastKey(NettyByteString.wrap(range.getStartKey()))
+              .build();
+
+      Task indexTask = Task.newBuilder()
+              .setId(taskId)
+              .setData(reorg.toByteString())
+              .setState(TaskState.Running)
+              .build();
+
+      indexTasks.add(indexTask);
+    }
+
+    metaStore.storeTask(TaskType.INDEXTASK, null, indexTasks.toArray(new Task[0]));
   }
 }

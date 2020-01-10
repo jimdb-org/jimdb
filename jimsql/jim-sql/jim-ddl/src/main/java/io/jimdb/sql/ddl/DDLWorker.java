@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The JimDB Authors.
+ * Copyright 2019 The JIMDB Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.common.utils.lang.NamedThreadFactory;
+import io.jimdb.core.plugin.MetaStore;
+import io.jimdb.core.plugin.MetaStore.TaskType;
+import io.jimdb.core.plugin.MetaStore.WatchType;
+import io.jimdb.core.plugin.RouterStore;
+import io.jimdb.core.plugin.store.Engine;
 import io.jimdb.pb.Ddlpb;
 import io.jimdb.pb.Ddlpb.AlterTableInfo;
 import io.jimdb.pb.Ddlpb.OpType;
@@ -38,12 +44,6 @@ import io.jimdb.pb.Metapb.ColumnInfo;
 import io.jimdb.pb.Metapb.IndexInfo;
 import io.jimdb.pb.Metapb.MetaState;
 import io.jimdb.pb.Metapb.TableInfo;
-import io.jimdb.core.plugin.MetaStore;
-import io.jimdb.core.plugin.MetaStore.TaskType;
-import io.jimdb.core.plugin.MetaStore.WatchType;
-import io.jimdb.core.plugin.RouterStore;
-import io.jimdb.core.plugin.store.Engine;
-import io.jimdb.common.utils.lang.NamedThreadFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -312,7 +312,7 @@ final class DDLWorker implements Closeable {
           }
 
           Ddlpb.AddIndexInfo index = Ddlpb.AddIndexInfo.parseFrom(arg);
-          index = TaskIndexHandler.addIndex(metaStore, routerStore, storeEngine, addIndexTable, index);
+          index = TaskIndexHandler.addIndex(metaStore, routerStore, storeEngine, task.getId(), addIndexTable, index);
           metaState = index.getState();
           arg = index.toByteString();
           if (metaState == MetaState.Public) {
@@ -482,6 +482,8 @@ final class DDLWorker implements Closeable {
           break;
 
         case AddIndex:
+          metaStore.removeTask(TaskType.INDEXTASK, task.getId());
+
           TableInfo addIndexTable = metaStore.getTable(task.getDbId(), task.getTableId());
           if (addIndexTable == null || addIndexTable.getState() != MetaState.Public) {
             throw new DDLException(DDLException.ErrorType.FAILED, ErrorCode.ER_BAD_TABLE_ERROR, String.valueOf(task.getTableId()));

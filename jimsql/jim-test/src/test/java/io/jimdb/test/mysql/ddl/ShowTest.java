@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The JimDB Authors.
+ * Copyright 2019 The JIMDB Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,11 +133,43 @@ public class ShowTest extends SqlTestBase {
 
   @Test
   public void testShowColumns() {
+    String DB_NAME = "show_test_db" + System.nanoTime();
+    createCatalog(DB_NAME);
+
+    String sql = String.format("CREATE TABLE %s.test(id BIGINT PRIMARY KEY, user varchar(32) NOT NULL UNIQUE KEY, "
+            + "host varchar(32)) COMMENT 'REPLICA=1' ENGINE=MEMORY", DB_NAME);
+    execUpdate(sql, 0, true);
+
     List<String> expected = expectedStr(new String[]{
-            "Field=id; Type=bigint(20) unsigned; Null=NO; Key=PRI; Default=; Extra=auto_increment",
-            "Field=name; Type=varchar(20); Null=NO; Key=MUL; Default=; Extra=",
-            "Field=num; Type=bigint(20) unsigned; Null=NO; Key=; Default=; Extra="
+            "Field=id; Type=bigint(20); Null=NO; Key=PRI; Default=; Extra=",
+            "Field=user; Type=varchar(32); Null=NO; Key=UNI; Default=; Extra=",
+            "Field=host; Type=varchar(32); Null=YES; Key=; Default=; Extra="
     });
-    execQuery("show columns from sqltest2 in maggie", expected);
+    execQuery("show columns from test in " + DB_NAME, expected);
+
+    deleteCatalog(DB_NAME);
+  }
+
+  @Test
+  public void testShowCreateTable() {
+    String DB_NAME = "show_test_db" + System.nanoTime();
+    createCatalog(DB_NAME);
+
+    String sql = String.format("CREATE TABLE %s.test(id BIGINT PRIMARY KEY, user varchar(32) NOT NULL UNIQUE KEY, "
+            + "host varchar(32)) COMMENT 'REPLICA=1' ENGINE=MEMORY", DB_NAME);
+    execUpdate(sql, 0, true);
+
+    List<String> expected = expectedStr(new String[]{
+            "Table=test; Create Table=CREATE TABLE `test`(\n" +
+                    " `id` bigint(20) NOT NULL,\n" +
+                    " `user` varchar(32) NOT NULL,\n" +
+                    " `host` varchar(32),\n" +
+                    "  UNIQUE KEY `user_2`(`user`),\n" +
+                    "  PRIMARY KEY (`id`),\n" +
+                    ") ENGINE=MEMORY COMMENT=''REPLICA=1''"
+    });
+    execQuery(String.format("show create table %s.test", DB_NAME), expected);
+
+    deleteCatalog(DB_NAME);
   }
 }
