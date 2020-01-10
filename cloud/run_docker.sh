@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 
-echo "Compile Chubaodb"
+echo "Compile JIMDB"
 ./build_image.sh
 
-echo "Make Chubaodb Image"
-docker build -t ansj/chubaodb:0.1 .
+echo "Make JIMDB Image"
+docker build -t ansj/jimdb:0.1 .
 
 echo "Start a empty service"
-docker run ansj/chubaodb:0.1
+docker run ansj/jimdb:0.1
 

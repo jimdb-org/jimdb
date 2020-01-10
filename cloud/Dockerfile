@@ -1,7 +1,7 @@
 FROM centos
 
-ADD bin /chubaodb/bin
+ADD bin /jimkv/bin
 ADD script/start.sh /chubaodb/
 
-ENTRYPOINT [ "/chubaodb/start.sh" ]
+ENTRYPOINT [ "/jimkv/start.sh" ]
 
