@@ -1,10 +1,2 @@
-#ChubaoDB model
-
-
-## Overview
-
-
-## Document
-
-## License
+#JIMDB protocol model
 
