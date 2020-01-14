@@ -10,7 +10,7 @@ We can get an executable file for the master by executing the following script
 
 .. code-block:: bash
 
-	cd chubaodb/master-server/cmd
+	cd jimdb/master-server/cmd
 	./build.sh
 
 
@@ -479,7 +479,7 @@ start.sh
 	  -classpath "$CLASSPATH" \
 	  -Dbasedir="$BASEDIR" \
 	  -Dfile.encoding="UTF-8" \
-	  io.chubao.jimdb.server.JimBootstrap &
+	  io.jimdb.server.JimBootstrap &
 	echo $! > jim.pid
 
 
@@ -492,7 +492,7 @@ stop.sh
 	then
 	    PIDPROC=`cat ./jim.pid`
 	else
-	    PIDPROC=`ps -ef | grep 'io.chubao.jimdb.server.JimBootstrap' | grep -v 'grep'| awk '{print $2}'`
+	    PIDPROC=`ps -ef | grep 'io.jimdb.server.JimBootstrap' | grep -v 'grep'| awk '{print $2}'`
 	fi
 
 	if [ -z "$PIDPROC" ];then
@@ -515,9 +515,9 @@ after start.sh
 
 	[root@79 bin]# ps -ef|grep jim
 	root     21234 18113  0 10:10 pts/0    00:00:00 grep --color=auto jim
-	root     57810     1 99 Sep30 ?        124-18:30:04 /export/servers/jdk1.8.0_60/bin/java -Xms8G -Xmx8G -Xmn3G -XX:SurvivorRatio=8 -XX:MaxDirectMemorySize=4G -XX:MetaspaceSize=64M -XX:MaxMetaspaceSize=512M -Xss256K -server -XX:+TieredCompilation -XX:CICompilerCount=3 -XX:InitialCodeCacheSize=64m -XX:ReservedCodeCacheSize=2048m -XX:CompileThreshold=1000 -XX:FreqInlineSize=2048 -XX:MaxInlineSize=512 -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled -XX:SoftRefLRUPolicyMSPerMB=0 -XX:CMSMaxAbortablePrecleanTime=100 -XX:+PrintGCDetails -Xloggc:/export/Logs/jimsql/gc.log -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:+PrintGCTimeStamps -classpath /export/App/jim-server/conf/:/export/App/jim-server/lib/* -Dbasedir=/export/App/jim-server -Dfile.encoding=UTF-8 io.chubao.jimdb.server.JimBootstrap
+	root     57810     1 99 Sep30 ?        124-18:30:04 /export/servers/jdk1.8.0_60/bin/java -Xms8G -Xmx8G -Xmn3G -XX:SurvivorRatio=8 -XX:MaxDirectMemorySize=4G -XX:MetaspaceSize=64M -XX:MaxMetaspaceSize=512M -Xss256K -server -XX:+TieredCompilation -XX:CICompilerCount=3 -XX:InitialCodeCacheSize=64m -XX:ReservedCodeCacheSize=2048m -XX:CompileThreshold=1000 -XX:FreqInlineSize=2048 -XX:MaxInlineSize=512 -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled -XX:SoftRefLRUPolicyMSPerMB=0 -XX:CMSMaxAbortablePrecleanTime=100 -XX:+PrintGCDetails -Xloggc:/export/Logs/jimsql/gc.log -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:+PrintGCTimeStamps -classpath /export/App/jim-server/conf/:/export/App/jim-server/lib/* -Dbasedir=/export/App/jim-server -Dfile.encoding=UTF-8 io.jimdb.server.JimBootstrap
 
 Reminder
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We can have multiple Proxys in ChubaoDB. The size of proxy depends on the throughput of the deployed clusters. Each Proxy needs to be deployed by following the above steps.
+We can have multiple Proxys in JIMDB. The size of proxy depends on the throughput of the deployed clusters. Each Proxy needs to be deployed by following the above steps.

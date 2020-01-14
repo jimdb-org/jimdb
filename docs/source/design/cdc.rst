@@ -10,7 +10,7 @@ arch
 -----------------
  
 The main idea of data capturing is a pull model, the most benefit is simple to understand and easy to realize. Design consider point:
-* lone process: do not depend on any others components of chubaodb, decrease risk for the whole system and reduce affected to data service core function.
+* lone process: do not depend on any others components of jimdb, decrease risk for the whole system and reduce affected to data service core function.
 * no status: do not maintain cdc progress and meta, esay logic for starting, stopping, and deploying.
 
 design
@@ -123,7 +123,7 @@ these request is dealed by data-server provided cdc handles:
 
 limitation
 
-* Each data change is pulled and pushed to external system as a single row change, any range data change has no relate to other, althrough chubaodb provides transaction semantic.
+* Each data change is pulled and pushed to external system as a single row change, any range data change has no relate to other, althrough jimdb provides transaction semantic.
 
 * A same row data may pulled repeated. At snapshot stage, checkpoint maybe execute serval times, and that lead to external system will comsume repeated changes.
 

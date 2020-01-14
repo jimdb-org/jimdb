@@ -4,7 +4,7 @@ Schedule
 1.1 General Structure
 ----------------------------------
 
-Schedule is the main part of ChubaoDB’s Master with scheduled job of Failover, Balance, Monitor etc. Schedule runs at 1-minute interval, within a cluster of masters, only one master which takes the lock can start Schedule.
+Schedule is the main part of JIMDB’s Master with scheduled job of Failover, Balance, Monitor etc. Schedule runs at 1-minute interval, within a cluster of masters, only one master which takes the lock can start Schedule.
 
 Schedule jobs run serially, a job can only start after its previous job finished successfully, the image below shows the detail order of pipeline.
 

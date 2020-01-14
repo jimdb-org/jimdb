@@ -24,37 +24,37 @@ Get DownLoad Script
 .. code-block:: bash
 
   download script code 
-  wget http://storage.jd.local/docker-compose/chubaodb_docker_compose.1120.tar.gz
+  wget http://storage.jd.local/docker-compose/jimdb_docker_compose.1120.tar.gz
   //mac os：brew install wget
 
   decompression
-  tar -zxf chubaodb_docker_compose.1120.tar.gz
+  tar -zxf jimdb_docker_compose.1120.tar.gz
 
   to directory
-  cd chubaodb_docker_compose/
+  cd jimdb_docker_compose/
 
 
 Deploy and Start up
 --------------------
 .. code-block:: bash
 
-  [root@ap2 chubaodb_docker_compose]# ./stop.sh
-  Stopping chubaodb_docker_compose_ms_1 ... done
-  Removing chubaodb_docker_compose_ds_1 ... done
-  Removing chubaodb_docker_compose_ms_1 ... done
-  Removing network chubaodb_docker_compose_default
+  [root@ap2 jimdb_docker_compose]# ./stop.sh
+  Stopping jimdb_docker_compose_ms_1 ... done
+  Removing jimdb_docker_compose_ds_1 ... done
+  Removing jimdb_docker_compose_ms_1 ... done
+  Removing network jimdb_docker_compose_default
 
-  [root@ap2 chubaodb_docker_compose]# ./start.sh
-  Creating network "chubaodb_docker_compose_default" with the default driver
-  Creating chubaodb_docker_compose_ms_1 ... done
-  Creating chubaodb_docker_compose_ds_1 ... done
-  Creating chubaodb_docker_compose_gw_1 ... done
+  [root@ap2 jimdb_docker_compose]# ./start.sh
+  Creating network "jimdb_docker_compose_default" with the default driver
+  Creating jimdb_docker_compose_ms_1 ... done
+  Creating jimdb_docker_compose_ds_1 ... done
+  Creating jimdb_docker_compose_gw_1 ... done
 
-  [root@ap2 chubaodb_docker_compose]# docker ps
+  [root@ap2 jimdb_docker_compose]# docker ps
   CONTAINER ID        IMAGE                        COMMAND                  CREATED             STATUS              PORTS                                                                        NAMES
-  77d8423410a6        chubaodb_docker_compose_gw   "./entrypoint.sh -cl…"   About an hour ago   Up About an hour    0.0.0.0:3361->3361/tcp                                                       chubaodb_docker_compose_gw_1
-  5fdf148b42fa        chubaodb_docker_compose_ds   "./entrypoint.sh -cl…"   About an hour ago   Up About an hour    0.0.0.0:6182->6182/tcp, 0.0.0.0:16182->16182/tcp, 0.0.0.0:18881->18881/tcp   chubaodb_docker_compose_ds_1
-  b1189f252ae0        chubaodb_docker_compose_ms   "./entrypoint.sh -cl…"   About an hour ago   Up About an hour    0.0.0.0:8811->8811/tcp                                                       
+  77d8423410a6        jimdb_docker_compose_gw   "./entrypoint.sh -cl…"   About an hour ago   Up About an hour    0.0.0.0:3361->3361/tcp                                                       jimdb_docker_compose_gw_1
+  5fdf148b42fa        jimdb_docker_compose_ds   "./entrypoint.sh -cl…"   About an hour ago   Up About an hour    0.0.0.0:6182->6182/tcp, 0.0.0.0:16182->16182/tcp, 0.0.0.0:18881->18881/tcp   jimdb_docker_compose_ds_1
+  b1189f252ae0        jimdb_docker_compose_ms   "./entrypoint.sh -cl…"   About an hour ago   Up About an hour    0.0.0.0:8811->8811/tcp
 
 Use
 ------

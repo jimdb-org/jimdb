@@ -4,14 +4,14 @@ Redis Proxy
 Overall architecture
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-AP is designed as a TCP server compatible with redis protocol, which is responsible for receiving commands from native redis clients, then calling the CHUBAODB SDK to interact with data server, write or read data, and convert data returned by data server into redis protocol and return to clients Complete redis command processing, the overall process as follows: 
+AP is designed as a TCP server compatible with redis protocol, which is responsible for receiving commands from native redis clients, then calling the JIMDB SDK to interact with data server, write or read data, and convert data returned by data server into redis protocol and return to clients Complete redis command processing, the overall process as follows:
 
 .. image:: ../images/redis-proxy-structure.png
    :align: center
    :scale: 80%
    :alt: Architecture
  
-use redis's auth command to wrap up the relevant information of CHUBAODB (cluster_id, db_id, table_id) when establishing the link , complete the initialization of the CHUBAODB Sdk, and then read and write. All kinds of commands are compatible with redis semantics as far as possible
+use redis's auth command to wrap up the relevant information of JIMDB (cluster_id, db_id, table_id) when establishing the link , complete the initialization of the JIMDB Sdk, and then read and write. All kinds of commands are compatible with redis semantics as far as possible
 
 Support types
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'ChubaoDB'
-copyright = '2019@ChubaoDB'
-author = 'ChubaoDB Authors'
+project = 'JIMDB'
+copyright = '2019@JIMDB'
+author = 'JIMDB Authors'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0.0'

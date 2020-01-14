@@ -21,7 +21,7 @@ sharding by table ranges, multi-raft replication, logical split, dynamic rebalan
 
 ## smart scheduling of storage tiers
 
-according to the access temperature, intelligent transition of hot/warm/cold ranges among RAM (masstree), SSD (rocksdb) and disks (rocksdb on ChubaoFS).  
+according to the access temperature, intelligent transition of hot/warm/cold ranges among RAM (masstree), SSD (rocksdb) and disks (rocksdb on CFS).  
 
 ## others
 
