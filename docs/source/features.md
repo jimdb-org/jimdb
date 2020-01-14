@@ -33,7 +33,7 @@ txn record, intent, version, 2PC
 
 ## backup & recovery
 
-on ChubaoFS
+on CFS
 
 ## deployment
 
