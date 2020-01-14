@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package dspb;
 
-import "github.com/chubaodb/chubaodb/proto/basepb/basepb.proto";
+import "github.com/jimdb-org/jimdb/protocol/basepb/basepb.proto";
 
 enum ExprType {
     Invalid_Expr = 0;

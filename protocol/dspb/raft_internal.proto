@@ -4,7 +4,7 @@ package dspb;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
-import "github.com/chubaodb/chubaodb/proto/basepb/basepb.proto";
+import "github.com/jimdb-org/jimdb/protocol/basepb/basepb.proto";
 
 import "dspb/kv.proto";
 import "dspb/txn.proto";
