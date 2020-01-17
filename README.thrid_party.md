@@ -7,7 +7,7 @@ JIMDB depends on third party libraries to implement some functionality. This doc
     
 | name          | License                                  | dependency type | modify                 |
 |---------------|------------------------------------------|-----------------|------------------------|
-| RocksDB       | GPLv2, Apache 2\.0                       | so              | N                      |
+| RocksDB       | Apache 2\.0                       | so              | N                      |
 | asio          | Boost Software License \- Version 1.0    | import          | N                      |
 | jemalloc      | BSD\-2\-Clause                           | so              | N                      |
 | protobuf      | BSD\-3\-Clause                           | so              | N                      |
