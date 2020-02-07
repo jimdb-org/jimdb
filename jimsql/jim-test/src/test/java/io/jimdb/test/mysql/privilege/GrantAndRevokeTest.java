@@ -31,12 +31,34 @@ public class GrantAndRevokeTest extends SqlTestBase {
 
   @Test
   public void testGrantAll() {
-    sql = "grant all privileges on *.* to 'dba'@'%' identified by '123456'";
+    sql = "grant all privileges on *.* to 'cba'@'%' identified by '123456'";
     execUpdate(sql, 0, true);
 
-    sql = "SELECT USER FROM mysql.user WHERE USER = 'dba';";
-    List<String> expected = expectedStr(new String[]{ "User=dba"});
+    sql = "SELECT * FROM mysql.user where host = '%' and user = 'cba'";
+    List<String> expected = expectedStr(new String[]{ "User=cba" });
     execQuery(sql, expected, false);
   }
+
+  @Test
+  public void testDropUser() {
+    sql = "DROP USER 'jdtest'@'%'";
+    execUpdate(sql, 0, true);
+
+    sql = "SELECT user FROM mysql.user";
+    List<String> expected = expectedStr(new String[]{ "User='dba'" });
+    execQuery(sql, expected, false);
+  }
+
+  @Test
+  public void testDelete() {
+//    sql = "show databases";
+//    execUpdate(sql, 0, true);
+
+    sql = "show databases";
+    List<String> expected = expectedStr(new String[]{ "Database='dba'" });
+    execQuery(sql, expected, false);
+  }
+
+
 
 }

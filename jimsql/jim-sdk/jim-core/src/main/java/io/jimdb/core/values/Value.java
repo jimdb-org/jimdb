@@ -85,6 +85,10 @@ public abstract class Value<T extends Value> {
     throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OPERATION_ERROR, getType().name() + "," + v2.getType().name(), "divide");
   }
 
+  protected Value divSafe(final T v2) {
+    throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OPERATION_ERROR, getType().name() + "," + v2.getType().name(), "div");
+  }
+
   protected Value modSafe(final T v2) {
     throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OPERATION_ERROR, getType().name() + "," + v2.getType().name(), "mod");
   }
@@ -202,6 +206,22 @@ public abstract class Value<T extends Value> {
     }
 
     return v1.divideSafe(v2);
+  }
+
+  public final Value div(Session session, Value v2) {
+    Value v1 = this;
+    ValueType type1 = v1.getType();
+    ValueType type2 = v2.getType();
+
+    if (type1 != ValueType.DECIMAL) {
+      v1 = ValueConvertor.convertType(session, v1, ValueType.DOUBLE, null);
+    }
+
+    if (type2 != ValueType.DECIMAL) {
+      v2 = ValueConvertor.convertType(session, v2, ValueType.DOUBLE, null);
+    }
+
+    return v1.divSafe(v2);
   }
 
   public final Value mod(Session session, Value v2) {

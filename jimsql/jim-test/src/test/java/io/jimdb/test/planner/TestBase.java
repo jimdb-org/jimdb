@@ -29,10 +29,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import io.jimdb.common.exception.JimException;
 import io.jimdb.core.Bootstraps;
 import io.jimdb.core.Session;
 import io.jimdb.core.config.JimConfig;
-import io.jimdb.common.exception.JimException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.FuncExpr;
@@ -47,14 +47,13 @@ import io.jimdb.core.model.meta.MetaData;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.DMLExecResult;
 import io.jimdb.core.model.result.impl.QueryExecResult;
-import io.jimdb.pb.Basepb;
-import io.jimdb.pb.Metapb;
-import io.jimdb.pb.Processorpb;
 import io.jimdb.core.plugin.PluginFactory;
 import io.jimdb.core.plugin.SQLEngine;
 import io.jimdb.core.plugin.SQLExecutor;
 import io.jimdb.core.plugin.store.Engine;
 import io.jimdb.core.plugin.store.Transaction;
+import io.jimdb.core.values.Value;
+import io.jimdb.pb.Processorpb;
 import io.jimdb.sql.Planner;
 import io.jimdb.sql.operator.Delete;
 import io.jimdb.sql.operator.IndexLookup;
@@ -70,11 +69,12 @@ import io.jimdb.sql.optimizer.OptimizeFlag;
 import io.jimdb.sql.optimizer.logical.LogicalOptimizer;
 import io.jimdb.sql.optimizer.statistics.TableStatsManager;
 import io.jimdb.test.TestUtil;
+import io.jimdb.test.mock.meta.MockMeta;
+import io.jimdb.test.mock.meta.MockMetaStore;
 import io.jimdb.test.mock.store.MockStoreEngine;
 import io.jimdb.test.mock.store.MockTableData;
-import io.jimdb.test.planner.analyzer.LogicalPlanTest;
-import io.jimdb.core.values.Value;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
@@ -82,7 +82,6 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
 
 import reactor.core.publisher.Flux;
@@ -91,23 +90,23 @@ public class TestBase {
   private static final int optimizerFlag = OptimizeFlag.PRUNCOLUMNS |
           OptimizeFlag.BUILDKEYINFO | OptimizeFlag.ELIMINATEPROJECTION |
           OptimizeFlag.PREDICATEPUSHDOWN | OptimizeFlag.PUSHDOWNTOPN;
-  protected static final Logger LOG = LoggerFactory.getLogger(LogicalPlanTest.class);
+  protected static final Logger LOG = LoggerFactory.getLogger(TestBase.class);
   protected static Planner planner;
   protected static Session session;
   protected static final String CATALOG = "test";
   protected static final String USER_TABLE = "user";
   protected static JimConfig config;
-  protected static Engine metaEngine;
+  protected static MockMeta mockMeta = new MockMetaStore();
   protected static HikariDataSource dataSource;
   private static MockStoreEngine storeEngine;
   private static CountDownLatch latch = new CountDownLatch(1);
   private static SQLExecutor sqlExecutor;
 
-
   @BeforeClass
   public static void setup() throws Exception {
     if (config == null) {
       config = Bootstraps.init("jim_test.properties");
+      mockMeta.init();
       storeEngine = new MockStoreEngine();
       sqlExecutor = PluginFactory.getSqlExecutor();
       session = new MockSession(PluginFactory.getSqlEngine(), storeEngine);
@@ -120,9 +119,14 @@ public class TestBase {
     }
   }
 
-  protected static void setMetaEngine(Engine mockStoreEngine) {
-    metaEngine = mockStoreEngine;
-    metaEngine.init(null);
+  @AfterClass
+  public static void resetMockMeta() {
+    mockMeta = new MockMetaStore();
+  }
+
+  protected static void setMockMeta(MockMeta meta) {
+    mockMeta = meta;
+    config = null;
   }
 
   protected static List<String> collect(ResultSet resultSet) throws SQLException {
@@ -325,7 +329,7 @@ public class TestBase {
     SQLStatement stmt = parse.get(0);
 
     if (!needOpt) {
-      return (RelOperator) planner.analyze1(session, stmt);
+      return (RelOperator) planner.analyze(session, stmt);
     }
 
     return (RelOperator) this.planner.analyzeAndOptimize(session, stmt);
@@ -379,7 +383,7 @@ public class TestBase {
         return result;
       }
 
-      Column[] columns = MetaData.Holder.getMetaData().getCatalog("test").getTable("user").getReadableColumns();
+      Column[] columns = MetaData.Holder.get().getCatalog("test").getTable("user").getReadableColumns();
 
       switch (expr.getExprType()) {
         case Column:
@@ -519,14 +523,11 @@ public class TestBase {
               List<TableAccessPath> tableAccessPaths = ((TableSource) operator).getTableAccessPaths();
               Map<String, String> actualMap = new LinkedHashMap<>();
               for (TableAccessPath path : tableAccessPaths) {
-                if ((path.getTableConditions() == null || path.getTableConditions().isEmpty()) &&
-                        (path.getAccessConditions() == null || path.getAccessConditions().isEmpty())) {
+                if (path.getAccessConditions() == null || path.getAccessConditions().isEmpty()) {
                   continue;
                 }
-                String description =
-                        "tableConditions=" + path.getTableConditions() + ",accessConditions=" + path.getAccessConditions();
 
-                actualMap.put(path.getIndex().getName(), description);
+                actualMap.put(path.getIndex().getName(), String.valueOf(path.getAccessConditions()));
               }
 
               Assert.assertEquals(String.format("DetachConditions error . sql : %s ", this.getSql()), expected,
@@ -536,12 +537,7 @@ public class TestBase {
             if (operator instanceof IndexSource) {
               IndexSource indexSource = ((IndexSource) operator);
               Map<String, String> actualMap = new LinkedHashMap<>();
-
-              String description =
-                      "accessConditions=" + indexSource.getAccessConditions();
-
-              actualMap.put(indexSource.getKeyValueRange().getIndex().getName(), description);
-
+              actualMap.put(indexSource.getKeyValueRange().getIndex().getName(), String.valueOf(indexSource.getAccessConditions()));
               Assert.assertEquals(String.format("DetachConditions error . sql : %s ", this.getSql()), expected,
                       JSON.toJSONString(actualMap));
             }
@@ -638,7 +634,7 @@ public class TestBase {
       //pk range
       if (operator instanceof KeyGet) {
         // don't check
-        return "";
+        return "KeyGet";
       }
 
       KeyValueRange keyValueRange = null;
@@ -811,36 +807,5 @@ public class TestBase {
       System.out.println("error:" + ex.getMessage());
       latch.countDown();
     }
-  }
-
-
-  public static void initMockMetaData() {
-    MetaData metaData = new MetaData(0);
-    Metapb.CatalogInfo catalogInfo = Metapb.CatalogInfo.newBuilder()
-            .setId(1)
-            .setName("test")
-            .setState(Metapb.MetaState.Public)
-            .build();
-
-    List<Metapb.ColumnInfo> columnInfoList = Lists.newArrayListWithExpectedSize(20);
-    Metapb.ColumnInfo columnInfo = Metapb.ColumnInfo.newBuilder()
-            .setId(1)
-            .setName("name")
-            .setSqlType(Metapb.SQLType.newBuilder().setType(Basepb.DataType.Varchar).setNotNull(true).build())
-            .setState(Metapb.MetaState.Public)
-            .setPrimary(true)
-            .build();
-
-    Metapb.TableInfo tableInfo = Metapb.TableInfo.newBuilder()
-            .setId(1)
-            .setName("user")
-            .setState(Metapb.MetaState.Public)
-            .addAllColumns(columnInfoList)
-            .build();
-    List<Metapb.TableInfo> tableInfos = Lists.newArrayListWithExpectedSize(10);
-    tableInfos.add(tableInfo);
-    metaData.addCatalog(catalogInfo, tableInfos);
-    MetaData.Holder.setMetaData(metaData);
-
   }
 }

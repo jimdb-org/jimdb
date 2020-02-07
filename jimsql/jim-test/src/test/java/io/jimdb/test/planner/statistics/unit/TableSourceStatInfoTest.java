@@ -17,6 +17,7 @@
 package io.jimdb.test.planner.statistics.unit;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -52,7 +53,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class TableSourceStatInfoTest extends TestBase {
 
   private static TableSourceStatsInfo tableSourceStatInfo;
-  private static Table table = MetaData.Holder.getMetaData().getTable(CATALOG, USER_TABLE);
+  private static Table table = MetaData.Holder.get().getTable(CATALOG, USER_TABLE);
 
   private static List<ColumnExpr> columnExprs = Arrays.stream(table.getReadableColumns())
           .map(column -> new ColumnExpr(session.allocColumnID(), column))
@@ -74,14 +75,14 @@ public class TableSourceStatInfoTest extends TestBase {
   public void tableSourceStatInfoTestSetup() {
 
     MockitoAnnotations.initMocks(this);
-    when(tableStats.getNonIndexedColumnStatsMap())
+    when(tableStats.getColumnStatsMap())
             .thenReturn(Collections.singletonMap(columnExprs.get(0).getId(), columnStats));
 
     when(tableStats.getIndexStatsMap()).thenReturn(Collections.singletonMap(table.getReadableIndices()[0].getId(), indexStats));
-    when(tableStats.getNonIndexedColumnStatsMap()).thenReturn(Collections.singletonMap(table.getReadableColumns()[0].getId(), columnStats));
+    when(tableStats.getColumnStatsMap()).thenReturn(Collections.singletonMap(table.getReadableColumns()[0].getId(), columnStats));
     when(tableStats.getEstimatedRowCount()).thenReturn(10L);
     when(tableStats.getModifiedCount()).thenReturn(10L);
-    when(tableStats.getColumnStats(anyLong())).thenReturn(columnStats);
+    when(tableStats.getColumnStats(anyInt())).thenReturn(columnStats);
 
     when(indexStats.getIndexInfo()).thenReturn(table.getReadableIndices()[0]);
     when(indexStats.getHistogram()).thenReturn(histogram);
@@ -111,7 +112,7 @@ public class TableSourceStatInfoTest extends TestBase {
 
     when(columnStats.estimateRowCount(any(), anyList(), anyLong())).thenReturn(0.3);
 
-    double rowCount = tableSourceStatInfo.estimateRowCountByNonIndexedRanges(session, columnExprs.get(0).getUid(), ranges);
+    double rowCount = tableSourceStatInfo.estimateRowCountByColumnRanges(session, columnExprs.get(0).getUid(), ranges);
     Assert.assertEquals("row count should be equal", 3.0, rowCount, 0.1);
   }
 

@@ -50,7 +50,7 @@ final class ArithmeticUtil {
 
   public static SQLType toDoublePrecision(SQLType source, SQLType t1, SQLType t2) {
     int scale = source.getScale();
-    int precision = source.getPrecision();
+    int precision = (int) source.getPrecision();
     SQLType.Builder resultType = source.toBuilder();
     if (t1.getScale() > -1 && t2.getScale() > -1) {
       scale = t1.getScale() + t2.getScale();
@@ -61,7 +61,7 @@ final class ArithmeticUtil {
         return resultType.build();
       }
 
-      int digit = Math.max(t1.getPrecision() - t1.getScale(), t2.getPrecision() - t2.getScale());
+      int digit = Math.max((int) t1.getPrecision() - t1.getScale(), (int) t2.getPrecision() - t2.getScale());
       precision = Math.min(digit + scale + 3, Types.MAX_REAL_WIDTH);
       resultType.setPrecision(precision)
               .setScale(scale);
@@ -75,7 +75,7 @@ final class ArithmeticUtil {
 
   public static SQLType toDecimalPrecision(SQLType source, SQLType t1, SQLType t2) {
     int scale = source.getScale();
-    int precision = source.getPrecision();
+    int precision = (int) source.getPrecision();
     SQLType.Builder resultType = source.toBuilder();
     if (t1.getScale() > -1 && t2.getScale() > -1) {
       scale = t1.getScale() + t2.getScale();
@@ -89,7 +89,7 @@ final class ArithmeticUtil {
         return resultType.build();
       }
 
-      int digit = Math.max(t1.getPrecision() - t1.getScale(), t2.getPrecision() - t2.getScale());
+      int digit = Math.max((int) t1.getPrecision() - t1.getScale(), (int) t2.getPrecision() - t2.getScale());
       precision = Math.min(digit + scale + 3, Types.MAX_DEC_WIDTH);
       resultType.setPrecision(precision)
               .setScale(scale);
@@ -126,7 +126,7 @@ final class ArithmeticUtil {
     }
 
     int scale = decA + Types.PREC_INCREMENT;
-    int precision = source.getPrecision();
+    int precision = (int) source.getPrecision();
     SQLType.Builder resultType = source.toBuilder();
     if (scale > Types.MAX_DEC_SCALE) {
       scale = Types.MAX_DEC_SCALE;
@@ -139,7 +139,7 @@ final class ArithmeticUtil {
       return resultType.build();
     }
 
-    precision = t1.getPrecision() + decB + Types.PREC_INCREMENT;
+    precision = (int) t1.getPrecision() + decB + Types.PREC_INCREMENT;
     if (precision > Types.MAX_DEC_WIDTH) {
       precision = Types.MAX_DEC_WIDTH;
     }

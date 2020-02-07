@@ -115,7 +115,7 @@ public class ColumnTest extends SqlTestBase {
     String sql = "CREATE TABLE column_test_tbl0(user varchar(32), host varchar(32), PRIMARY KEY(user,host), col1 varchar(32), col2 varchar(32)) COMMENT 'REPLICA=1' ENGINE=MEMORY";
     execUpdate(sql, 0, true);
 
-    Table table = MetaData.Holder.getMetaData().getTable(dbName, "column_test_tbl0");
+    Table table = MetaData.Holder.get().getTable(dbName, "column_test_tbl0");
     Column[] columns = table.getReadableColumns();
 
     Assert.assertEquals(4, columns.length);
@@ -131,7 +131,7 @@ public class ColumnTest extends SqlTestBase {
     sql = "ALTER TABLE column_test_tbl0 ADD COLUMN col4 varchar(32) after col1";
     execUpdate(sql, 0, true);
 
-    table = MetaData.Holder.getMetaData().getTable(dbName, "column_test_tbl0");
+    table = MetaData.Holder.get().getTable(dbName, "column_test_tbl0");
     columns = table.getReadableColumns();
 
     Assert.assertEquals(7, columns.length);
@@ -160,7 +160,7 @@ public class ColumnTest extends SqlTestBase {
     sql = "ALTER TABLE column_test_tbl0 drop COLUMN col0, drop COLUMN col2";
     execUpdate(sql, 0, true);
 
-    Table table = MetaData.Holder.getMetaData().getTable(dbName, "column_test_tbl0");
+    Table table = MetaData.Holder.get().getTable(dbName, "column_test_tbl0");
     Column[] columns = table.getReadableColumns();
     Assert.assertEquals(3, columns.length);
     Assert.assertEquals("user", columns[0].getName().toLowerCase());
@@ -203,7 +203,7 @@ public class ColumnTest extends SqlTestBase {
 //
 //  private Table createAndGetTable(String sql) {
 //    execUpdate(sql, 0, true);
-//    MetaData metaData = MetaData.Holder.getMetaData();
+//    MetaData metaData = MetaData.Holder.get();
 //    return metaData.getTable(catalogName, tableName);
 //  }
 

@@ -75,7 +75,7 @@ public class CboIntegrationTest extends TestBase {
 
     TableStatsManager.init(config);
     planner = new Planner(SQLEngine.DBType.MYSQL);
-    table_user1 = MetaData.Holder.getMetaData().getTable(CATALOG, USER_TABLE);
+    table_user1 = MetaData.Holder.get().getTable(CATALOG, USER_TABLE);
 
     // load all statistics data
     loadStatsData();

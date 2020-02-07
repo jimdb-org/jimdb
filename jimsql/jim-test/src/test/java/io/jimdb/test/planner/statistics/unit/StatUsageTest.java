@@ -17,6 +17,7 @@
 package io.jimdb.test.planner.statistics.unit;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -43,7 +44,7 @@ public class StatUsageTest extends StatUsageBaseTest {
             .addCheckPoint(CheckPoint.PushDownIndexPlan,
                     "IndexSource(user.idx_salary)");
 
-    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyLong(), anyList())).
+    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyInt(), anyList())).
             thenAnswer((InvocationOnMock invocation) -> {
                       long indexId = (long) invocation.getArgument(1);
                       if (indexId == 1) {
@@ -71,7 +72,7 @@ public class StatUsageTest extends StatUsageBaseTest {
             .addCheckPoint(CheckPoint.TablePlan,
                     "TableSource={columns=[name,age,score], pushDownPredicates=[GreaterInt(test.user.age,20)]}");
 
-    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyLong(), anyList())).
+    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyInt(), anyList())).
             thenAnswer((InvocationOnMock invocation) -> {
                       long indexId = (long) invocation.getArgument(1);
                       if (indexId == 1) {
@@ -112,7 +113,7 @@ public class StatUsageTest extends StatUsageBaseTest {
             .addCheckPoint(CheckPoint.PushDownIndexPlan,
                     "IndexSource(user.idx_salary)");
 
-    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyLong(), anyList())).
+    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyInt(), anyList())).
             thenAnswer((InvocationOnMock invocation) -> {
                       long indexId = (long) invocation.getArgument(1);
                       if (indexId == 4) {
@@ -152,7 +153,7 @@ public class StatUsageTest extends StatUsageBaseTest {
                     "IndexSource(user)")
             .addCheckPoint(CheckPoint.IndexPlan, "IndexSource(user.idx_salary)");
 
-    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyLong(), anyList())).
+    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyInt(), anyList())).
             thenAnswer((InvocationOnMock invocation) -> {
                       long indexId = (long) invocation.getArgument(1);
                       if (indexId == 4) {

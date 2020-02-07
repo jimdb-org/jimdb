@@ -19,17 +19,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import io.jimdb.core.Session;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.core.Session;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.model.meta.Catalog;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.QueryExecResult;
-import io.jimdb.sql.operator.RelOperator;
 import io.jimdb.core.values.StringValue;
 import io.jimdb.core.values.Value;
+import io.jimdb.sql.operator.RelOperator;
 
 import reactor.core.publisher.Flux;
 

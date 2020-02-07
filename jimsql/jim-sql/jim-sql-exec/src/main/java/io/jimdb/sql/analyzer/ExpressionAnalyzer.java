@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import io.jimdb.core.SQLAnalyzer;
-import io.jimdb.core.Session;
-import io.jimdb.core.context.PrepareContext;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.core.SQLAnalyzer;
+import io.jimdb.core.Session;
+import io.jimdb.core.context.PreparedContext;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ExpressionUtil;
@@ -35,13 +35,13 @@ import io.jimdb.core.expression.FuncExpr;
 import io.jimdb.core.expression.Schema;
 import io.jimdb.core.expression.ValueExpr;
 import io.jimdb.core.expression.functions.FuncType;
-import io.jimdb.pb.Basepb.DataType;
-import io.jimdb.pb.Metapb.SQLType;
-import io.jimdb.sql.operator.RelOperator;
 import io.jimdb.core.types.Types;
 import io.jimdb.core.values.LongValue;
 import io.jimdb.core.values.StringValue;
 import io.jimdb.core.values.ValueConvertor;
+import io.jimdb.pb.Basepb.DataType;
+import io.jimdb.pb.Metapb.SQLType;
+import io.jimdb.sql.operator.RelOperator;
 
 import com.alibaba.druid.sql.ast.SQLArgument;
 import com.alibaba.druid.sql.ast.SQLArrayDataType;
@@ -533,21 +533,21 @@ public abstract class ExpressionAnalyzer implements SQLAnalyzer {
   private void rewriteVariable(SQLExpr expr) {
 
     if (expr instanceof SQLVariantRefExpr) {
-      PrepareContext prepareContext = session.getPrepareContext();
+      PreparedContext preparedContext = session.getPreparedContext();
       SQLVariantRefExpr varExp = (SQLVariantRefExpr) expr;
       if ("?".equals(varExp.getName())) {
         ValueExpr constVal = new ValueExpr(StringValue.getInstance(varExp.getName()), Types.buildSQLType(DataType.Varchar));
-
+        preparedContext.addVariantRefExpr(varExp);
         SQLType sqlType = Types.buildSQLType(DataType.Int);
         ValueExpr valueExpr = new ValueExpr(LongValue.getInstance(varExp.getIndex()), sqlType);
-        if (prepareContext.getPrepareTypes() == null) {
-          stack.addFirst(constVal);
+        if (preparedContext.getParamTypes() == null) {
+          stack.addFirst(ValueExpr.ONE);
           return;
         }
-        Expression expression = this.buildFuncExpr(FuncType.GetParam, prepareContext.getPrepareTypes().get(varExp
-                .getIndex()), valueExpr);
+
+        Expression expression = this.buildFuncExpr(FuncType.GetParam, preparedContext.getParamTypes()[varExp.getIndex()], valueExpr);
         constVal.setLazyExpr(expression);
-        expression.setResultType(prepareContext.getPrepareTypes().get(varExp.getIndex()));
+        expression.setResultType(preparedContext.getParamTypes()[varExp.getIndex()]);
         stack.addFirst(constVal);
         return;
       }

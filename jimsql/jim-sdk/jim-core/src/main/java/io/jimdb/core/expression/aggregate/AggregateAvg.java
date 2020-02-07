@@ -18,13 +18,13 @@ package io.jimdb.core.expression.aggregate;
 import java.math.BigDecimal;
 
 import io.jimdb.core.Session;
+import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.values.DecimalValue;
 import io.jimdb.core.values.DoubleValue;
 import io.jimdb.core.values.LongValue;
 import io.jimdb.core.values.Value;
 import io.jimdb.core.values.ValueConvertor;
-import io.jimdb.core.expression.aggregate.util.ValueUtil;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -38,12 +38,13 @@ public class AggregateAvg extends AggregateFunc {
   private static AggFuncExec valueOriginalFunction = (session, rowsInGroup, aggregateFunc, partialResult) -> {
 
     AvgCell cell = (AvgCell) partialResult;
+    long count = 0;
     Value countValue = cell.getCount();
     Value sumValue = cell.getSum();
-
+    Value value;
+    Expression expression = aggregateFunc.getArgs()[0];
     for (ValueAccessor valueAccessor : rowsInGroup) {
-      Value value = ValueUtil.exec(session, aggregateFunc.getArgs()[0], valueAccessor,
-              aggregateFunc.getArgs()[0].getResultType().getType());
+      value = expression.exec(valueAccessor);
       if (value == null || value.isNull()) {
         continue;
       }
@@ -53,11 +54,11 @@ public class AggregateAvg extends AggregateFunc {
       }
 
       sumValue = sumValue.plus(session, value);
-      countValue = countValue.plus(session, LongValue.getInstance(1));
+      count++;
 
       cell.setSum(sumValue);
-      cell.setCount(countValue);
     }
+    cell.setCount(countValue.plus(session, LongValue.getInstance(count)));
 
     return cell;
   };
@@ -110,16 +111,14 @@ public class AggregateAvg extends AggregateFunc {
 
     if (count.isNull()) {
       finalRow.set(index, null);
-    } else {
+    } else if (((LongValue) count).compareToSafe(LongValue.getInstance(1)) > 0) {
       Value sum = cell.getSum();
       if (count.getType() != sum.getType()) {
         count = ValueConvertor.convertType(session, count, sum.getType(), getSqlType());
       }
-      if (ValueConvertor.convertToDouble(session, count, null).getValue() == 0) {
-        finalRow.set(index, DoubleValue.getInstance(0));
-      } else {
-        finalRow.set(index, sum.divide(session, count));
-      }
+      finalRow.set(index, sum.divide(session, count));
+    } else {
+      finalRow.set(index, cell.getSum());
     }
     return true;
   }
@@ -148,9 +147,10 @@ public class AggregateAvg extends AggregateFunc {
   }
 
   private static InitCellFunc initLongCellFunc = (sqlType, hasDistinct) -> new AvgCell(LongValue.getInstance(0),
-          DecimalValue.getInstance(BigDecimal.ZERO), hasDistinct);
+          DecimalValue.getInstance(BigDecimal.ZERO, 0, 0), hasDistinct);
   private static InitCellFunc initDecimalCellFunc = (sqlType, hasDistinct) -> new AvgCell(LongValue.getInstance(0),
-          DecimalValue.getInstance(BigDecimal.valueOf(0, sqlType.getScale()), sqlType.getPrecision(), sqlType.getScale()), hasDistinct);
+          DecimalValue.getInstance(BigDecimal.valueOf(0, sqlType.getScale()), (int) sqlType.getPrecision(),
+                  sqlType.getScale()), hasDistinct);
   private static InitCellFunc initDoubleCellFunc = (sqlType, hasDistinct) -> new AvgCell(LongValue.getInstance(0),
           DoubleValue.getInstance(0.0d), hasDistinct);
 }

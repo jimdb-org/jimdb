@@ -18,10 +18,11 @@ package io.jimdb.sql.optimizer.physical;
 import java.util.List;
 
 import io.jimdb.core.Session;
+import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
+import io.jimdb.core.expression.ExpressionUtil;
 import io.jimdb.core.expression.TableAccessPath;
 import io.jimdb.core.expression.ValueRange;
-import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.sql.operator.Aggregation;
 import io.jimdb.sql.operator.RelOperator;
@@ -32,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import reactor.util.function.Tuple2;
+import reactor.util.function.Tuple4;
 
 /**
  * @version V1.0
@@ -51,12 +52,6 @@ public class PhysicalOptimizer {
    * @return optimized physical plan
    */
   public static RelOperator optimize(Session session, RelOperator relOperator) {
-    // decorate access path before building stats
-//    AccessPathDecorator accessPathDecorator = new AccessPathDecorator(session);
-//    if (!relOperator.acceptVisitor(accessPathDecorator)) {
-//      // TODO log
-//    }
-
 //    updateAccessPath(session, relOperator);
 
     StatisticsVisitor statisticsVisitor = new StatisticsVisitor();
@@ -65,6 +60,9 @@ public class PhysicalOptimizer {
     if (statInfo == null) {
       LOG.debug("Could not derive stats info in PhysicalOptimizer ...");
     }
+
+    // decorate access path before building stats
+    AccessPathDecorator.decorateAccessPath(session, relOperator);
 
     Task oldTask = relOperator.acceptVisitor(session, bestTaskFinder, PhysicalProperty.DEFAULT_PROP);
     Task task = oldTask.finish();
@@ -108,19 +106,18 @@ public class PhysicalOptimizer {
       return;
     }
 
-    Column pkColumn = path.getIndex().getColumns()[0];
-    Tuple2<List<Expression>, List<Expression>> cnfResult =
-            NFDetacher.detachConditions(session, conditions, pkColumn.getId());
-    path.setAccessConditions(cnfResult.getT1());
-    path.setTableConditions(cnfResult.getT2());
-    path.setRanges(RangeBuilder.buildPKRange(session, cnfResult.getT1(), pkColumn.getType()));
+    final List<ColumnExpr> columnExprs = ExpressionUtil.indexToColumnExprs(path.getIndex(),
+            tableSource.getSchema().getColumns());
+    Tuple4<List<ValueRange>, List<Expression>, List<Expression>, Boolean> cnfResult = NFDetacher.
+            detachConditionsAndBuildRangeForIndex(session, conditions, columnExprs);
+    path.setAccessConditions(cnfResult.getT2());
+    path.setTableConditions(cnfResult.getT3());
+    path.setRanges(cnfResult.getT1());
   }
 
   private static void updateIndexPath(Session session, TableSource tableSource, TableAccessPath path) {
     List<Expression> conditions = tableSource.getPushDownPredicates();
-    if (path.getIndex().isPrimary()
-//            || path.getIndex().getColumns().length != 1
-    ) {
+    if (path.getIndex().isPrimary()) {
       return;
     }
 
@@ -129,16 +126,17 @@ public class PhysicalOptimizer {
       return;
     }
 
-    // FIXME is this correct? seems the same as the table path?
-    Column pkColumn = path.getIndex().getColumns()[0];
-    Tuple2<List<Expression>, List<Expression>> cnfResult = NFDetacher.detachConditions(session, conditions, pkColumn.getId());
-    if (cnfResult.getT1().isEmpty()) {
+    final List<ColumnExpr> columnExprs = ExpressionUtil.indexToColumnExprs(path.getIndex(),
+            tableSource.getSchema().getColumns());
+    Tuple4<List<ValueRange>, List<Expression>, List<Expression>, Boolean> cnfResult =
+            NFDetacher.detachConditionsAndBuildRangeForIndex(session, conditions, columnExprs);
+    if (cnfResult.getT2().isEmpty()) {
       return;
     }
-    path.setAccessConditions(cnfResult.getT1());
-    path.setTableConditions(cnfResult.getT2());
-    List<ValueRange> ranges = RangeBuilder.buildColumnRange(session, cnfResult.getT1(), pkColumn.getType());
-    path.setRanges(ranges);
+
+    path.setAccessConditions(cnfResult.getT2());
+    path.setTableConditions(cnfResult.getT3());
+    path.setRanges(cnfResult.getT1());
   }
 
   /**

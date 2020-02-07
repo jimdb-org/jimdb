@@ -30,7 +30,7 @@ import org.junit.Test;
  */
 public final class KeyUpdateTest extends SqlTestBase {
 
-  private static String DBNAME = "test";
+  private static String DBNAME = "test_update";
   private static String TABLENAME = "sqltest";
 
   @BeforeClass

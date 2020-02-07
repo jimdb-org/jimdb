@@ -104,6 +104,7 @@ public class IndexSource extends RelOperator {
     for (int i = 0; i < size; i++) {
       outputOffsets.add(i);
     }
+
     return session.getTxn().select(keyValueRange.getIndex(), processors,
             this.schema.getColumns().toArray(new ColumnExpr[size]), outputOffsets, keyValueRange.getValueRanges());
 //    return mockDatas;

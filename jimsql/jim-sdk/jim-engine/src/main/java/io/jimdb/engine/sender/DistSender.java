@@ -28,24 +28,24 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import io.jimdb.core.codec.Codec;
-import io.jimdb.core.codec.KvPair;
-import io.jimdb.core.config.JimConfig;
-import io.jimdb.engine.StoreCtx;
-import io.jimdb.engine.client.RequestContext;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.RangeRouteException;
-import io.jimdb.meta.RouterManager;
+import io.jimdb.common.utils.lang.ByteUtil;
+import io.jimdb.common.utils.lang.NamedThreadFactory;
+import io.jimdb.core.codec.KvPair;
+import io.jimdb.core.config.JimConfig;
 import io.jimdb.core.model.meta.RangeInfo;
+import io.jimdb.engine.StoreCtx;
+import io.jimdb.engine.client.RequestContext;
+import io.jimdb.meta.RouterManager;
 import io.jimdb.meta.route.RoutePolicy;
 import io.jimdb.pb.Api.RangeRequest.ReqCase;
 import io.jimdb.pb.Exprpb;
 import io.jimdb.pb.Kv;
 import io.jimdb.pb.Statspb;
 import io.jimdb.pb.Txn;
-import io.jimdb.common.utils.lang.NamedThreadFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -208,7 +208,7 @@ public final class DistSender implements Closeable {
 
   private Flux<List<Txn.Row>> txnSingeSelectFlow(StoreCtx storeCtx, Txn.SelectFlowRequest.Builder reqBuilder,
                                                  ByteString key,
-                                                       RangeInfo rangeInfo) {
+                                                 RangeInfo rangeInfo) {
     RequestContext context = new RequestContext(storeCtx, key, rangeInfo, reqBuilder, ReqCase.SELECT_FLOW);
     if (rangeInfo == null) {
       context.refreshRangeInfo();
@@ -264,7 +264,7 @@ public final class DistSender implements Closeable {
   private <T> Flux<List<T>> txnMultKeysSelectFlux(StoreCtx storeCtx, SelectRangeFunc func,
                                                   MessageOrBuilder reqBuilder, List<ByteString> keys) {
     Flux<List<T>> flux = null;
-    Collections.sort(keys, (k1, k2) -> Codec.compare(k1, k2));
+    Collections.sort(keys, (k1, k2) -> ByteUtil.compare(k1, k2));
 
     Map<RangeInfo, List<ByteString>> keyGroupMap;
     try {
@@ -309,7 +309,7 @@ public final class DistSender implements Closeable {
       }
 
       key = rangeInfo.getEndKey();
-      if (Codec.compare(key, start) < 0 || Codec.compare(key, end) >= 0) {
+      if (ByteUtil.compare(key, start) < 0 || ByteUtil.compare(key, end) >= 0) {
         break;
       }
     }
@@ -393,7 +393,8 @@ public final class DistSender implements Closeable {
 
   /**
    * Send analyzeIndex request to the storage layer
-   * @param storeCtx store context
+   *
+   * @param storeCtx   store context
    * @param reqBuilder request builder
    * @return flux of the response from the storage layer.
    */
@@ -428,7 +429,8 @@ public final class DistSender implements Closeable {
 
   /**
    * Send analyzeColumns request to the storage layer
-   * @param storeCtx store context
+   *
+   * @param storeCtx   store context
    * @param reqBuilder request builder
    * @return flux of the response from the storage layer
    */

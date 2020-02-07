@@ -83,9 +83,9 @@ public abstract class SqlTestBase {
   }
 
   protected static void createCatalog(String name) {
-    deleteCatalog(name);
+    //deleteCatalog(name);
 
-    String sql = String.format("Create database %s", name);
+    String sql = String.format("Create database IF NOT EXISTS %s", name);
     execUpdate(sql, 0, true);
   }
 

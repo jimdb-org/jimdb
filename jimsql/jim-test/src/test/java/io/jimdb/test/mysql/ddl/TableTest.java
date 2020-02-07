@@ -23,23 +23,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.jimdb.core.config.JimConfig;
 import io.jimdb.common.exception.JimException;
-import io.jimdb.meta.EtcdMetaStore;
-import io.jimdb.meta.client.MasterClient;
+import io.jimdb.common.utils.lang.ByteUtil;
+import io.jimdb.common.utils.lang.IOUtil;
+import io.jimdb.core.config.JimConfig;
 import io.jimdb.core.model.meta.Catalog;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.meta.MetaData;
 import io.jimdb.core.model.meta.Table;
+import io.jimdb.core.plugin.MetaStore;
+import io.jimdb.core.plugin.RouterStore;
+import io.jimdb.meta.EtcdMetaStore;
+import io.jimdb.meta.client.MasterClient;
 import io.jimdb.pb.Basepb;
 import io.jimdb.pb.Metapb;
 import io.jimdb.pb.Mspb;
-import io.jimdb.core.plugin.MetaStore;
-import io.jimdb.core.plugin.RouterStore;
 import io.jimdb.sql.ddl.DDLUtils;
 import io.jimdb.test.mysql.SqlTestBase;
-import io.jimdb.common.utils.lang.ByteUtil;
-import io.jimdb.common.utils.lang.IOUtil;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -123,7 +123,26 @@ public final class TableTest extends SqlTestBase {
 
   @Test
   public void testCreate() {
-    String sql = "CREATE TABLE ddl_test_tbl0(user varchar(32), host varchar(32), PRIMARY KEY(user,host)) COMMENT 'REPLICA=1' ENGINE=MEMORY";
+    String sql = "CREATE TABLE `message_retry` (" +
+            " `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增主键'," +
+            " `message_id` varchar(50) NOT NULL COMMENT '消息编号'," +
+            " `business_id` varchar(100) DEFAULT NULL COMMENT '业务编号'," +
+            " `topic` varchar(100) NOT NULL COMMENT '主题'," +
+            " `app` varchar(100) NOT NULL COMMENT '应用'," +
+            " `send_time` datetime NOT NULL COMMENT '发送时间'," +
+            " `expire_time` datetime NOT NULL COMMENT '过期时间'," +
+            " `retry_time` datetime NOT NULL COMMENT '重试时间'," +
+            " `retry_count` int(10) NOT NULL DEFAULT '0' COMMENT '重试次数'," +
+            " `data` text NOT NULL COMMENT '消息体'," +
+            " `exception` text COMMENT '异常信息'," +
+            " `create_time` datetime NOT NULL COMMENT '创建时间'," +
+            " `create_by` int(10) NOT NULL DEFAULT '0' COMMENT '创建人'," +
+            " `update_time` datetime NOT NULL COMMENT '更新时间'," +
+            " `update_by` int(10) NOT NULL DEFAULT '0' COMMENT '更新人'," +
+            " `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态,0:成功,1:失败,-2:过期'," +
+            " PRIMARY KEY (`id`)," +
+            " KEY `idx_topic_app` (`topic`, `app`, `status`, `retry_time`)" +
+            ") ENGINE = MEMORY AUTO_INCREMENT = 100  COMMENT 'REPLICA=1;消息重试表'";
     execUpdate(sql, 0, true);
 
     int found = 0;
@@ -135,24 +154,46 @@ public final class TableTest extends SqlTestBase {
       }
 
       for (Metapb.TableInfo table : entry.getValue()) {
-        if (table.getName().equalsIgnoreCase("ddl_test_tbl0")) {
+        if (table.getName().equalsIgnoreCase("message_retry")) {
           found++;
           tableInfo = table;
         }
       }
     }
     Assert.assertEquals(1, found);
-    Assert.assertEquals(1, tableInfo.getIndicesCount());
-    Assert.assertEquals(2, tableInfo.getColumnsCount());
+    Assert.assertEquals(2, tableInfo.getIndicesCount());
+    Assert.assertEquals(16, tableInfo.getColumnsCount());
 
     List<Metapb.ColumnInfo> columns = tableInfo.getColumnsList();
-    Metapb.IndexInfo primaryIndex = tableInfo.getIndicesList().get(0);
-    Assert.assertEquals("user", columns.get(0).getName().toLowerCase());
-    Assert.assertEquals("host", columns.get(1).getName().toLowerCase());
+    Assert.assertEquals("id", columns.get(0).getName().toLowerCase());
+    Assert.assertEquals("message_id", columns.get(1).getName().toLowerCase());
+    Assert.assertEquals("business_id", columns.get(2).getName().toLowerCase());
+    Assert.assertEquals("topic", columns.get(3).getName().toLowerCase());
+    Assert.assertEquals("app", columns.get(4).getName().toLowerCase());
+    Assert.assertEquals("send_time", columns.get(5).getName().toLowerCase());
+    Assert.assertEquals("expire_time", columns.get(6).getName().toLowerCase());
+    Assert.assertEquals("retry_time", columns.get(7).getName().toLowerCase());
+    Assert.assertEquals("retry_count", columns.get(8).getName().toLowerCase());
+    Assert.assertEquals("data", columns.get(9).getName().toLowerCase());
+    Assert.assertEquals("exception", columns.get(10).getName().toLowerCase());
+    Assert.assertEquals("create_time", columns.get(11).getName().toLowerCase());
+    Assert.assertEquals("create_by", columns.get(12).getName().toLowerCase());
+    Assert.assertEquals("update_time", columns.get(13).getName().toLowerCase());
+    Assert.assertEquals("update_by", columns.get(14).getName().toLowerCase());
+    Assert.assertEquals("status", columns.get(15).getName().toLowerCase());
+
+    Metapb.IndexInfo primaryIndex = tableInfo.getIndices(0);
     Assert.assertEquals("primary", primaryIndex.getName().toLowerCase());
-    Assert.assertEquals(2, primaryIndex.getColumnsCount());
+    Assert.assertEquals(1, primaryIndex.getColumnsCount());
     Assert.assertEquals(columns.get(0).getId(), primaryIndex.getColumnsList().get(0).intValue());
-    Assert.assertEquals(columns.get(1).getId(), primaryIndex.getColumnsList().get(1).intValue());
+
+    Metapb.IndexInfo secondIndex = tableInfo.getIndices(1);
+    Assert.assertEquals("idx_topic_app", secondIndex.getName().toLowerCase());
+    Assert.assertEquals(4, secondIndex.getColumnsCount());
+    Assert.assertEquals(columns.get(3).getId(), secondIndex.getColumnsList().get(0).intValue());
+    Assert.assertEquals(columns.get(4).getId(), secondIndex.getColumnsList().get(1).intValue());
+    Assert.assertEquals(columns.get(15).getId(), secondIndex.getColumnsList().get(2).intValue());
+    Assert.assertEquals(columns.get(7).getId(), secondIndex.getColumnsList().get(3).intValue());
 
     verifyRoute(tableInfo);
   }
@@ -447,7 +488,7 @@ public final class TableTest extends SqlTestBase {
     sql = "RENAME TABLE ddl_test_tbl1 TO ddl_test_tbl11";
     execUpdate(sql, 0, true);
 
-    Catalog catalog = MetaData.Holder.getMetaData().getCatalog(DB_NAME);
+    Catalog catalog = MetaData.Holder.get().getCatalog(DB_NAME);
     Table[] tables = catalog.getTables();
     Assert.assertEquals(2, tables.length);
 
@@ -462,7 +503,7 @@ public final class TableTest extends SqlTestBase {
     sql = "ALTER TABLE ddl_test_tbl11 RENAME TO ddl_test_tbl112";
     execUpdate(sql, 0, true);
 
-    catalog = MetaData.Holder.getMetaData().getCatalog(DB_NAME);
+    catalog = MetaData.Holder.get().getCatalog(DB_NAME);
     tables = catalog.getTables();
     Assert.assertEquals(2, tables.length);
 
@@ -492,7 +533,7 @@ public final class TableTest extends SqlTestBase {
 
     sql = "ALTER TABLE ddl_test_tbl1 RENAME INDEX idxTest TO idxRename";
     execUpdate(sql, 0, true);
-    Table table = MetaData.Holder.getMetaData().getTable(DB_NAME, "ddl_test_tbl1");
+    Table table = MetaData.Holder.get().getTable(DB_NAME, "ddl_test_tbl1");
     for (Index index : table.getReadableIndices()) {
       if (index.isPrimary()) {
         Assert.assertEquals("primary", index.getName().toLowerCase());
@@ -517,7 +558,7 @@ public final class TableTest extends SqlTestBase {
     SQLException result = new SQLException("Key 'idxnull' doesn't exist in table 'ddl_test_tbl1'", "42000", 1176);
     execUpdate(sql, result, true);
 
-    Table table = MetaData.Holder.getMetaData().getTable(DB_NAME, "ddl_test_tbl1");
+    Table table = MetaData.Holder.get().getTable(DB_NAME, "ddl_test_tbl1");
     Index index = null;
     for (Index idx : table.getReadableIndices()) {
       if ("idxTest".equalsIgnoreCase(idx.getName())) {
@@ -529,7 +570,7 @@ public final class TableTest extends SqlTestBase {
     sql = "DROP INDEX idxTest ON ddl_test_tbl1";
     execUpdate(sql, 0, true);
 
-    table = MetaData.Holder.getMetaData().getTable(DB_NAME, "ddl_test_tbl1");
+    table = MetaData.Holder.get().getTable(DB_NAME, "ddl_test_tbl1");
     Assert.assertEquals(2, table.getReadableIndices().length);
     int found = 0;
     for (Index idx : table.getReadableIndices()) {

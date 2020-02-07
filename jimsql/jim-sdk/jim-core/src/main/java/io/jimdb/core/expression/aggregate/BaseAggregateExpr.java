@@ -143,9 +143,11 @@ public abstract class BaseAggregateExpr {
       case MediumInt:
       case Int:
       case BigInt:
-//        builder.setType(DataType.BigInt);
-//        this.type = builder.build();
-//        break;
+        builder.setType(DataType.Decimal)
+                .setPrecision(Types.MAX_DEC_WIDTH)
+                .setScale(Math.min(4, Types.MAX_DEC_SCALE));
+        this.type = builder.build();
+        break;
       case Decimal:
         int scale = this.args[0].getResultType().getScale();
         if (scale < 0) {

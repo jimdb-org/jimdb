@@ -30,8 +30,9 @@ import io.jimdb.common.exception.JimException;
 import io.jimdb.common.utils.os.SystemClock;
 import io.jimdb.core.Session;
 import io.jimdb.core.config.JimConfig;
-import io.jimdb.core.context.PrepareContext;
-import io.jimdb.core.model.prepare.JimStatement;
+import io.jimdb.core.context.PreparedContext;
+import io.jimdb.core.context.PreparedPlanner;
+import io.jimdb.core.context.PreparedStatement;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.ResultType;
 import io.jimdb.core.plugin.PluginFactory;
@@ -66,6 +67,7 @@ import reactor.core.publisher.SignalType;
 @ThreadSafe
 public final class JimSQLExecutor implements SQLExecutor {
   private static final Logger LOG = LoggerFactory.getLogger(JimSQLExecutor.class);
+  private static final long PLANNER_CACHE_TTL = 30 * 60 * 1000;
 
   private Engine storeEngine;
   private Planner planner;
@@ -98,7 +100,7 @@ public final class JimSQLExecutor implements SQLExecutor {
 
       if (stmts.size() > 1) {
         execFlux = Flux.just(stmts.toArray(new SQLStatement[0])).flatMap(e -> {
-          Operator optimizedOp = this.planner.analyzeAndOptimize(s, stmts.get(0));
+          Operator optimizedOp = this.planner.analyzeAndOptimize(s, e);
           if (!optimizedOp.getOperatorType().isWritable()) {
             return Flux.error(DBException.get(ErrorModule.EXECUTOR, ErrorCode.ER_NOT_SUPPORTED_YET, "Batch execute of non-dml"));
           }
@@ -148,9 +150,7 @@ public final class JimSQLExecutor implements SQLExecutor {
   @Override
   public void executePrepare(Session s, String sql) {
     s.initTxnContext();
-    Prepare prepare = new Prepare();
-    prepare.setPlanner(this.planner);
-    prepare.setSqlText(sql);
+    Prepare prepare = new Prepare(planner, sql);
 
     Flux<ExecResult> execute = prepare.execute(s);
     execute.subscribe(r -> s.write(r, true));
@@ -159,29 +159,36 @@ public final class JimSQLExecutor implements SQLExecutor {
   @Override
   public void execute(Session session, int stmtId) {
     JimException replyErr = null;
-    PrepareContext prepareContext = session.getPrepareContext();
-    JimStatement jimStmt = prepareContext.getPreparedStmts().get(stmtId);
-    SQLStatement stmt = jimStmt.getSqlStatement();
+    PreparedContext prepareContext = session.getPreparedContext();
+    PreparedStatement preparedStmt = prepareContext.getStatement(stmtId);
     try {
+      session.initTxnContext();
       session.getStmtContext().setBinaryProtocol(true);
-      PreparePlanCacheKey planCacheKey = new PreparePlanCacheKey(session.getVarContext().getDefaultCatalog(), session.getConnID(),
-              stmtId, 0);
-      Object plan = prepareContext.getCache().getIfPresent(planCacheKey);
-
-      Operator operator;
-      if (plan != null) {
-        operator = (Operator) plan;
-        operator.acceptVisitor(new RangeRebuildVisitor(session));
-      } else {
-        operator = this.planner.analyzeAndOptimize(session, stmt);
-
-        if (!(operator instanceof DualTable)) {
-          prepareContext.getCache().put(planCacheKey, operator);
+      Operator operator = null;
+      if (preparedStmt.isCachePlan()) {
+        PreparedPlanner preparedPlanner = prepareContext.getPlanner(stmtId);
+        if (preparedPlanner != null && !preparedPlanner.isTimeout(PLANNER_CACHE_TTL)
+                && preparedPlanner.getCatalog().equalsIgnoreCase(session.getVarContext().getDefaultCatalog())
+                && preparedPlanner.getMetaVersion() == session.getTxnContext().getMetaData().getVersion()) {
+          operator = (Operator) preparedPlanner.getPlanner();
+          operator.acceptVisitor(new RangeRebuildVisitor(session));
         }
       }
-      Flux<ExecResult> resultFlux = operator.execute(session);
 
-      resultFlux.subscribe(new ExecResultSubscriber(session, stmt.toLowerCaseString(), operator));
+      if (operator == null) {
+        operator = planner.analyzeAndOptimize(session, preparedStmt.getSqlStmt());
+        if (preparedStmt.isCachePlan() && !(operator instanceof DualTable)) {
+          prepareContext.setPlanner(stmtId, new PreparedPlanner(session.getTxnContext().getMetaData().getVersion(),
+                  session.getVarContext().getDefaultCatalog(), operator));
+        }
+      }
+
+      if (!operator.getOperatorType().isWritable()) {
+        session.getTxnContext().metaRelease();
+      }
+
+      Flux<ExecResult> resultFlux = operator.execute(session);
+      resultFlux.subscribe(new ExecResultSubscriber(session, preparedStmt.getSql(), operator));
     } catch (JimException e) {
       replyErr = e;
     } catch (Exception e) {
@@ -189,7 +196,7 @@ public final class JimSQLExecutor implements SQLExecutor {
     }
 
     if (replyErr != null) {
-      replyError(session, stmt.toLowerCaseString(), replyErr);
+      replyError(session, preparedStmt.getSql(), replyErr);
     }
   }
 
@@ -378,71 +385,6 @@ public final class JimSQLExecutor implements SQLExecutor {
       if (this.op != null) {
         this.op.close();
       }
-    }
-  }
-
-  /**
-   * @version V1.0
-   */
-  private static final class PreparePlanCacheKey {
-    public String database;
-    public long connId;
-    public long stmtID;
-    public long schemaVersion;
-    public int sqlMode;
-    public int timeZone;
-
-    private PreparePlanCacheKey(String database, long connId, long stmtID, long schemaVersion) {
-      this.database = database;
-      this.connId = connId;
-      this.stmtID = stmtID;
-      this.schemaVersion = schemaVersion;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result += prime * database.hashCode();
-      result += prime * connId;
-      result += prime * stmtID;
-      result += prime * schemaVersion;
-      result += prime * sqlMode;
-      return result + prime * timeZone;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof PreparePlanCacheKey)) {
-        return false;
-      }
-      PreparePlanCacheKey other = (PreparePlanCacheKey) obj;
-
-      if (!other.database.equals(this.database)) {
-        return false;
-      }
-
-      if (other.connId != this.connId) {
-        return false;
-      }
-
-      if (other.stmtID != this.stmtID) {
-        return false;
-      }
-
-      if (other.schemaVersion != this.schemaVersion) {
-        return false;
-      }
-
-      if (other.sqlMode != this.sqlMode) {
-        return false;
-      }
-
-      if (other.timeZone != this.timeZone) {
-        return false;
-      }
-
-      return true;
     }
   }
 }

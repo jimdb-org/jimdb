@@ -16,7 +16,9 @@
 package io.jimdb.test.mysql.privilege;
 
 import java.sql.SQLException;
+import java.util.List;
 
+import io.jimdb.sql.privilege.ScrambleUtil;
 import io.jimdb.test.mysql.SqlTestBase;
 
 import org.junit.Test;
@@ -33,32 +35,71 @@ public class UserTest extends SqlTestBase {
 
   @Test
   public void testCreateUser() {
-    sql = "CREATE USER 'test'@'localhost';";
+    String currTs = String.valueOf(System.nanoTime());
+    String seed = currTs.substring(currTs.length() - 10);
+    String user = "user_" + seed;
+
+    sql = String.format("CREATE USER '%s'@'localhost';", user);
     execUpdate(sql, 0, true);
 
-    sql = "CREATE USER 'test'@'localhost' IDENTIFIED BY '123456';";
+    sql = String.format("DROP USER '%s'@'localhost';", user);
     execUpdate(sql, 0, true);
 
-    sql = "CREATE USER 'test' IDENTIFIED BY '123456';";
+    sql = String.format("CREATE USER '%s'@'localhost' IDENTIFIED BY '123456';", user);
     execUpdate(sql, 0, true);
 
-    sql = "CREATE USER test IDENTIFIED BY '123456';";
+    sql = String.format("DROP USER '%s'@'localhost';", user);
     execUpdate(sql, 0, true);
 
-    sql = "CREATE USER 'test';";
+    List<String> expected = expectedStr(new String[]{});
+    execQuery(String.format("select * from mysql.user where User='%s'", user), expected);
+
+//    sql = "CREATE USER 'test' IDENTIFIED BY '123456';";
+//    execUpdate(sql, 0, true);
+//
+//    sql = "CREATE USER test IDENTIFIED BY '123456';";
+//    execUpdate(sql, 0, true);
+//
+//    sql = "CREATE USER 'test';";
+//    execUpdate(sql, 0, true);
+//
+//    sql = "CREATE USER test;";
+//    execUpdate(sql, 0, true);
+//
+//    sql = "CREATE USER test@;";
+//    execUpdate(sql, 0, true);
+//
+//    sql = "CREATE USER 'test'@'1';";
+//    execUpdate(sql, 0, true);
+//
+//    sql = "CREATE USER '测试';";
+//    execUpdate(sql, 0, true);
+  }
+
+  @Test
+  public void testAlterUser() {
+    String currTs = String.valueOf(System.nanoTime());
+    String seed = currTs.substring(currTs.length() - 10);
+    String user = "user_" + seed;
+
+    sql = String.format("CREATE USER '%s'@'localhost' IDENTIFIED BY '123456';", user);
+    execUpdate(sql, 0, true);
+    String origin = ScrambleUtil.encodePassword("123456");
+    List<String> expected = expectedStr(new String[]{ "Password=" + origin });
+    execQuery(String.format("select Password from mysql.user where User='%s'", user), expected);
+
+    sql = String.format("ALTER USER '%s'@'localhost' IDENTIFIED BY 'root' PASSWORD EXPIRE;", user);
     execUpdate(sql, 0, true);
 
-    sql = "CREATE USER test;";
+    String modified = ScrambleUtil.encodePassword("root");
+    expected = expectedStr(new String[]{ "Password=" + modified });
+    execQuery(String.format("select Password from mysql.user where User='%s'", user), expected);
+
+    sql = String.format("DROP USER '%s'@'localhost';", user);
     execUpdate(sql, 0, true);
 
-    sql = "CREATE USER test@;";
-    execUpdate(sql, 0, true);
-
-    sql = "CREATE USER 'test'@'1';";
-    execUpdate(sql, 0, true);
-
-    sql = "CREATE USER '测试';";
-    execUpdate(sql, 0, true);
+    expected = expectedStr(new String[]{ });
+    execQuery(String.format("select * from mysql.user where User='%s'", user), expected);
   }
 
   @Test
@@ -81,12 +122,6 @@ public class UserTest extends SqlTestBase {
   }
 
   @Test
-  public void testAlterUser() {
-    sql = "ALTER USER 'test'@'localhost' IDENTIFIED BY '123456' PASSWORD EXPIRE;";
-    execUpdate(sql, 0, true);
-  }
-
-  @Test
   public void teatAlterUserError() {
     sql = "ALTER USER ' '@'localhost' IDENTIFIED BY '123456' PASSWORD EXPIRE;";
     result = new SQLException("User variable name ' ' is illegal", "42000", 3061);
@@ -95,18 +130,6 @@ public class UserTest extends SqlTestBase {
     sql = "ALTER USER 'testttttttttttttttttttttttttttttttttttttttt'@'localhost' IDENTIFIED BY '123456' PASSWORD EXPIRE;";
     result = new SQLException("String 'testttttttttttttttttttttttttttttttttttttttt' is too long for user name (should be no longer than 16)", "HY000", 1470);
     execUpdate(sql, result, true);
-  }
-
-  @Test
-  public void testDropUser() {
-    sql = "DROP USER 'test'@'localhost';";
-    execUpdate(sql, 0, true);
-
-    sql = "DROP USER 'test';";
-    execUpdate(sql, 0, true);
-
-    sql = "DROP USER test;";
-    execUpdate(sql, 0, true);
   }
 
   @Test

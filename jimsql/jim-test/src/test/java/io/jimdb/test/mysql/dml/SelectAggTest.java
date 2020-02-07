@@ -33,7 +33,7 @@ import io.jimdb.test.TestUtil;
 import io.jimdb.test.mysql.SqlTestBase;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -46,13 +46,13 @@ import reactor.util.function.Tuples;
  * @version V1.0
  */
 public class SelectAggTest extends SqlTestBase {
-  private static String DBNAME = "test";
+  private static String DBNAME = "test_agg";
 
-  @BeforeClass
+//  @BeforeClass
   public static void init() {
     createDB();
     createTable();
-    setUp();
+    initData();
   }
 
   private static void createDB() {
@@ -88,7 +88,7 @@ public class SelectAggTest extends SqlTestBase {
 
   }
 
-  private static void setUp() {
+  private static void initData() {
 
     int size = 1000;
     String[] name = new String[]{ "Tom", "Jack", "Mary", "Suzy", "Kate", "Luke", "Bob", "Polly", "Alex", "Barke",
@@ -125,12 +125,16 @@ public class SelectAggTest extends SqlTestBase {
     }
   }
 
+  @Before
+  public void load() {
+    useCatalog(DBNAME);
+  }
 
   @Test
   public void testSelectAll01() {
     List<String> expected = expectedStr(new String[]{
             "COUNT(1)=1000" });
-    execQuery("select count(1) from baker_agg", expected);
+    execQuery("select COUNT(1) from baker_agg", expected);
   }
 
   @Test
@@ -164,9 +168,9 @@ public class SelectAggTest extends SqlTestBase {
   @Test
   public void testSelectSmallintGroupby() {
     List<String> expected = expectedStr(new String[]{
-            "sum=104; avg=4.16; cnt=25; max=8; min=0; country=china; gender=0; company=baidu",
-            "sum=96; avg=3.84; cnt=25; max=8; min=0; country=china; gender=0; company=facebook",
-            "sum=96; avg=3.84; cnt=25; max=8; min=0; country=china; gender=0; company=jingdong"
+            "sum=104; avg=4.1600; cnt=25; max=8; min=0; country=china; gender=0; company=baidu",
+            "sum=96; avg=3.8400; cnt=25; max=8; min=0; country=china; gender=0; company=facebook",
+            "sum=96; avg=3.8400; cnt=25; max=8; min=0; country=china; gender=0; company=jingdong"
     });
     execQuery("select sum(num_smallint) as sum,avg(num_smallint) as avg,count(1) as cnt,max(num_smallint) as max,min"
             + "(num_smallint) as min,country,gender,company "
@@ -194,9 +198,9 @@ public class SelectAggTest extends SqlTestBase {
   @Test
   public void testSelectIntGroupby() {
     List<String> expected = expectedStr(new String[]{
-            "sum=6250; avg=50; cnt=125; max=98; min=2; country=brazil",
-            "sum=6000; avg=48; cnt=125; max=96; min=0; country=china",
-            "sum=6000; avg=48; cnt=125; max=96; min=0; country=england"
+            "sum=6250; avg=50.0000; cnt=125; max=98; min=2; country=brazil",
+            "sum=6000; avg=48.0000; cnt=125; max=96; min=0; country=china",
+            "sum=6000; avg=48.0000; cnt=125; max=96; min=0; country=england"
     });
     execQuery("select sum(age) as sum,avg(age) as avg,count(1) as cnt,max(age) as max,min(age) as min,country "
             + "from baker_agg "
@@ -269,28 +273,30 @@ public class SelectAggTest extends SqlTestBase {
   @Test
   public void testSelectPKGroupbyCol() {
     List<String> expected = expectedStr(new String[]{
-            "age=45; COUNT(1)=9; AVG(age)=45; MIN(age)=45; SUM(age)=405; MAX(age)=45; age=45",
-            "age=40; COUNT(1)=9; AVG(age)=40; MIN(age)=40; SUM(age)=360; MAX(age)=40; age=40",
-            "age=35; COUNT(1)=9; AVG(age)=35; MIN(age)=35; SUM(age)=315; MAX(age)=35; age=35"
+            "age=99; COUNT(1)=10; AVG(age)=99.0000; MIN(age)=99; SUM(age)=990; MAX(age)=99; age=99",
+            "age=98; COUNT(1)=10; AVG(age)=98.0000; MIN(age)=98; SUM(age)=980; MAX(age)=98; age=98",
+            "age=97; COUNT(1)=10; AVG(age)=97.0000; MIN(age)=97; SUM(age)=970; MAX(age)=97; age=97"
     });
     execQuery("select age, count(1),avg(age),min(age),sum(age),max(age),age  "
             + "from baker_agg  where id  > 10 "
-            + "group by age limit 3", expected);
+            + "group by age order by age desc limit 3", expected);
   }
 
   @Test
   public void testSelectCountDistinctGroupby1() {
     List<String> expected = expectedStr(new String[]{
-            "country=french; company=sap",
-            "country=china; company=jingdong",
-            "country=brazil; company=facebook",
-            "country=japan; company=ibm",
-            "country=india; company=huawei",
-            "country=usa; company=oracle",
             "country=korea; company=alibaba",
+            "country=china; company=baidu",
+            "country=brazil; company=facebook",
+            "country=india; company=huawei",
+            "country=japan; company=ibm",
+            "country=china; company=jingdong",
+            "country=japan; company=mi",
+            "country=usa; company=oracle",
+            "country=french; company=sap",
             "country=england; company=tencent"
     });
-    execQuery("select distinct country , company from baker_agg group by company " , expected);
+    execQuery("select distinct country , company from baker_agg group by company order by company" , expected);
   }
 
 
@@ -448,7 +454,7 @@ public class SelectAggTest extends SqlTestBase {
     for (int i = 0; i < meta.size(); i++) {
       Tuple2<String, Integer> metaKV = meta.get(i);
       final String metaName = metaKV.getT1();
-      if (!isNumber(meta.get(i))) {
+      if (!isNumberAndDateTime(meta.get(i))) {
         continue;
       }
 
@@ -554,24 +560,26 @@ public class SelectAggTest extends SqlTestBase {
         continue;
       }
 
-      if (metaName.equals("crt_year")) { //TODO: FIX ME , the year value is  2038-01-01
-        continue;
+      BigDecimal count = new BigDecimal(allResult.stream().map(r -> r.get(metaName)).distinct().count());
+      List<BigDecimal> sumList = allResult.stream().map(r -> r.get(metaName)).distinct().map(m -> new BigDecimal(m.toString())).collect(Collectors.toList());
+      BigDecimal sum = new BigDecimal(0);
+      for (BigDecimal bigDecimal : sumList) {
+        sum = sum.add(bigDecimal);
       }
 
-      double count = allResult.stream().map(r -> r.get(metaName)).distinct().count();
-      double sum =
-              allResult.stream().map(r -> r.get(metaName)).distinct().mapToDouble(v -> Double.parseDouble(castNumValue(v.toString(),
-                      metaKV.getT2()))).sum();
-
       List<String> actual = execQuery("select AVG(DISTINCT(" + metaName + ")) from baker_agg");
-      List<String> expected = Lists.newArrayList("AVG(DISTINCT " + metaName + ")=" + (sum / count));
+      List<String> expected = Lists.newArrayList("AVG(DISTINCT " + metaName + ")=" + sum.divide(count));
 
       String a = actual.get(0);
       String e = expected.get(0);
-      if (metaKV.getT2() == Types.TIMESTAMP || metaKV.getT2().equals(Types.BIGINT)) {
+      if (metaKV.getT2().equals(Types.BIGINT)
+              || metaKV.getT2().equals(Types.INTEGER) || metaKV.getT2().equals(Types.SMALLINT)
+              || metaKV.getT2().equals(Types.TINYINT)) {
         BigDecimal ba = new BigDecimal(a.split("=")[1]);
+        ba.setScale(4);
         BigDecimal be = new BigDecimal(e.split("=")[1]);
-        Assert.assertTrue(ba.subtract(be).floatValue() < 0.1);
+        be.setScale(4);
+        Assert.assertTrue(Math.abs(ba.subtract(be).doubleValue()) == 0.0000);
       } else {
         Assert.assertEquals(e, a);
       }
@@ -593,24 +601,25 @@ public class SelectAggTest extends SqlTestBase {
         continue;
       }
 
-      if (!metaName.equals("crt_date")) {
-        continue;
+      BigDecimal count = new BigDecimal(allResult.stream().map(r -> r.get(metaName)).count());
+      List<BigDecimal> sumList =
+              allResult.stream().map(r -> r.get(metaName)).map(m -> new BigDecimal(m.toString())).collect(Collectors.toList());
+      BigDecimal sum = new BigDecimal(0);
+      for (BigDecimal bigDecimal : sumList) {
+        sum = sum.add(bigDecimal);
       }
 
-      double count = allResult.stream().map(r -> r.get(metaName)).count();
-      double sum =
-              allResult.stream().map(r -> r.get(metaName)).mapToDouble(v -> Double.parseDouble(castNumValue(v.toString(),
-                      metaKV.getT2()))).sum();
-
       List<String> actual = execQuery("select AVG(" + metaName + ") from baker_agg");
-      List<String> expected = Lists.newArrayList("AVG(" + metaName + ")=" + (sum / count));
+      List<String> expected = Lists.newArrayList("AVG(" + metaName + ")=" + (sum.divide(count)));
 
       String a = actual.get(0);
       String e = expected.get(0);
-      if (metaKV.getT2() == Types.TIMESTAMP || metaKV.getT2().equals(Types.BIGINT)) {
+      if (metaKV.getT2().equals(Types.BIGINT)
+              || metaKV.getT2().equals(Types.INTEGER) || metaKV.getT2().equals(Types.SMALLINT)
+              || metaKV.getT2().equals(Types.TINYINT)) {
         BigDecimal ba = new BigDecimal(a.split("=")[1]);
         BigDecimal be = new BigDecimal(e.split("=")[1]);
-        Assert.assertTrue(ba.subtract(be).floatValue() < 0.1);
+        Assert.assertTrue(Math.abs(ba.subtract(be).doubleValue()) == 0.0000);
       } else {
         Assert.assertEquals(e, a);
       }
@@ -635,7 +644,7 @@ public class SelectAggTest extends SqlTestBase {
     }
   }
 
-  private boolean isNumber(Tuple2<String, Integer> nameType) {
+  private boolean isNumberAndDateTime(Tuple2<String, Integer> nameType) {
     switch (nameType.getT2()) {
       case Types.TINYINT:
       case Types.SMALLINT:
@@ -655,8 +664,25 @@ public class SelectAggTest extends SqlTestBase {
     }
   }
 
+  private boolean isNumber(Tuple2<String, Integer> nameType) {
+    switch (nameType.getT2()) {
+      case Types.TINYINT:
+      case Types.SMALLINT:
+      case Types.INTEGER:
+      case Types.BIGINT:
+      case Types.FLOAT:
+      case Types.REAL:
+      case Types.DOUBLE:
+      case Types.NUMERIC:
+      case Types.DECIMAL:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   private void selectAllfromTablebaker02(List<Map<String, Comparable>> allResult, List<Tuple2<String, Integer>> meta) {
-    Map<String, Comparable> record = new HashMap<>();
+
     execQuery("select * from baker_agg", resultSet -> {
       try {
         for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
@@ -665,6 +691,7 @@ public class SelectAggTest extends SqlTestBase {
 
         while (resultSet.next()) {
           int count = resultSet.getMetaData().getColumnCount();
+          Map<String, Comparable> record = new HashMap<>();
           for (int i = 1; i <= count; i++) {
             record.put(resultSet.getMetaData().getColumnLabel(i), (Comparable) resultSet.getObject(i));
           }
@@ -685,7 +712,7 @@ public class SelectAggTest extends SqlTestBase {
     for (int i = 0; i < size; i++) {
       service.submit(() -> {
         try {
-          execQuery("select COUNT(1) from baker_agg  where name = 'aaa' group by age");
+          execQuery("select COUNT(1) from " + DBNAME + ".baker_agg  where name = 'aaa' group by age");
         } catch (Exception e) {
           e.printStackTrace();
         } finally {
@@ -727,7 +754,7 @@ public class SelectAggTest extends SqlTestBase {
     for (Tuple2<String, Integer> metaKV : meta) {
       final String metaName = metaKV.getT1();
 
-      if (!isNumber(metaKV) || metaName.equals("id") || metaName.equals("crt_timestamp")
+      if (!isNumberAndDateTime(metaKV) || metaName.equals("id") || metaName.equals("crt_timestamp")
               || metaName.equals("crt_date") || metaName.equals("crt_datetime") || metaName.equals("crt_time")
               || metaName.equals("crt_year")) {
         continue;
@@ -759,7 +786,7 @@ public class SelectAggTest extends SqlTestBase {
     for (Tuple2<String, Integer> metaKV : meta) {
       final String metaName = metaKV.getT1();
 
-      if (!isNumber(metaKV) || metaName.equals("id") || metaName.equals("crt_timestamp")
+      if (!isNumberAndDateTime(metaKV) || metaName.equals("id") || metaName.equals("crt_timestamp")
               || metaName.equals("crt_date") || metaName.equals("crt_datetime") || metaName.equals("crt_time")
               || metaName.equals("crt_year")) {
         continue;
@@ -769,11 +796,26 @@ public class SelectAggTest extends SqlTestBase {
       allResult.stream().collect(Collectors.groupingBy((r) -> r.get("company"))).forEach((k, v) -> {
         List<BigDecimal> sumList = v.stream().map((row) -> row.get(metaName)).distinct()
                 .map(m -> new BigDecimal(castNumValue(m.toString(), metaKV.getT2()))).collect(Collectors.toList());
-        BigDecimal result = new BigDecimal(0.0);
-        for (BigDecimal bigDecimal : sumList) {
-          result = result.add(bigDecimal);
+
+        String result;
+        if (metaKV.getT2().equals(Types.BIGINT)
+                || metaKV.getT2().equals(Types.INTEGER) || metaKV.getT2().equals(Types.SMALLINT)
+                || metaKV.getT2().equals(Types.TINYINT)) {
+          BigDecimal avg = new BigDecimal("0.0000");
+          for (BigDecimal bigDecimal : sumList) {
+            avg = avg.add(bigDecimal);
+          }
+          avg = avg.divide(new BigDecimal(sumList.size()));
+          result = avg.toString();
+        } else {
+          BigDecimal avg = new BigDecimal("0.0");
+          for (BigDecimal bigDecimal : sumList) {
+            avg = avg.add(bigDecimal);
+          }
+          avg = avg.divide(new BigDecimal(sumList.size()));
+          result = String.valueOf(avg.doubleValue());
         }
-        result = result.divide(new BigDecimal(sumList.size()));
+
 
         String value = "AVG(DISTINCT " + metaName + ")=" + result.toString() + "; company=" + k;
         esp.add(value);
@@ -788,15 +830,23 @@ public class SelectAggTest extends SqlTestBase {
     List<Tuple2<String, Integer>> meta = new ArrayList<>();
 
     selectAllfromTablebaker02(allResult, meta);
-    List<String> esp = new ArrayList<>();
 
-    esp = allResult.stream().map((r) -> {
-      Integer age = (Integer) r.get("age");
-      String company = (String) r.get("company");
-      return String.format("COUNT(DISTINCT age)=%s; SUM(DISTINCT age)=%s; MAX(age)=%s; "
-              + "MIN(age)=%s; company=%s", 1, age, age, age, company);
-    }).collect(Collectors.toList());
-    execQuery("select count(distinct age), sum(distinct age), max(age),min(age), company from baker_agg group by id", esp);
+    List<String> esp = new ArrayList<>();
+    allResult.stream().collect(Collectors.groupingBy((r) -> r.get("company"))).forEach((k, v) -> {
+      int count = v.stream().map(r -> (Integer)r.get("age")).distinct().collect(Collectors.toList()).size();
+      List<Integer> sumDistinctList = v.stream().map(r -> (Integer)r.get("age")).distinct().collect(Collectors.toList());
+      int sum = 0;
+      for (Integer i : sumDistinctList) {
+        sum += i.intValue();
+      }
+      int maxAge = v.stream().map(r -> (Integer)r.get("age")).max(Comparable::compareTo).get();
+      int minAge = v.stream().map(r -> (Integer)r.get("age")).min(Comparable::compareTo).get();
+
+      String value = String.format("COUNT(DISTINCT age)=%s; SUM(DISTINCT age)=%s; MAX(age)=%s; "
+              + "MIN(age)=%s; company=%s", count, sum, maxAge, minAge, k);
+      esp.add(value);
+    });
+    execQuery("select count(distinct age), sum(distinct age), max(age),min(age), company from baker_agg group by company", esp);
   }
 
   @Test

@@ -21,19 +21,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import io.jimdb.common.exception.JimException;
 import io.jimdb.core.Session;
 import io.jimdb.core.config.JimConfig;
-import io.jimdb.core.context.ReorgContext;
-import io.jimdb.common.exception.JimException;
 import io.jimdb.core.expression.ValueRange;
 import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.meta.RangeInfo;
 import io.jimdb.core.model.meta.Table;
-import io.jimdb.pb.Ddlpb;
-import io.jimdb.pb.Statspb;
 import io.jimdb.core.plugin.store.Engine;
 import io.jimdb.core.plugin.store.Transaction;
+import io.jimdb.pb.Statspb;
 
 import reactor.core.publisher.Flux;
 import reactor.util.function.Tuple2;
@@ -78,11 +76,6 @@ public class MockStoreEngine implements Engine {
   public Flux<List<Tuple2<Statspb.Histogram, List<Statspb.SampleCollector>>>> analyzeColumns(Table table, Column[] columns, Instant timeout, List<ValueRange> ranges, Statspb.ColumnsStatsRequest.Builder reqBuilder) throws JimException {
     // TODO
     return null;
-  }
-
-  @Override
-  public void reOrganize(ReorgContext context, Table table, Index index, Ddlpb.OpType opType) {
-    return;
   }
 
   @Override

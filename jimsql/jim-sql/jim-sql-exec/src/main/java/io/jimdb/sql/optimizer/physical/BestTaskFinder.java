@@ -146,7 +146,7 @@ public class BestTaskFinder extends ParameterizedOperatorVisitor<PhysicalPropert
       } else if (path.getAccessConditions() != null && !path.getAccessConditions().isEmpty()) {
         // get index candidates
         boolean isSingleScan = isSingleScan(tableSource.getSchema().getColumns(), path.getIndexColumns(),
-                tableSource.getTable().getPrimary()[0]);
+                tableSource.getTable().getPrimary());
         path.setSingleScan(isSingleScan);
         currentCandidate.columnIdSet = extractColumnIds(path.getAccessConditions());
       } else {
@@ -179,9 +179,9 @@ public class BestTaskFinder extends ParameterizedOperatorVisitor<PhysicalPropert
     return candidates;
   }
 
-  private boolean isSingleScan(List<ColumnExpr> columns, List<ColumnExpr> indexColumns, Column primaryKey) {
+  private boolean isSingleScan(List<ColumnExpr> columns, List<ColumnExpr> indexColumns, Column[] primaryKeys) {
     for (ColumnExpr columnExpr : columns) {
-      if (primaryKey != null && columnExpr.getId().equals(primaryKey.getId())) {
+      if (isContainColId(primaryKeys, columnExpr.getId())) {
         continue;
       }
 
@@ -198,6 +198,15 @@ public class BestTaskFinder extends ParameterizedOperatorVisitor<PhysicalPropert
       }
     }
     return true;
+  }
+
+  private boolean isContainColId(Column[] cols, Integer colId) {
+    for (Column col : cols) {
+      if (col.getId().equals(colId)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // Compare the two path candidates
@@ -374,13 +383,12 @@ public class BestTaskFinder extends ParameterizedOperatorVisitor<PhysicalPropert
                             TableAccessPath accessPath) {
     // get index columns
     List<ColumnExpr> result = new ArrayList<>(columns.length);
-    Schema newSchema = new Schema(result);
 
     if (accessPath.isSingleScan()) {
       for (int i = 0; i < columns.length; i++) {
         // if columns of tableSource contains pk, then put it to result
         if (columns[i].isPrimary()) {
-          result.add(schema.getColumn(i));
+          result.add(schema.getColumn(i).clone());
         }
       }
     } else {
@@ -394,12 +402,12 @@ public class BestTaskFinder extends ParameterizedOperatorVisitor<PhysicalPropert
     for (Column indexCol : indexCols) {
       for (ColumnExpr columnExpr : schema.getColumns()) {
         if (indexCol.getId().longValue() == columnExpr.getId().longValue()) {
-          result.add(columnExpr);
+          result.add(columnExpr.clone());
         }
       }
     }
 
-    return newSchema;
+    return new Schema(result);
   }
 
   /**

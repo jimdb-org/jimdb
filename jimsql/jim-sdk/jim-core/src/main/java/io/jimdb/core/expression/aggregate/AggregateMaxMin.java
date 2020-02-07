@@ -16,10 +16,10 @@
 package io.jimdb.core.expression.aggregate;
 
 import io.jimdb.core.Session;
+import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.values.NullValue;
 import io.jimdb.core.values.Value;
-import io.jimdb.core.expression.aggregate.util.ValueUtil;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -32,24 +32,22 @@ public class AggregateMaxMin extends AggregateFunc {
   private static AggFuncExec valueFunction = (session, rowsInGroup, aggregateFunc, partialResult) -> {
     boolean isMax = ((AggregateMaxMin) aggregateFunc).isMax;
     Value result = partialResult.getValue();
-
+    Expression expression = aggregateFunc.getArgs()[0];
+    Value value;
     for (ValueAccessor valueAccessor : rowsInGroup) {
-
-      Value value = ValueUtil.exec(session, aggregateFunc.getArgs()[0], valueAccessor, aggregateFunc.getSqlType().getType());
+      value = expression.exec(valueAccessor);
 
       if (result == null || result.isNull()) {
-        partialResult.setValue(value);
         result = value;
         continue;
       }
 
       int b = value.compareTo(session, result);
       if (isMax && b > 0 || !isMax && b < 0) {
-        partialResult.setValue(value);
         result = value;
       }
     }
-
+    partialResult.setValue(result);
     return partialResult;
   };
 

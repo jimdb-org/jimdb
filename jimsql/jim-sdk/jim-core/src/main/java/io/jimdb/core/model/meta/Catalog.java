@@ -16,6 +16,7 @@
 package io.jimdb.core.model.meta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,9 @@ import io.jimdb.pb.Metapb.CatalogInfo;
 import io.jimdb.pb.Metapb.MetaState;
 import io.jimdb.pb.Metapb.TableInfo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -35,6 +39,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 @SuppressFBWarnings({ "FCCD_FIND_CLASS_CIRCULAR_DEPENDENCY", "EI_EXPOSE_REP" })
 public final class Catalog {
+  private static final Logger LOG = LoggerFactory.getLogger(Catalog.class);
+
   private final Integer id;
 
   private final CatalogInfo catalogInfo;
@@ -102,6 +108,6 @@ public final class Catalog {
   }
 
   public Table[] getTables() {
-    return tables;
+    return Arrays.copyOf(tables, tables.length);
   }
 }

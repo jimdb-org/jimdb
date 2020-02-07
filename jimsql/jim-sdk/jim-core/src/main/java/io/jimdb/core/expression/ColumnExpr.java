@@ -17,6 +17,10 @@ package io.jimdb.core.expression;
 
 import java.util.List;
 
+import io.jimdb.common.exception.DBException;
+import io.jimdb.common.exception.ErrorCode;
+import io.jimdb.common.exception.ErrorModule;
+import io.jimdb.common.exception.JimException;
 import io.jimdb.core.Session;
 import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Table;
@@ -31,10 +35,6 @@ import io.jimdb.core.values.UnsignedLongValue;
 import io.jimdb.core.values.Value;
 import io.jimdb.core.values.ValueConvertor;
 import io.jimdb.core.values.YearValue;
-import io.jimdb.common.exception.DBException;
-import io.jimdb.common.exception.ErrorCode;
-import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
 import io.jimdb.pb.Basepb.DataType;
 
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +59,7 @@ public final class ColumnExpr extends Expression {
   private String aliasCol;
   private boolean inSubQuery;
   private ByteString reorgValue;
+  private Value defaultValue;
 
   public ColumnExpr(Long uid) {
     this.id = Integer.valueOf(0);
@@ -82,8 +83,8 @@ public final class ColumnExpr extends Expression {
       this.catalog = tbl.getCatalog() == null ? "" : tbl.getCatalog().getName();
     }
     this.resultType = column.getType();
-//    this.columnType = column.getColumnType();
-    this.reorgValue =  column.getReorgValue();
+    this.reorgValue = column.getReorgValue();
+    this.defaultValue = column.getDefaultValue();
   }
 
   @Override
@@ -97,7 +98,6 @@ public final class ColumnExpr extends Expression {
     result.oriCol = this.oriCol;
     result.aliasCol = this.aliasCol;
     result.inSubQuery = this.inSubQuery;
-//    result.columnType = this.columnType;
     result.reorgValue = this.reorgValue;
     clone(result);
     return result;
@@ -112,7 +112,6 @@ public final class ColumnExpr extends Expression {
     this.aliasTable = otherExpr.aliasTable;
     this.oriCol = otherExpr.oriCol;
     this.aliasCol = otherExpr.aliasCol;
-//    this.columnType = otherExpr.columnType;
     this.inSubQuery = otherExpr.isInSubQuery();
     this.reorgValue = otherExpr.getReorgValue();
   }
@@ -185,7 +184,7 @@ public final class ColumnExpr extends Expression {
   @Override
   public LongValue execLong(Session session, ValueAccessor accessor) throws JimException {
     final Value v = accessor.get(offset);
-    return v.isNull() ? null : ValueConvertor.convertToLong(session, v, null);
+    return v.isNull() ? null : ValueConvertor.convertToLong(session, v, resultType);
   }
 
   @Override
@@ -216,7 +215,7 @@ public final class ColumnExpr extends Expression {
     if (resultType.getType() == DataType.Char || resultType.getType() == DataType.NChar) {
       String str = v.getString();
       if (str.length() < resultType.getPrecision()) {
-        str = StringUtils.rightPad(str, resultType.getPrecision() - str.length());
+        str = StringUtils.rightPad(str, (int) resultType.getPrecision() - str.length());
         return StringValue.getInstance(str);
       }
     }
@@ -318,15 +317,6 @@ public final class ColumnExpr extends Expression {
     return this;
   }
 
-//  public ColumnType getColumnType() {
-//    return columnType;
-//  }
-//
-//  public ColumnExpr setColumnType(ColumnType columnType) {
-//    this.columnType = columnType;
-//    return this;
-//  }
-
   public boolean isInSubQuery() {
     return inSubQuery;
   }
@@ -338,6 +328,10 @@ public final class ColumnExpr extends Expression {
 
   public ByteString getReorgValue() {
     return reorgValue;
+  }
+
+  public Value getDefaultValue() {
+    return defaultValue;
   }
 
   public void setReorgValue(ByteString reorgValue) {

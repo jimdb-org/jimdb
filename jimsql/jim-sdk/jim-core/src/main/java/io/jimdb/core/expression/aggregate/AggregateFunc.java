@@ -162,7 +162,7 @@ public abstract class AggregateFunc {
   private static InitCellFunc initBinaryCellFunc = (sqlType, hasDistinct) -> new CommonCell(BinaryValue.getInstance(new byte[]{}), hasDistinct);
   private static InitCellFunc initDoubleCellFunc = (sqlType, hasDistinct) -> new CommonCell(DoubleValue.getInstance(0.0d), hasDistinct);
   private static InitCellFunc initDecimalCellFunc = (sqlType, hasDistinct) -> new CommonCell(
-          DecimalValue.getInstance(BigDecimal.valueOf(0, sqlType.getScale()), sqlType.getPrecision(), sqlType.getScale()), hasDistinct);
+          DecimalValue.getInstance(BigDecimal.valueOf(0, sqlType.getScale()), (int) sqlType.getPrecision(), sqlType.getScale()), hasDistinct);
   private static InitCellFunc initTimeCellFunc = (sqlType, hasDistinct) -> new CommonCell(TimeValue.getInstance(null), hasDistinct);
   private static InitCellFunc initDataCellFunc = (sqlType, hasDistinct) -> new CommonCell(DateValue.getInstance("", Basepb.DataType.Date), hasDistinct);
   private static InitCellFunc initJsonCellFunc = (sqlType, hasDistinct) -> new CommonCell(JsonValue.getInstance(""), hasDistinct);

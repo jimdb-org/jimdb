@@ -25,7 +25,7 @@ import org.junit.Test;
  * @version V1.0
  */
 public final class KeyDeleteTest extends SqlTestBase {
-  private static String DBNAME = "test";
+  private static String DBNAME = "test_del";
   private static String TABLENAME = "sqltest";
 
   @BeforeClass

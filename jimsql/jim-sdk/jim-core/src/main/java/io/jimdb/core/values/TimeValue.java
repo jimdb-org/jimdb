@@ -36,9 +36,8 @@ import org.slf4j.LoggerFactory;
 public final class TimeValue extends Value<TimeValue> {
   private static final Logger LOGGER = LoggerFactory.getLogger(TimeValue.class);
 
-  protected static final TimeValue TIME_EMPTY = null;
-  protected static final TimeValue TIME_ZERO = new TimeValue(0, TimeUtil.DEFAULT_FSP, false);
-
+  public static final TimeValue TIME_EMPTY = null;
+  public static final TimeValue TIME_ZERO = new TimeValue(0, TimeUtil.DEFAULT_FSP, false);
   public static final TimeValue MAX_VALUE = new TimeValue(Long.MAX_VALUE, TimeUtil.DEFAULT_FSP);
   public static final TimeValue MIN_VALUE = new TimeValue(Long.MIN_VALUE, TimeUtil.DEFAULT_FSP);
 
@@ -67,30 +66,28 @@ public final class TimeValue extends Value<TimeValue> {
 
   //string to time
   public static TimeValue convertToTime(String valueS, int fsp) {
-
     if (StringUtils.isBlank(valueS)) {
       return TIME_ZERO;
     }
+
     valueS = valueS.trim();
-
-    boolean negative = false;
-
     int signIndex = valueS.indexOf('-');
     if (signIndex == valueS.length() - 1) {
       return TIME_ZERO;
-    } else if (signIndex != -1) {
+    }
+
+    boolean negative = false;
+    if (signIndex != -1) {
       negative = true;
       valueS = valueS.substring(1);
     }
+    valueS = valueS.trim();
 
     int hour;
     int minute;
     int second;
     //a fractional seconds part
     int micros = 0;
-
-    valueS = valueS.trim();
-
     // truncate fractional part
     // decimal point index
     int decimalIndex = valueS.indexOf('.');
@@ -102,6 +99,7 @@ public final class TimeValue extends Value<TimeValue> {
     if ("0".equals(valueS) || "0000-00-00 00:00:00".equals(valueS) || "00000000000000".equals(valueS)) {
       return TIME_ZERO;
     }
+
     int length = valueS.length();
     switch (length) {
       case 9:
@@ -233,6 +231,10 @@ public final class TimeValue extends Value<TimeValue> {
 
   public static TimeValue getInstance(long value, int fsp) {
     return new TimeValue(value, fsp);
+  }
+
+  public static TimeValue getInstance(int hour, int minute, int second, int micros, boolean negative) {
+    return new TimeValue(hour, minute, second, micros, 0, negative);
   }
 
   public long getValue() {

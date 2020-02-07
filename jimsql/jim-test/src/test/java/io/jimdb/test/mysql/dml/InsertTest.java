@@ -20,7 +20,7 @@ import java.util.List;
 
 import io.jimdb.test.mysql.SqlTestBase;
 
-import org.junit.Before;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -28,9 +28,9 @@ import org.junit.Test;
  * @version V1.0
  */
 public final class InsertTest extends SqlTestBase {
-  private static String DBNAME = "test";
+  private static String DBNAME = "test_insert";
   private static String TABLENAME = "sqltest";
-  private List<String> deleteIDS = new ArrayList<>();
+  private List<Integer> deleteIDS = new ArrayList<>();
 
   @BeforeClass
   public static void createSqlTest() {
@@ -55,10 +55,10 @@ public final class InsertTest extends SqlTestBase {
     dropAndCreateTable(TABLENAME, sql);
   }
 
-  @Before
-  public void tearUp() {
-    for (String id : deleteIDS) {
-      String SQL_CLEAR = "delete from %s where id = %s";
+  @After
+  public void tearDown() {
+    for (Integer id : deleteIDS) {
+      String SQL_CLEAR = "delete from %s where id = %d";
       execUpdate(String.format(SQL_CLEAR, TABLENAME, id), true);
     }
     this.deleteIDS.clear();
@@ -66,44 +66,51 @@ public final class InsertTest extends SqlTestBase {
 
   @Test
   public void testInsertAll() {
-    this.deleteIDS.add("111");
-    execUpdate("INSERT INTO sqltest VALUES(111, 'testInsertAll', 28)", 1, true);
+    this.deleteIDS.add(111);
+    String sql = String.format("INSERT INTO %s VALUES(111, 'testInsertAll', 28)", TABLENAME);
+    execUpdate(sql, 1, true);
 
     List<String> expected = new ArrayList<>();
     expected.add("id=111; name=testInsertAll; age=28");
-    execQuery("select * from sqltest where id=111", expected);
+    execQuery(String.format("select * from %s where id=111", TABLENAME), expected);
   }
 
   @Test
   public void testInsertPartial() {
-    this.deleteIDS.add("111");
-    execUpdate("INSERT INTO sqltest(id,name) VALUES(111, 'testInsertPartial')", 1, true);
+    this.deleteIDS.add(111);
+    String sql = String.format("INSERT INTO %s (id,name) VALUES(111, 'testInsertPartial')", TABLENAME);
+    execUpdate(sql, 1, true);
 
     List<String> expected = new ArrayList<>();
     expected.add("id=111; name=testInsertPartial; age=null");
-    execQuery("select * from sqltest where id=111", expected);
+    execQuery(String.format("select * from %s where id=111", TABLENAME), expected);
   }
 
   @Test
   public void testInsertNull() {
-    this.deleteIDS.add("111");
-    execUpdate("INSERT INTO sqltest(id,name,age) VALUES(111, '中国', null)", 1, true);
+    this.deleteIDS.add(111);
+    String sql = String.format("INSERT INTO %s (id,name,age) VALUES(111, '中国', null)", TABLENAME);
+    execUpdate(sql, 1, true);
 
     List<String> expected = new ArrayList<>();
     expected.add("id=111; age=null; name=中国");
-    execQuery("select id,age,name from sqltest where id=111", expected);
+    execQuery(String.format("select id,age,name from %s where id=111", TABLENAME), expected);
   }
 
   @Test
   public void testInsertMultiValue() {
-    this.deleteIDS.add("111");
-    this.deleteIDS.add("222");
-    this.deleteIDS.add("333");
-    this.deleteIDS.add("444");
-    this.deleteIDS.add("555");
-    this.deleteIDS.add("666");
-    execUpdate("INSERT INTO sqltest VALUES(111, 'testInsertMultiValue1', 28),(222, 'testInsertMultiValue2', 28),(333, 'testInsertMultiValue3', 28)", 3, true);
-    execUpdate("INSERT INTO sqltest(id,name) VALUES(444, 'testInsertMultiValue4'),(555, 'testInsertMultiValue5'),(666, 'testInsertMultiValue6')", 3, true);
+    this.deleteIDS.add(111);
+    this.deleteIDS.add(222);
+    this.deleteIDS.add(333);
+    this.deleteIDS.add(444);
+    this.deleteIDS.add(555);
+    this.deleteIDS.add(666);
+    String sql = String.format("INSERT INTO %s VALUES (111, 'testInsertMultiValue1', 28)"
+            + ",(222, 'testInsertMultiValue2', 28),(333, 'testInsertMultiValue3', 28)", TABLENAME);
+    execUpdate(sql, 3, true);
+    sql = String.format("INSERT INTO %s (id,name) VALUES (444, 'testInsertMultiValue4')"
+            + ",(555, 'testInsertMultiValue5'),(666, 'testInsertMultiValue6')", TABLENAME);
+    execUpdate(sql, 3, true);
 
     List<String> expected = new ArrayList<>();
     expected.add("id=111; name=testInsertMultiValue1; age=28");
@@ -112,16 +119,17 @@ public final class InsertTest extends SqlTestBase {
     expected.add("id=444; name=testInsertMultiValue4; age=null");
     expected.add("id=555; name=testInsertMultiValue5; age=null");
     expected.add("id=666; name=testInsertMultiValue6; age=null");
-    execQuery("select * from sqltest where id=111 or id=222 or id=333 or id=444 or id=555 or id=666", expected);
+    execQuery(String.format("select * from %s where id=111 or id=222 or id=333 or id=444 or id=555 or id=666", TABLENAME), expected);
   }
 
   @Test
   public void testInsertSet() {
-    this.deleteIDS.add("11111");
-    execUpdate("INSERT INTO sqltest set id=11111, name='testInsertPartial', age=18", 1, true);
+    this.deleteIDS.add(11111);
+    String sql = String.format("INSERT INTO %s set id=11111, name='testInsertPartial', age=18", TABLENAME);
+    execUpdate(sql, 1, true);
 
     List<String> expected = new ArrayList<>();
     expected.add("id=11111; name=testInsertPartial; age=18");
-    execQuery("select * from sqltest where id=11111", expected);
+    execQuery(String.format("select * from %s where id=11111", TABLENAME), expected);
   }
 }

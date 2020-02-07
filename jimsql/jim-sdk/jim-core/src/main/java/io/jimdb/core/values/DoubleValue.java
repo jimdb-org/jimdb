@@ -17,6 +17,7 @@ package io.jimdb.core.values;
 
 import java.lang.ref.SoftReference;
 import java.nio.ByteBuffer;
+import java.text.DecimalFormat;
 
 import io.jimdb.core.types.ValueType;
 import io.jimdb.common.exception.DBException;
@@ -29,6 +30,12 @@ import io.jimdb.common.exception.ErrorModule;
 public final class DoubleValue extends Value<DoubleValue> {
   private static volatile SoftReference<DoubleValue[]> doubleCache =
           new SoftReference(new DoubleValue[VALUE_CACHE_SIZE]);
+
+  private static ThreadLocal<DecimalFormat> doubleToStrLocal = ThreadLocal.withInitial(() -> {
+    DecimalFormat d = new DecimalFormat("0");
+    d.setMaximumFractionDigits(340);
+    return d;
+  });
 
   protected static final DoubleValue ZERO = new DoubleValue(0.0d);
 
@@ -111,6 +118,14 @@ public final class DoubleValue extends Value<DoubleValue> {
   }
 
   @Override
+  protected Value divSafe(DoubleValue v2) {
+    if (v2.value == 0.0d) {
+      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_DIVISION_BY_ZERO);
+    }
+    return getInstance(Math.floor(value / v2.value));
+  }
+
+  @Override
   protected Value modSafe(DoubleValue v2) {
     if (v2.value == 0.0d) {
       throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_DIVISION_BY_ZERO);
@@ -134,7 +149,8 @@ public final class DoubleValue extends Value<DoubleValue> {
 
   @Override
   public String getString() {
-    return Double.toString(value);
+    return doubleToStrLocal.get().format(value);
+//    return Double.toString(value);
   }
 
   @Override

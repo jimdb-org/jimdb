@@ -139,11 +139,11 @@ public class Analyze extends Operator {
     }
 
     // every non-indexed column and index becomes a row in the constructed result
-    final int rowCount = tableStats.getIndexStatsMap().size() + tableStats.getNonIndexedColumnStatsMap().size();
+    final int rowCount = tableStats.getIndexStatsMap().size() + tableStats.getColumnStatsMap().size();
     List<ValueAccessor> valueAccessorList = Lists.newArrayListWithExpectedSize(rowCount);
 
     // construct result for column stats
-    Map<Integer, ColumnStats> columnStatsMap = tableStats.getNonIndexedColumnStatsMap();
+    Map<Integer, ColumnStats> columnStatsMap = tableStats.getColumnStatsMap();
     for (Map.Entry<Integer, ColumnStats> entry: columnStatsMap.entrySet()) {
       ColumnStats columnStats = entry.getValue();
       Value[] values = ColumnStats.convertToValues(entry.getKey(), false, columnStats.getTotalRowCount(), columnStats.getHistogram(), columnStats.getCms());

@@ -61,12 +61,12 @@ public class NFDetacher {
    *
    * @param session    session of the current query
    * @param conditions given conditions to be detached
-   * @param uniqueId   uid of the corresponding column for the to-be-detached access conditions
+   * @param id   id of the corresponding column for the to-be-detached access conditions
    * @return the detached access conditions and the remaining filter conditions
    */
   public static Tuple2<List<Expression>, List<Expression>> detachConditions(Session session, List<Expression> conditions,
-                                                                            long uniqueId) {
-    return detachCNFColumnConditions(session, conditions, new ConditionChecker(uniqueId));
+                                                                            int id) {
+    return detachCNFColumnConditions(session, conditions, new ConditionChecker(id));
   }
 
   // Detach accessConditions and filterConditions from CNF

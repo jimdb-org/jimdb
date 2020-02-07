@@ -15,17 +15,14 @@
  */
 package io.jimdb.core.expression.functions;
 
-import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.core.Session;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.expression.functions.builtin.cast.CastFuncBuilder;
-import io.jimdb.pb.Basepb.DataType;
-import io.jimdb.pb.Exprpb.ExprType;
-import io.jimdb.pb.Metapb.SQLType;
 import io.jimdb.core.types.Types;
 import io.jimdb.core.types.ValueType;
 import io.jimdb.core.values.DateValue;
@@ -37,6 +34,9 @@ import io.jimdb.core.values.StringValue;
 import io.jimdb.core.values.TimeValue;
 import io.jimdb.core.values.UnsignedLongValue;
 import io.jimdb.core.values.YearValue;
+import io.jimdb.pb.Basepb.DataType;
+import io.jimdb.pb.Exprpb.ExprType;
+import io.jimdb.pb.Metapb.SQLType;
 
 import com.google.common.base.Preconditions;
 
@@ -135,20 +135,20 @@ public abstract class Func implements Cloneable {
       case DATE:
         builder.setType(DataType.TimeStamp)
                 .setPrecision(Types.MAX_DATETIME_FSP_WIDTH)
-                .setScale(6)
+                .setScale(Types.MAX_DATETIME_SCALE)
                 .setBinary(true);
         sqlType = builder.build();
         break;
       case TIME:
         builder.setType(DataType.Time)
                 .setPrecision(Types.MAX_TIME_FSP_WIDTH)
-                .setScale(6)
+                .setScale(Types.MAX_TIME_SCALE)
                 .setBinary(true);
         sqlType = builder.build();
         break;
       case YEAR:
         builder.setType(DataType.Year)
-                .setPrecision(4)
+                .setPrecision(Types.MAX_YEAR_WIDTH)
                 .setScale(Types.UNDEFINE_WIDTH)
                 .setBinary(true);
         sqlType = builder.build();
@@ -303,7 +303,7 @@ public abstract class Func implements Cloneable {
       return arg;
     }
 
-    int precision = arg.getResultType().getPrecision();
+    long precision = arg.getResultType().getPrecision();
     if (arg.getResultType().getType() == DataType.Decimal && precision != Types.UNDEFINE_WIDTH) {
       precision += 2;
     }

@@ -42,7 +42,7 @@ import io.jimdb.pb.Api.RangeRequest.ReqCase;
 import io.jimdb.pb.Errorpb;
 import io.jimdb.pb.Function.FunctionID;
 import io.jimdb.pb.Kv;
-import io.jimdb.pb.Stats;
+import io.jimdb.pb.Statspb;
 import io.jimdb.pb.Txn;
 import io.jimdb.rpc.client.NettyClient;
 import io.jimdb.rpc.client.command.CommandCallback;
@@ -355,10 +355,10 @@ public final class ShardSender implements Closeable {
         bodyBuilder.setSelectFlow((Txn.SelectFlowRequest.Builder) reqBuilder);
         break;
       case INDEX_STATS:
-        bodyBuilder.setIndexStats((Stats.IndexStatsRequest.Builder) reqBuilder);
+        bodyBuilder.setIndexStats((Statspb.IndexStatsRequest.Builder) reqBuilder);
         break;
       case COLUMNS_STATS:
-        bodyBuilder.setColumnsStats((Stats.ColumnsStatsRequest.Builder) reqBuilder);
+        bodyBuilder.setColumnsStats((Statspb.ColumnsStatsRequest.Builder) reqBuilder);
         break;
       default:
         throw DBException.get(ErrorModule.ENGINE, ErrorCode.ER_NOT_SUPPORTED_YET, "command type:" + cmdType);

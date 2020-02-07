@@ -25,13 +25,13 @@ import java.util.Vector;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.function.Supplier;
 
+import io.jimdb.common.exception.JimException;
+import io.jimdb.common.utils.lang.Resetable;
 import io.jimdb.core.SQLAnalyzer;
+import io.jimdb.core.expression.Schema;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.model.privilege.PrivilegeInfo;
 import io.jimdb.core.model.privilege.PrivilegeType;
-import io.jimdb.common.exception.JimException;
-import io.jimdb.core.expression.Schema;
-import io.jimdb.common.utils.lang.Resetable;
 
 import com.google.common.collect.Maps;
 
@@ -39,14 +39,15 @@ import com.google.common.collect.Maps;
  * @version V1.0
  */
 public final class StatementContext implements Resetable {
-  private static final AtomicIntegerFieldUpdater<StatementContext> ERRCOUNT_UPDATER = AtomicIntegerFieldUpdater.newUpdater(StatementContext.class, "errCnt");
+  private static final AtomicIntegerFieldUpdater<StatementContext> ERRCOUNT_UPDATER =
+          AtomicIntegerFieldUpdater.newUpdater(StatementContext.class, "errCnt");
 
   private volatile int errCnt;
+  private volatile boolean binaryProtocol = false;
+  private volatile boolean replying = false;
   private volatile Instant timeout;
 
   private boolean nullReject;
-  private boolean binaryProtocol = false;
-  private boolean usePlanCache;
   private int analyzerCnt;
   private List<PrivilegeInfo> privilegeInfos;
 
@@ -75,6 +76,7 @@ public final class StatementContext implements Resetable {
     this.reset();
     this.errCnt = 0;
     this.binaryProtocol = false;
+    this.replying = false;
     this.timeout = null;
     this.warnings.clear();
   }
@@ -133,16 +135,16 @@ public final class StatementContext implements Resetable {
     return binaryProtocol;
   }
 
-  public boolean isUsePlanCache() {
-    return usePlanCache;
-  }
-
-  public void setUsePlanCache(boolean useCache) {
-    this.usePlanCache = useCache;
-  }
-
   public void setBinaryProtocol(boolean binaryProtocol) {
     this.binaryProtocol = binaryProtocol;
+  }
+
+  public boolean isReplying() {
+    return replying;
+  }
+
+  public void setReplying(boolean replying) {
+    this.replying = replying;
   }
 
   public List<PrivilegeInfo> getPrivilegeInfos() {

@@ -55,19 +55,31 @@ import com.alibaba.druid.sql.ast.SQLDataTypeImpl;
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.expr.SQLIntegerExpr;
+import com.alibaba.druid.sql.ast.expr.SQLMethodInvokeExpr;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * @version V1.0
  */
-@SuppressFBWarnings({ "HARD_CODE_KEY", "OCP_OVERLY_CONCRETE_PARAMETER" })
+@SuppressFBWarnings({ "HARD_CODE_KEY", "OCP_OVERLY_CONCRETE_PARAMETER", "CLI_CONSTANT_LIST_INDEX", "CC_CYCLOMATIC_COMPLEXITY" })
 public final class Types {
   public static final String PRIMARY_KEY_NAME = "PRIMARY";
 
   public static final int FLAG_KEY_PRIMARY = 1 << 1;
   public static final int FLAG_KEY_UNIQUE = 1 << 2;
   public static final int FLAG_KEY_MULTIPLE = 1 << 3;
+
+  public static final long NANOSECOND = 1;
+  public static final long MICROSECOND = 1000 * NANOSECOND;
+  public static final long MILLISECOND = 1000 * MICROSECOND;
+  public static final long SECOND = 1000 * MILLISECOND;
+  public static final long MINUTE = 60 * SECOND;
+  public static final long HOUR = 60 * MINUTE;
+  public static final long DAY = 24 * HOUR;
+
+  public static final String ZERO_DATETIME = "0000-00-00 00:00:00";
+  public static final String ZERO_DATE = "0000-00-00";
 
   public static final BigDecimal MAX_DEC_SIGNEDLONG = BigDecimal.valueOf(Long.MAX_VALUE);
   public static final BigDecimal MIN_DEC_SIGNEDLONG = BigDecimal.valueOf(Long.MIN_VALUE);
@@ -92,102 +104,124 @@ public final class Types {
   public static final int MAX_DATETIME_NOFSP_WIDTH = 19;
   public static final int MAX_DATETIME_FSP_WIDTH = 26;
   public static final int MAX_DATETIME_WIDTH = 29;
+  public static final int MAX_DATETIME_SCALE = 6;
   public static final int MAX_TIME_NOFSP_WIDTH = 10;
   public static final int MAX_TIME_FSP_WIDTH = 15;
-  public static final int MAX_BLOB_WIDTH = 16777216;
+  public static final int MAX_TIME_SCALE = 6;
+  public static final int MAX_YEAR_WIDTH = 4;
   public static final int MAX_CHAR_WIDTH = 255;
   public static final int MAX_VARCHAR_WIDTH = 65535;
-  //
+  public static final int MAX_MEDIUM_TEXT_WIDTH = 16777215;
+  public static final long MAX_LONG_TEXT_WIDTH = 4294967295L;
+
   public static final int NOT_FIXED_DEC = 31;
   public static final int PREC_INCREMENT = 4;
 
-  public static final String CURRENT_TIMESTAMP_FUNC = "CURRENT_TIMESTAMP";
   public static final String NOW_FUNC = "NOW";
   public static final String LOCALTIME = "LOCALTIME";
   public static final String LOCALTIME_FUNC = "LOCALTIME";
   public static final String LOCALTIMESTAMP = "LOCALTIMESTAMP";
   public static final String LOCALTIMESTAMP_FUNC = "LOCALTIMESTAMP";
+  public static final String CURRENT_TIMESTAMP_FUNC = "CURRENT_TIMESTAMP";
 
-  private static final Map<String, DataType> DATA_TYPE_MAP;
-  private static final Map<DataType, String> DATA_TYPE_DESC_MAP;
-  private static final Map<DataType, int[]> DATA_TYPE_DEFAULT_PRECISION_SCALE;
+  private static final Map<String, DataType> TYPE_MAP;
+  private static final Map<DataType, String> TYPE_DESC_MAP;
+  private static final Map<DataType, long[]> TYPE_DEFAULT_PRECISION_MAP;
 
   static {
-    DATA_TYPE_MAP = new HashMap<>();
-    DATA_TYPE_MAP.put("BIT", DataType.Bit);
-    DATA_TYPE_MAP.put(INT, DataType.Int);
-    DATA_TYPE_MAP.put(BIGINT, DataType.BigInt);
-    DATA_TYPE_MAP.put("MEDIUMINT", DataType.MediumInt);
-    DATA_TYPE_MAP.put(SMALLINT, DataType.SmallInt);
-    DATA_TYPE_MAP.put(TINYINT, DataType.TinyInt);
-    DATA_TYPE_MAP.put(BOOLEAN, DataType.TinyInt);
-    DATA_TYPE_MAP.put("FLOAT", DataType.Float);
-    DATA_TYPE_MAP.put("DOUBLE", DataType.Double);
-    DATA_TYPE_MAP.put(REAL, DataType.Double);
-    DATA_TYPE_MAP.put(DECIMAL, DataType.Decimal);
-    DATA_TYPE_MAP.put(NUMBER, DataType.Decimal);
-    DATA_TYPE_MAP.put(VARCHAR, DataType.Varchar);
-    DATA_TYPE_MAP.put(TEXT, DataType.Varchar);
-    DATA_TYPE_MAP.put(DATE, DataType.Date);
-    DATA_TYPE_MAP.put("DATETIME", DataType.DateTime);
-    DATA_TYPE_MAP.put(TIMESTAMP, DataType.TimeStamp);
-    DATA_TYPE_MAP.put("TIME", DataType.Time);
-    DATA_TYPE_MAP.put("YEAR", DataType.Year);
-    DATA_TYPE_MAP.put(CHAR, DataType.Char);
-    DATA_TYPE_MAP.put(NCHAR, DataType.NChar);
-    DATA_TYPE_MAP.put(BYTEA, DataType.Binary);
+    TYPE_MAP = new HashMap<>();
+    TYPE_MAP.put("BIT", DataType.Bit);
+    TYPE_MAP.put(INT, DataType.Int);
+    TYPE_MAP.put(BIGINT, DataType.BigInt);
+    TYPE_MAP.put("MEDIUMINT", DataType.MediumInt);
+    TYPE_MAP.put(SMALLINT, DataType.SmallInt);
+    TYPE_MAP.put(TINYINT, DataType.TinyInt);
+    TYPE_MAP.put(BOOLEAN, DataType.TinyInt);
+    TYPE_MAP.put("FLOAT", DataType.Float);
+    TYPE_MAP.put("DOUBLE", DataType.Double);
+    TYPE_MAP.put(REAL, DataType.Double);
+    TYPE_MAP.put(DECIMAL, DataType.Decimal);
+    TYPE_MAP.put(NUMBER, DataType.Decimal);
+    TYPE_MAP.put(VARCHAR, DataType.Varchar);
+    TYPE_MAP.put(DATE, DataType.Date);
+    TYPE_MAP.put("DATETIME", DataType.DateTime);
+    TYPE_MAP.put(TIMESTAMP, DataType.TimeStamp);
+    TYPE_MAP.put("TIME", DataType.Time);
+    TYPE_MAP.put("YEAR", DataType.Year);
+    TYPE_MAP.put(CHAR, DataType.Char);
+    TYPE_MAP.put(NCHAR, DataType.NChar);
+    TYPE_MAP.put(BYTEA, DataType.Binary);
+    TYPE_MAP.put("BINARY", DataType.Binary);
+    TYPE_MAP.put("VARBINARY", DataType.VarBinary);
+    TYPE_MAP.put("TINYBLOB", DataType.TinyBlob);
+    TYPE_MAP.put("BLOB", DataType.Blob);
+    TYPE_MAP.put("MEDIUMBLOB", DataType.MediumBlob);
+    TYPE_MAP.put("LONGBLOB", DataType.LongBlob);
+    TYPE_MAP.put(TEXT, DataType.Text);
+    TYPE_MAP.put("TINYTEXT", DataType.TinyText);
+    TYPE_MAP.put("MEDIUMTEXT", DataType.MediumText);
+    TYPE_MAP.put("LONGTEXT", DataType.LongText);
   }
 
   static {
-    DATA_TYPE_DESC_MAP = new HashMap<>();
-    DATA_TYPE_DESC_MAP.put(DataType.Invalid, "unspecified");
-    DATA_TYPE_DESC_MAP.put(DataType.TinyInt, "tinyint");
-    DATA_TYPE_DESC_MAP.put(DataType.SmallInt, "smallint");
-    DATA_TYPE_DESC_MAP.put(DataType.MediumInt, "mediumint");
-    DATA_TYPE_DESC_MAP.put(DataType.Int, "int");
-    DATA_TYPE_DESC_MAP.put(DataType.BigInt, "bigint");
-    DATA_TYPE_DESC_MAP.put(DataType.Bit, "bit");
-    DATA_TYPE_DESC_MAP.put(DataType.Float, "float");
-    DATA_TYPE_DESC_MAP.put(DataType.Double, "double");
-    DATA_TYPE_DESC_MAP.put(DataType.Decimal, "decimal");
-    DATA_TYPE_DESC_MAP.put(DataType.Date, "date");
-    DATA_TYPE_DESC_MAP.put(DataType.TimeStamp, "timestamp");
-    DATA_TYPE_DESC_MAP.put(DataType.DateTime, "datetime");
-    DATA_TYPE_DESC_MAP.put(DataType.Time, "time");
-    DATA_TYPE_DESC_MAP.put(DataType.Year, "year");
-    DATA_TYPE_DESC_MAP.put(DataType.Varchar, "varchar");
-    DATA_TYPE_DESC_MAP.put(DataType.Binary, "binary");
-    DATA_TYPE_DESC_MAP.put(DataType.Char, "char");
-    DATA_TYPE_DESC_MAP.put(DataType.NChar, "char");
-    DATA_TYPE_DESC_MAP.put(DataType.Text, "text");
-    DATA_TYPE_DESC_MAP.put(DataType.VarBinary, "varbinary");
-    DATA_TYPE_DESC_MAP.put(DataType.Json, "json");
+    TYPE_DESC_MAP = new HashMap<>();
+    TYPE_DESC_MAP.put(DataType.Invalid, "unspecified");
+    TYPE_DESC_MAP.put(DataType.TinyInt, "tinyint");
+    TYPE_DESC_MAP.put(DataType.SmallInt, "smallint");
+    TYPE_DESC_MAP.put(DataType.MediumInt, "mediumint");
+    TYPE_DESC_MAP.put(DataType.Int, "int");
+    TYPE_DESC_MAP.put(DataType.BigInt, "bigint");
+    TYPE_DESC_MAP.put(DataType.Bit, "bit");
+    TYPE_DESC_MAP.put(DataType.Float, "float");
+    TYPE_DESC_MAP.put(DataType.Double, "double");
+    TYPE_DESC_MAP.put(DataType.Decimal, "decimal");
+    TYPE_DESC_MAP.put(DataType.Date, "date");
+    TYPE_DESC_MAP.put(DataType.TimeStamp, "timestamp");
+    TYPE_DESC_MAP.put(DataType.DateTime, "datetime");
+    TYPE_DESC_MAP.put(DataType.Time, "time");
+    TYPE_DESC_MAP.put(DataType.Year, "year");
+    TYPE_DESC_MAP.put(DataType.Varchar, "varchar");
+    TYPE_DESC_MAP.put(DataType.Char, "char");
+    TYPE_DESC_MAP.put(DataType.NChar, "char");
+    TYPE_DESC_MAP.put(DataType.Binary, "binary");
+    TYPE_DESC_MAP.put(DataType.VarBinary, "varbinary");
+    TYPE_DESC_MAP.put(DataType.TinyBlob, "tinyblob");
+    TYPE_DESC_MAP.put(DataType.Blob, "blob");
+    TYPE_DESC_MAP.put(DataType.MediumBlob, "mediumblob");
+    TYPE_DESC_MAP.put(DataType.LongBlob, "longblob");
+    TYPE_DESC_MAP.put(DataType.TinyText, "tinytext");
+    TYPE_DESC_MAP.put(DataType.Text, "text");
+    TYPE_DESC_MAP.put(DataType.MediumText, "mediumtext");
+    TYPE_DESC_MAP.put(DataType.LongText, "longtext");
+    TYPE_DESC_MAP.put(DataType.Json, "json");
   }
 
   static {
-    DATA_TYPE_DEFAULT_PRECISION_SCALE = new HashMap<>();
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Bit, new int[]{ 1, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.TinyInt, new int[]{ 4, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.SmallInt, new int[]{ 6, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.MediumInt, new int[]{ 9, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Int, new int[]{ 11, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.BigInt, new int[]{ 20, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Float, new int[]{ 12, -1 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Double, new int[]{ 22, -1 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Decimal, new int[]{ 10, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Year, new int[]{ 4, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Null, new int[]{ 0, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Time, new int[]{ 10, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Date, new int[]{ 10, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.DateTime, new int[]{ 19, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.TimeStamp, new int[]{ 19, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Char, new int[]{ 1, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.NChar, new int[]{ 1, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Varchar, new int[]{ 5, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Binary, new int[]{ 1, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.VarBinary, new int[]{ 5, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Text, new int[]{ 65535, 0 });
-    DATA_TYPE_DEFAULT_PRECISION_SCALE.put(DataType.Json, new int[]{ Integer.MAX_VALUE, 0 });
+    TYPE_DEFAULT_PRECISION_MAP = new HashMap<>();
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Null, new long[]{ 0, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Bit, new long[]{ 1, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.TinyInt, new long[]{ 4, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.SmallInt, new long[]{ 6, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.MediumInt, new long[]{ 9, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Int, new long[]{ 11, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.BigInt, new long[]{ 20, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Float, new long[]{ 12, -1 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Double, new long[]{ 22, -1 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Decimal, new long[]{ 10, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Year, new long[]{ 4, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Time, new long[]{ 10, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Date, new long[]{ 10, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.DateTime, new long[]{ 19, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.TimeStamp, new long[]{ 19, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Char, new long[]{ 1, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.NChar, new long[]{ 1, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Binary, new long[]{ 1, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.TinyBlob, new long[]{ 255, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Blob, new long[]{ 65535, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.MediumBlob, new long[]{ 16777215, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.LongBlob, new long[]{ 4294967295L, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Text, new long[]{ 4294967295L, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Json, new long[]{ 4294967295L, 0 });
   }
 
 //  private static final EnumMap<DataType, EnumMap<DataType, DataType>> TYPE_MERGE_MAP;
@@ -350,7 +384,7 @@ public final class Types {
       throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_PARSE_NO_TYPE_ERROR, "after " + colName);
     }
     String typeName = sqlType.getName().toUpperCase();
-    DataType dt = DATA_TYPE_MAP.get(typeName);
+    DataType dt = TYPE_MAP.get(typeName);
     if (dt == null) {
       throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_NOT_SUPPORTED_YET, "SqlType(" + typeName + ")");
     }
@@ -359,15 +393,8 @@ public final class Types {
       return buildSQLType(dt);
     }
 
-    int precision = 0;
-    int scale = 0;
-    boolean unsigned = false;
-    boolean zerofill = false;
-    if (sqlType instanceof SQLDataTypeImpl) {
-      SQLDataTypeImpl sqlTypeImpl = (SQLDataTypeImpl) sqlType;
-      unsigned = sqlTypeImpl.isUnsigned();
-      zerofill = sqlTypeImpl.isZerofill();
-    }
+    SQLType.Builder builder = buildPrecisionAndScale(sqlType.getArguments(), dt, typeName, colName);
+
     String charset = DEFAULT_CHARSET.name();
     String collate = DEFAULT_COLLATE;
 //    if (sqlType instanceof SQLCharacterDataType) {
@@ -375,7 +402,48 @@ public final class Types {
 //      charset = chaDataType.getCharSetName();
 //      collate = chaDataType.getCollate();
 //    }
-    List<SQLExpr> argList = sqlType.getArguments();
+    builder.setCharset(charset).setCollate(collate);
+
+    boolean unsigned = false;
+    boolean zerofill = false;
+    if (sqlType instanceof SQLDataTypeImpl) {
+      SQLDataTypeImpl sqlTypeImpl = (SQLDataTypeImpl) sqlType;
+      unsigned = sqlTypeImpl.isUnsigned();
+      zerofill = sqlTypeImpl.isZerofill();
+    }
+    switch (dt) {
+      case TinyInt:
+      case SmallInt:
+      case MediumInt:
+      case Int:
+      case BigInt:
+      case Bit:
+      case Decimal:
+      case Float:
+      case Double:
+        if (zerofill) {
+          unsigned = true;
+        }
+        break;
+      default:
+        break;
+    }
+    return builder.setUnsigned(unsigned).setZerofill(zerofill).build();
+  }
+
+  private static SQLType.Builder buildPrecisionAndScale(List<SQLExpr> argList, DataType dt, String typeName, String colName) {
+    if (argList.isEmpty()) {
+      long[] defaults = TYPE_DEFAULT_PRECISION_MAP.get(dt);
+      if (defaults != null) {
+        return SQLType.newBuilder()
+                .setType(dt)
+                .setPrecision(defaults[0])
+                .setScale((int) defaults[1]);
+      }
+    }
+
+    long precision = UNDEFINE_WIDTH;
+    int scale = UNDEFINE_WIDTH;
     switch (dt) {
       //tiny/small/medium/int/bigint(M), 0~255
       case TinyInt:
@@ -383,7 +451,6 @@ public final class Types {
       case MediumInt:
       case Int:
       case BigInt:
-        unsigned = handleNumberZerofill(unsigned, zerofill);
         precision = getArg1(argList, typeName);
         validArgNeg(typeName, precision, argList);
         if (precision > 255) {
@@ -392,12 +459,6 @@ public final class Types {
         break;
       //bit(M), 1~64
       case Bit:
-        unsigned = handleNumberZerofill(unsigned, zerofill);
-        if (argList.isEmpty()) {
-          //the default is 1;
-          precision = 1;
-          break;
-        }
         precision = getArg1(argList, typeName);
         validArgNeg(typeName, precision, argList);
         if (precision == 0) {
@@ -407,32 +468,27 @@ public final class Types {
           throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_DISPLAYWIDTH, colName, "64");
         }
         break;
-      //decimal/float/double(M,D)
+      //decimal/float/double(M,D), the default of decimal is (10,0);
+      //don't check fount/double default
+      //float: If M and D are omitted, values are stored to the limits permitted by the hardware
       case Decimal:
       case Float:
       case Double:
-        unsigned = handleNumberZerofill(unsigned, zerofill);
-        if (argList.isEmpty()) {
-          if (dt == DataType.Decimal) {
-            //the default of decimal is (10,0);
-            precision = 10;
-          }
-          //don't check fount/double default
-          //float: If M and D are omitted, values are stored to the limits permitted by the hardware
-          break;
-        }
         if (argList.size() > 2) {
           throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_PARSE_TYPE_TWO_ERROR, typeName + "(" + argList + ")");
         }
+
         SQLExpr expr = argList.get(0);
-        precision = ((SQLIntegerExpr) expr).getNumber().intValue();
+        precision = ((SQLIntegerExpr) expr).getNumber().longValue();
+        validArgNeg(typeName, precision, argList);
+
         if (argList.size() == 2) {
           expr = argList.get(1);
           scale = ((SQLIntegerExpr) expr).getNumber().intValue();
+          validArgNeg(typeName, scale, argList);
+        } else if (dt == DataType.Decimal) {
+          scale = 0;
         }
-
-        validArgNeg(typeName, precision, argList);
-        validArgNeg(typeName, scale, argList);
 
         if (dt == DataType.Decimal && precision > 65) {
           throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_PRECISION, precision + "", colName, "65");
@@ -463,38 +519,65 @@ public final class Types {
           }
         }
         break;
+      //char[M], 0~255
+      case Char:
+      case NChar:
+      case Binary:
+      case TinyBlob:
+      case TinyText:
+        precision = getArg1(argList, typeName);
+        validArgNeg(typeName, precision, argList);
+        if (precision > MAX_CHAR_WIDTH) {
+          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_FIELDLENGTH, colName, Integer.toString(MAX_CHAR_WIDTH));
+        }
+        break;
       //varchar[M], 0~65,535
       case Varchar:
+      case VarBinary:
+      case Blob:
+      case Text:
         if (argList.isEmpty()) {
-          break;
+          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_PARSE_TYPE_ERROR, typeName + "(" + argList + ")");
         }
         precision = getArg1(argList, typeName);
         validArgNeg(typeName, precision, argList);
-        //update to no limit, maggie
-//        if (precision > 65535) {
-//          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_FIELDLENGTH, colName, "65535");
-//        }
+        if (precision > MAX_VARCHAR_WIDTH) {
+          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_FIELDLENGTH, colName, Integer.toString(MAX_VARCHAR_WIDTH));
+        }
+        break;
+      case MediumBlob:
+      case MediumText:
+        precision = getArg1(argList, typeName);
+        validArgNeg(typeName, precision, argList);
+        if (precision > MAX_MEDIUM_TEXT_WIDTH) {
+          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_FIELDLENGTH, colName, Integer.toString(MAX_MEDIUM_TEXT_WIDTH));
+        }
+        break;
+      case LongBlob:
+      case LongText:
+        precision = getArg1(argList, typeName);
+        validArgNeg(typeName, precision, argList);
+        if (precision > MAX_LONG_TEXT_WIDTH) {
+          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_FIELDLENGTH, colName, Long.toString(MAX_LONG_TEXT_WIDTH));
+        }
         break;
       //year[M], 2 or 4
       case Year:
         precision = getArg1(argList, typeName);
         validArgNeg(typeName, precision, argList);
         if (precision != 2) {
-          precision = 4;
+          precision = MAX_YEAR_WIDTH;
         }
         break;
       //datetime/timestamp/time[fsp], 0~6
       case DateTime:
       case TimeStamp:
       case Time: {
-        if (argList.isEmpty()) {
-          break;
-        }
-        scale = getArg1(argList, typeName);
+        scale = (int) getArg1(argList, typeName);
         validArgNeg(typeName, scale, argList);
-        if (scale > 6) {
+        if (scale > MAX_TIME_SCALE) {
           //? scale or precision
-          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_PRECISION, precision + "", colName, "6");
+          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_PRECISION, precision + "", colName, Integer.toString(MAX_TIME_SCALE));
         }
         break;
       }
@@ -502,26 +585,16 @@ public final class Types {
         break;
     }
 
-    return SQLType.newBuilder().setType(dt)
-            .setScale(scale).setPrecision(precision)
-            .setCharset(charset).setCollate(collate)
-            .setUnsigned(unsigned).setZerofill(zerofill).build();
+    return SQLType.newBuilder().setType(dt).setPrecision(precision).setScale(scale);
   }
 
-  private static void validArgNeg(String typeName, int arg, List<SQLExpr> argList) {
+  private static void validArgNeg(String typeName, long arg, List<SQLExpr> argList) {
     if (arg < 0) {
       throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_PARSE_TYPE_ERROR, typeName + "(" + argList + ")");
     }
   }
 
-  private static boolean handleNumberZerofill(boolean unsigned, boolean zerofill) {
-    if (zerofill) {
-      unsigned = true;
-    }
-    return unsigned;
-  }
-
-  private static int getArg1(List<SQLExpr> argList, String typeName) {
+  private static long getArg1(List<SQLExpr> argList, String typeName) {
     if (argList.isEmpty()) {
       return 0;
     }
@@ -529,7 +602,7 @@ public final class Types {
       throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_PARSE_TYPE_ONE_ERROR, typeName + "(" + argList + ")");
     }
     SQLExpr expr = argList.get(0);
-    return ((SQLIntegerExpr) expr).getNumber().intValue();
+    return ((SQLIntegerExpr) expr).getNumber().longValue();
   }
 
   public static SQLType buildSQLType(DataType type) {
@@ -605,11 +678,34 @@ public final class Types {
     return sqlType.getBinary() && isString(sqlType) ? true : false;
   }
 
-  public static boolean isTimestampFunc(SQLExpr expr, Basepb.DataType dataType) {
-    if (expr instanceof SQLIdentifierExpr && ((SQLIdentifierExpr) expr).nameEquals(Types.CURRENT_TIMESTAMP_FUNC)
-            && (dataType == Basepb.DataType.DateTime || dataType == Basepb.DataType.TimeStamp)) {
-      return true;
+  public static boolean isTimestampFunc(SQLExpr expr, Basepb.DataType dataType, int fsp, String colName) {
+
+    if (dataType != Basepb.DataType.DateTime && dataType != Basepb.DataType.TimeStamp) {
+      return false;
     }
+
+    if (expr instanceof SQLIdentifierExpr
+            && ((SQLIdentifierExpr) expr).nameEquals(Types.CURRENT_TIMESTAMP_FUNC)) {
+      if (fsp == 0) {
+        return true;
+      }
+      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_INVALID_DEFAULT, colName);
+    }
+
+    //colName TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
+    if (expr instanceof SQLMethodInvokeExpr
+            && Types.CURRENT_TIMESTAMP_FUNC.equalsIgnoreCase(((SQLMethodInvokeExpr) expr).getMethodName())) {
+      List<SQLExpr> argList = ((SQLMethodInvokeExpr) expr).getArguments();
+      if (argList != null && argList.size() == 1) {
+        int funcFsp = ((SQLIntegerExpr) argList.get(0)).getNumber().intValue();
+        if (funcFsp == fsp) {
+          return true;
+        }
+      }
+
+      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_INVALID_DEFAULT, colName);
+    }
+
     return false;
   }
 
@@ -623,9 +719,12 @@ public final class Types {
       case Null:
         return ValueType.NULL;
       case Varchar:
-      case Text:
       case Char:
       case NChar:
+      case TinyText:
+      case Text:
+      case MediumText:
+      case LongText:
         return ValueType.STRING;
 
       case TinyInt:
@@ -647,13 +746,17 @@ public final class Types {
         return ValueType.DATE;
       case Time:
         return ValueType.TIME;
-
       case Year:
         return ValueType.YEAR;
 
       case Binary:
       case VarBinary:
+      case TinyBlob:
+      case Blob:
+      case MediumBlob:
+      case LongBlob:
         return ValueType.BINARY;
+
       case Json:
         return ValueType.JSON;
       default:
@@ -701,7 +804,7 @@ public final class Types {
   public static String toDescribe(final Metapb.ColumnInfo columnInfo) {
     String append = "";
     Basepb.DataType dataType = columnInfo.getSqlType().getType();
-    String typeStr = DATA_TYPE_DESC_MAP.get(dataType);
+    String typeStr = TYPE_DESC_MAP.get(dataType);
     String charset = columnInfo.getSqlType().getCharset();
     if ("binary".equalsIgnoreCase(charset)) {
       if (dataType == Basepb.DataType.Varchar) {
@@ -709,14 +812,14 @@ public final class Types {
       }
     }
 
-    int defaultPrecision = -1;
+    long defaultPrecision = -1;
     int defaultScale = -1;
-    int[] defaults = DATA_TYPE_DEFAULT_PRECISION_SCALE.get(dataType);
+    long[] defaults = TYPE_DEFAULT_PRECISION_MAP.get(dataType);
     if (defaults != null) {
       defaultPrecision = defaults[0];
-      defaultScale = defaults[1];
+      defaultScale = (int) defaults[1];
     }
-    int precision = columnInfo.getSqlType().getPrecision();
+    long precision = columnInfo.getSqlType().getPrecision();
     int scale = columnInfo.getSqlType().getScale();
     boolean notDefaultScale = scale != defaultScale && scale != 0 && scale != Types.UNDEFINE_WIDTH;
     if (precision == 0 || precision == Types.UNDEFINE_WIDTH) {
@@ -756,7 +859,14 @@ public final class Types {
       case Varchar:
       case Binary:
       case VarBinary:
+      case TinyBlob:
+      case Blob:
+      case MediumBlob:
+      case LongBlob:
+      case TinyText:
       case Text:
+      case MediumText:
+      case LongText:
         append = String.format("(%d)", precision);
         break;
 

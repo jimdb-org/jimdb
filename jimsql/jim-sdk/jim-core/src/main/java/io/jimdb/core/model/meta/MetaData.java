@@ -92,7 +92,7 @@ public final class MetaData {
   }
 
   public Collection<? extends Catalog> getAllCatalogs() {
-    return this.catalogs;
+    return new ArrayList<>(this.catalogs);
   }
 
   public long getVersion() {
@@ -121,7 +121,7 @@ public final class MetaData {
     }
 
     @SuppressFBWarnings("SWL_SLEEP_WITH_LOCK_HELD")
-    public static synchronized void setMetaData(MetaData meta) {
+    public static synchronized void set(MetaData meta) {
       MetaData oldMeta = metaData;
       metaData = meta;
 
@@ -134,11 +134,11 @@ public final class MetaData {
       }
     }
 
-    public static MetaData getMetaData() {
+    public static MetaData get() {
       return metaData;
     }
 
-    public static MetaData getRetainedMetaData() {
+    public static MetaData getRetained() {
       MetaData meta = metaData;
       meta.retain();
       return meta;

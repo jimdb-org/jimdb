@@ -17,7 +17,7 @@
 
 <Configuration status="OFF">
     <Properties>
-        <Property name="pattern">%d{yyyy-MM-dd HH:mm:ss} [%level] -- %msg%n</Property>
+        <Property name="pattern">%d{yyyy-MM-dd HH:mm:ss} - [%level] -- %msg%n</Property>
     </Properties>
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT">
@@ -43,7 +43,7 @@
         </RollingRandomAccessFile>
     </Appenders>
     <Loggers>
-        <AsyncRoot level="error" includeLocation="false">
+        <AsyncRoot level="warn" includeLocation="false">
             <AppenderRef ref="CONSOLE"/>
             <AppenderRef ref="ROLLFILE"/>
         </AsyncRoot>

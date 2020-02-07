@@ -25,16 +25,23 @@ import java.util.Set;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.utils.lang.ByteUtil;
+import io.jimdb.core.ExecutorHelper;
+import io.jimdb.core.codec.Codec;
+import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.meta.MetaData;
 import io.jimdb.core.model.meta.RangeInfo;
 import io.jimdb.core.model.meta.Table;
+import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.plugin.MetaStore;
 import io.jimdb.core.plugin.MetaStore.TaskType;
+import io.jimdb.core.plugin.PluginFactory;
 import io.jimdb.core.plugin.RouterStore;
 import io.jimdb.core.plugin.store.Engine;
+import io.jimdb.core.values.Value;
 import io.jimdb.pb.Basepb;
+import io.jimdb.pb.Ddlpb;
 import io.jimdb.pb.Ddlpb.AddIndexInfo;
 import io.jimdb.pb.Ddlpb.IndexReorg;
 import io.jimdb.pb.Ddlpb.Task;
@@ -45,6 +52,7 @@ import io.jimdb.pb.Metapb.MetaState;
 import io.jimdb.pb.Metapb.TableInfo;
 import io.jimdb.pb.Mspb;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.NettyByteString;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -54,6 +62,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 @SuppressFBWarnings({ "EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS", "OCP_OVERLY_CONCRETE_PARAMETER" })
 final class TaskIndexHandler {
+  private static final char COMMA = ',';
+  private static final char DOT = '.';
+
   private TaskIndexHandler() {
   }
 
@@ -133,20 +144,6 @@ final class TaskIndexHandler {
 
       default:
         throw new DDLException(DDLException.ErrorType.FAILED, "invalid table state: " + index.getState().name());
-    }
-  }
-
-  private static void errorHandler(Throwable e) {
-    if (e instanceof JimException) {
-      JimException jimException = (JimException) e;
-      if (jimException.getCode() == ErrorCode.ER_DUP_ENTRY
-              || jimException.getCode() == ErrorCode.ER_CHECK_NOT_IMPLEMENTED) {
-        //not unique or not support type, rollback
-        throw new DDLException(DDLException.ErrorType.ROLLACK, ErrorCode.ER_DUP_ENTRY, jimException);
-      }
-      throw jimException;
-    } else {
-      throw new DDLException(DDLException.ErrorType.FAILED, e);
     }
   }
 
@@ -342,7 +339,9 @@ final class TaskIndexHandler {
   private static void doReorg(long taskId, TableInfo tableInfo, IndexInfo indexInfo, MetaStore metaStore, Engine storeEngine) {
     Task task = metaStore.getTask(TaskType.INDEXTASK, Task.newBuilder().setId(taskId).build());
     if (task == null) {
-      createReorgTask(taskId, tableInfo, indexInfo, metaStore, storeEngine);
+      if (!createReorgTask(taskId, tableInfo, indexInfo, metaStore, storeEngine)) {
+        return;
+      }
     }
 
     waitReorgComplete(taskId, tableInfo.getId(), metaStore);
@@ -353,17 +352,18 @@ final class TaskIndexHandler {
       Task tableTask = Task.newBuilder()
               .setId(taskId)
               .setTableId(tableId)
+              .setOp(Ddlpb.OpType.AddIndex)
               .build();
       if (!metaStore.tryLock(TaskType.SCHEMATASK, tableTask)) {
         throw new DDLException(DDLException.ErrorType.CONCURRENT, "lost the ddl task worker lock");
       }
 
-      Task indexTask = metaStore.getTask(TaskType.INDEXTASK, Task.newBuilder().setId(taskId).build());
-      if (indexTask == null) {
+      Task taskStatus = metaStore.getTask(TaskType.INDEXTASK, Task.newBuilder().setId(taskId).build());
+      if (taskStatus == null) {
         throw new DDLException(DDLException.ErrorType.CONCURRENT, String.format("Table[%d] occur concurrent process error", tableId));
       }
-      if (indexTask.getState() != TaskState.Running) {
-        throw new DDLException(DDLException.ErrorType.ROLLACK, ErrorCode.valueOf(indexTask.getErrorCode()), false, indexTask.getError());
+      if (taskStatus.getState() != TaskState.Running) {
+        throw new DDLException(DDLException.ErrorType.ROLLACK, ErrorCode.valueOf(taskStatus.getErrorCode()), false, taskStatus.getError());
       }
 
       List<Task> indexTasks = metaStore.getTasks(TaskType.INDEXTASK, Task.newBuilder().setId(taskId).build());
@@ -379,7 +379,7 @@ final class TaskIndexHandler {
         }
       }
       tableTask = null;
-      indexTask = null;
+      taskStatus = null;
       indexTasks = null;
 
       if (isComplete) {
@@ -394,7 +394,7 @@ final class TaskIndexHandler {
     }
   }
 
-  private static void createReorgTask(long taskId, TableInfo tableInfo, IndexInfo indexInfo, MetaStore metaStore, Engine storeEngine) {
+  private static boolean createReorgTask(long taskId, TableInfo tableInfo, IndexInfo indexInfo, MetaStore metaStore, Engine storeEngine) {
     try {
       Thread.sleep(10000);
     } catch (InterruptedException ex) {
@@ -402,7 +402,7 @@ final class TaskIndexHandler {
     }
 
     Index index = null;
-    Table table = MetaData.Holder.getMetaData().getTable(tableInfo.getDbId(), tableInfo.getId());
+    Table table = MetaData.Holder.get().getTable(tableInfo.getDbId(), tableInfo.getId());
     if (table != null) {
       final String indexName = indexInfo.getName();
       for (Index idx : table.getWritableIndices()) {
@@ -416,20 +416,57 @@ final class TaskIndexHandler {
       throw new DDLException(DDLException.ErrorType.CONCURRENT, String.format("Table[%d] occur concurrent process error", tableInfo.getId()));
     }
 
+    StringBuilder sb = new StringBuilder();
+    for (Column column : table.getPrimary()) {
+      sb.append(column.getName()).append(COMMA);
+    }
+    String keys = sb.substring(0, sb.length() - 1);
+    sb = new StringBuilder("select ");
+    sb.append(keys)
+            .append(" from ")
+            .append(table.getCatalog().getName())
+            .append(DOT)
+            .append(table.getName())
+            .append(" order by ")
+            .append(keys)
+            .append(" desc limit 1");
+    List<ExecResult> results = ExecutorHelper.execute(PluginFactory.getSqlExecutor(), PluginFactory.getSqlEngine(), storeEngine, sb.toString());
+    if (results == null || results.isEmpty() || results.get(0).size() == 0) {
+      return false;
+    }
+
+    Value[] values = new Value[table.getPrimary().length];
+    for (int i = 0; i < table.getPrimary().length; i++) {
+      values[i] = results.get(0).getRow(0).get(i);
+    }
+    ByteString maxKey = Codec.encodeKey(table.getId(), table.getPrimary(), values);
+    maxKey = Codec.nextKey(maxKey);
+
     Set<RangeInfo> ranges = storeEngine.getRanges(table);
     List<Task> indexTasks = new ArrayList<>(ranges.size());
     int i = 0;
     for (RangeInfo range : ranges) {
+      ByteString startKey = NettyByteString.wrap(range.getStartKey());
+      ByteString endKey = NettyByteString.wrap(range.getEndKey());
+      if (ByteUtil.compare(startKey, maxKey) >= 0) {
+        continue;
+      }
+      if (ByteUtil.compare(endKey, maxKey) > 0) {
+        endKey = maxKey;
+      }
+
       IndexReorg reorg = IndexReorg.newBuilder()
               .setIndexId(indexInfo.getId())
               .setOffset(++i)
-              .setStartKey(NettyByteString.wrap(range.getStartKey()))
-              .setEndKey(NettyByteString.wrap(range.getEndKey()))
-              .setLastKey(NettyByteString.wrap(range.getStartKey()))
+              .setStartKey(startKey)
+              .setEndKey(endKey)
+              .setLastKey(startKey)
               .build();
 
       Task indexTask = Task.newBuilder()
               .setId(taskId)
+              .setDbId(tableInfo.getDbId())
+              .setTableId(tableInfo.getId())
               .setData(reorg.toByteString())
               .setState(TaskState.Running)
               .build();
@@ -437,6 +474,11 @@ final class TaskIndexHandler {
       indexTasks.add(indexTask);
     }
 
+    if (indexTasks.isEmpty()) {
+      return false;
+    }
+
     metaStore.storeTask(TaskType.INDEXTASK, null, indexTasks.toArray(new Task[0]));
+    return true;
   }
 }

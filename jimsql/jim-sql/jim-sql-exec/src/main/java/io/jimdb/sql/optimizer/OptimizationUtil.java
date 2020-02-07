@@ -69,10 +69,6 @@ public class OptimizationUtil {
   }
 
   public static boolean hasVarSetGet(Expression expression) {
-    if (expression.getExprType() != FUNC) {
-      return false;
-    }
-
     if (expression.getExprType() == FUNC) {
       FuncExpr funcExpr = (FuncExpr) expression;
 
@@ -162,22 +158,22 @@ public class OptimizationUtil {
     return count * (StatsUtils.CPU_FACTOR + StatsUtils.MEMORY_FACTOR);
   }
 
-//  public static boolean columnsCoveredByIndex(Column[] pkCols, List<ColumnExpr> columnExprs, List<ColumnExpr> indexCols) {
-//    if (columnExprs == null || indexCols == null) {
-//      return false;
-//    }
-//
-//    Set<Integer> indexColumnIds = indexCols.stream().map(ColumnExpr::getId).collect(Collectors.toSet());
-//
-//    for (ColumnExpr columnExpr : columnExprs) {
-//
-//      if (!indexColumnIds.contains(columnExpr.getId())) {
-//        return false;
-//      }
-//    }
-//
-//    return true;
-//  }
+  public static boolean columnsCoveredByIndex(List<ColumnExpr> columnExprs, List<ColumnExpr> indexCols) {
+    if (columnExprs == null || indexCols == null) {
+      return false;
+    }
+
+    Set<Integer> indexColumnIds = indexCols.stream().map(ColumnExpr::getId).collect(Collectors.toSet());
+
+    for (ColumnExpr columnExpr : columnExprs) {
+
+      if (!indexColumnIds.contains(columnExpr.getId())) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   public static boolean columnsCoveredByIndex(Column[] pkCols, List<ColumnExpr> columnExprs, Column[] indexColumns) {
     if (columnExprs == null) {

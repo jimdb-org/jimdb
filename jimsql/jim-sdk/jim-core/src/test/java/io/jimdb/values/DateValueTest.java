@@ -20,10 +20,10 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import io.jimdb.common.utils.os.SystemClock;
 import io.jimdb.core.values.DateValue;
 import io.jimdb.core.values.TimeUtil;
 import io.jimdb.pb.Basepb.DataType;
-import io.jimdb.common.utils.os.SystemClock;
 
 import org.junit.After;
 import org.junit.Before;
@@ -58,23 +58,26 @@ public class DateValueTest {
 
   @Test
   public void testTimeZone() throws Exception {
+
+    TimeZone localZone = TimeZone.getTimeZone("Asia/Shanghai");
+
     Timestamp timestamp = new Timestamp(SystemClock.currentTimeMillis());
     System.out.println(timestamp);
 
-    Timestamp targetTimestamp = TimeUtil.changeTimeZone(timestamp, TimeZone.getTimeZone("Asia/Shanghai"), TimeZone.getTimeZone("America/Chicago"));
+    Timestamp targetTimestamp = TimeUtil.changeTimeZone(timestamp, localZone, TimeZone.getTimeZone("America/Chicago"));
     System.out.println(targetTimestamp);
 
-    Timestamp targetTimestamp2 = TimeUtil.changeTimeZone(timestamp, TimeZone.getTimeZone("Asia/Shanghai"), TimeUtil.UTC_ZONE);
+    Timestamp targetTimestamp2 = TimeUtil.changeTimeZone(timestamp, localZone, TimeUtil.UTC_ZONE);
     System.out.println(targetTimestamp2);
 
-    DateValue timestampValue = DateValue.getNow(DataType.TimeStamp, 3, TimeZone.getTimeZone("Asia/Shanghai"));
-    System.out.println(timestampValue.convertToString(null));
+    DateValue timestampValue = DateValue.getNow(DataType.TimeStamp, 3, localZone);
+    System.out.println(timestampValue.convertToString(null, localZone));
 
     DateValue datetimeValue = DateValue.getNow(DataType.DateTime, 4, null);
-    System.out.println(datetimeValue.convertToString(null));
+    System.out.println(datetimeValue.convertToString(null, null));
 
     DateValue dateValue = DateValue.getNow(DataType.Date, 0, null);
-    System.out.println(dateValue.convertToString(null));
+    System.out.println(dateValue.convertToString(null, null));
 
 //    String ids[] = TimeZone.getAvailableIDs();
 //    System.out.println(TimeZone.getDefault().getDisplayName());

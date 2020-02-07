@@ -21,9 +21,9 @@ import static io.jimdb.sql.optimizer.statistics.StatsUtils.OUT_OF_RANGE_BETWEEN_
 import static io.jimdb.sql.optimizer.statistics.StatsUtils.SELECTION_FACTOR;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import io.jimdb.core.Session;
@@ -35,14 +35,13 @@ import io.jimdb.core.expression.FuncExpr;
 import io.jimdb.core.expression.ValueRange;
 import io.jimdb.core.expression.functions.FuncType;
 import io.jimdb.core.model.meta.Column;
-import io.jimdb.core.model.meta.Table;
+import io.jimdb.core.values.Value;
 import io.jimdb.sql.optimizer.physical.NFDetacher;
 import io.jimdb.sql.optimizer.physical.RangeBuilder;
-import io.jimdb.core.values.Value;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.primitives.Longs;
+import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -54,13 +53,13 @@ import reactor.util.function.Tuple4;
  */
 @SuppressFBWarnings()
 public class TableSourceStatsInfo extends OperatorStatsInfo {
-  private Map<Long, ColumnStats> nonIndexedColumnStatsMap; // key is uid
+  private Map<Long, ColumnStats> columnStatsMap; // key is uid, this is different from the table stats
 
-  private Map<Long, IndexStats> indexStatsMap; // key is index id
+  private Map<Integer, IndexStats> indexStatsMap; // key is index id
 
-  private Map<Long, List<Long>> indexToColumnIds; // the map from the index id to its column ids.
+  private Map<Integer, List<Long>> indexToColumnUids; // the map from the index id to its column ids.
 
-  private Map<Long, Long> columnIdToIndexId; // the map from column id to index id of the first column.
+  private Map<Long, Integer> columnUidToIndexId; // the map from column id to index id of the first column.
 
   private long modifiedCount; // modified row count in the table (from table stats)
 
@@ -68,13 +67,10 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
 
   private List<Selectivity> selectivityList;
 
-  // To be used to update table stats
-  private Table table;
-
   public TableSourceStatsInfo(@NonNull TableStats tableStats, Column[] columnInfos, List<ColumnExpr> columnExprs) {
 
     super(tableStats.getEstimatedRowCount(),
-            Arrays.stream(columnInfos).mapToDouble(column -> calculateColumnNdv(tableStats, column.getId())).toArray());
+            Arrays.stream(columnInfos).mapToDouble(column -> tableStats.calculateColumnNdv(column.getId())).toArray());
 
 //    // initialize the estimated row count the same as the raw row count
 //    this.estimatedRowCount = tableStats.getEstimatedRowCount();
@@ -89,28 +85,31 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
     Map<Integer, Long> colIdToUniqueId =
             columnExprs.stream().collect(Collectors.toMap(ColumnExpr::getId, ColumnExpr::getUid));
 
-    this.nonIndexedColumnStatsMap = Maps.newHashMap();
+    this.columnStatsMap = Maps.newHashMapWithExpectedSize(columnExprs.size());
 
-    this.indexStatsMap = Maps.newHashMap();
+    this.indexStatsMap = tableStats.getIndexStatsMap();
 
-    for (Map.Entry<Integer, ColumnStats> entry : tableStats.getNonIndexedColumnStatsMap().entrySet()) {
+    for (Map.Entry<Integer, ColumnStats> entry : tableStats.getColumnStatsMap().entrySet()) {
       Long uid = colIdToUniqueId.get(entry.getKey());
 
+      // we put uid as the key instead of column id
       if (uid != null) {
-        this.nonIndexedColumnStatsMap.put(uid, entry.getValue());
+        this.columnStatsMap.put(uid, entry.getValue());
       }
     }
 
-    this.indexToColumnIds = Maps.newHashMap();
-    this.columnIdToIndexId = Maps.newHashMap();
+    this.indexToColumnUids = Maps.newHashMapWithExpectedSize(columnExprs.size());
+    this.columnUidToIndexId = Maps.newHashMapWithExpectedSize(columnExprs.size());
 
     for (IndexStats indexStats : tableStats.getIndexStatsMap().values()) {
-      List<Long> uids = Lists.newArrayList();
+      List<Long> uids = Lists.newArrayListWithCapacity(indexStats.getIndexInfo().getColumns().length);
+      final int indexId = indexStats.getIndexInfo().getId();
       for (Column columnInfo : indexStats.getIndexInfo().getColumns()) {
         Long uid = colIdToUniqueId.get(columnInfo.getId());
 
         if (uid != null) {
           uids.add(uid);
+          this.columnUidToIndexId.put(uid, indexId);
         }
       }
 
@@ -118,29 +117,13 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
         continue;
       }
 
-      final long indexId = indexStats.getIndexInfo().getId();
-      this.columnIdToIndexId.put(uids.get(0), indexId);
-
-      this.indexStatsMap.put(indexId, indexStats);
-
-      this.indexToColumnIds.put(indexId, uids);
+      this.indexToColumnUids.put(indexId, uids);
     }
 
     // initialize row count
     this.rawRowCount = tableStats.getEstimatedRowCount();
     this.modifiedCount = tableStats.getModifiedCount();
-
     this.selectivityList = Lists.newArrayList();
-  }
-
-  private static double calculateColumnNdv(TableStats tableStats, long columnId) {
-    ColumnStats columnStats = tableStats.getColumnStats(columnId);
-    if (null != columnStats && columnStats.getTotalRowCount() > 0) {
-      double ratio = (double) tableStats.getEstimatedRowCount() / (double) columnStats.getTotalRowCount();
-      return columnStats.getHistogram().getNdv() * ratio;
-    } else {
-      return tableStats.getEstimatedRowCount() * StatsUtils.DISTINCT_RATIO;
-    }
   }
 
   /**
@@ -167,7 +150,7 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
         continue;
       }
 
-      ColumnStats columnStats = this.nonIndexedColumnStatsMap.get(columnExpr.getUid());
+      ColumnStats columnStats = this.columnStatsMap.get(columnExpr.getUid());
 
       if (columnStats == null || columnStats.isInValid(session)) {
         selectivityValue *= 1.0 / DEFAULT_ROW_COUNT;
@@ -185,7 +168,7 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
     List<ColumnExpr> extractedColumns = extractColumnsFromExpressions(remainingExpressions);
 
     // update selectivities for non-indexed columns
-    calculateSelectivityForNonIndexedColumns(session, extractedColumns, remainingExpressions);
+    calculateSelectivityForColumns(session, extractedColumns, remainingExpressions);
 
     // update selectivities for indexed columns
     calculateSelectivityForIndices(session, extractedColumns, remainingExpressions);
@@ -269,26 +252,28 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
     return columnExprList;
   }
 
-  private void calculateSelectivityForNonIndexedColumns(Session session, List<ColumnExpr> extractedColumns,
-                                                        List<Expression> remainingExpressions) {
+  private void calculateSelectivityForColumns(Session session, List<ColumnExpr> extractedColumns,
+                                              List<Expression> remainingExpressions) {
 
     // We must use id instead of uid here because the id of a ColumnExpr is the same as the corresponding Column
     // stored in ColumnStats
-    final Map<Integer, ColumnExpr> idToColumnExprMap = new HashMap<>();
+    //final Map<Integer, ColumnExpr> idToColumnExprMap = new HashMap<>();
 
-    for (ColumnExpr columnExpr : extractedColumns) {
-      idToColumnExprMap.putIfAbsent(columnExpr.getId(), columnExpr);
-    }
+//    for (ColumnExpr columnExpr : extractedColumns) {
+//      idToColumnExprMap.putIfAbsent(columnExpr.getId(), columnExpr);
+//    }
 
     long mask = 0;
-    for (Map.Entry<Long, ColumnStats> entry : nonIndexedColumnStatsMap.entrySet()) {
+
+    for (ColumnExpr columnExpr : extractedColumns) {
+      //for (Map.Entry<Long, ColumnStats> entry : columnStatsMap.entrySet()) {
       // for each ColumnStatistics, we need to first find the corresponding column in the extracted columns
-      ColumnExpr columnExpr = idToColumnExprMap.get(entry.getKey());
-      if (columnExpr == null) {
+      // ColumnExpr columnExpr = idToColumnExprMap.get(entry.getKey());
+      if (!columnStatsMap.containsKey(columnExpr.getUid())) {
         continue;
       }
 
-      List<Expression> accessConditions = extractAccessConditionsForColumn(remainingExpressions, columnExpr.getUid());
+      List<Expression> accessConditions = extractAccessConditionsForColumn(remainingExpressions, columnExpr.getId());
       List<ValueRange> ranges = RangeBuilder.buildColumnRange(session, accessConditions, columnExpr.getResultType());
 
       for (int i = 0; i < remainingExpressions.size(); i++) {
@@ -300,15 +285,15 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
         }
       }
 
-      final double count = estimateRowCountByNonIndexedRanges(session, columnExpr.getUid(), ranges);
+      final double count = estimateRowCountByColumnRanges(session, columnExpr.getUid(), ranges);
       final double selectivityValue = count / this.estimatedRowCount;
-      selectivityList.add(new Selectivity(columnExpr.getId(), SelectivityType.COLUMN, mask, ranges, 1,
+      selectivityList.add(new Selectivity(columnExpr.getUid(), SelectivityType.COLUMN, mask, ranges, 1,
               selectivityValue, false));
     }
   }
 
-  public double estimateRowCountByIntColumnRanges(Session session, long id, List<ValueRange> ranges) {
-    final ColumnStats columnStats = this.nonIndexedColumnStatsMap.get(id);
+  public double estimateRowCountByIntColumnRanges(Session session, long uid, List<ValueRange> ranges) {
+    final ColumnStats columnStats = this.columnStatsMap.get(uid);
     if (columnStats == null || columnStats.isInValid(session)) {
       // TODO return pseudo count ?
       //  see TiDB GetRowCountByIntColumnRanges
@@ -319,8 +304,9 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
             * columnStats.getHistogram().estimateIncreasingFactor(this.rawRowCount);
   }
 
-  public double estimateRowCountByNonIndexedRanges(Session session, long uid, List<ValueRange> ranges) {
-    final ColumnStats columnStats = this.nonIndexedColumnStatsMap.get(uid);
+  @Override
+  public double estimateRowCountByColumnRanges(Session session, long uid, List<ValueRange> ranges) {
+    final ColumnStats columnStats = this.columnStatsMap.get(uid);
 
     if (columnStats == null || columnStats.isInValid(session)) {
       return 0;
@@ -332,8 +318,9 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
 
   // Extract the access conditions used for range calculation
   // TODO put this function into detacher
-  private List<Expression> extractAccessConditionsForColumn(List<Expression> conditions, long uid) {
-    ConditionChecker conditionChecker = new ConditionChecker(uid);
+  private List<Expression> extractAccessConditionsForColumn(List<Expression> conditions, int id) {
+    // note that id is the column id used for checker
+    ConditionChecker conditionChecker = new ConditionChecker(id);
     List<Expression> result = Lists.newArrayList();
     for (Expression condition : conditions) {
       if (conditionChecker.check(condition)) {
@@ -347,10 +334,12 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
   private void calculateSelectivityForIndices(Session session, List<ColumnExpr> extractedColumns,
                                               List<Expression> remainingExpressions) {
     long mask = 0;
-    for (Map.Entry<Long, IndexStats> entry : indexStatsMap.entrySet()) {
+    for (Map.Entry<Integer, IndexStats> entry : indexStatsMap.entrySet()) {
       // for each ColumnStatistics, we need to first find the corresponding index columns in the extracted columns
-      long[] columnIds = Longs.toArray(indexToColumnIds.get(entry.getKey()));
-      List<ColumnExpr> indexedColumnExprs = extractIndexedColumns(extractedColumns, columnIds);
+      Set<Long> columnUids = Sets.newHashSet(indexToColumnUids.get(entry.getKey()));
+      List<ColumnExpr> indexedColumnExprs =
+              extractedColumns.stream().filter(columnExpr -> columnUids.contains(columnExpr.getUid())).collect(Collectors.toList());
+
       if (indexedColumnExprs.isEmpty()) {
         continue;
       }
@@ -385,18 +374,6 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
       selectivityList.add(new Selectivity(entry.getKey(), SelectivityType.COLUMN, mask, ranges, columnCount,
               selectivityValue, isPartialCoverage));
     }
-  }
-
-  private List<ColumnExpr> extractIndexedColumns(List<ColumnExpr> extractedColumns, long[] indexColumnIds) {
-    List<ColumnExpr> result = Lists.newArrayList();
-    for (long columnId : indexColumnIds) {
-      for (ColumnExpr columnExpr : extractedColumns) {
-        if (columnExpr.getUid().equals(columnId)) {
-          result.add(columnExpr);
-        }
-      }
-    }
-    return result;
   }
 
   private List<Selectivity> greedySelect(List<Selectivity> candidates) {
@@ -467,7 +444,7 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
   /**
    * Estimate the row count for an index key
    */
-  private double estimateRowCountForIndex(Session session, List<ValueRange> ranges, long indexId) {
+  private double estimateRowCountForIndex(Session session, List<ValueRange> ranges, int indexId) {
     IndexStats indexStats = this.indexStatsMap.get(indexId);
     double totalCount = 0;
 
@@ -499,18 +476,18 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
 
       // Use histogram to estimate
       if (position != range.getStarts().size()) {
-        List<Long> columnIds = indexToColumnIds.get(indexId);
-        long columnId = -1;
+        List<Long> uids = indexToColumnUids.get(indexId);
+        long uid = -1;
         double count = 0;
-        if (position < columnIds.size()) {
-          columnId = columnIds.get(position);
+        if (position < uids.size()) {
+          uid = uids.get(position);
         }
 
-        Long idx = columnIdToIndexId.get(columnId);
+        Integer idx = columnUidToIndexId.get(uid);
         if (idx != null) {
           count = estimateRowCountByIndexedRanges(session, idx, Lists.newArrayList(range));
         } else {
-          count = estimateRowCountByNonIndexedRanges(session, columnId, Lists.newArrayList(range));
+          count = estimateRowCountByColumnRanges(session, uid, Lists.newArrayList(range));
         }
 
         selectivity *= count / indexStats.getHistogram().getTotalRowCount();
@@ -523,7 +500,7 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
   }
 
   // See TiDB (coll *HistColl) GetRowCountByIndexRange
-  public double estimateRowCountByIndexedRanges(Session session, long indexId, List<ValueRange> ranges) {
+  public double estimateRowCountByIndexedRanges(Session session, int indexId, List<ValueRange> ranges) {
     final IndexStats indexStats = this.indexStatsMap.get(indexId);
 
     if (indexStats == null || indexStats.isInValid(session)) {
@@ -570,7 +547,7 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
 
     Map<Long, ColumnStats> newNonIndexedColumnStatsMap = Maps.newHashMap();
 
-    Map<Long, IndexStats> newIndexStatsMap = Maps.newHashMap();
+    Map<Integer, IndexStats> newIndexStatsMap = Maps.newHashMap();
 
     for (Selectivity selectivity : selectivityList) {
       if (selectivity.getType() == SelectivityType.INDEX) {
@@ -583,11 +560,11 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
         IndexStats newIndexStats = indexStats.newIndexStatsFromSelectivity(session,
                 selectivity);
 
-        newIndexStatsMap.put(selectivity.getId(), newIndexStats);
+        newIndexStatsMap.put((int) selectivity.getId(), newIndexStats);
         continue;
       }
 
-      ColumnStats oldNonIndexedColStats = this.nonIndexedColumnStatsMap.get(selectivity.getId());
+      ColumnStats oldNonIndexedColStats = this.columnStatsMap.get(selectivity.getId());
       if (oldNonIndexedColStats == null) {
         continue;
       }
@@ -615,14 +592,14 @@ public class TableSourceStatsInfo extends OperatorStatsInfo {
       newNonIndexedColumnStatsMap.put(selectivity.getId(), newNonIndexedColStats);
     }
 
-    for (Map.Entry<Long, IndexStats> entry : this.indexStatsMap.entrySet()) {
+    for (Map.Entry<Integer, IndexStats> entry : this.indexStatsMap.entrySet()) {
       IndexStats indexedColStats = entry.getValue();
-      Long indexId = entry.getKey();
+      Integer indexId = entry.getKey();
 
       newIndexStatsMap.putIfAbsent(indexId, indexedColStats);
     }
 
-    for (Map.Entry<Long, ColumnStats> entry : this.nonIndexedColumnStatsMap.entrySet()) {
+    for (Map.Entry<Long, ColumnStats> entry : this.columnStatsMap.entrySet()) {
       ColumnStats nonIndexedColStats = entry.getValue();
       Long nonIndexedId = entry.getKey();
 

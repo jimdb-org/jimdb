@@ -24,12 +24,12 @@ import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 
-import io.jimdb.core.types.ValueType;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.pb.Basepb.DataType;
 import io.jimdb.common.utils.os.SystemClock;
+import io.jimdb.core.types.ValueType;
+import io.jimdb.pb.Basepb.DataType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -469,7 +469,7 @@ public final class DateValue extends Value<DateValue> {
     dateCal.clear();
     dateCal.set(year, month - 1, day, hour, minute, second);
     Timestamp ts = new Timestamp(dateCal.getTimeInMillis());
-    ts.setNanos(micros * 1000);
+    ts.setNanos(micros / 1000);
     if (zone != null) {
       return TimeUtil.changeTimeZone(ts, zone, TimeUtil.UTC_ZONE);
     }
@@ -481,7 +481,7 @@ public final class DateValue extends Value<DateValue> {
     return yearValue.getValue();
   }
 
-  public String convertToString(DataType type) {
+  public String convertToString(DataType type, TimeZone tz) {
     if (type == null) {
       type = this.getDateType();
     }
@@ -500,6 +500,9 @@ public final class DateValue extends Value<DateValue> {
       dataEncode = "0000-00-00 00:00:00";
       fspPart = "000000";
     } else {
+      if (type == DataType.TimeStamp) {
+        value = TimeUtil.changeTimeZone(value, TimeUtil.UTC_ZONE, tz);
+      }
       dataEncode = new SimpleDateFormat(DATETIME_FORMAT).format(value);
       fspPart = String.format("%06d", value.getNanos() / 1000);
     }
@@ -536,15 +539,15 @@ public final class DateValue extends Value<DateValue> {
     return getInstance(value, dateType, TimeUtil.MAX_FSP, null);
   }
 
-  public static DateValue getInstance(long value, DataType dateType) {
+  public static DateValue getInstance(long value, DataType dateType, int fsp) {
     Timestamp timeValue = TimeUtil.decodeUint64ToTimestamp(value);
-    return new DateValue(timeValue, dateType, TimeUtil.MAX_FSP);
+    return new DateValue(timeValue, dateType, fsp);
   }
 
-  public static DateValue convertTimeZone(DateValue fromValue, TimeZone fz, TimeZone tz) {
-    Timestamp timeValue = TimeUtil.changeTimeZone(fromValue.value, fz, tz);
-    return new DateValue(timeValue, fromValue.getDateType(), fromValue.getFsp());
-  }
+//  public static DateValue convertTimeZone(DateValue fromValue, TimeZone fz, TimeZone tz) {
+//    Timestamp timeValue = TimeUtil.changeTimeZone(fromValue.value, fz, tz);
+//    return new DateValue(timeValue, fromValue.getDateType(), fromValue.getFsp());
+//  }
 
   public Timestamp getValue() {
     return this.value;

@@ -17,16 +17,15 @@ package io.jimdb.sql.operator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
-import io.jimdb.core.Session;
-import io.jimdb.core.context.PrepareContext;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.core.Session;
+import io.jimdb.core.context.PreparedContext;
+import io.jimdb.core.context.PreparedStatement;
 import io.jimdb.core.expression.ColumnExpr;
-import io.jimdb.core.model.prepare.JimStatement;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.PrepareResult;
 import io.jimdb.sql.Planner;
@@ -43,75 +42,59 @@ import reactor.core.publisher.Flux;
  * @version V1.0
  */
 public final class Prepare extends Operator {
-  private int id;
-  private String name;
-  private String sqlText;
-  private SQLStatement statement;
-  private Planner planner;
-
   // MAX_PREPARED_STMT_COUNT is the name for 'max_prepared_stmt_count' system variable.
-  public static final String MAX_PREPARED_STMT_COUNT = "max_prepared_stmt_count";
+  private static final String MAX_PREPARED_STMT_COUNT = "max_prepared_stmt_count";
+  private static final int MAX_PREPARED_PARAM_COUNT = 1 << 16 - 1;
+
+  private final String sql;
+  private final Planner planner;
+
+  public Prepare(Planner planner, String sql) {
+    this.planner = planner;
+    this.sql = sql;
+  }
 
   @Override
   public Flux<ExecResult> execute(Session session) throws JimException {
-    PrepareContext context = session.getPrepareContext();
-    ConcurrentHashMap<Integer, JimStatement> jimstmts = context.getPreparedStmts();
-
-    PrepareResult prepareResult = new PrepareResult();
-
-    if (this.id != 0 && null != jimstmts.get(id)) {
-      prepareResult.setStmtId(this.id);
-      return Flux.just(prepareResult);
-    }
-
-    List<SQLStatement> statements = this.planner.parse(sqlText);
-
+    List<SQLStatement> statements = planner.parse(sql);
     if (statements.size() != 1) {
-      throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NOT_SUPPORTED_YET, "Can not prepare multiple statements");
+      throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NOT_SUPPORTED_YET, "prepare multiple statements");
     }
 
     SQLStatement statement = statements.get(0);
-
     if (statement instanceof SQLDDLStatement) {
-      throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NOT_SUPPORTED_YET, "Can not prepare DDL statements with parameters");
+      throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NOT_SUPPORTED_YET, "prepare DDL statements");
     }
 
-    List<SQLVariantRefExpr> variantRefExprs = new ArrayList<>();
+    List<SQLVariantRefExpr> variantExprs = new ArrayList<>();
     PrepareAnalyzer prepareAnalyzer = new PrepareAnalyzer();
-    prepareAnalyzer.setVariantRefExprs(variantRefExprs);
+    prepareAnalyzer.setVariantRefExprs(variantExprs);
     statement.accept(prepareAnalyzer);
-
-
-    if (variantRefExprs.size() > (1 << 16 - 1)) {
-      throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NOT_SUPPORTED_YET, "Too many prepare parameters");
+    if (variantExprs.size() > MAX_PREPARED_PARAM_COUNT) {
+      throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_PS_MANY_PARAM);
     }
 
     long maxStmtCount = Long.parseLong(session.getVarContext().getGlobalVariable(MAX_PREPARED_STMT_COUNT));
-    if (jimstmts.size() > maxStmtCount) {
-      throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_MAX_PREPARED_STMT_COUNT_REACHED, ErrorCode.ER_MAX_PREPARED_STMT_COUNT_REACHED.getMessage());
+    PreparedContext preparedContext = session.getPreparedContext();
+    if (preparedContext.getStatementCount() > maxStmtCount) {
+      throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_MAX_PREPARED_STMT_COUNT_REACHED);
     }
 
-    Operator operator = this.planner.analyze1(session, statement);
-    context.setUseCache(CacheableAnalyzer.checkCacheable(statement));
+    PrepareResult prepareResult = new PrepareResult();
 
+    Operator operator = planner.analyze(session, statement);
+    int stmtID = preparedContext.nextID();
     List<ColumnExpr> columns = operator.getSchema().getColumns();
+    prepareResult.setStmtId(stmtID);
     prepareResult.setColumnExprs(columns.toArray(new ColumnExpr[0]));
     prepareResult.setColumnsNum(columns.size());
-    prepareResult.setParametersNum(variantRefExprs.size());
-    prepareResult.setParams(variantRefExprs);
+    prepareResult.setParametersNum(variantExprs.size());
+    prepareResult.setParams(variantExprs);
 
-    if (this.id == 0) {
-      this.id = context.getNextPreparedStmtID();
-    }
-    prepareResult.setStmtId(this.id);
-
-    JimStatement stmtCache = new JimStatement();
-    stmtCache.setStmtId(this.id);
-    stmtCache.setSql(sqlText);
-    stmtCache.setSqlStatement(statement);
-    stmtCache.setParametersNum(variantRefExprs.size());
-
-    jimstmts.put(this.id, stmtCache);
+    boolean cachePlan = CacheableAnalyzer.checkCacheable(statement);
+    PreparedStatement stmtCache = new PreparedStatement(session.getPreparedContext(), sql, stmtID,
+            cachePlan, variantExprs.size(), statement);
+    preparedContext.setStatement(stmtID, stmtCache);
     return Flux.just(prepareResult);
   }
 
@@ -120,43 +103,8 @@ public final class Prepare extends Operator {
     return OperatorType.SIMPLE;
   }
 
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
+  @Override
   public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getSqlText() {
-    return sqlText;
-  }
-
-  public void setSqlText(String sqlText) {
-    this.sqlText = sqlText;
-  }
-
-  public SQLStatement getStatement() {
-    return statement;
-  }
-
-  public void setStatement(SQLStatement statement) {
-    this.statement = statement;
-  }
-
-  public Planner getPlanner() {
-    return planner;
-  }
-
-  public void setPlanner(Planner planner) {
-    this.planner = planner;
+    return "prepare";
   }
 }

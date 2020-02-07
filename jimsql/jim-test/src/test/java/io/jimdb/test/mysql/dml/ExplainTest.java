@@ -23,6 +23,7 @@ import io.jimdb.test.mysql.SqlTestBase;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -59,18 +60,20 @@ import org.junit.Test;
  * @version V1.0
  */
 public class ExplainTest extends SqlTestBase {
+  private static String DBNAME = "testexp";
   private String expected;
+
+  @BeforeClass
+  public static void init() {
+    createCatalog(DBNAME);
+  }
 
   @Before
   public void initExplain() {
+    useCatalog(DBNAME);
     dropTable();
     createTable();
-  }
-
-  @After
-  public void end() {
-    dropTable();
-    System.out.println("drop table success");
+    useCatalog(DBNAME);
   }
 
   private void dropTable() {
@@ -113,7 +116,7 @@ public class ExplainTest extends SqlTestBase {
   @Test
   public void explainSelectSingle() {
     expected = "op=TableSource;task=proxy;op=TableSource;task=ds;";
-    List<String> result = execQuery("explain select * from test.blue_explain_test");
+    List<String> result = execQuery("explain select * from blue_explain_test");
     assertResult(expected, result);
   }
 
@@ -121,7 +124,7 @@ public class ExplainTest extends SqlTestBase {
   public void explainIndexUnique() {
     expected = "op=KeyGet;task=proxy;";
     // TODO parse projection
-    List<String> result = execQuery("explain select id, age from test.blue_explain_test where id = 2");
+    List<String> result = execQuery("explain select id, age from blue_explain_test where id = 2");
     assertResult(expected, result);
   }
 
@@ -129,7 +132,7 @@ public class ExplainTest extends SqlTestBase {
   public void explainIndexScan() {
     expected = "op=TableSource;task=proxy;op=TableSource;task=ds;";
     // TODO why use tableScan not indexScan
-    List<String> result = execQuery("explain select * from test.blue_explain_test where id > 2 and id <10");
+    List<String> result = execQuery("explain select * from blue_explain_test where id > 2 and id <10");
     assertResult(expected, result);
   }
 
@@ -137,7 +140,7 @@ public class ExplainTest extends SqlTestBase {
   public void explainIndexScan1() {
     expected = "op=TableSource;task=proxy;op=TableSource;task=ds;";
     // TODO explain error
-    List<String> result = execQuery("explain select id from test.blue_explain_test where (id > 2 and id <10) "
+    List<String> result = execQuery("explain select id from blue_explain_test where (id > 2 and id <10) "
             + "or (id > 11 and id <20) or (id >30) ");
     assertResult(expected, result);
   }
@@ -145,14 +148,14 @@ public class ExplainTest extends SqlTestBase {
   @Test
   public void explainIndexScan2() {
     expected = "op=IndexSource;task=proxy;op=IndexSource;task=ds;";
-    List<String> result = execQuery("explain select age from test.blue_explain_test where (age > 2 and age <10) or (age > 15 and age <20)");
+    List<String> result = execQuery("explain select age from blue_explain_test where (age > 2 and age <10) or (age > 15 and age <20)");
     assertResult(expected, result);
   }
 
   @Test
   public void explainIndexLookUp() {
     expected = "op=IndexLookup;task=proxy;op=TableSource;task=ds;op=IndexSource;task=ds;";
-    List<String> result = execQuery("explain select * from test.blue_explain_test where age > 2 and age <10");
+    List<String> result = execQuery("explain select * from blue_explain_test where age > 2 and age <10");
     assertResult(expected, result);
   }
 
@@ -161,7 +164,7 @@ public class ExplainTest extends SqlTestBase {
     expected = "op=Projection;task=proxy;op=TopN;task=proxy;op=Selection;task=proxy;op=Aggregation;task=proxy;"
             + "op=IndexSource;task=proxy;op=Aggregation;task=ds;op=IndexSource;task=ds;";
     // TODO limit can be pushdown
-    List<String> result = execQuery("explain select sum(id) from test.blue_explain_test where card_id > 2 "
+    List<String> result = execQuery("explain select sum(id) from blue_explain_test where card_id > 2 "
             + "group by card_id having count(card_id) >1 order by card_id limit 10 ");
     assertResult(expected, result);
   }
@@ -170,7 +173,7 @@ public class ExplainTest extends SqlTestBase {
   public void explainSelectAgg1() {
     expected = "op=Projection;task=proxy;op=Order;task=proxy;op=Selection;task=proxy;op=Aggregation;task=proxy;"
             + "op=IndexLookup;task=proxy;op=Aggregation;task=ds;op=TableSource;task=ds;op=IndexSource;task=ds;";
-    List<String> result = execQuery("explain select sum(id), avg(age) from test.blue_explain_test where card_id > 2 "
+    List<String> result = execQuery("explain select sum(id), avg(age) from blue_explain_test where card_id > 2 "
             + "group by card_id having count(card_id) >1 order by card_id desc ");
     assertResult(expected, result);
   }
@@ -178,7 +181,7 @@ public class ExplainTest extends SqlTestBase {
   @Test
   public void explainSelectAll() {
     expected = "op=Aggregation;task=proxy;op=TableSource;task=proxy;op=Aggregation;task=ds;op=TableSource;task=ds;";
-    List<String> result = execQuery("explain select count(*) from test.blue_explain_test");
+    List<String> result = execQuery("explain select count(*) from blue_explain_test");
     assertResult(expected, result);
   }
 
@@ -189,7 +192,7 @@ public class ExplainTest extends SqlTestBase {
     expected = "op=Order;task=proxy;op=Aggregation;task=proxy;op=IndexLookup;task=proxy;op=Aggregation;task=ds;"
             + "op=Selection;task=ds;op=TableSource;task=ds;op=IndexSource;task=ds;";
     List<String> result = execQuery("explain select sum(num_double) as sum,avg(num_double) as avg,count(1) as cnt,max(num_double) as max,min(num_double) as min,country,gender,company "
-            + "from test.blue_explain_test "
+            + "from blue_explain_test "
             + "where age between 25 and 45 and (country = 'china' or country = 'usa') "
             + "group by country,gender,company order by country,gender,company");
     assertResult(expected, result);
@@ -198,7 +201,7 @@ public class ExplainTest extends SqlTestBase {
   @Test
   public void explainDistinctSelect() {
     expected = "op=Aggregation;task=proxy;op=TableSource;task=proxy;op=Aggregation;task=ds;op=TableSource;task=ds;";
-    List<String> result = execQuery("explain select distinct age from test.blue_explain_test");
+    List<String> result = execQuery("explain select distinct age from blue_explain_test");
     assertResult(expected, result);
   }
 
@@ -206,7 +209,7 @@ public class ExplainTest extends SqlTestBase {
   @Test
   public void analyzeSelectAll() {
     //TODO NOT support
-    List<String> strings = execQuery("select analyze from test.blue_decimal_index");
+    List<String> strings = execQuery("select analyze from blue_decimal_index");
     strings.forEach(en -> System.out.println(en));
   }
 
@@ -214,14 +217,14 @@ public class ExplainTest extends SqlTestBase {
   @Test
   public void explainDel() {
     expected = "op=Delete;task=proxy;op=KeyGet;task=ds;";
-    List<String> result = execQuery("explain delete from test.blue_explain_test where id =2");
+    List<String> result = execQuery("explain delete from blue_explain_test where id =2");
     assertResult(expected, result);
   }
 
   @Test
   public void explainUpdate() {
     expected = "op=Update;task=proxy;op=KeyGet;task=ds;";
-    List<String> result = execQuery("explain update test.blue_explain_test set id =3  where id =2");
+    List<String> result = execQuery("explain update blue_explain_test set id =3  where id =2");
     assertResult(expected, result);
   }
 
@@ -260,7 +263,7 @@ public class ExplainTest extends SqlTestBase {
 //      }
 //      System.out.println(sql);
     //init data
-    String insertSql = "INSERT INTO test.blue_explain_test (name, age, country, num_float, num_double, num_smallint, num_bigint, gender, "
+    String insertSql = "INSERT INTO blue_explain_test (name, age, country, num_float, num_double, num_smallint, num_bigint, gender, "
             + "company, card_id, crt_timestamp, crt_date, crt_datetime, crt_time, crt_year)"
             + " VALUES('Bob-90' , 90, 'usa', 0, 20, 10, 9000000000, 0, 'jingdong', 90, '2019-12-08 12:01:05', "
             + "'2019-12-08','2019-12-08 12:01:05','12:01:05', 1995)" ;

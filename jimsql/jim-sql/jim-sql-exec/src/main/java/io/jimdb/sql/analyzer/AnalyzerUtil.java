@@ -23,15 +23,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
-import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.core.Session;
 import io.jimdb.core.expression.ValueExpr;
 import io.jimdb.core.model.meta.Table;
-import io.jimdb.pb.Basepb.DataType;
-import io.jimdb.pb.Metapb.SQLType;
 import io.jimdb.core.types.Types;
 import io.jimdb.core.values.BinaryValue;
 import io.jimdb.core.values.DateValue;
@@ -42,6 +40,8 @@ import io.jimdb.core.values.NullValue;
 import io.jimdb.core.values.StringValue;
 import io.jimdb.core.values.UnsignedLongValue;
 import io.jimdb.core.values.Value;
+import io.jimdb.pb.Basepb.DataType;
+import io.jimdb.pb.Metapb.SQLType;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -61,6 +61,7 @@ import com.alibaba.druid.sql.ast.expr.SQLNumberExpr;
 import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
 import com.alibaba.druid.sql.ast.expr.SQLRealExpr;
 import com.alibaba.druid.sql.ast.expr.SQLTimestampExpr;
+import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
 import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
 import com.alibaba.druid.sql.ast.statement.SQLSelectItem;
 import com.alibaba.druid.sql.ast.statement.SQLTableSource;
@@ -114,6 +115,8 @@ public final class AnalyzerUtil {
       }
     } else if (expr instanceof SQLNumberExpr) {
       return LongValue.getInstance(((SQLNumberExpr) expr).getNumber().longValue());
+    } else if (expr instanceof SQLVariantRefExpr) {
+      return LongValue.getInstance(0);
     }
 
     return null;
@@ -185,7 +188,8 @@ public final class AnalyzerUtil {
       BigInteger bigInteger = (BigInteger) number;
       // convert over maxUnsignedLong or less minLong to bigDecimal
       if (bigInteger.compareTo(MAX_UNSIGNEDLONG) > 0 || bigInteger.compareTo(MIN_DEC_SIGNEDLONG.toBigInteger()) < 0) {
-        value = DecimalValue.getInstance(new BigDecimal(bigInteger));
+        BigDecimal dec = new BigDecimal(bigInteger, 4);
+        value = DecimalValue.getInstance(dec, dec.precision(), dec.scale());
         resultType = Types.buildSQLType(DataType.Decimal);
       } else if (bigInteger.compareTo(MAX_SIGNEDLONG) > 0) {
         value = UnsignedLongValue.getInstance(bigInteger);
@@ -195,7 +199,8 @@ public final class AnalyzerUtil {
         resultType = Types.buildSQLType(DataType.BigInt);
       }
     } else if (number instanceof BigDecimal) {
-      value = DecimalValue.getInstance((BigDecimal) number);
+      BigDecimal dec = (BigDecimal) number;
+      value = DecimalValue.getInstance(dec, dec.precision(), dec.scale());
       resultType = Types.buildSQLType(DataType.Decimal);
     } else {
       value = LongValue.getInstance(number.longValue());

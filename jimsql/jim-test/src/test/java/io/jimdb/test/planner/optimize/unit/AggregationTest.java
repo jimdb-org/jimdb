@@ -57,8 +57,7 @@ public class AggregationTest extends TestBase {
   public void testDistinctValue() {
     TestBase.Checker checker = TestBase.Checker.build()
             .sql("select name,age from user group by name,age")
-            .addCheckPoint(TestBase.CheckPoint.PlanTree, "TableSource(user) -> HashAgg(DISTINCT(col_0),DISTINCT"
-                    + "(col_1))");
+            .addCheckPoint(TestBase.CheckPoint.PlanTree, "TableSource(user) -> Projection");
 
     run(checker);
   }
@@ -94,9 +93,7 @@ public class AggregationTest extends TestBase {
   public void testSumIndex2() {
     TestBase.Checker checker = TestBase.Checker.build()
             .sql("select sum(age),phone from user where age > 1  group by age")
-            .addCheckPoint(TestBase.CheckPoint.PlanTree, "IndexSource(user) -> TableSource(user) -> "
-                    + "HashAgg(SUM(test.user.age),DISTINCT(test.user.phone)) -> IndexLookUp -> "
-                    + "HashAgg(SUM(col_0),DISTINCT(col_1))");
+            .addCheckPoint(TestBase.CheckPoint.PlanTree, "IndexSource(user) -> HashAgg(SUM(col_0),DISTINCT(col_1))");
 
     run(checker);
   }
@@ -119,64 +116,24 @@ public class AggregationTest extends TestBase {
                     + "or age=11512800 or age=11512900 or age=11513000 or age=11513100 or age=11513200 or "
                     + "age=11513300 or age=11513400 or age=11513500 or age=11513600 or age=11513700 or age=11513800 "
                     + "or age=11513900 or age=11514000")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1151,end:1151,startInclusive:true,"
-                    + "endInclusive:true}][{start:1151100,end:1151100,startInclusive:true,"
-                    + "endInclusive:true}][{start:1151200,end:1151200,startInclusive:true,"
-                    + "endInclusive:true}][{start:1151300,end:1151300,startInclusive:true,"
-                    + "endInclusive:true}][{start:1151400,end:1151400,startInclusive:true,"
-                    + "endInclusive:true}][{start:1151500,end:1151500,startInclusive:true,"
-                    + "endInclusive:true}][{start:1151600,end:1151600,startInclusive:true,"
-                    + "endInclusive:true}][{start:1151700,end:1151700,startInclusive:true,"
-                    + "endInclusive:true}][{start:1151800,end:1151800,startInclusive:true,"
-                    + "endInclusive:true}][{start:1151900,end:1151900,startInclusive:true,"
-                    + "endInclusive:true}][{start:11511000,end:11511000,startInclusive:true,"
-                    + "endInclusive:true}][{start:11511100,end:11511100,startInclusive:true,"
-                    + "endInclusive:true}][{start:11511200,end:11511200,startInclusive:true,"
-                    + "endInclusive:true}][{start:11511300,end:11511300,startInclusive:true,"
-                    + "endInclusive:true}][{start:11511400,end:11511400,startInclusive:true,"
-                    + "endInclusive:true}][{start:11511500,end:11511500,startInclusive:true,"
-                    + "endInclusive:true}][{start:11511600,end:11511600,startInclusive:true,"
-                    + "endInclusive:true}][{start:11511700,end:11511700,startInclusive:true,"
-                    + "endInclusive:true}][{start:11511800,end:11511800,startInclusive:true,"
-                    + "endInclusive:true}][{start:11511900,end:11511900,startInclusive:true,"
-                    + "endInclusive:true}][{start:11512000,end:11512000,startInclusive:true,"
-                    + "endInclusive:true}][{start:11512100,end:11512100,startInclusive:true,"
-                    + "endInclusive:true}][{start:11512200,end:11512200,startInclusive:true,"
-                    + "endInclusive:true}][{start:11512300,end:11512300,startInclusive:true,"
-                    + "endInclusive:true}][{start:11512400,end:11512400,startInclusive:true,"
-                    + "endInclusive:true}][{start:11512500,end:11512500,startInclusive:true,"
-                    + "endInclusive:true}][{start:11512600,end:11512600,startInclusive:true,"
-                    + "endInclusive:true}][{start:11512700,end:11512700,startInclusive:true,"
-                    + "endInclusive:true}][{start:11512800,end:11512800,startInclusive:true,"
-                    + "endInclusive:true}][{start:11512900,end:11512900,startInclusive:true,"
-                    + "endInclusive:true}][{start:11513000,end:11513000,startInclusive:true,"
-                    + "endInclusive:true}][{start:11513100,end:11513100,startInclusive:true,"
-                    + "endInclusive:true}][{start:11513200,end:11513200,startInclusive:true,"
-                    + "endInclusive:true}][{start:11513300,end:11513300,startInclusive:true,"
-                    + "endInclusive:true}][{start:11513400,end:11513400,startInclusive:true,"
-                    + "endInclusive:true}][{start:11513500,end:11513500,startInclusive:true,"
-                    + "endInclusive:true}][{start:11513600,end:11513600,startInclusive:true,"
-                    + "endInclusive:true}][{start:11513700,end:11513700,startInclusive:true,"
-                    + "endInclusive:true}][{start:11513800,end:11513800,startInclusive:true,"
-                    + "endInclusive:true}][{start:11513900,end:11513900,startInclusive:true,"
-                    + "endInclusive:true}][{start:11514000,end:11514000,startInclusive:true,endInclusive:true}]]");
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:11511000,end:11511000}],startInclusive:true,endInclusive:true},{[{start:11511200,end:11511200}],startInclusive:true,endInclusive:true},{[{start:11511100,end:11511100}],startInclusive:true,endInclusive:true},{[{start:11511500,end:11511500}],startInclusive:true,endInclusive:true},{[{start:11511300,end:11511300}],startInclusive:true,endInclusive:true},{[{start:11511400,end:11511400}],startInclusive:true,endInclusive:true},{[{start:11511700,end:11511700}],startInclusive:true,endInclusive:true},{[{start:11511800,end:11511800}],startInclusive:true,endInclusive:true},{[{start:11511600,end:11511600}],startInclusive:true,endInclusive:true},{[{start:11512000,end:11512000}],startInclusive:true,endInclusive:true},{[{start:11511900,end:11511900}],startInclusive:true,endInclusive:true},{[{start:11512200,end:11512200}],startInclusive:true,endInclusive:true},{[{start:11512300,end:11512300}],startInclusive:true,endInclusive:true},{[{start:11512100,end:11512100}],startInclusive:true,endInclusive:true},{[{start:11512500,end:11512500}],startInclusive:true,endInclusive:true},{[{start:11512400,end:11512400}],startInclusive:true,endInclusive:true},{[{start:11512800,end:11512800}],startInclusive:true,endInclusive:true},{[{start:11512600,end:11512600}],startInclusive:true,endInclusive:true},{[{start:11512700,end:11512700}],startInclusive:true,endInclusive:true},{[{start:11513000,end:11513000}],startInclusive:true,endInclusive:true},{[{start:11512900,end:11512900}],startInclusive:true,endInclusive:true},{[{start:11513300,end:11513300}],startInclusive:true,endInclusive:true},{[{start:11513100,end:11513100}],startInclusive:true,endInclusive:true},{[{start:11513200,end:11513200}],startInclusive:true,endInclusive:true},{[{start:11513500,end:11513500}],startInclusive:true,endInclusive:true},{[{start:11513400,end:11513400}],startInclusive:true,endInclusive:true},{[{start:11513800,end:11513800}],startInclusive:true,endInclusive:true},{[{start:11513600,end:11513600}],startInclusive:true,endInclusive:true},{[{start:11513700,end:11513700}],startInclusive:true,endInclusive:true},{[{start:11514000,end:11514000}],startInclusive:true,endInclusive:true},{[{start:11513900,end:11513900}],startInclusive:true,endInclusive:true},{[{start:1151,end:1151}],startInclusive:true,endInclusive:true},{[{start:1151200,end:1151200}],startInclusive:true,endInclusive:true},{[{start:1151100,end:1151100}],startInclusive:true,endInclusive:true},{[{start:1151400,end:1151400}],startInclusive:true,endInclusive:true},{[{start:1151300,end:1151300}],startInclusive:true,endInclusive:true},{[{start:1151700,end:1151700}],startInclusive:true,endInclusive:true},{[{start:1151500,end:1151500}],startInclusive:true,endInclusive:true},{[{start:1151600,end:1151600}],startInclusive:true,endInclusive:true},{[{start:1151900,end:1151900}],startInclusive:true,endInclusive:true},{[{start:1151800,end:1151800}],startInclusive:true,endInclusive:true}]");
 
     run(checker);
   }
 
   @Test
-  public void testStream() {
+  public void testSum2() {
     TestBase.Checker checker = TestBase.Checker.build()
             .sql("select sum(age) from user where age > 1  group by age")
-            .addCheckPoint(TestBase.CheckPoint.PlanTree, "IndexSource(user) -> StreamAgg(SUM(col_0))");
+            .addCheckPoint(TestBase.CheckPoint.PlanTree, "IndexSource(user) -> HashAgg(SUM(col_0))");
 
     run(checker);
   }
   @Test
-  public void testStream2() {
+  public void testDistinct() {
     TestBase.Checker checker = TestBase.Checker.build()
             .sql("select DISTINCT(age) from user order by age")
-            .addCheckPoint(TestBase.CheckPoint.PlanTree, "IndexSource(user) -> StreamAgg(DISTINCT(col_0)) -> Order");
+            .addCheckPoint(TestBase.CheckPoint.PlanTree, "TableSource(user) -> HashAgg(DISTINCT(col_0)) -> Order");
 
     run(checker);
   }

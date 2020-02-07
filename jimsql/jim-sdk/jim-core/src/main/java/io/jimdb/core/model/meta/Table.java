@@ -143,14 +143,14 @@ public final class Table {
         return -1;
       }
       if (c2.isPrimary()) {
-        return -1;
+        return 1;
       }
 
       if (c1.isUnique() && !c2.isUnique()) {
         return -1;
       }
       if (!c1.isUnique() && c2.isUnique()) {
-        return -1;
+        return 1;
       }
 
       return c1.getId().intValue() >= c2.getId().intValue() ? 1 : -1;

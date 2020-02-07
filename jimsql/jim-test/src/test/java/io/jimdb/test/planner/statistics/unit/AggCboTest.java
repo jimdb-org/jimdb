@@ -17,6 +17,7 @@
 package io.jimdb.test.planner.statistics.unit;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -124,7 +125,7 @@ public class AggCboTest extends StatUsageBaseTest {
             .addCheckPoint(CheckPoint.PushDownTablePlan,
                     "TableSource(user) -> StreamAgg(SUM(test.user.score))");
 
-    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyLong(), anyList())).
+    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyInt(), anyList())).
             thenAnswer((InvocationOnMock invocation) -> {
                       long indexId = (long) invocation.getArgument(1);
                       if (indexId == 1) {
@@ -164,7 +165,7 @@ public class AggCboTest extends StatUsageBaseTest {
                     "IndexSource(user) -> StreamAgg(COUNT(col_0))")
             .addCheckPoint(CheckPoint.IndexPlan, "IndexSource(user.idx_salary)");
 
-    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyLong(), anyList())).
+    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyInt(), anyList())).
             thenAnswer((InvocationOnMock invocation) -> {
                       long indexId = (long) invocation.getArgument(1);
                       if (indexId == 4) {
@@ -187,7 +188,7 @@ public class AggCboTest extends StatUsageBaseTest {
                     "IndexSource(user) -> StreamAgg(COUNT(col_0)) -> Limit")
             .addCheckPoint(CheckPoint.IndexPlan, "IndexSource(user.idx_salary)");
 
-    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyLong(), anyList())).
+    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyInt(), anyList())).
             thenAnswer((InvocationOnMock invocation) -> {
                       long indexId = (long) invocation.getArgument(1);
                       if (indexId == 4) {

@@ -17,7 +17,6 @@ package io.jimdb.sql.privilege;
 
 import java.io.Closeable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -25,16 +24,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.jimdb.common.exception.JimException;
+import io.jimdb.common.utils.lang.NamedThreadFactory;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.model.privilege.PrivilegeType;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.plugin.MetaStore;
+import io.jimdb.core.values.Value;
 import io.jimdb.sql.privilege.cache.CatalogCache;
 import io.jimdb.sql.privilege.cache.PrivilegeCache;
+import io.jimdb.sql.privilege.cache.PrivilegeCacheHolder;
 import io.jimdb.sql.privilege.cache.TableCache;
 import io.jimdb.sql.privilege.cache.UserCache;
-import io.jimdb.common.utils.lang.NamedThreadFactory;
-import io.jimdb.core.values.Value;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,6 @@ final class PrivilegeSyncer implements Closeable {
     this.delay = delay;
     this.metaStore = metaStore;
     this.syncExecutor = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("Prvilege-Syncer-Executor", true));
-    PrivilegeCache.Holder.set(new PrivilegeCache(Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, 0));
   }
 
   void start() {
@@ -101,7 +100,7 @@ final class PrivilegeSyncer implements Closeable {
     }
 
     try {
-      long curVersion = PrivilegeCache.Holder.get().getVersion();
+      long curVersion = PrivilegeCacheHolder.get().getVersion();
       long syncVersion = metaStore.addAndGetPrivVersion(0);
       if (curVersion == syncVersion) {
         return;
@@ -110,7 +109,7 @@ final class PrivilegeSyncer implements Closeable {
       ExecResult userResult = PrivilegeStore.loadUser();
       ExecResult dbResult = PrivilegeStore.loadDB();
       ExecResult tableResult = PrivilegeStore.loadTable();
-      PrivilegeCache.Holder.set(new PrivilegeCache(buildUserCache(userResult), buildCatalogCache(dbResult), buildTableCache(tableResult), syncVersion));
+      PrivilegeCacheHolder.set(new PrivilegeCache(buildUserCache(userResult), buildCatalogCache(dbResult), buildTableCache(tableResult), syncVersion));
     } finally {
       loading.compareAndSet(true, false);
     }

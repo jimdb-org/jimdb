@@ -17,7 +17,6 @@ package io.jimdb.core.codec;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.TimeZone;
 
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
@@ -25,21 +24,18 @@ import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.expression.ValueRange;
 import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
+import io.jimdb.core.values.BinaryValue;
+import io.jimdb.core.values.LongValue;
+import io.jimdb.core.values.NullValue;
+import io.jimdb.core.values.UnsignedLongValue;
+import io.jimdb.core.values.Value;
 import io.jimdb.pb.Basepb.DataType;
 import io.jimdb.pb.Metapb.SQLType;
 import io.jimdb.pb.Txn;
-import io.jimdb.core.values.BinaryValue;
-import io.jimdb.core.values.DateValue;
-import io.jimdb.core.values.LongValue;
-import io.jimdb.core.values.NullValue;
-import io.jimdb.core.values.TimeUtil;
-import io.jimdb.core.values.UnsignedLongValue;
-import io.jimdb.core.values.Value;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.UnpooledByteBufAllocator;
 
-import com.google.common.primitives.UnsignedBytes;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.NettyByteString;
 
@@ -123,21 +119,21 @@ public final class Codec {
     return null;
   }
 
-  public static ValueAccessor decodeRow(ColumnExpr[] resultColumns, Txn.RowValueOrBuilder row, TimeZone zone) {
+  public static ValueAccessor decodeRow(ColumnExpr[] resultColumns, Txn.RowValueOrBuilder row) {
     int colLength = resultColumns.length;
     int valueLength = colLength + 1;
     Value[] values = new Value[valueLength];
     ByteBuf buf = NettyByteString.asByteBuf(row.getFields());
 
     for (int i = 0; i < colLength; i++) {
-      values[i] = decodeValue(buf, resultColumns[i].getResultType(), i, zone);
+      values[i] = decodeValue(buf, resultColumns[i].getResultType(), i);
     }
     values[colLength] = LongValue.getInstance(row.getVersion());
     return new RowValueAccessor(values);
   }
 
   public static ValueAccessor decodeRowWithOpt(ColumnExpr[] resultColumns, Txn.RowValueOrBuilder row,
-                                               ByteString pkValues, TimeZone zone) {
+                                               ByteString pkValues) {
     boolean opt = !pkValues.isEmpty();
     int colLength = resultColumns.length;
     int valueLength = colLength + 1;
@@ -148,7 +144,7 @@ public final class Codec {
     ByteBuf buf = NettyByteString.asByteBuf(row.getFields());
     int i = 0;
     for (; i < colLength; i++) {
-      values[i] = decodeValue(buf, resultColumns[i].getResultType(), i, zone);
+      values[i] = decodeValue(buf, resultColumns[i].getResultType(), i);
     }
     if (opt) {
       values[i++] = BinaryValue.getInstance(pkValues.toByteArray());
@@ -157,9 +153,8 @@ public final class Codec {
     return new RowValueAccessor(values);
   }
 
-  private static Value decodeValue(ByteBuf buf, SQLType sqlType, int offset, TimeZone zone) {
-    DataType dataType = sqlType.getType();
-    DecodeValue decodeValue = decodeValue(buf, dataType, offset);
+  private static Value decodeValue(ByteBuf buf, SQLType sqlType, int offset) {
+    DecodeValue decodeValue = decodeValueInternal(buf, sqlType, offset);
     Value value = decodeValue.getValue();
     if (value == null || value.isNull()) {
       return NullValue.getInstance();
@@ -168,13 +163,13 @@ public final class Codec {
       long number = ((LongValue) value).getValue();
       return UnsignedLongValue.getInstance(new BigInteger(Long.toUnsignedString(number)));
     }
-    if (DataType.TimeStamp == sqlType.getType()) {
-      return DateValue.convertTimeZone((DateValue) value, TimeUtil.UTC_ZONE, zone);
-    }
+//    if (DataType.TimeStamp == sqlType.getType()) {
+//      return DateValue.convertTimeZone((DateValue) value, TimeUtil.UTC_ZONE, zone);
+//    }
     return value;
   }
 
-  private static DecodeValue<? extends Value> decodeValue(ByteBuf buf, DataType dataType, int offset) {
+  private static DecodeValue<? extends Value> decodeValueInternal(ByteBuf buf, SQLType sqlType, int offset) {
     DecodeTag decodeValueTag = ValueCodec.decodeValueTag(buf);
     ValueCodec.TagType type = decodeValueTag.getType();
     if (type == ValueCodec.TagType.Null) {
@@ -184,6 +179,7 @@ public final class Codec {
       return result;
     }
 
+    DataType dataType = sqlType.getType();
     switch (dataType) {
       case TinyInt:
       case SmallInt:
@@ -203,38 +199,17 @@ public final class Codec {
       case Text:
       case Binary:
       case VarBinary:
+      case MediumBlob:
+      case Blob:
         return ValueCodec.decodeBytesValue(buf);
       case Date:
       case DateTime:
       case TimeStamp:
-        return ValueCodec.decodeDateValue(buf, dataType);
+        return ValueCodec.decodeDateValue(buf, dataType, sqlType.getScale());
       case Time:
         return ValueCodec.decodeTimeValue(buf);
       default:
         throw new RuntimeException(String.format("unsupported type(%s) when encoding column(%d)", dataType, offset));
     }
   }
-
-  public static int compare(byte[] left, ByteString right) {
-    int minLen = Math.min(left.length, right.size());
-    for (int i = 0; i < minLen; i++) {
-      int result = UnsignedBytes.compare(left[i], right.byteAt(i));
-      if (result != 0) {
-        return result;
-      }
-    }
-    return left.length - right.size();
-  }
-
-  public static int compare(ByteString left, ByteString right) {
-    int minLen = Math.min(left.size(), right.size());
-    for (int i = 0; i < minLen; i++) {
-      int result = UnsignedBytes.compare(left.byteAt(i), right.byteAt(i));
-      if (result != 0) {
-        return result;
-      }
-    }
-    return left.size() - right.size();
-  }
-
 }

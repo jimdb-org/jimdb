@@ -21,8 +21,12 @@ import com.alibaba.druid.sql.ast.SQLObject;
 import com.alibaba.druid.sql.ast.SQLOrderBy;
 import com.alibaba.druid.sql.ast.expr.SQLInSubQueryExpr;
 import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
+import com.alibaba.druid.sql.ast.statement.SQLDeleteStatement;
+import com.alibaba.druid.sql.ast.statement.SQLInsertStatement;
 import com.alibaba.druid.sql.ast.statement.SQLSelectGroupByClause;
 import com.alibaba.druid.sql.ast.statement.SQLSelectOrderByItem;
+import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
+import com.alibaba.druid.sql.ast.statement.SQLUpdateStatement;
 import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -37,10 +41,10 @@ public final class CacheableAnalyzer extends SQLASTVisitorAdapter {
 
   public static boolean checkCacheable(SQLObject sqlObject) {
 
-//    if (!(sqlObject instanceof SQLSelectStatement) || !(sqlObject instanceof SQLInsertStatement) || !(sqlObject
-//            instanceof SQLDeleteStatement) || !(sqlObject instanceof SQLUpdateStatement)) {
-//      return false;
-//    }
+    if (!(sqlObject instanceof SQLSelectStatement) && !(sqlObject instanceof SQLInsertStatement) && !(sqlObject
+            instanceof SQLDeleteStatement) && !(sqlObject instanceof SQLUpdateStatement)) {
+      return false;
+    }
     CacheableAnalyzer cacheableAnalyzer = new CacheableAnalyzer();
     sqlObject.accept(cacheableAnalyzer);
 

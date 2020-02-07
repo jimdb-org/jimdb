@@ -16,6 +16,8 @@
 package io.jimdb.test.mysql.dml;
 
 import java.math.BigDecimal;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,9 +36,12 @@ import io.jimdb.test.TestUtil;
 import io.jimdb.test.mysql.SqlTestBase;
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.alibaba.fastjson.JSON;
 
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
@@ -45,7 +50,7 @@ import reactor.util.function.Tuples;
  * @version V1.0
  */
 public class SelectIndexTest extends SqlTestBase {
-  private static String DBNAME = "test";
+  private static String DBNAME = "test_index";
   private static String INT_TABLENAME = "baker_int_idx";
   private static String FLOAT_TABLENAME = "baker_float_idx";
   private static String DATETIME_TABLENAME = "baker_datetime_idx";
@@ -70,8 +75,7 @@ public class SelectIndexTest extends SqlTestBase {
   private static void createDB() {
     createCatalog(DBNAME);
 
-    String sql = String.format("use %s", DBNAME);
-    execUpdate(sql, 0, true);
+    useCatalog(DBNAME);
   }
 
   private static void initIntTable() {
@@ -119,9 +123,9 @@ public class SelectIndexTest extends SqlTestBase {
             + "`f1` float NOT NULL, "
             + "`f2` float NOT NULL, "
             + "`f3` float NOT NULL, "
-            + "`decimal1` decimal NOT NULL, "
-            + "`decimal2` decimal NOT NULL, "
-            + "`decimal3` decimal NOT NULL, "
+            + "`decimal1` decimal(10,2) NOT NULL, "
+            + "`decimal2` decimal(10,2) NOT NULL, "
+            + "`decimal3` decimal(10,2) NOT NULL, "
             + "PRIMARY KEY (`id`), "
             + "UNIQUE INDEX double_idx (d1,d2,d3), "
             + "UNIQUE INDEX float_idx (f1,f2,f3), "
@@ -257,6 +261,8 @@ public class SelectIndexTest extends SqlTestBase {
 
   @Before
   public void fetchData() {
+    useCatalog(DBNAME);
+
     if (INT_TABLE_DATARESULT.data_result.isEmpty()) {
       selectAllfromTablebaker(INT_TABLE_DATARESULT);
     }
@@ -266,6 +272,11 @@ public class SelectIndexTest extends SqlTestBase {
     if (DATETIME_TABLE_DATARESULT.data_result.isEmpty()) {
       selectAllfromTablebaker(DATETIME_TABLE_DATARESULT);
     }
+  }
+
+  @Test
+  public void tempSelect() {
+    selectAllfromTablebaker(FLOAT_TABLE_DATARESULT);
   }
 
   @Test
@@ -286,6 +297,29 @@ public class SelectIndexTest extends SqlTestBase {
                     && row.get("i2").compareTo(2005) == 0
                     && row.get("i3").compareTo(3015) == 0);
     execQuery("select "+select.select+" from " + select.tableName + " where i1 = 1 and i2 = 2005 and i3 = 3015 ", expected);
+  }
+  @Test
+  public void testIndex4Int03() {
+    SelectCols select = new SelectCols(INT_TABLE_DATARESULT, new String[] { "i1", "i2", "i3" } );
+    List<String> expected = this.filter(select,
+            row -> row.get("i1").compareTo(1) == 0
+                    && row.get("i2").compareTo(2005) == 1
+                    && row.get("i2").compareTo(2007) == -1);
+    Assert.assertTrue("expected is empty !", expected.isEmpty());
+    execPrepareQuery("select " + select.select + " from " + select.tableName + " where i1 = ? and i2 > ? and i2 < ? ", expected,1,2005,2007);
+  }
+
+
+
+  @Test
+  public void testIndex4Int04() {
+    SelectCols select = new SelectCols(INT_TABLE_DATARESULT, new String[] { "i1", "i2", "i3" } );
+    List<String> expected = this.filter(select,
+            row -> row.get("i1").compareTo(3) == 0
+                    && row.get("i2").compareTo(2000) == 0
+                    && row.get("i3").compareTo(3030) == 0);
+    Assert.assertTrue("expected is empty !", !expected.isEmpty());
+    execPrepareQuery("select "+select.select+" from " + select.tableName + " where i1 = ? and i2 = ? and i3 = ? ", expected,3,2000,3030);
   }
 
   @Test
@@ -308,6 +342,30 @@ public class SelectIndexTest extends SqlTestBase {
     execQuery("select " + select.select + " from " + select.tableName + " where b1 = 10000 and b2 = 12006 and b3 = 13006", expected);
   }
 
+  @Test
+  public void testIndex4BigInt03() {
+    SelectCols select = new SelectCols(INT_TABLE_DATARESULT, new String[] { "b1", "b2", "b3" } );
+    List<String> expected = this.filter(select,
+            row -> row.get("b1").compareTo(10000L) == 0
+                    && row.get("b2").compareTo(12006L) == 1
+                    && row.get("b2").compareTo(12009L) == -1);
+    Assert.assertTrue("expected is empty !", !expected.isEmpty());
+    execPrepareQuery("select " +select.select+ " from " + select.tableName + " where b1 = ? and b2 > ?  and b2 < ? ", expected,10000,12006 , 12009);
+  }
+
+
+  @Test
+  public void testIndex4BigInt04() {
+    SelectCols select = new SelectCols(INT_TABLE_DATARESULT, new String[] { "b1", "b2", "b3" } );
+    List<String> expected = this.filter(select,
+            row -> row.get("b1").compareTo(10000L) == 0
+                    && row.get("b2").compareTo(12006L) == 0
+                    && row.get("b3").compareTo(13006L) == 0);
+    Assert.assertTrue("expected is empty !", !expected.isEmpty());
+    execPrepareQuery("select " + select.select + " from " + select.tableName + " where b1 = ? and b2 = ? and b3 = ?", expected,10000,12006,13006);
+  }
+
+
 
   @Test
   public void testIndex4Varchar01() {
@@ -327,6 +385,18 @@ public class SelectIndexTest extends SqlTestBase {
                     && row.get("v2").compareTo("v2-9") == 0
                     && row.get("v3").compareTo("v3-99") == 0);
     execQuery("select " + select.select + " from " + select.tableName + " where v1 = 'v1-9' and v2 = 'v2-9' and v3 = 'v3-99' ", expected);
+  }
+
+
+  @Test
+  public void testIndex4Varchar03() {
+    SelectCols select = new SelectCols(INT_TABLE_DATARESULT, new String[] { "v1", "v2", "v3" } );
+    List<String> expected = this.filter(select,
+            row -> row.get("v1").compareTo("v1-9") == 0
+                    && row.get("v2").compareTo("v2-9") < 0
+                    && row.get("v2").compareTo("v2-6") > 0);
+    Assert.assertTrue("expected is empty !", !expected.isEmpty());
+    execPrepareQuery("select " + select.select + " from " + select.tableName + " where v1 = ? and v2 < ? and v2 > ? ", expected, "v1-9","v2-9","v2-6");
   }
 
   @Test
@@ -433,7 +503,8 @@ public class SelectIndexTest extends SqlTestBase {
             row -> row.get("mi1").compareTo(1) == 0
                     && row.get("si1").compareTo(16) == 0
                     && row.get("ti1").compareTo(-111) == 0);
-    execQuery("select " + select.select + " from " + select.tableName + " where mi1 = 1 and si1 = 16 and ti1 = -111 ", expected);
+    execQuery("select " + select.select + " from " + select.tableName
+            + " where mi1 = 1 and si1 = 16 and ti1 = -111 limit 1", expected);
   }
 
   @Test
@@ -465,6 +536,19 @@ public class SelectIndexTest extends SqlTestBase {
                     && row.get("d3").compareTo(475000.0) == 0);
     execQuery("select " + select.select + " from " + select.tableName + " where d1 = 13.5 and d2 = 15000.0 and d3 = 475000.0 ", expected);
   }
+
+
+  @Test
+  public void testIndex4Double03() {
+    SelectCols select = new SelectCols(FLOAT_TABLE_DATARESULT, new String[] { "d1", "d2", "d3" } );
+    List<String> expected = this.filter(select,
+            row -> row.get("d1").compareTo(13.5) == 0
+                    && row.get("d2").compareTo(15000.0) == 0
+                    && row.get("d3").compareTo(475000.0) == 0);
+    Assert.assertTrue("expected is empty !", !expected.isEmpty());
+    execPrepareQuery("select " + select.select + " from " + select.tableName + " where d1 = ? and d2 = ? and d3 = ? ", expected,13.5 ,15000.0,475000.0);
+  }
+
 
   @Test
   public void testIndex4Float01() {
@@ -499,26 +583,26 @@ public class SelectIndexTest extends SqlTestBase {
   public void testIndex4Decimal01() {
     SelectCols select = new SelectCols(FLOAT_TABLE_DATARESULT, new String[] {"id", "decimal1", "decimal2", "decimal3" } );
     List<String> expected = this.filter(select,
-            row -> row.get("decimal1").compareTo(13.5f) == 0
-                    && row.get("decimal2").compareTo(15000.0f) == -1);
-    execQuery("select " + select.select + " from " + select.tableName + " where decimal1 = 13.5 and decimal1 < 15000.0 ", expected);
+            row -> row.get("decimal1").compareTo(new BigDecimal(13.50)) == 0
+                    && row.get("decimal2").compareTo(new BigDecimal(15000.0)) == -1);
+    execQuery("select " + select.select + " from " + select.tableName + " where decimal1 = 13.50 and decimal1 < 15000.0 ", expected);
   }
 
   @Test
   public void testIndex4Decimal02() {
     SelectCols select = new SelectCols(FLOAT_TABLE_DATARESULT, new String[] {"id", "decimal1", "decimal2", "decimal3" } );
     List<String> expected = this.filter(select,
-            row -> row.get("decimal1").compareTo(13.5f) == 0
-                    && row.get("decimal2").compareTo(15000.0f) == 0
-                    && row.get("decimal3").compareTo(475000.0f) == 0);
-    execQuery("select " + select.select + " from " + select.tableName + " where decimal1 = 13.5 and decimal2 = 15000.0 and decimal3 = 475000.0 ", expected);
+            row -> row.get("decimal1").compareTo(new BigDecimal(13.50)) == 0
+                    && row.get("decimal2").compareTo(new BigDecimal(15000.00)) == 0
+                    && row.get("decimal3").compareTo(new BigDecimal(475000.00)) == 0);
+    execQuery("select " + select.select + " from " + select.tableName + " where decimal1 = 13.50 and decimal2 = 15000.00 and decimal3 = 475000.00 ", expected);
   }
 
   @Test
   public void testIndex4DFD01() {
     SelectCols select = new SelectCols(FLOAT_TABLE_DATARESULT, new String[] {"id", "d1", "f1", "decimal1" } );
     List<String> expected = this.filter(select,
-            row -> row.get("d1").compareTo(13.5f) == 0
+            row -> row.get("d1").compareTo(13.5d) == 0
                     && row.get("f1").compareTo(15000.0f) == -1);
     execQuery("select " + select.select + " from " + select.tableName + " where d1 = 1 and f1 > 1  ", expected);
   }
@@ -527,19 +611,19 @@ public class SelectIndexTest extends SqlTestBase {
   public void testIndex4DFD02() {
     SelectCols select = new SelectCols(FLOAT_TABLE_DATARESULT, new String[] {"id", "d1", "f1", "decimal1" } );
     List<String> expected = this.filter(select,
-            row -> row.get("d1").compareTo(13.5f) == 0
+            row -> row.get("d1").compareTo(13.5d) == 0
                     && row.get("f1").compareTo(15000.0f) == 0
-                    && row.get("decimal1").compareTo(15000.0f) == 0);
-    execQuery("select " + select.select + " from " + select.tableName + " where d1 = 1 and f1 = 1 and decimal1 = 1 ", expected);
+                    && row.get("decimal1").compareTo(15000.0) == 0);
+    execQuery("select " + select.select + " from " + select.tableName + " where d1 = 13.5 and f1 = 15000.0 and decimal1 = 15000.0 ", expected);
   }
 
   @Test
   public void testIndex4DFD_UNIQ() {
     SelectCols select = new SelectCols(FLOAT_TABLE_DATARESULT, new String[] {"id", "d3", "f3", "decimal3" } );
     List<String> expected = this.filter(select,
-            row -> row.get("d3").compareTo(13.5f) == 0
+            row -> row.get("d3").compareTo(13.5d) == 0
                     && row.get("f3").compareTo(15000.0f) == 0
-                    && row.get("decimal3").compareTo(15000.0f) == 0);
+                    && row.get("decimal3").compareTo(15000.0) == 0);
     execQuery("select " + select.select + " from " + select.tableName + " where d3 = 1 and f3 = 1 and decimal3 = 1 ", expected);
   }
 
@@ -570,13 +654,12 @@ public class SelectIndexTest extends SqlTestBase {
 
   @Test
   public void testIndex4Time01() throws ParseException {
-    DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
-    Date time1 = dateFormat.parse("12:00:20");
-    Date time2 = dateFormat.parse("12:00:00");
+    Time time1 = new Time(14420000);    //12:00:20
+    Time time2 = new Time(14400000);    //12:00:00
 
     SelectCols select = new SelectCols(DATETIME_TABLE_DATARESULT, new String[] {"id", "time1", "time2" } );
     List<String> expected = this.filter(select,
-            row -> row.get("time1").compareTo(time1) == 0
+            row -> row.get("time1").equals(time1)
                     && row.get("time2").compareTo(time2) == 1);
     execQuery("select " + select.select + " from " + select.tableName + " where time1 = '12:00:20' and time2 > '12:00:00' ", expected);
   }
@@ -584,8 +667,8 @@ public class SelectIndexTest extends SqlTestBase {
   @Test
   public void testIndex4Time02() throws ParseException {
     DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
-    Date time1 = dateFormat.parse("12:00:20");
-    Date time2 = dateFormat.parse("12:00:00");
+    Time time1 = new Time(14420000);    //12:00:20
+    Time time2 = new Time(14400000);    //12:00:00
 
     SelectCols select = new SelectCols(DATETIME_TABLE_DATARESULT, new String[] {"id", "time1", "time2" } );
     List<String> expected = this.filter(select,
@@ -595,7 +678,7 @@ public class SelectIndexTest extends SqlTestBase {
   }
 
   @Test
-  public void testIndex4DateTime01() throws ParseException {
+  public void testIndex4DateTime01() {
 
     SelectCols select = new SelectCols(DATETIME_TABLE_DATARESULT, new String[] {"id", "datetime1", "datetime2" } );
     List<String> expected = this.filter(select,
@@ -605,12 +688,11 @@ public class SelectIndexTest extends SqlTestBase {
   }
 
   @Test
-  public void testIndex4DateTime02() throws ParseException {
-
+  public void testIndex4DateTime02() {
     SelectCols select = new SelectCols(DATETIME_TABLE_DATARESULT, new String[] {"id", "datetime1", "datetime2" } );
     List<String> expected = this.filter(select,
-            row -> row.get("datetime1").compareTo("1990-01-02 12:00:00") == 0
-                    && row.get("datetime2").compareTo("1990-01-03 11:00:00") == 0);
+            row -> row.get("datetime1").equals("1990-01-02 12:00:00")
+                      && row.get("datetime2").equals("1990-01-03 12:00:00"));
     execQuery("select " + select.select + " from " + select.tableName + " where datetime1 = '1990-01-02 12:00:00' and datetime2 = '1990-01-03 12:00:00' ", expected);
   }
 
@@ -681,16 +763,16 @@ public class SelectIndexTest extends SqlTestBase {
 
   @Test
   public void testIndex4_DATE_COMPOSITE02() throws ParseException {
+    DateFormat yearFormat = new SimpleDateFormat("yyyy");
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-    Date date1 = dateFormat.parse("1990-01-02");
-    Date datetime1 = dateTimeFormat.parse("1990-01-02 12:00:00");
+    Date date = dateFormat.parse("1990-01-02");
+    Date year = yearFormat.parse("1906");
 
     SelectCols select = new SelectCols(DATETIME_TABLE_DATARESULT, new String[] {"id", "date1", "datetime1" ,"year1" } );
     List<String> expected = this.filter(select,
-            row -> row.get("date1").compareTo(date1) == 0
+            row -> row.get("date1").compareTo(date) == 0
                     && row.get("datetime1").compareTo("1990-01-02 12:00:00") == 0
-                    && row.get("year1").compareTo(1906) == 0);
+                    && row.get("year1").compareTo(year) == 0);
     execQuery("select " + select.select + " from " + select.tableName + " where date1 = '1990-01-02' and datetime1 = '1990-01-02 12:00:00' and year1 = 1906", expected);
   }
 
@@ -713,28 +795,27 @@ public class SelectIndexTest extends SqlTestBase {
 
   @Test
   public void testIndex4_TIME_COMPOSITE01() throws ParseException {
-    DateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
     DateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-    Date time1 = timeFormat.parse("12:00:20");
-    Date timestamp1 = timeStampFormat.parse("1990-01-02 11:00:00");
+    Time time = new Time(14420000);    //12:00:20
+    Date timestamp1 = timeStampFormat.parse("1990-01-02 11:00:00.0");
+    Timestamp timestamp = new Timestamp(timestamp1.getTime());
 
     SelectCols select = new SelectCols(DATETIME_TABLE_DATARESULT, new String[] {"id", "time1", "timestamp1" } );
     List<String> expected = this.filter(select,
-            row -> row.get("time1").compareTo(time1) == 0
-                    && row.get("timestamp1").compareTo(timestamp1) == 1);
+            row -> row.get("time1").compareTo(time) == 0
+                      && row.get("timestamp1").compareTo(timestamp) == 1);
     execQuery("select " + select.select + " from " + select.tableName + " where time1 = '12:00:20' and timestamp1 > '1990-01-02 11:00:00' ", expected);
   }
 
   @Test
   public void testIndex4_TIME_COMPOSITE02() throws ParseException {
-    DateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
     DateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-    Date time1 = timeFormat.parse("12:00:20");
+    Time time = new Time(14420000);    //12:00:20
     Date timestamp1 = timeStampFormat.parse("1990-01-02 12:00:00");
 
     SelectCols select = new SelectCols(DATETIME_TABLE_DATARESULT, new String[] {"id", "time1", "timestamp1" } );
     List<String> expected = this.filter(select,
-            row -> row.get("time1").compareTo(time1) == 0
+            row -> row.get("time1").compareTo(time) == 0
                     && row.get("timestamp1").compareTo(timestamp1) == 0);
     execQuery("select " + select.select + " from " + select.tableName + " where time1 = '12:00:20' and timestamp1 = '1990-01-02 12:00:00' ", expected);
   }

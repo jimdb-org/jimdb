@@ -149,22 +149,4 @@ public final class PrivilegeCache {
       tablePrivileges.put(table.getUser().toLowerCase(), tableCaches);
     }
   }
-
-  /**
-   *
-   */
-  public static final class Holder {
-    private static volatile PrivilegeCache privilegeCache;
-
-    private Holder() {
-    }
-
-    public static void set(PrivilegeCache update) {
-      privilegeCache = update;
-    }
-
-    public static PrivilegeCache get() {
-      return privilegeCache;
-    }
-  }
 }

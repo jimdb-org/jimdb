@@ -26,25 +26,40 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.jimdb.pb.Ddlpb;
-import io.jimdb.pb.Ddlpb.Task;
-import io.jimdb.pb.Ddlpb.TaskState;
+import io.jimdb.common.exception.ErrorCode;
+import io.jimdb.common.exception.JimException;
+import io.jimdb.common.utils.lang.ByteUtil;
+import io.jimdb.common.utils.lang.NamedThreadFactory;
+import io.jimdb.core.Session;
+import io.jimdb.core.model.meta.Index;
+import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.plugin.MetaStore;
 import io.jimdb.core.plugin.MetaStore.TaskType;
+import io.jimdb.core.plugin.PluginFactory;
 import io.jimdb.core.plugin.store.Engine;
-import io.jimdb.common.utils.lang.NamedThreadFactory;
+import io.jimdb.core.plugin.store.Transaction;
+import io.jimdb.pb.Ddlpb.IndexReorg;
+import io.jimdb.pb.Ddlpb.Task;
+import io.jimdb.pb.Ddlpb.TaskState;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.NettyByteString;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * @version V1.0
  */
-@SuppressFBWarnings("FCBL_FIELD_COULD_BE_LOCAL")
+@SuppressFBWarnings({ "EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS", "FCBL_FIELD_COULD_BE_LOCAL" })
 final class IndexWorker implements Closeable {
   private static final Logger LOG = LoggerFactory.getLogger(IndexWorker.class);
+
+  private static final int BATCH_SIZE = 100;
+  private static final int RETRY_MAX = 10;
 
   private final int delay;
   private final int reorgThreads;
@@ -100,15 +115,15 @@ final class IndexWorker implements Closeable {
           return;
         }
 
-        Ddlpb.IndexReorg reorg = Ddlpb.IndexReorg.parseFrom(task.getData());
+        IndexReorg reorg = IndexReorg.parseFrom(task.getData());
         String key = task.getId() + "_" + reorg.getOffset();
         if (reorgWorkings.contains(key) || task.getState() == TaskState.Success) {
           continue;
         }
 
-        Task indexStatus = metaStore.getTask(TaskType.INDEXTASK, Task.newBuilder().setId(task.getId()).build());
-        if (indexStatus == null || indexStatus.getState() != TaskState.Running) {
-          continue;
+        Task taskStatus = metaStore.getTask(TaskType.INDEXTASK, Task.newBuilder().setId(task.getId()).build());
+        if (taskStatus == null || taskStatus.getState() != TaskState.Running) {
+          return;
         }
         if (!metaStore.tryLock(TaskType.INDEXTASK, task)) {
           continue;
@@ -145,14 +160,127 @@ final class IndexWorker implements Closeable {
     @Override
     public void run() {
       try {
-        task = metaStore.getTask(TaskType.INDEXTASK, task);
-        if (task == null || task.getState() == TaskState.Success) {
-          return;
+        int count = 0;
+        Task taskStatus;
+        Session session = new Session(PluginFactory.getSqlEngine(), storeEngine);
+
+        while (true) {
+          if (task.getState() == TaskState.Success) {
+            return;
+          }
+
+          taskStatus = metaStore.getTask(TaskType.INDEXTASK, Task.newBuilder().setId(task.getId()).build());
+          if (taskStatus == null || taskStatus.getState() != TaskState.Running) {
+            return;
+          }
+          if (task.getRetryNum() > RETRY_MAX) {
+            cancelIndexTask(taskStatus, task.getErrorCode(), task.getError());
+            return;
+          }
+
+          if (!metaStore.tryLock(TaskType.INDEXTASK, task)) {
+            return;
+          }
+
+          if (doReorg(session, taskStatus)) {
+            if (++count % 5 == 0) {
+              Thread.sleep(200);
+            }
+          } else {
+            Thread.sleep(3000);
+          }
         }
       } catch (Exception ex) {
         LOG.error(String.format("execute index reorg '%s' error", key), ex);
       } finally {
         workings.remove(key);
+      }
+    }
+
+    private boolean doReorg(Session session, Task taskStatus) {
+      String error = "";
+      String errorCode = "";
+      boolean isSuccess = true;
+      IndexReorg reorg = null;
+
+      try {
+        Index index = null;
+        reorg = IndexReorg.parseFrom(task.getData());
+        Table table = session.getTxnContext().getMetaData().getTable(task.getDbId(), task.getTableId());
+        if (table != null) {
+          for (Index idx : table.getWritableIndices()) {
+            if (idx.getId().intValue() == reorg.getIndexId()) {
+              index = idx;
+              break;
+            }
+          }
+        }
+        if (index == null) {
+          throw new DDLException(DDLException.ErrorType.CONCURRENT, String.format("Table[%d] occur concurrent process error", task.getTableId()));
+        }
+
+        Transaction txn = session.getTxn();
+        byte[] lastKey = txn.addIndex(index, NettyByteString.asByteArray(reorg.getLastKey()),
+                NettyByteString.asByteArray(reorg.getEndKey()), BATCH_SIZE);
+        txn.commit().blockFirst();
+
+        reorg = reorg.toBuilder()
+                .setLastKey(NettyByteString.wrap(lastKey))
+                .build();
+      } catch (InvalidProtocolBufferException ex) {
+        DDLException e = new DDLException(DDLException.ErrorType.FAILED, ex);
+        cancelIndexTask(taskStatus, e.getCode().name(), e.getMessage());
+        return isSuccess;
+      } catch (DDLException ex) {
+        throw ex;
+      } catch (JimException ex) {
+        isSuccess = false;
+        if (ex.getCode() != ErrorCode.ER_TXN_CONFLICT && ex.getCode() != ErrorCode.ER_TXN_VERSION_CONFLICT
+                && ex.getCode() != ErrorCode.ER_TXN_STATUS_CONFLICT) {
+          errorCode = ex.getCode().name();
+          error = ex.getMessage();
+        }
+      }
+
+      if (reorg != null) {
+        updateTask(reorg, errorCode, error);
+      }
+      return isSuccess;
+    }
+
+    private void updateTask(IndexReorg reorg, String errorCode, String error) {
+      Task oldTask = task;
+      int retryNum = 0;
+      if (StringUtils.isNotBlank(errorCode)) {
+        retryNum = task.getRetryNum() + 1;
+      }
+
+      TaskState state = task.getState();
+      if (ByteUtil.compare(reorg.getLastKey(), reorg.getEndKey()) >= 0) {
+        state = TaskState.Success;
+      }
+
+      task = task.toBuilder()
+              .setData(reorg.toByteString())
+              .setRetryNum(retryNum)
+              .setError(error)
+              .setErrorCode(errorCode)
+              .setState(state)
+              .build();
+      if (!metaStore.storeTask(TaskType.INDEXTASK, oldTask, task)) {
+        throw new DDLException(DDLException.ErrorType.CONCURRENT, String.format("Table[%d] occur concurrent process error", task.getTableId()));
+      }
+    }
+
+    private void cancelIndexTask(Task taskStatus, String errorCode, String error) {
+      Task oldTask = taskStatus;
+      taskStatus = taskStatus.toBuilder()
+              .setError(error)
+              .setErrorCode(errorCode)
+              .setState(TaskState.Failed)
+              .build();
+      if (!metaStore.storeTask(TaskType.INDEXTASK, oldTask, taskStatus)) {
+        throw new DDLException(DDLException.ErrorType.CONCURRENT, String.format("Table[%d] occur concurrent process error", task.getTableId()));
       }
     }
   }

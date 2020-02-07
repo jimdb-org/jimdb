@@ -17,18 +17,22 @@ package io.jimdb.test.planner.optimize.integration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import io.jimdb.common.exception.JimException;
-import io.jimdb.core.expression.Schema;
 import io.jimdb.core.model.meta.MetaData;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.sql.operator.RelOperator;
 import io.jimdb.sql.optimizer.statistics.TableStats;
 import io.jimdb.sql.optimizer.statistics.TableStatsManager;
+import io.jimdb.test.mock.meta.MockMetaStore4PhysicalPlan;
 import io.jimdb.test.planner.TestBase;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -39,18 +43,29 @@ import org.junit.Test;
 
 public class PhysicalOptimizationTest extends TestBase {
 
-  @Before
-  public void init() {
+  private static MockMetaStore4PhysicalPlan mockMetaStore = new MockMetaStore4PhysicalPlan();
 
-    Table table = MetaData.Holder.getMetaData().getTable("test", "person");
+  @BeforeClass
+  public static void initMockMeta() throws Exception {
+    setMockMeta(mockMetaStore);
+    setup();
+    init();
+  }
+
+  public static void init() {
+    Table table = MetaData.Holder.get().getTable("test", "person");
 
     TableStats tableStats = TableStatsManager.getTableStats(table);
 
     if (tableStats == null) {
-      Schema schema = new Schema(session, table.getReadableColumns());
-      TableStatsManager.addToCache(table, new TableStats(session, table, schema, 0));
+      TableStatsManager.addToCache(table, new TableStats(table, 0));
     }
 
+  }
+
+  @After
+  public void reset() {
+    TableStatsManager.resetAllTableStats();
   }
 
   private void run(Checker checker) {
@@ -84,8 +99,7 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test2() {
     Checker checker = Checker.build()
             .sql("select name from person")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,"
-                    + "endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
             .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person)")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE")
@@ -99,8 +113,7 @@ public class PhysicalOptimizationTest extends TestBase {
 
     Checker checker = Checker.build()
             .sql("select u.* from person u")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,"
-                    + "endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
             .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(u)")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE")
@@ -113,8 +126,7 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test4() {
     Checker checker = Checker.build()
             .sql("select u.* from person as u")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,"
-                    + "endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
             .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(u)")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE")
@@ -127,8 +139,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test5() {
     Checker checker = Checker.build()
             .sql("select id,age from person where age = 1")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "null")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person)")
             .addCheckPoint(CheckPoint.PushDownProcessors, "INDEX_READ_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "");
@@ -140,13 +152,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test6() {
     Checker checker = Checker.build()
             .sql("select name,age from person where age=1 and score=100")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1),"
-                    + " EqualInt(test.person.score,100)],accessConditions=[]\","
-                    + "\"idx_age\":\"tableConditions=[EqualInt(test.person.score,100)],accessConditions=[EqualInt"
-                    + "(test.person.age,1)]\",\"idx_phone\":\"tableConditions=[EqualInt(test.person.age,1), EqualInt"
-                    + "(test.person.score,100)],accessConditions=[]\",\"idx_age_phone\":\"tableConditions=[EqualInt"
-                    + "(test.person.score,100)],accessConditions=[EqualInt(test.person.age,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> Selection(EqualInt(test"
                     + ".person.score,100)) -> IndexLookUp -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> "
@@ -160,9 +167,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test7() {
     Checker checker = Checker.build()
             .sql("select id,age from person where age = 1 or score = 100")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[LogicOr(EqualInt(test.person"
-                    + ".age,1),EqualInt(test.person.score,100))],accessConditions=[]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> SELECTION_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "age EqualInt value(1) LogicOr score EqualInt value(100)");
@@ -174,13 +180,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test8() {
     Checker checker = Checker.build()
             .sql("select id from person where age = score")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,"
-                    + "test.person.score)],accessConditions=[]\",\"idx_age\":\"tableConditions=[EqualInt(test.person"
-                    + ".age,test.person.score)],accessConditions=[]\",\"idx_phone\":\"tableConditions=[EqualInt(test"
-                    + ".person.age,test.person.score)],accessConditions=[]\","
-                    + "\"idx_age_phone\":\"tableConditions=[EqualInt(test.person.age,test.person.score)],"
-                    + "accessConditions=[]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> SELECTION_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "age EqualInt score");
@@ -192,8 +193,7 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test9() {
     Checker checker = Checker.build()
             .sql("select id from person where 1=1")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,"
-                    + "endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
             .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person)")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE")
@@ -206,8 +206,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test10() {
     Checker checker = Checker.build()
             .sql("select id from person where 1=1 and age=1")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "null")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "INDEX_READ_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "");
@@ -219,12 +219,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test11() {
     Checker checker = Checker.build()
             .sql("select id,age from person where name ='Tom' and (age =1 or score =100)")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualString(test.person.name,Tom), "
-                    + "LogicOr(EqualInt(test.person.age,1),EqualInt(test.person.score,100))],accessConditions=[]\","
-                    + "\"idx_age\":\"tableConditions=[EqualString(test.person.name,Tom), LogicOr(EqualInt(test.person.age,1),EqualInt(test.person.score,100))],accessConditions=[]\","
-                    + "\"idx_phone\":\"tableConditions=[EqualString(test.person.name,Tom), LogicOr(EqualInt(test.person.age,1),EqualInt(test.person.score,100))],accessConditions=[]\","
-                    + "\"idx_age_phone\":\"tableConditions=[EqualString(test.person.name,Tom), LogicOr(EqualInt(test.person.age,1),EqualInt(test.person.score,100))],accessConditions=[]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> SELECTION_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "name EqualString value(Tom) AND age EqualInt value(1) "
@@ -237,7 +233,7 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test12() {
     Checker checker = Checker.build()
             .sql("select sum(1) from person")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
             .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> HashAgg(SUM(col_0))")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> AGGREGATION_TYPE")
@@ -250,7 +246,7 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test13() {
     Checker checker = Checker.build()
             .sql("select count(1+1) from person")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
             .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> HashAgg(COUNT(col_0))")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> AGGREGATION_TYPE")
@@ -263,8 +259,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test14() {
     Checker checker = Checker.build()
             .sql("select id,age from person where age=1")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "null")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person)")
             .addCheckPoint(CheckPoint.PushDownProcessors, "INDEX_READ_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "");
@@ -276,11 +272,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test15() {
     Checker checker = Checker.build()
             .sql("select name as c1,age a from person where age=1")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1)],"
-                    + "accessConditions=[]\",\"idx_age\":\"tableConditions=[],accessConditions=[EqualInt(test.person.age,1)]\","
-                    + "\"idx_phone\":\"tableConditions=[EqualInt(test.person.age,1)],accessConditions=[]\","
-                    + "\"idx_age_phone\":\"tableConditions=[],accessConditions=[EqualInt(test.person.age,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> IndexLookUp -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> "
                     + "tablePlanProcessors : [TABLE_READ_TYPE]")
@@ -293,7 +286,7 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test16() {
     Checker checker = Checker.build()
             .sql("select *,1 from person")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
             .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE")
@@ -306,7 +299,7 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test17() {
     Checker checker = Checker.build()
             .sql("select 1, person.* from person")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
             .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE")
@@ -319,12 +312,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test18() {
     Checker checker = Checker.build()
             .sql("select name,age from person where age=1 order by age desc")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1)"
-                    + "],accessConditions=[]\",\"idx_age\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\",\"idx_phone\":\"tableConditions=[EqualInt(test.person.age,1)],"
-                    + "accessConditions=[]\",\"idx_age_phone\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> IndexLookUp -> Projection "
                     + "-> Order")
             .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> "
@@ -338,12 +327,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test19() {
     Checker checker = Checker.build()
             .sql("select name,age from person where age=1 order by age desc,name desc")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1)"
-                    + "],accessConditions=[]\",\"idx_age\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\",\"idx_phone\":\"tableConditions=[EqualInt(test.person.age,1)],"
-                    + "accessConditions=[]\",\"idx_age_phone\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> IndexLookUp -> Projection "
                     + "-> Order")
             .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> "
@@ -357,12 +342,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test20() {
     Checker checker = Checker.build()
             .sql("select name,age from person where age=1 order by 1")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1)"
-                    + "],accessConditions=[]\",\"idx_age\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\",\"idx_phone\":\"tableConditions=[EqualInt(test.person.age,1)],"
-                    + "accessConditions=[]\",\"idx_age_phone\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> IndexLookUp -> Projection "
                     + "-> Order")
             .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> "
@@ -376,12 +357,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test21() {
     Checker checker = Checker.build()
             .sql("select name,age from person where age=1 order by 1+1")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1)"
-                    + "],accessConditions=[]\",\"idx_age\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\",\"idx_phone\":\"tableConditions=[EqualInt(test.person.age,1)],"
-                    + "accessConditions=[]\",\"idx_age_phone\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> IndexLookUp -> Projection "
                     + "-> Order")
             .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> "
@@ -395,12 +372,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test22() {
     Checker checker = Checker.build()
             .sql("select name,age from person where age=1 order by (age+score)")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1)"
-                    + "],accessConditions=[]\",\"idx_age\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\",\"idx_phone\":\"tableConditions=[EqualInt(test.person.age,1)],"
-                    + "accessConditions=[]\",\"idx_age_phone\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> IndexLookUp -> Order -> "
                     + "Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> "
@@ -414,7 +387,7 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test23() {
     Checker checker = Checker.build()
             .sql("select id from person limit 5")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
             .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Limit")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> LIMIT_TYPE")
@@ -427,17 +400,10 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test24() {
     Checker checker = Checker.build()
             .sql("select id from person where age=1 order by score limit 10")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1)"
-                    + "],accessConditions=[]\",\"idx_age\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\",\"idx_phone\":\"tableConditions=[EqualInt(test.person.age,1)],"
-                    + "accessConditions=[]\",\"idx_age_phone\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\"}")
-            .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> TopN(Exprs=(test.person"
-                    + ".score,ASC),Offset=0,Count=10) -> IndexLookUp -> TopN(Exprs=(test.person.score,ASC),Offset=0,"
-                    + "Count=10) -> Projection")
-            .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> "
-                    + "tablePlanProcessors : [TABLE_READ_TYPE -> ORDER_BY_TYPE]")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
+            .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> TopN(Exprs=(test.person.score,ASC),Offset=0,Count=10) -> IndexLookUp -> TopN(Exprs=(test.person.score,ASC),Offset=0,Count=10) -> Projection")
+            .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> tablePlanProcessors : [TABLE_READ_TYPE -> ORDER_BY_TYPE]")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "");
 
     run(checker);
@@ -447,11 +413,10 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test25() {
     Checker checker = Checker.build()
             .sql("select id from person where age=18 and phone='123'")
-            .addCheckPoint(CheckPoint.ColumnRange, "")
-            .addCheckPoint(CheckPoint.DetachConditions, "{idx_age_phone:[18123]}")
-            .addCheckPoint(CheckPoint.PlanTree, "KeyGet((idx_age_phone(age,phone),values(18:LONG,123:STRING))) -> "
-                    + "Projection(test.person.id)")
-            .addCheckPoint(CheckPoint.PushDownProcessors, "")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:123,end:123}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_phone\":\"[EqualInt(test.person.phone,123)]\"}")
+            .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> Selection(EqualInt(test.person.age,18)) -> IndexLookUp -> Projection")
+            .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> tablePlanProcessors : [TABLE_READ_TYPE -> SELECTION_TYPE]")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "");
 
     run(checker);
@@ -461,9 +426,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test26() {
     Checker checker = Checker.build()
             .sql("select age from person where name='Tom' or name='Jack'")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[LogicOr(EqualString(test.person"
-                    + ".name,Tom),EqualString(test.person.name,Jack))],accessConditions=[]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> SELECTION_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "name EqualString value(Tom) LogicOr name EqualString "
@@ -476,7 +440,7 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test27() {
     Checker checker = Checker.build()
             .sql("select id,name,age from person where id = 1 ")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "KeyGet")
             .addCheckPoint(CheckPoint.DetachConditions, "{primary:[1]}")
             .addCheckPoint(CheckPoint.PlanTree, "KeyGet((primary(id),values(1:LONG))) -> Projection(test.person.id,test"
                     + ".person.name,test.person.age)")
@@ -490,12 +454,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test28() {
     Checker checker = Checker.build()
             .sql("select id,name,age from person where age = 1 ")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1)"
-                    + "],accessConditions=[]\",\"idx_age\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\",\"idx_phone\":\"tableConditions=[EqualInt(test.person.age,1)],"
-                    + "accessConditions=[]\",\"idx_age_phone\":\"tableConditions=[],accessConditions=[EqualInt(test"
-                    + ".person.age,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> IndexLookUp -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> "
                     + "tablePlanProcessors : [TABLE_READ_TYPE]")
@@ -508,9 +468,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test29() {
     Checker checker = Checker.build()
             .sql("select id,name,age from person where id = 1 and age = 1 and score = 1")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1),"
-                    + " EqualInt(test.person.score,1)],accessConditions=[EqualInt(test.person.id,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"[EqualInt(test.person.id,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> SELECTION_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "age EqualInt value(1) AND score EqualInt value(1)");
@@ -522,10 +481,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test30() {
     Checker checker = Checker.build()
             .sql("select id,name,age from person where id = 1 or age = 1 or score = 1")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[LogicOr(LogicOr(EqualInt"
-                    + "(test.person.id,1),EqualInt(test.person.age,1)),EqualInt(test.person.score,1))],"
-                    + "accessConditions=[]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> SELECTION_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "id EqualInt value(1) LogicOr age EqualInt value(1) "
@@ -538,12 +495,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test31() {
     Checker checker = Checker.build()
             .sql("select id,name,age from person where score = 1 ")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.score,"
-                    + "1)],accessConditions=[]\",\"idx_age\":\"tableConditions=[EqualInt(test.person.score,1)],"
-                    + "accessConditions=[]\",\"idx_phone\":\"tableConditions=[EqualInt(test.person.score,1)],"
-                    + "accessConditions=[]\",\"idx_age_phone\":\"tableConditions=[EqualInt(test.person.score,1)],"
-                    + "accessConditions=[]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> SELECTION_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "score EqualInt value(1)");
@@ -555,12 +508,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test32() {
     Checker checker = Checker.build()
             .sql("select id,name,age from person where name = 'Tom' ")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualString(test.person"
-                    + ".name,Tom)],accessConditions=[]\",\"idx_age\":\"tableConditions=[EqualString(test.person.name,"
-                    + "Tom)],accessConditions=[]\",\"idx_phone\":\"tableConditions=[EqualString(test.person.name,Tom)"
-                    + "],accessConditions=[]\",\"idx_age_phone\":\"tableConditions=[EqualString(test.person.name,Tom)"
-                    + "],accessConditions=[]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> SELECTION_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "name EqualString value(Tom)");
@@ -572,14 +521,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test33() {
     Checker checker = Checker.build()
             .sql("select id,name,age from person where age = 1 and name = 'Tom'")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1),"
-                    + " EqualString(test.person.name,Tom)],accessConditions=[]\","
-                    + "\"idx_age\":\"tableConditions=[EqualString(test.person.name,Tom)],accessConditions=[EqualInt"
-                    + "(test.person.age,1)]\",\"idx_phone\":\"tableConditions=[EqualInt(test.person.age,1), "
-                    + "EqualString(test.person.name,Tom)],accessConditions=[]\","
-                    + "\"idx_age_phone\":\"tableConditions=[EqualString(test.person.name,Tom)],"
-                    + "accessConditions=[EqualInt(test.person.age,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> Selection(EqualString(test"
                     + ".person.name,Tom)) -> IndexLookUp -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> "
@@ -593,9 +536,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test34() {
     Checker checker = Checker.build()
             .sql("select id,name,age from person where age = 1 or name = 'Tom'")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[LogicOr(EqualInt(test.person"
-                    + ".age,1),EqualString(test.person.name,Tom))],accessConditions=[]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> SELECTION_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "age EqualInt value(1) LogicOr name EqualString value"
@@ -608,11 +550,9 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test35() {
     Checker checker = Checker.build()
             .sql("select id,name,age from person where phone = 1123")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,"
-                    + "endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "KeyGet")
             .addCheckPoint(CheckPoint.DetachConditions, "{idx_phone:[1123]}")
-            .addCheckPoint(CheckPoint.PlanTree, "KeyGet((idx_phone(phone),values(1123:STRING))) -> Projection(test.person"
-                    + ".id,test.person.name,test.person.age)")
+            .addCheckPoint(CheckPoint.PlanTree, "KeyGet((idx_phone(phone),values(1123:LONG))) -> Projection(test.person.id,test.person.name,test.person.age)")
             .addCheckPoint(CheckPoint.PushDownProcessors, "")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "");
 
@@ -623,13 +563,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test36() {
     Checker checker = Checker.build()
             .sql("select id,name,age from person where id = 1 and age = 1123 or score = 23")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[LogicOr(LogicAnd(EqualInt"
-                    + "(test.person.id,1),EqualInt(test.person.age,1123)),EqualInt(test.person.score,23))],"
-                    + "accessConditions=[]\",\"idx_age\":\"tableConditions=[LogicOr(LogicAnd(EqualInt(test.person.id,"
-                    + "1),EqualInt(test.person.age,1123)),EqualInt(test.person.score,23))],accessConditions=[]\","
-                    + "\"idx_age_phone\":\"tableConditions=[LogicOr(LogicAnd(EqualInt(test.person.id,1),EqualInt(test"
-                    + ".person.age,1123)),EqualInt(test.person.score,23))],accessConditions=[]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> SELECTION_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "id EqualInt value(1) LogicAnd age EqualInt value(1123) "
@@ -642,10 +577,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test37() {
     Checker checker = Checker.build()
             .sql("select id,name,age from person where  age = 1123 or score = 23 and ( name = 'Tom' ) ")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[LogicOr(EqualInt(test.person"
-                    + ".age,1123),LogicAnd(EqualInt(test.person.score,23),EqualString(test.person.name,Tom)))],"
-                    + "accessConditions=[]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> SELECTION_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "age EqualInt value(1123) LogicOr score EqualInt value"
@@ -658,9 +591,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test38() {
     Checker checker = Checker.build()
             .sql("select id,name,age from person where id = 1 and age = 1 and score = 1")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1),"
-                    + " EqualInt(test.person.score,1)],accessConditions=[EqualInt(test.person.id,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"[EqualInt(test.person.id,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> SELECTION_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "age EqualInt value(1) AND score EqualInt value(1)");
@@ -672,9 +604,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test39() {
     Checker checker = Checker.build()
             .sql("select count(*) from person where id = 1 and score = 1")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.score,1)"
-                    + "],accessConditions=[EqualInt(test.person.id,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"[EqualInt(test.person.id,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> HashAgg(COUNT(col_0))")
             .addCheckPoint(CheckPoint.PushDownProcessors, "TABLE_READ_TYPE -> SELECTION_TYPE -> AGGREGATION_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "score EqualInt value(1)");
@@ -686,8 +617,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test40() {
     Checker checker = Checker.build()
             .sql("select age from person where age = 1 ")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "null")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person)")
             .addCheckPoint(CheckPoint.PushDownProcessors, "INDEX_READ_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "");
@@ -699,9 +630,9 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test41() {
     Checker checker = Checker.build()
             .sql("select age from person where age = 1 order by id limit 10")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
             // TopN doesn't have accessPath
-            .addCheckPoint(CheckPoint.DetachConditions, "null")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TopN(Exprs=(test.person.id,ASC),Offset=0,"
                     + "Count=10) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "INDEX_READ_TYPE -> ORDER_BY_TYPE")
@@ -714,13 +645,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test42() {
     Checker checker = Checker.build()
             .sql("select id,name,age from person where age = 1 and score = 1")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1),"
-                    + " EqualInt(test.person.score,1)],accessConditions=[]\",\"idx_age\":\"tableConditions=[EqualInt"
-                    + "(test.person.score,1)],accessConditions=[EqualInt(test.person.age,1)]\","
-                    + "\"idx_phone\":\"tableConditions=[EqualInt(test.person.age,1), EqualInt(test.person.score,1)],"
-                    + "accessConditions=[]\",\"idx_age_phone\":\"tableConditions=[EqualInt(test.person.score,1)],"
-                    + "accessConditions=[EqualInt(test.person.age,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> Selection(EqualInt(test"
                     + ".person.score,1)) -> IndexLookUp -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> "
@@ -734,13 +660,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test43() {
     Checker checker = Checker.build()
             .sql("select count(*) from person where age = 1 and score = 1 ")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1),"
-                    + " EqualInt(test.person.score,1)],accessConditions=[]\",\"idx_age\":\"tableConditions=[EqualInt"
-                    + "(test.person.score,1)],accessConditions=[EqualInt(test.person.age,1)]\","
-                    + "\"idx_phone\":\"tableConditions=[EqualInt(test.person.age,1), EqualInt(test.person.score,1)],"
-                    + "accessConditions=[]\",\"idx_age_phone\":\"tableConditions=[EqualInt(test.person.score,1)],"
-                    + "accessConditions=[EqualInt(test.person.age,1)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> Selection(EqualInt(test"
                     + ".person.score,1)) -> HashAgg(COUNT(1)) -> IndexLookUp -> HashAgg(COUNT(col_0))")
             .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> "
@@ -754,8 +675,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test44() {
     Checker checker = Checker.build()
             .sql("select id,age from person where age=1 order by age desc limit 5")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "null")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TopN(Exprs=(test.person.age,DESC),Offset=0,"
                     + "Count=5)")
             .addCheckPoint(CheckPoint.PushDownProcessors, "INDEX_READ_TYPE -> ORDER_BY_TYPE")
@@ -769,9 +690,9 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test45() {
     Checker checker = Checker.build()
             .sql("select id,age from person where age > 1 order by age desc limit 5")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:MAX_VALUE,startInclusive:false,endInclusive:true}]]");
-//            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1)],"
-//                    + "accessConditions=[]\",\"idx_age\":\"tableConditions=[],accessConditions=[EqualInt(test.person"
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:MAX_VALUE}],startInclusive:false,endInclusive:true}]");
+//            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"[EqualInt(test.person.age,1)],"
+//                    + "[]\",\"idx_age\":\"[],[EqualInt(test.person"
 //                    + ".age,1)]\"}")
 //            .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> TopN(Exprs=(test.person.age,DESC),Offset=0,Count=5)")
 //            .addCheckPoint(CheckPoint.PushDownProcessors, "INDEX_READ_TYPE -> ORDER_BY_TYPE")
@@ -786,8 +707,8 @@ public class PhysicalOptimizationTest extends TestBase {
     Checker checker = Checker.build()
             .sql("select id,age,name from person where age > 1")
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:MAX_VALUE}],startInclusive:false,endInclusive:true}]");
-//            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1)],"
-//                    + "accessConditions=[]\",\"idx_age\":\"tableConditions=[],accessConditions=[EqualInt(test.person"
+//            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"[EqualInt(test.person.age,1)],"
+//                    + "[]\",\"idx_age\":\"[],[EqualInt(test.person"
 //                    + ".age,1)]\"}")
 //            .addCheckPoint(CheckPoint.PlanTree, "TableSource(person) -> TopN(Exprs=(test.person.age,DESC),Offset=0,Count=5)")
 //            .addCheckPoint(CheckPoint.PushDownProcessors, "INDEX_READ_TYPE -> ORDER_BY_TYPE")
@@ -801,8 +722,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test46() {
     Checker checker = Checker.build()
             .sql("select id,age from person where age >= 1 order by age desc limit 5")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "null")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[GreaterOrEqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TopN(Exprs=(test.person.age,DESC),Offset=0,"
                     + "Count=5)")
             .addCheckPoint(CheckPoint.PushDownProcessors, "INDEX_READ_TYPE -> ORDER_BY_TYPE")
@@ -815,8 +736,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test47() {
     Checker checker = Checker.build()
             .sql("select id,age from person where age < 1 order by age desc limit 5")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:1,startInclusive:true,endInclusive:false}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "null")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:1}],startInclusive:true,endInclusive:false}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[LessInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TopN(Exprs=(test.person.age,DESC),Offset=0,"
                     + "Count=5)")
             .addCheckPoint(CheckPoint.PushDownProcessors, "INDEX_READ_TYPE -> ORDER_BY_TYPE")
@@ -829,8 +750,8 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test48() {
     Checker checker = Checker.build()
             .sql("select id,age from person where age <= 1 order by age desc limit 5")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:1,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "null")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:1}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[LessOrEqualInt(test.person.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TopN(Exprs=(test.person.age,DESC),Offset=0,"
                     + "Count=5)")
             .addCheckPoint(CheckPoint.PushDownProcessors, "INDEX_READ_TYPE -> ORDER_BY_TYPE")
@@ -846,13 +767,10 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test49() {
     Checker checker = Checker.build()
             .sql("select id,age from person where age = 1 and phone > '123' order by age desc limit 5")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:false,endInclusive:true}{start:123,end:MAX_VALUE,startInclusive:false,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[EqualInt(test.person.age,1), "
-                    + "GreaterString(test.person.phone,123)],accessConditions=[]\","
-                    + "\"idx_age\":\"tableConditions=[GreaterString(test.person.phone,123)],accessConditions=[EqualInt"
-                    + "(test.person.age,1)]\",\"idx_phone\":\"tableConditions=[EqualInt(test.person.age,1)],"
-                    + "accessConditions=[GreaterString(test.person.phone,123)]\"}")
-            .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> Selection(GreaterString(test.person.phone,123)) -> TopN(Exprs=(test.person.age,DESC),Offset=0,Count=5) -> IndexLookUp -> TopN(Exprs=(test.person.age,DESC),Offset=0,Count=5) -> Projection")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:1},{start:123,end:MAX_VALUE}],startInclusive:false,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age_phone\":\"[EqualInt(test.person.age,1), "
+                    + "GreaterInt(test.person.phone,123)]\"}")
+            .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TopN(Exprs=(test.person.age,DESC),Offset=0,Count=5) -> Projection")
             .addCheckPoint(CheckPoint.PushDownProcessors, "INDEX_READ_TYPE -> ORDER_BY_TYPE")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "");
 
@@ -865,12 +783,9 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test50() {
     Checker checker = Checker.build()
             .sql("select id,age,name from person where age = 1 or age = 2 ")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:2,startInclusive:true,endInclusive:true}]]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[LogicOr(EqualInt(test.person"
-                    + ".age,1),EqualInt(test.person.age,2))],accessConditions=[]\",\"idx_age\":\"tableConditions=[],"
-                    + "accessConditions=[EqualInt(test.person.age,1), EqualInt(test.person.age,2)]\","
-                    + "\"idx_age_phone\":\"tableConditions=[],accessConditions=[EqualInt(test.person.age,1), EqualInt"
-                    + "(test.person.age,2)]\"}")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:2}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_age\":\"[EqualInt(test.person.age,1), EqualInt(test"
+                    + ".person.age,2)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(person) -> TableSource(person) -> IndexLookUp")
             .addCheckPoint(CheckPoint.PushDownProcessors, "indexPlanProcessors : [INDEX_READ_TYPE] -> tablePlanProcessors : [TABLE_READ_TYPE]")
             .addCheckPoint(CheckPoint.ProcessorpbSelection, "");
@@ -883,7 +798,7 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test51() {
     Checker checker = Checker.build()
             .sql("select id,age,name from person where age = 1 or age = 2 or age = 3  or age = 4")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:4,startInclusive:true,endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:1,end:4}],startInclusive:true,endInclusive:true}]")
             ;
 
     run(checker);
@@ -893,7 +808,7 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test52() {
     Checker checker = Checker.build()
             .sql("select id,age,name from person where id = 1 or id = 2 or id = 3  or id = 4")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:1,end:1,startInclusive:true,endInclusive:true}][{start:2,end:2,startInclusive:true,endInclusive:true}][{start:3,end:3,startInclusive:true,endInclusive:true}][{start:4,end:4,startInclusive:true,endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "KeyGet")
             ;
 
     run(checker);
@@ -903,7 +818,7 @@ public class PhysicalOptimizationTest extends TestBase {
   public void test53() {
     Checker checker = Checker.build()
             .sql("select id,age,name from person where age = 1 or score = 1")
-            .addCheckPoint(CheckPoint.ColumnRange, "[[{start:MIN_VALUE,end:MAX_VALUE,startInclusive:true,endInclusive:true}]]")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
             ;
 
     run(checker);
@@ -914,12 +829,25 @@ public class PhysicalOptimizationTest extends TestBase {
   @Test
   public void test54() {
     Checker checker = Checker.build()
-        .sql("select id,age,name from user where age = null ")
+        .sql("select id,age,name from person where age = null ")
         .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
         ;
 
     run(checker);
   }
+
+
+
+  @Test
+  public void test55() {
+    Checker checker = Checker.build()
+            .sql("select t_char from person where score >70 ")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,endInclusive:true}]")
+            ;
+
+    run(checker);
+  }
+
 
 
   private List<Checker> buildAllTestCases() {

@@ -24,7 +24,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import io.jimdb.core.Bootstraps;
 import io.jimdb.core.Session;
 import io.jimdb.core.config.JimConfig;
-import io.jimdb.engine.JimStoreEngine;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueExpr;
@@ -33,7 +32,6 @@ import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.meta.MetaData;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.model.result.ExecResult;
-import io.jimdb.pb.Basepb;
 import io.jimdb.core.plugin.PluginFactory;
 import io.jimdb.core.plugin.store.Engine;
 import io.jimdb.core.plugin.store.Transaction;
@@ -42,6 +40,8 @@ import io.jimdb.core.values.LongValue;
 import io.jimdb.core.values.NullValue;
 import io.jimdb.core.values.StringValue;
 import io.jimdb.core.values.Value;
+import io.jimdb.engine.JimStoreEngine;
+import io.jimdb.pb.Basepb;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -106,7 +106,7 @@ public class EngineBenchMark {
         throw new IllegalArgumentException("engine error");
       }
       this.engine = (JimStoreEngine) e;
-      this.t = MetaData.Holder.getMetaData().getTable(this.catalog, this.tableName);
+      this.t = MetaData.Holder.get().getTable(this.catalog, this.tableName);
 
       Index pkIndex = null, uniqueIndex = null;
       for (Index index : t.getWritableIndices()) {
@@ -186,7 +186,7 @@ public class EngineBenchMark {
 //    }
 
     //meta change test
-    MetaData metaData = MetaData.Holder.getMetaData();
+    MetaData metaData = MetaData.Holder.get();
     Table t = metaData.getTable(catalog, tableName);
     if (t == null) {
       LOG.error("table is null");

@@ -20,7 +20,6 @@ import java.util.List;
 
 import io.jimdb.test.mysql.SqlTestBase;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -28,7 +27,7 @@ import org.junit.Test;
  * @version V1.0
  */
 public final class KeyGetTest extends SqlTestBase {
-  private static String DBNAME = "test";
+  private static String DBNAME = "test_get";
 
   private static String TABLENAME = "sqltest";
 
@@ -38,7 +37,6 @@ public final class KeyGetTest extends SqlTestBase {
     createTable();
     initData();
   }
-
 
   private static void createDB() {
     createCatalog(DBNAME);

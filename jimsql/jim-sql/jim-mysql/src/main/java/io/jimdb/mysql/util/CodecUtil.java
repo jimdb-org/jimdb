@@ -19,22 +19,35 @@ import static io.jimdb.mysql.constant.MySQLVariables.MYSQL_SERVER_ENCODING;
 import static io.jimdb.mysql.constant.MySQLVariables.MYSQL_SERVER_VERSION;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.sql.Timestamp;
 
-import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.core.Session;
+import io.jimdb.core.context.StatementContext;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.model.result.QueryResult;
 import io.jimdb.core.model.result.impl.DMLExecResult;
 import io.jimdb.core.model.result.impl.PrepareResult;
+import io.jimdb.core.types.Types;
+import io.jimdb.core.types.ValueType;
+import io.jimdb.core.values.BinaryValue;
+import io.jimdb.core.values.DateValue;
+import io.jimdb.core.values.DoubleValue;
+import io.jimdb.core.values.LongValue;
+import io.jimdb.core.values.StringValue;
+import io.jimdb.core.values.TimeValue;
+import io.jimdb.core.values.UnsignedLongValue;
+import io.jimdb.core.values.Value;
+import io.jimdb.core.values.YearValue;
 import io.jimdb.mysql.constant.CapabilityFlags;
 import io.jimdb.mysql.constant.MySQLColumnDataType;
+import io.jimdb.mysql.constant.MySQLColumnFlag;
 import io.jimdb.mysql.constant.MySQLError;
 import io.jimdb.mysql.constant.MySQLErrorCode;
 import io.jimdb.mysql.constant.MySQLVariables;
@@ -42,18 +55,8 @@ import io.jimdb.mysql.constant.MySQLVersion;
 import io.jimdb.mysql.handshake.HandshakeInfo;
 import io.jimdb.mysql.handshake.HandshakeResult;
 import io.jimdb.pb.Basepb;
+import io.jimdb.pb.Metapb;
 import io.jimdb.pb.Metapb.SQLType;
-import io.jimdb.core.types.Types;
-import io.jimdb.core.types.ValueType;
-import io.jimdb.core.values.BinaryValue;
-import io.jimdb.core.values.DateValue;
-import io.jimdb.core.values.DecimalValue;
-import io.jimdb.core.values.DoubleValue;
-import io.jimdb.core.values.LongValue;
-import io.jimdb.core.values.StringValue;
-import io.jimdb.core.values.TimeValue;
-import io.jimdb.core.values.UnsignedLongValue;
-import io.jimdb.core.values.Value;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.CompositeByteBuf;
 import io.netty.util.internal.StringUtil;
@@ -65,7 +68,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @version V1.0
  */
-@SuppressFBWarnings("EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS")
+@SuppressFBWarnings({ "EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS", "CC_CYCLOMATIC_COMPLEXITY" })
 public final class CodecUtil {
   private static final int OK_HEAD = 0x00;
   private static final int ERR_HEAD = 0xff;
@@ -133,81 +136,34 @@ public final class CodecUtil {
    * @see <a href="https://dev.mysql.com/doc/internals/en/com-query-response.html#packet-Protocol::ColumnDefinition41">ColumnDefinition41</a>
    */
   public static void encode(Session session, CompositeByteBuf out, QueryResult resultSet) {
-
-    if (session.getStmtContext().isBinaryProtocol()) {
-      ByteBuf dataBuf = out.alloc().buffer(4);
-
-      ColumnExpr[] columns = resultSet.getColumns();
-      writeEncodeInt(dataBuf, columns.length);
-      writePacket(session, out, dataBuf);
-
-      writeColumns(session, columns, out);
-
-      resultSet.forEach(row -> {
-        ByteBuf binaryBuffer = out.alloc().buffer(4);
-        writeInt1(binaryBuffer, OK_HEAD);
-        NullBitMap nullBitmap = getNullBitmap(columns.length, row);
-
-        for (int i = 0; i < nullBitmap.getBits().length; i++) {
-          writeInt1(binaryBuffer, nullBitmap.getBits()[i]);
-        }
-        for (int i = 0; i < columns.length; i++) {
-          binaryWrite(binaryBuffer, row.get(columns[i].getOffset()), columns[i]);
-        }
-        writePacket(session, out, binaryBuffer);
-      });
-    } else {
+    ColumnExpr[] columns = resultSet.getColumns();
+    StatementContext stmtContext = session.getStmtContext();
+    if (!stmtContext.isReplying()) {
       ByteBuf dataBuf = out.alloc().buffer(8);
-      //Result Set Header
-      ColumnExpr[] columns = resultSet.getColumns();
-      //field count
       writeEncodeInt(dataBuf, columns.length);
       writePacket(session, out, dataBuf);
-
-      // column_count * Protocol::ColumnDefinition packets
       writeColumns(session, columns, out);
-
-      //One or more ProtocolText::ResultsetRow packets, each containing column_count values
-      resultSet.forEach(row -> {
-        ByteBuf rowBuffer = out.alloc().buffer(1024);
-        Value val;
-        for (ColumnExpr column : columns) {
-          val = row.get(column.getOffset());
-          if (null == val || val.isNull()) {
-            writeInt1(rowBuffer, NULL);
-          } else if (val.getType() == ValueType.BINARY) {
-            writeEncodeBytes(rowBuffer, ((BinaryValue) val).getValue());
-          } else if (val.getType() == ValueType.TIME) {
-            String timeEncode = ((TimeValue) val).convertToString();
-            writeEncodeString(rowBuffer, timeEncode);
-          } else if (val.getType() == ValueType.DATE) {
-            SQLType sqlType = column.getResultType();
-            String dataEncode = ((DateValue) val).convertToString(sqlType.getType());
-            writeEncodeString(rowBuffer, dataEncode);
-          } else {
-            writeEncodeString(rowBuffer, val.getString());
-          }
-        }
-        writePacket(session, out, rowBuffer);
-      });
+      stmtContext.setReplying(true);
     }
+
+    resultSet.forEach(row -> {
+      ByteBuf rowBuffer = out.alloc().buffer(1024);
+      if (stmtContext.isBinaryProtocol()) {
+        encodeBinaryRow(rowBuffer, columns, row);
+      } else {
+        encodeTextRow(rowBuffer, columns, row);
+      }
+      writePacket(session, out, rowBuffer);
+    });
 
     //EOF_Packet
-    ByteBuf endBuffer = out.alloc().buffer(8);
-    writeInt1(endBuffer, EOF_HEAD);
-    writeInt2(endBuffer, DEFAULT_VALUE_ZERO);
-    writeInt2(endBuffer, DEFAULT_VALUE_ZERO);
-    writePacket(session, out, endBuffer);
-  }
-
-  private static NullBitMap getNullBitmap(int columnsCount, ValueAccessor row) {
-    NullBitMap result = new NullBitMap(2, columnsCount);
-    for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
-      if (null == row.get(columnIndex)) {
-        result.setNullBit(columnIndex);
-      }
+    if (resultSet.isEof()) {
+      ByteBuf endBuffer = out.alloc().buffer(8);
+      writeInt1(endBuffer, EOF_HEAD);
+      writeInt2(endBuffer, DEFAULT_VALUE_ZERO);
+      writeInt2(endBuffer, DEFAULT_VALUE_ZERO);
+      writePacket(session, out, endBuffer);
     }
-    return result;
   }
 
   /**
@@ -342,15 +298,19 @@ public final class CodecUtil {
       // is the column character set
       writeInt2(columnBuffer, CharsetUtil.getCharset(colType.getCharset()));
       //maximum length of the field
-      writeInt4(columnBuffer, columns.length);
+      writeInt4(columnBuffer, (int) colType.getPrecision());
       //column_type
       writeInt1(columnBuffer, MySQLColumnDataType.valueOfJDBCType(colType.getType()).getValue());
       //flags
-      writeInt2(columnBuffer, DEFAULT_VALUE_ZERO);
+      writeInt2(columnBuffer, getFlag(colType));
       //decimals
-      writeInt1(columnBuffer, colType.getPrecision());
+      writeInt1(columnBuffer, colType.getScale());
       //reserved
       writeByteReserved(columnBuffer, 2);
+      //default value
+      if (column.getDefaultValue() != null) {
+        writeStringWithNull(columnBuffer, column.getDefaultValue().getString());
+      }
 
       writePacket(session, out, columnBuffer);
     }
@@ -380,115 +340,337 @@ public final class CodecUtil {
     }
   }
 
-  public static void writeNullBitMap(ByteBuf buffer, ColumnExpr[] columns, ValueAccessor valueAccessor) {
-    if (columns == null) {
-      return;
-    }
-    for (int i = 0; i < columns.length; i++) {
-      Value value = valueAccessor.get(columns[i].getOffset());
-      if (null == value) {
-        writeInt1(buffer, 0);
+  private static void encodeTextRow(ByteBuf rowBuffer, ColumnExpr[] columns, ValueAccessor row) {
+    Value val;
+    for (ColumnExpr column : columns) {
+      val = row.get(column.getOffset());
+      if (null == val || val.isNull()) {
+        writeInt1(rowBuffer, NULL);
+        continue;
+      }
+
+      switch (val.getType()) {
+        case BINARY:
+          writeEncodeBytes(rowBuffer, ((BinaryValue) val).getValue());
+          break;
+        case DATE:
+          String dataEncode = ((DateValue) val).convertToString(column.getResultType().getType(), null);
+          writeEncodeString(rowBuffer, dataEncode);
+          break;
+        case TIME:
+          String timeEncode = ((TimeValue) val).convertToString();
+          writeEncodeString(rowBuffer, timeEncode);
+          break;
+        case YEAR:
+          int year = ((YearValue) val).getValue();
+          String str;
+          if (year == 0) {
+            str = "0000";
+          } else {
+            str = Integer.toString(year);
+          }
+          writeEncodeString(rowBuffer, str);
+          break;
+        default:
+          writeEncodeString(rowBuffer, val.getString());
+          break;
       }
     }
   }
 
-  public static void binaryWrite(ByteBuf buffer, Value val, ColumnExpr column) {
-    switch (column.getResultType().getType()) {
-      case TinyInt:
-        LongValue tinyIntVal = (LongValue) val;
-        Long tinyIntValue = tinyIntVal.getValue();
-        writeInt1(buffer, tinyIntValue.intValue());
-        break;
-      case SmallInt:
-        LongValue smallVal = (LongValue) val;
-        Long smallValue = smallVal.getValue();
-        writeInt2(buffer, smallValue.intValue());
-        break;
-      case MediumInt:
-        LongValue mediumVal = (LongValue) val;
-        Long mediumValue = mediumVal.getValue();
-        writeInt3(buffer, mediumValue.intValue());
-        break;
-      case Int:
-        LongValue intVal = (LongValue) val;
-        Long intValue = intVal.getValue();
-        writeInt4(buffer, intValue.intValue());
-        break;
-      case BigInt:
-        if (val.getType() == ValueType.UNSIGNEDLONG) {
-          UnsignedLongValue unsignedLongVal = (UnsignedLongValue) val;
-          BigInteger longValue = unsignedLongVal.getValue();
-          writeInt8(buffer, longValue.longValue());
-        } else {
-          LongValue longVal = (LongValue) val;
-          writeInt8(buffer, longVal.getValue());
-        }
-        break;
-      case Varchar:
-        if (val.getType() == ValueType.BINARY) {
-          writeEncodeBytes(buffer, ((BinaryValue) val).getValue());
-        } else {
-          writeEncodeString(buffer, val.getString());
-        }
-        break;
-      case Double:
-      case Float:
-        if (val.getType() == ValueType.DECIMAL) {
-          DecimalValue decimalVal = (DecimalValue) val;
-          BigDecimal decimalValue = decimalVal.getValue();
-          writeDouble(buffer, decimalValue.doubleValue());
-        } else {
-          DoubleValue doubleVal = (DoubleValue) val;
-          Double doubleValue = doubleVal.getValue();
-          writeDouble(buffer, doubleValue);
-        }
-        break;
-      default:
-        if (val.getType() == ValueType.BINARY) {
-          writeEncodeBytes(buffer, ((BinaryValue) val).getValue());
-        } else {
-          writeEncodeString(buffer, val.getString());
-        }
+  private static void encodeBinaryRow(ByteBuf rowBuffer, ColumnExpr[] columns, ValueAccessor row) {
+    writeInt1(rowBuffer, OK_HEAD);
+    int nullBitOffset = rowBuffer.writerIndex();
+    int nullBitLen = (columns.length + 7 + 2) / 8;
+    for (int i = 0; i < nullBitLen; i++) {
+      rowBuffer.writeByte(0);
+    }
+
+    Value value;
+    for (int i = 0; i < columns.length; i++) {
+      value = row.get(columns[i].getOffset());
+      if (value == null || value.isNull()) {
+        int nullPos = nullBitOffset + ((i + 2) / 8);
+        int bitPos = (i + 2) % 8;
+        int nullByte = rowBuffer.getByte(nullPos) & 0xff;
+        rowBuffer.setByte(nullPos, (byte) (nullByte | (1 << bitPos)));
+        continue;
+      }
+      binaryWrite(rowBuffer, columns[i].getResultType(), value);
     }
   }
 
-  public static Value binaryRead(ByteBuf buffer, SQLType type) {
-
+  private static void binaryWrite(ByteBuf buffer, SQLType type, Value val) {
     switch (type.getType()) {
       case TinyInt:
-        int tinyIntVale = readInt1(buffer);
+        writeInt1(buffer, (byte) ((LongValue) val).getValue());
+        break;
+      case SmallInt:
+        writeInt2(buffer, (short) (((LongValue) val).getValue()));
+        break;
+      case MediumInt:
+      case Int:
+        writeInt4(buffer, (int) ((LongValue) val).getValue());
+        break;
+      case BigInt:
+        if (val.getType() == ValueType.UNSIGNEDLONG) {
+          writeInt8(buffer, ((UnsignedLongValue) val).getValue().longValue());
+        } else {
+          writeInt8(buffer, ((LongValue) val).getValue());
+        }
+        break;
+      case Float:
+        buffer.writeFloatLE((float) ((DoubleValue) val).getValue());
+        break;
+      case Double:
+        buffer.writeDoubleLE(((DoubleValue) val).getValue());
+        break;
+      case Decimal:
+        writeEncodeString(buffer, val.getString());
+        break;
+
+      case Varchar:
+      case Char:
+      case TinyBlob:
+      case Blob:
+      case MediumBlob:
+      case LongBlob:
+      case TinyText:
+      case Text:
+      case MediumText:
+      case LongText:
+      case Bit:
+        if (val.getType() == ValueType.BINARY) {
+          writeEncodeBytes(buffer, ((BinaryValue) val).getValue());
+        } else {
+          writeEncodeString(buffer, val.getString());
+        }
+        break;
+
+      case Date:
+      case DateTime:
+      case TimeStamp:
+        writeDateTime(buffer, (DateValue) val);
+        break;
+      case Time:
+        writeTime(buffer, (TimeValue) val);
+        break;
+      case Year:
+        writeInt2(buffer, (short) (((YearValue) val).getValue()));
+        break;
+
+      default:
+        throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_NOT_SUPPORTED_YET, "value type " + type.getType().name());
+    }
+  }
+
+  private static void writeDateTime(ByteBuf buffer, DateValue value) {
+    Timestamp ts = value.getValue();
+    int year = ts.getYear() + 1900;
+    int month = ts.getMonth() + 1;
+    int day = ts.getDate();
+
+
+    if (value.getDateType() == Basepb.DataType.Date) {
+      buffer.writeByte(4);
+      buffer.writeShortLE(year);
+      buffer.writeByte(month);
+      buffer.writeByte(day);
+      return;
+    }
+
+    buffer.writeByte(11);
+    buffer.writeShortLE(year);
+    buffer.writeByte(month);
+    buffer.writeByte(day);
+    buffer.writeByte(ts.getHours());
+    buffer.writeByte(ts.getMinutes());
+    buffer.writeByte(ts.getSeconds());
+    buffer.writeIntLE(ts.getSeconds() / 1000 / 1000);
+
+  }
+
+  private static void writeTime(ByteBuf buffer, TimeValue value) {
+    long time = value.getValue();
+    if (time == 0) {
+      buffer.writeByte(0);
+      return;
+    }
+
+    byte isNeg = 0;
+    if (time < 0) {
+      isNeg = 1;
+      time = -time;
+    }
+
+    long day = time / Types.DAY;
+    time -= day * Types.DAY;
+    long hour = time / Types.HOUR;
+    time -= hour * Types.HOUR;
+    long minute = time / Types.MINUTE;
+    time -= minute * Types.MINUTE;
+    long second = time / Types.SECOND;
+    time -= second * Types.SECOND;
+    if (time == 0) {
+      buffer.writeByte(8);
+    } else {
+      buffer.writeByte(12);
+    }
+    buffer.writeByte(isNeg);
+    buffer.writeByte((byte) day);
+    buffer.writeByte(0);
+    buffer.writeByte(0);
+    buffer.writeByte(0);
+    buffer.writeByte((byte) hour);
+    buffer.writeByte((byte) minute);
+    buffer.writeByte((byte) second);
+    if (time > 0) {
+      buffer.writeIntLE((int) (time / Types.MICROSECOND));
+    }
+  }
+
+  public static Value binaryRead(ByteBuf in, SQLType type) {
+    switch (type.getType()) {
+      case Null:
+        return null;
+      case TinyInt:
+        if (in.readableBytes() < 1) {
+          throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+        }
+
+        int tinyIntVale = type.getUnsigned() ? readInt1(in) : in.readByte();
         return LongValue.getInstance(tinyIntVale);
       case SmallInt:
-        int smallIntVal = readInt2(buffer);
+        if (in.readableBytes() < 2) {
+          throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+        }
+
+        int smallIntVal = type.getUnsigned() ? readInt2(in) : in.readShortLE();
         return LongValue.getInstance(smallIntVal);
       case MediumInt:
-        int mediumIntVale = readInt3(buffer);
-        return LongValue.getInstance(mediumIntVale);
       case Int:
-        int intVal = readInt4(buffer);
+        if (in.readableBytes() < 4) {
+          throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+        }
+
+        int intVal = type.getUnsigned() ? readInt4(in) : in.readIntLE();
         return LongValue.getInstance(intVal);
       case BigInt:
-        long longVal = readInt8(buffer);
-        if (type.getUnsigned()) {
-          return UnsignedLongValue.getInstance(new BigInteger(String.valueOf(longVal)));
-        } else {
-          return LongValue.getInstance(longVal);
+        if (in.readableBytes() < 8) {
+          throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
         }
-      case Varchar:
-        String varcharVal = readEncodeString(buffer);
-        return StringValue.getInstance(varcharVal);
-      case Double:
+
+        long longVal = in.readLongLE();
+        if (type.getUnsigned()) {
+          return UnsignedLongValue.getInstance(new BigInteger(Long.toUnsignedString(longVal)));
+        }
+        return LongValue.getInstance(longVal);
       case Float:
-        double readDouble = readDouble(buffer);
-        if (type.getUnsigned()) {
-          return DecimalValue.getInstance(new BigDecimal(readDouble));
-        } else {
-          return DoubleValue.getInstance(readDouble);
+        if (in.readableBytes() < 4) {
+          throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
         }
+
+        return DoubleValue.getInstance(in.readFloatLE());
+      case Double:
+        if (in.readableBytes() < 8) {
+          throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+        }
+
+        return DoubleValue.getInstance(in.readDoubleLE());
+      case Date:
+      case DateTime:
+      case TimeStamp:
+        if (in.readableBytes() < 1) {
+          throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+        }
+
+        int len = readInt1(in);
+        switch (len) {
+          case 0:
+            return DateValue.getInstance(Types.ZERO_DATETIME, type.getType());
+          case 4:
+            return DateValue.getInstance(String.format("%04d-%02d-%02d", readInt2(in),
+                    readInt1(in), readInt1(in)), type.getType());
+          case 7:
+            return DateValue.getInstance(String.format("%04d-%02d-%02d %02d:%02d:%02d", readInt2(in),
+                    readInt1(in), readInt1(in), readInt1(in), readInt1(in), readInt1(in)), type.getType());
+          case 11:
+            return DateValue.getInstance(String.format("%04d-%02d-%02d %02d:%02d:%02d.%06d", readInt2(in),
+                    readInt1(in), readInt1(in), readInt1(in), readInt1(in), readInt1(in), ((long) in.readIntLE()) & 0xffffffff), type.getType());
+          default:
+            throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+        }
+      case Time:
+        if (in.readableBytes() < 1) {
+          throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+        }
+
+        int length = readInt1(in);
+        switch (length) {
+          case 0:
+            return TimeValue.TIME_ZERO;
+          case 8:
+          case 12:
+            int isNeg = readInt1(in);
+            if (isNeg > 1) {
+              throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+            }
+
+            in.skipBytes(4);
+            if (length == 8) {
+              return TimeValue.getInstance(readInt1(in), readInt1(in), readInt1(in), 0, isNeg == 1);
+            }
+            return TimeValue.getInstance(readInt1(in), readInt1(in), readInt1(in), readInt4(in), isNeg == 1);
+
+          default:
+            throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+        }
+      case Year:
+        if (in.readableBytes() < 2) {
+          throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+        }
+
+        int yearVal = type.getUnsigned() ? readInt2(in) : in.readShortLE();
+        return YearValue.getInstance(yearVal);
+
+      case Varchar:
+      case Char:
+      case Decimal:
+      case TinyBlob:
+      case Blob:
+      case MediumBlob:
+      case LongBlob:
+      case Bit:
+      case Enum:
+      case Set:
+      case Invalid:
+        if (in.readableBytes() < 1) {
+          throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+        }
+
+        String value = readEncodeString(in);
+        return value == null ? null : StringValue.getInstance(value);
+
       default:
-        String defaultVal = readEncodeString(buffer);
-        return StringValue.getInstance(defaultVal);
+        throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_NOT_SUPPORTED_YET, "stmt field type " + type.getType().name());
     }
+  }
+
+  public static int getFlag(Metapb.SQLTypeOrBuilder colType) {
+    int flag = 0;
+    if (colType.getNotNull()) {
+      flag |= MySQLColumnFlag.NOT_NULL_FLAG.getValue();
+    }
+    if (colType.getUnsigned()) {
+      flag |= MySQLColumnFlag.UNSIGNED_FLAG.getValue();
+    }
+    if (colType.getBinary()) {
+      flag |= MySQLColumnFlag.BINARY_FLAG.getValue();
+    }
+    if (colType.getZerofill()) {
+      flag |= MySQLColumnFlag.ZEROFILL_FLAG.getValue();
+    }
+    return flag;
   }
 
   public static void readHeader(ByteBuf byteBuf) {
@@ -537,14 +719,6 @@ public final class CodecUtil {
 
   public static void writeInt8(ByteBuf byteBuf, long value) {
     byteBuf.writeLongLE(value);
-  }
-
-  public static void writeDouble(ByteBuf byteBuf, double value) {
-    byteBuf.writeDouble(value);
-  }
-
-  public static double readDouble(ByteBuf byteBuf) {
-    return byteBuf.readDoubleLE();
   }
 
   public static long readEncodeInt(ByteBuf byteBuf) {
@@ -623,6 +797,13 @@ public final class CodecUtil {
 
   public static String readEncodeString(ByteBuf byteBuf) {
     int length = (int) readEncodeInt(byteBuf);
+    if (length < 1) {
+      return null;
+    }
+    if (byteBuf.readableBytes() < length) {
+      throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+    }
+
     try {
       CharSequence sequence = byteBuf.readCharSequence(length,
               Charset.forName(MySQLVariables.getVariable(MYSQL_SERVER_ENCODING).getValue()));

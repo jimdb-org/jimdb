@@ -23,24 +23,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.jimdb.common.exception.ErrorCode;
+import io.jimdb.common.utils.lang.ByteUtil;
+import io.jimdb.common.utils.os.SystemClock;
 import io.jimdb.core.codec.Codec;
 import io.jimdb.core.codec.KvPair;
-import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.core.model.meta.Column;
+import io.jimdb.core.types.Types;
+import io.jimdb.core.values.StringValue;
+import io.jimdb.core.values.UnsignedLongValue;
+import io.jimdb.core.values.Value;
+import io.jimdb.core.values.ValueChecker;
+import io.jimdb.core.values.ValueConvertor;
 import io.jimdb.pb.Basepb;
 import io.jimdb.pb.Metapb;
 import io.jimdb.pb.Metapb.ColumnInfo;
 import io.jimdb.pb.Metapb.IndexInfo;
 import io.jimdb.pb.Metapb.SQLType;
 import io.jimdb.pb.Metapb.TableInfo;
-import io.jimdb.core.types.Types;
-import io.jimdb.common.utils.lang.ByteUtil;
-import io.jimdb.common.utils.os.SystemClock;
-import io.jimdb.core.values.StringValue;
-import io.jimdb.core.values.UnsignedLongValue;
-import io.jimdb.core.values.Value;
-import io.jimdb.core.values.ValueChecker;
-import io.jimdb.core.values.ValueConvertor;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -199,7 +199,7 @@ public final class DDLUtils {
       case Varchar:
       case Char:
       case NChar:
-        if (sqlType.getPrecision() == 0) {
+        if (sqlType.getPrecision() == 0L) {
           throw new DDLException(DDLException.ErrorType.FAILED, ErrorCode.ER_WRONG_KEY_COLUMN, columnInfo.getName());
         }
         break;
@@ -214,11 +214,11 @@ public final class DDLUtils {
         break;
     }
 
-    if (sqlType.getPrecision() > 0) {
+    if (sqlType.getPrecision() > 0L) {
       if (sqlType.getType() == Basepb.DataType.Bit) {
-        return (sqlType.getPrecision() + 7) >> 3;
+        return ((int) sqlType.getPrecision() + 7) >> 3;
       }
-      return sqlType.getPrecision();
+      return (int) sqlType.getPrecision();
     }
 
     Integer len = DEFAULT_LENGTH_TYPE.get(sqlType.getType());
@@ -279,20 +279,13 @@ public final class DDLUtils {
 
   //only support unsigned auto_increment pre-split
   private static List<Basepb.Range> splitRangeByNum(TableInfo tableInfo, Map<Integer, ColumnInfo> colMap) {
-    Basepb.KeySchema keySchema = Basepb.KeySchema.newBuilder().setUniqueIndex(true)
-            .addAllKeyCols(getKeySchemaColInfos(tableInfo.getPrimarysList(), colMap)).build();
-
-    Basepb.StoreType storeType = getTableStoreType(tableInfo);
-
     ColumnInfo splitColumn = colMap.get(tableInfo.getPrimarysList().get(0));
     SQLType type = splitColumn.getSqlType();
-
     List<ByteString> keys = getTableRangeKeys(tableInfo.getId());
 
-    //can pre-split ? auto_increment && unsigned
-    if (splitColumn.getAutoIncr() && type.getUnsigned()) {
+    if (tableInfo.getPrimarysList().size() == 1 && Types.isIntegerType(type)) {
       Column[] columns = new Column[]{ new Column(null, splitColumn, 0) };
-      Value[] values = new Value[1];
+      Value[] values;
       BigInteger maxValue = ValueChecker.computeUpperBound(type.getUnsigned(), type.getType());
       long docNum = maxValue.divide(BigInteger.valueOf(tableInfo.getSplitNum())).longValue();
       for (int j = 1; j < tableInfo.getSplitNum(); j++) {
@@ -302,7 +295,9 @@ public final class DDLUtils {
       }
     }
 
-    return getRanges(tableInfo, keySchema, storeType, Basepb.RangeType.RNG_Data, keys);
+    Basepb.KeySchema keySchema = Basepb.KeySchema.newBuilder().setUniqueIndex(true)
+            .addAllKeyCols(getKeySchemaColInfos(tableInfo.getPrimarysList(), colMap)).build();
+    return getRanges(tableInfo, keySchema, getTableStoreType(tableInfo), Basepb.RangeType.RNG_Data, keys);
   }
 
   private static List<ByteString> getTableRangeKeys(int tableId) {

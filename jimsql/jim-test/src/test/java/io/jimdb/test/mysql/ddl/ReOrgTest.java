@@ -22,15 +22,16 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.jimdb.core.codec.Codec;
 import io.jimdb.core.codec.ValueCodec;
 import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.MetaData;
 import io.jimdb.core.model.meta.Table;
+import io.jimdb.core.values.StringValue;
 import io.jimdb.pb.Metapb;
 import io.jimdb.test.mysql.SqlTestBase;
-import io.jimdb.core.values.StringValue;
 import io.netty.buffer.ByteBuf;
 
 import org.junit.After;
@@ -44,8 +45,8 @@ import com.google.protobuf.NettyByteString;
  * @version V1.0
  */
 public class ReOrgTest extends SqlTestBase {
-  private static String catalogName = "maggie";
-  private static String tableName = "sqltest2";
+  private static String catalogName = "maggie_reorg";
+  private static String tableName = "sqltest_reorg";
 
   private String tName = String.format("%s.%s", catalogName, tableName);
 
@@ -112,7 +113,7 @@ public class ReOrgTest extends SqlTestBase {
     String addColumnSql = "alter table " + tName + " add column name varchar(20) not null;";
     execUpdate(addColumnSql, 0, true);
 
-    MetaData metaData = MetaData.Holder.getMetaData();
+    MetaData metaData = MetaData.Holder.get();
     Table table = metaData.getTable(catalogName, tableName);
     Column commonColumn = table.getWritableColumn("name");
     Metapb.SQLType commonSqlType = commonColumn.getType();
@@ -141,10 +142,10 @@ public class ReOrgTest extends SqlTestBase {
   @Test
   public void testAddIndexForUniqueError() {
 //    createCatalog(catalogName);
-
     String sql = String.format("create table %s.%s (id bigint unsigned primary key auto_increment, " +
                     "name varchar(20) not null default 'a', " +
-                    "num bigint unsigned not null) " +
+                    "num bigint unsigned not null, " +
+                    "KEY nameidx(name)) " +
                     "AUTO_INCREMENT=0  %s",
             catalogName, tableName, EXTRA);
 
@@ -153,8 +154,8 @@ public class ReOrgTest extends SqlTestBase {
 
     testBatchInsert(1, 15, "INSERT INTO " + tName + "(num) VALUES(%d)");
 
-    String addIndexSql = "alter table " + tName + " add unique index nameidx using btree(name)";
-    SQLException exception = new SQLException(null, "23000", 1062);
+    String addIndexSql = "alter table " + tName + " add KEY nameidx using btree(name)";
+    SQLException exception = new SQLException("Duplicate key name 'nameidx'", "42000", 1061);
     execUpdate(addIndexSql, exception, true);
   }
 
@@ -185,7 +186,7 @@ public class ReOrgTest extends SqlTestBase {
   //reOrg add index
   //not unique on name column
   @Test
-  public void testAddIndexForNonUnique() {
+  public void testAddIndexForNonUnique() throws Exception {
 //    createCatalog(catalogName);
 
     String sql = String.format("create table %s.%s (id bigint unsigned primary key auto_increment, " +
@@ -198,10 +199,28 @@ public class ReOrgTest extends SqlTestBase {
     prepareTable(sql);
 
     testBatchInsert(1, 15, "INSERT INTO " + tName + "(id, num) VALUES(%d, 1)");
+    AtomicBoolean stop = new AtomicBoolean(false);
+    for (int i = 0; i < 2; i++) {
+      Thread t = new Thread(() -> {
+        while (!stop.get()) {
+          testBatchInsert(1, 1, "INSERT INTO " + tName + "(num,name) VALUES(%d, 'b')");
+        }
+      });
+      t.setDaemon(true);
+      t.start();
+    }
 
+    Thread.sleep(500);
     String addIndexSql = "alter table " + tName + " add index nameidx using btree(name)";
-    execUpdate(addIndexSql, 0, true);
+    try {
+      execUpdate(addIndexSql, 0, true);
+    } catch (Exception ex) {
+      Assert.fail(ex.getMessage());
+    } finally {
+      stop.set(true);
+    }
 
+    Thread.sleep(5000);
     testSelect(1, 1, "select id, name, num from " + tName + " where name = 'a' ");
     testUpdate(1, 15, "delete from " + tName + " where id = '%d' ");
     testSelect(1, 1, "select id, name, num from " + tName + " where name = 'a' ");
@@ -235,7 +254,6 @@ public class ReOrgTest extends SqlTestBase {
       executor.execute(() -> {
         try {
           String sql = String.format(formatSql, temp);
-          System.out.println(sql);
           execUpdate(sql, 1, true);
         } catch (Throwable e) {
           e.printStackTrace();

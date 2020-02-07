@@ -33,12 +33,11 @@ import io.jimdb.core.model.result.QueryResult;
 import io.jimdb.core.model.result.impl.AckExecResult;
 import io.jimdb.core.model.result.impl.DMLExecResult;
 import io.jimdb.core.model.result.impl.QueryExecResult;
-import io.jimdb.pb.Processorpb;
-import io.jimdb.pb.Txn;
 import io.jimdb.core.plugin.store.Transaction;
 import io.jimdb.core.values.BinaryValue;
 import io.jimdb.core.values.LongValue;
 import io.jimdb.core.values.Value;
+import io.jimdb.pb.Processorpb;
 
 import reactor.core.publisher.Flux;
 
@@ -117,13 +116,8 @@ public class MockTransaction implements Transaction {
   }
 
   @Override
-  public Flux<ValueAccessor[]> selectByStream(Table table, Txn.SelectFlowRequest.Builder selectFlowBuilder, ColumnExpr[] resultColumns) throws JimException {
+  public byte[] addIndex(Index index, byte[] startKey, byte[] endKey, int limit) {
     return null;
-  }
-
-  @Override
-  public void addIndex(Index index, ColumnExpr[] columns, ValueAccessor[] rows) {
-
   }
 
   @Override

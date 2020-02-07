@@ -27,12 +27,12 @@ import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
-import io.jimdb.core.model.meta.MetaData;
-import io.jimdb.pb.Metapb.CatalogInfo;
-import io.jimdb.pb.Metapb.TableInfo;
-import io.jimdb.core.plugin.MetaStore;
 import io.jimdb.common.utils.lang.NamedThreadFactory;
 import io.jimdb.common.utils.os.SystemClock;
+import io.jimdb.core.model.meta.MetaData;
+import io.jimdb.core.plugin.MetaStore;
+import io.jimdb.pb.Metapb.CatalogInfo;
+import io.jimdb.pb.Metapb.TableInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,12 +57,12 @@ final class DDLSyncer implements Closeable {
   private volatile long updateTime = 0;
   private volatile long registerVersion = 0;
 
-  DDLSyncer(MetaStore metaStore, long delay, long timeout) {
-    this.delay = delay;
-    this.timeout = 600000;
+  DDLSyncer(MetaStore metaStore, long timeout) {
+    this.delay = timeout / 2 > 0 ? timeout / 2 : 1;
+    this.timeout = timeout;
     this.metaStore = metaStore;
     this.syncExecutor = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("DDL-Syncer-Executor", true));
-    MetaData.Holder.setMetaData(new MetaData(0));
+    MetaData.Holder.set(new MetaData(0));
   }
 
   void start() {
@@ -82,7 +82,7 @@ final class DDLSyncer implements Closeable {
       }
     }
 
-    registerVersion = MetaData.Holder.getMetaData().getVersion();
+    registerVersion = MetaData.Holder.get().getVersion();
     metaStore.register(registerVersion);
     metaStore.watch(MetaStore.WatchType.SCHEMAVERSION, l -> syncExecutor.execute(() -> syncMeta()));
     syncExecutor.scheduleWithFixedDelay(() -> syncMeta(), delay, delay, TimeUnit.MILLISECONDS);
@@ -104,8 +104,8 @@ final class DDLSyncer implements Closeable {
           return;
         }
 
-        if (SystemClock.currentTimeMillis() - start > 2 * timeout) {
-          throw DBException.get(ErrorModule.DDL, ErrorCode.ER_INTERNAL_ERROR, false, String.format("wait all sqlnode meta sync timeout(%d)", 2 * timeout));
+        if (SystemClock.currentTimeMillis() - start > timeout) {
+          throw DBException.get(ErrorModule.DDL, ErrorCode.ER_INTERNAL_ERROR, false, String.format("wait all sqlnode meta sync timeout(%d)", timeout));
         }
         Thread.sleep(100);
       }
@@ -159,7 +159,7 @@ final class DDLSyncer implements Closeable {
     }
 
     try {
-      long curVersion = MetaData.Holder.getMetaData().getVersion();
+      long curVersion = MetaData.Holder.get().getVersion();
       long syncVersion = metaStore.addAndGetVersion(0);
       if (curVersion != syncVersion) {
         Map<CatalogInfo, List<TableInfo>> metas = metaStore.getCatalogAndTables();
@@ -167,7 +167,7 @@ final class DDLSyncer implements Closeable {
         if (metas != null && metas.size() > 0) {
           metas.forEach((catalogInfo, tableInfos) -> metaData.addCatalog(catalogInfo, tableInfos));
         }
-        MetaData.Holder.setMetaData(metaData);
+        MetaData.Holder.set(metaData);
       }
 
       if (registerVersion != syncVersion) {

@@ -21,17 +21,12 @@ import java.util.Properties;
 
 import io.jimdb.common.utils.lang.IOUtil;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * @version V1.0
  */
 public abstract class JimException extends RuntimeException {
-  private static final Logger LOG = LoggerFactory.getLogger(JimException.class);
-
   protected static final long serialVersionUID = 2767283925928234491L;
 
   @SuppressFBWarnings("PMB_POSSIBLE_MEMORY_BLOAT")
@@ -52,7 +47,6 @@ public abstract class JimException extends RuntimeException {
         }
       });
     } catch (Exception ex) {
-      LOG.warn("Load exception message resource error.", ex);
     }
   }
 

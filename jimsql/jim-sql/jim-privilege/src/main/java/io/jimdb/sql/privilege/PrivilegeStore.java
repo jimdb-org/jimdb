@@ -17,64 +17,132 @@ package io.jimdb.sql.privilege;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import io.jimdb.core.ExecutorHelper;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
+import io.jimdb.core.ExecutorHelper;
+import io.jimdb.core.model.privilege.PrivilegeType;
 import io.jimdb.core.model.result.ExecResult;
+import io.jimdb.core.plugin.PluginFactory;
 import io.jimdb.pb.Ddlpb.PriOn;
 import io.jimdb.pb.Ddlpb.PriUser;
-import io.jimdb.core.plugin.PluginFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * @version V1.0
  */
-@SuppressFBWarnings("OCP_OVERLY_CONCRETE_PARAMETER")
+@SuppressFBWarnings({ "OCP_OVERLY_CONCRETE_PARAMETER", "UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "MS_MUTABLE_COLLECTION_PKGPROTECT" })
 public final class PrivilegeStore {
-  private static final List<String> PRIVILEGE_USERS = Arrays.asList("Create_priv", "Select_priv", "Insert_priv", "Update_priv",
+  private static final char COMMA = ',';
+
+  public static final Map<String, String> PRIV_STR_TO_PRIVILEGE = new HashMap<String, String>() {{
+      put("CREATE", "Create_priv");
+      put("SELECT", "Select_priv");
+      put("INSERT", "Insert_priv");
+      put("UPDATE", "Update_priv");
+      put("DELETE", "Delete_priv");
+      put("SHOW DATABASES", "Show_db_priv");
+      put("SUPER", "Super_priv");
+      put("CREATE USER", "Create_user_priv");
+      put("TRIGGER", "Trigger_priv");
+      put("DROP", "Drop_priv");
+      put("PROCESS", "Process_priv");
+      put("GRANT", "Grant_priv");
+      put("REFERENCES", "References_priv");
+      put("ALTER", "Alter_priv");
+      put("EXECUTE", "Execute_priv");
+      put("INDEX", "Index_priv");
+      put("CREATE VIEW", "Create_view_priv");
+      put("SHOW VIEW", "Show_view_priv");
+      put("CREATE ROLE", "Create_role_priv");
+      put("DROP ROLE", "Drop_role_priv");
+    }};
+
+  public static final Map<String, PrivilegeType> PRIVILEGE_TO_PRIVILEGE_TYPE = new HashMap<String, PrivilegeType>() {{
+      put("Create_priv", PrivilegeType.CREATE_PRIV);
+      put("Select_priv", PrivilegeType.SELECT_PRIV);
+      put("Insert_priv", PrivilegeType.INSERT_PRIV);
+      put("Update_priv", PrivilegeType.UPDATE_PRIV);
+      put("Delete_priv", PrivilegeType.DELETE_PRIV);
+      put("Show_db_priv", PrivilegeType.SHOW_DB_PRIV);
+      put("Super_priv", PrivilegeType.SUPER_PRIV);
+      put("Create_user_priv", PrivilegeType.CREATE_USER_PRIV);
+      put("Trigger_priv", PrivilegeType.TRIGGER_PRIV);
+      put("Drop_priv", PrivilegeType.DROP_PRIV);
+      put("Process_priv", PrivilegeType.PROCESS_PRIV);
+      put("Grant_priv", PrivilegeType.GRANT_PRIV);
+      put("References_priv", PrivilegeType.REFERENCES_PRIV);
+      put("Alter_priv", PrivilegeType.ALTER_PRIV);
+      put("Execute_priv", PrivilegeType.EXECUTE_PRIV);
+      put("Index_priv", PrivilegeType.INDEX_PRIV);
+      put("Create_view_priv", PrivilegeType.CREATE_VIEW_PRIV);
+      put("Show_view_priv", PrivilegeType.SHOW_VIEW_PRIV);
+      put("Create_role_priv", PrivilegeType.CREATE_ROLE_PRIV);
+      put("Drop_role_priv", PrivilegeType.DROP_ROLE_PRIV);
+    }};
+
+  public static final List<String> PRIVILEGE_USERS = Arrays.asList("Create_priv", "Select_priv", "Insert_priv",
+          "Update_priv",
           "Delete_priv", "Show_db_priv", "Super_priv", "Create_user_priv", "Trigger_priv", "Drop_priv", "Process_priv", "Grant_priv",
-          "References_priv", "Alter_priv", "Execute_priv", "Index_priv", "Create_view_priv", "Show_view_priv", "Create_role_priv", "Drop_role_priv");
+          "References_priv", "Alter_priv", "Execute_priv", "Index_priv", "Create_view_priv", "Show_view_priv",
+          "Create_role_priv", "Drop_role_priv");
 
-  private static final List<String> PRIVILEGE_CATALOGS = Arrays.asList("Select_priv", "Insert_priv", "Update_priv", "Delete_priv",
-          "Create_priv", "Drop_priv", "Grant_priv", "Alter_priv", "Index_priv", "Execute_priv", "Create_view_priv", "Show_view_priv");
+  public static final List<String> PRIVILEGE_CATALOGS = Arrays.asList("Select_priv", "Insert_priv", "Update_priv",
+          "Delete_priv",
+          "Create_priv", "Drop_priv", "Grant_priv", "Alter_priv", "Index_priv", "Execute_priv", "Create_view_priv",
+          "Show_view_priv");
 
-  private static final List<String> PRIVILEGE_TABLES = Arrays.asList("Select_priv", "Insert_priv", "Update_priv", "Delete_priv",
+  public static final List<String> PRIVILEGE_TABLES = Arrays.asList("Select_priv", "Insert_priv", "Update_priv",
+          "Delete_priv",
           "Create_priv", "Drop_priv", "Grant_priv", "Alter_priv", "Index_priv");
 
 //  private static final List<String> PRIVILEGE_COLUMNS = Arrays.asList("Select_priv", "Insert_priv", "Update_priv");
 
-  private static final String SQL_LOAD_USER = "select user,password,host,Create_priv,Select_priv,Insert_priv,Update_priv,"
-          + "Delete_priv,Show_db_priv,Super_priv,Create_user_priv,Trigger_priv,Drop_priv,Process_priv,Grant_priv,References_priv,"
-          + "Alter_priv,Execute_priv,Index_priv,Create_view_priv,Show_view_priv,Create_role_priv,Drop_role_priv from mysql.user";
+  private static final String SQL_LOAD_USER = "select user,password,host,Create_priv,Select_priv,Insert_priv,"
+          + "Update_priv,"
+          + "Delete_priv,Show_db_priv,Super_priv,Create_user_priv,Trigger_priv,Drop_priv,Process_priv,Grant_priv,"
+          + "References_priv,"
+          + "Alter_priv,Execute_priv,Index_priv,Create_view_priv,Show_view_priv,Create_role_priv,Drop_role_priv from "
+          + "mysql.user";
 
   private static final String SQL_LOAD_CATALOG = "select Host,DB,User,Select_priv,Insert_priv,Update_priv,Delete_priv,"
-          + "Create_priv,Drop_priv,Grant_priv,Index_priv,Alter_priv,Execute_priv,Create_view_priv,Show_view_priv from mysql.db";
+          + "Create_priv,Drop_priv,Grant_priv,Index_priv,Alter_priv,Execute_priv,Create_view_priv,Show_view_priv from"
+          + " mysql.db";
 
-  private static final String SQL_LOAD_TABLE = "select Host,DB,User,Table_name,Table_priv,Column_priv from mysql.tables_priv";
+  private static final String SQL_LOAD_TABLE = "select Host,DB,User,Table_name,Table_priv,Column_priv from mysql"
+          + ".tables_priv";
 
   private static final String SQL_EXISTS_USER = "select Host, User from mysql.user where Host = '%s' and User = '%s'";
 
-  private static final String SQL_EXISTS_CATALOG = "select Host, Db, User from mysql.db where Host = '%s' and Db = '%s' and User = '%s'";
+  private static final String SQL_EXISTS_CATALOG = "select Host, Db, User from mysql.db where Host = '%s' and Db = "
+          + "'%s' and User = '%s'";
 
-  private static final String SQL_EXISTS_TABLE = "select Host, Db, User, Table_name from mysql.tables_priv where Host = '%s' and Db = '%s' "
+  private static final String SQL_EXISTS_TABLE = "select Host, Db, User, Table_name from mysql.tables_priv where Host"
+          + " = '%s' and Db = '%s' "
           + "and User = '%s' and Table_name = '%s'";
 
-  private static final String SQL_INSERT_USER = "INSERT INTO mysql.user(Host, User, Password) VALUES ('%s', '%s', '%s')";
+  private static final String SQL_INSERT_USER = "INSERT INTO mysql.user(Host, User, Password) VALUES ('%s', '%s', "
+          + "'%s')";
 
   private static final String SQL_INSERT_CATALOG = "INSERT INTO mysql.db(Host, Db, User) VALUES ('%s', '%s', '%s')";
 
-  private static final String SQL_INSERT_TABLE = "INSERT INTO mysql.tables_priv(Host, Db, User, Table_name) VALUES ('%s', '%s', '%s', '%s')";
+  private static final String SQL_INSERT_TABLE = "INSERT INTO mysql.tables_priv(Host, Db, User, Table_name) VALUES "
+          + "('%s', '%s', '%s', '%s')";
 
   private static final String SQL_UPDATE_USER = "UPDATE mysql.user SET %s where Host = '%s' and User = '%s'";
 
-  private static final String SQL_UPDATE_PASSWORD = "UPDATE mysql.user SET Password='%s' WHERE Host = '%s' and User = '%s'";
+  private static final String SQL_UPDATE_PASSWORD = "UPDATE mysql.user SET Password='%s' WHERE Host = '%s' and User ="
+          + " '%s'";
 
-  private static final String SQL_UPDATE_CATALOG = "UPDATE mysql.db SET %s where Host = '%s' and Db = '%s' and User = '%s'";
+  private static final String SQL_UPDATE_CATALOG = "UPDATE mysql.db SET %s where Host = '%s' and Db = '%s' and User ="
+          + " '%s'";
 
-  private static final String SQL_UPDATE_TABLE = "UPDATE mysql.tables_priv SET %s where Host = '%s' and Db = '%s' and User = '%s' and Table_name = '%s'";
+  private static final String SQL_UPDATE_TABLE = "UPDATE mysql.tables_priv SET %s where Host = '%s' and Db = '%s' and"
+          + " User = '%s' and Table_name = '%s'";
 
   private static final String SQL_DELETE_USER = "DELETE FROM mysql.user WHERE Host = '%s' and User = '%s'";
 
@@ -86,14 +154,17 @@ public final class PrivilegeStore {
           + "Update_priv, Delete_priv, Create_priv, Drop_priv, Process_priv, Grant_priv, References_priv, Alter_priv, "
           + "Show_db_priv, Super_priv, Create_tmp_table_priv, Lock_tables_priv, Execute_priv, Create_view_priv, "
           + "Show_view_priv, Create_routine_priv, Alter_routine_priv, Index_priv, Create_user_priv, Event_priv, "
-          + "Trigger_priv, Create_role_priv, Drop_role_priv, Account_locked) VALUES('%', 'root', '%s', 'Y', "
-          + "'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y','Y', 'Y', 'Y', 'Y'), "
-          + "('127.0.0.1', 'root', '%s', 'Y', 'Y','Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', "
+          + "Trigger_priv, Create_role_priv, Drop_role_priv, Account_locked) VALUES('localhost', 'root', '%s', 'Y', "
+          + "'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y',"
+          + "'Y', 'Y', 'Y', 'Y'), "
+          + "('127.0.0.1', 'root', '%s', 'Y', 'Y','Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', "
+          + "'Y', 'Y', 'Y', 'Y', "
           + "'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y')";
 
   private static final String SQL_CREATE_MYSQL = "CREATE DATABASE IF NOT EXISTS mysql";
 
-  private static final String SQL_CREATE_USER = "CREATE TABLE IF NOT EXISTS mysql.user(id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, "
+  private static final String SQL_CREATE_USER = "CREATE TABLE IF NOT EXISTS mysql.user(id BIGINT UNSIGNED "
+          + "AUTO_INCREMENT PRIMARY KEY, "
           + "Host varchar(64), User varchar(16), Password varchar(41), "
           + "Select_priv varchar(4) NOT NULL DEFAULT 'N', "
           + "Insert_priv varchar(4) NOT NULL DEFAULT 'N', "
@@ -123,7 +194,8 @@ public final class PrivilegeStore {
           + "Account_locked varchar(4) NOT NULL DEFAULT 'N' "
           + ", UNIQUE Key(Host, User)) COMMENT 'REPLICA=%d' ENGINE=%s";
 
-  private static final String SQL_CREATE_CATALOG = "CREATE TABLE IF NOT EXISTS mysql.db(id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, "
+  private static final String SQL_CREATE_CATALOG = "CREATE TABLE IF NOT EXISTS mysql.db(id BIGINT UNSIGNED "
+          + "AUTO_INCREMENT PRIMARY KEY, "
           + "Host varchar(64), DB varchar(64), User varchar(16), "
           + "Select_priv varchar(4) Not Null DEFAULT 'N', "
           + "Insert_priv varchar(4) Not Null DEFAULT 'N', "
@@ -146,7 +218,8 @@ public final class PrivilegeStore {
           + "Trigger_priv varchar(4) NOT NULL DEFAULT 'N' "
           + ", UNIQUE Key(Host, DB, User)) COMMENT 'REPLICA=%d' ENGINE=%s";
 
-  private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS mysql.tables_priv(id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, "
+  private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS mysql.tables_priv(id BIGINT UNSIGNED "
+          + "AUTO_INCREMENT PRIMARY KEY, "
           + "Host varchar(64), DB varchar(64), User varchar(16), Table_name varchar(64), "
           + "Grantor varchar(77), "
           + "Timestamp	Timestamp DEFAULT CURRENT_TIMESTAMP, "
@@ -211,12 +284,14 @@ public final class PrivilegeStore {
   }
 
   protected static boolean tableNotExists(PriUser user, PriOn on) {
-    ExecResult result = execute(String.format(SQL_EXISTS_TABLE, user.getHost(), on.getDb(), user.getName(), on.getTable()));
+    ExecResult result = execute(String.format(SQL_EXISTS_TABLE, user.getHost(), on.getDb(), user.getName(),
+            on.getTable()));
     return result.size() == 0;
   }
 
   protected static String insertUser(PriUser user) {
-    return String.format(SQL_INSERT_USER, user.getHost(), user.getName(), ScrambleUtil.encodePassword(user.getPassword()));
+    return String.format(SQL_INSERT_USER, user.getHost(), user.getName(),
+            ScrambleUtil.encodePassword(user.getPassword()));
   }
 
   protected static String insertDb(PriUser user, PriOn on) {
@@ -228,7 +303,8 @@ public final class PrivilegeStore {
   }
 
   protected static String updatePassword(PriUser user) {
-    return String.format(SQL_UPDATE_PASSWORD, ScrambleUtil.encodePassword(user.getPassword()), user.getHost(), user.getName());
+    return String.format(SQL_UPDATE_PASSWORD, ScrambleUtil.encodePassword(user.getPassword()), user.getHost(),
+            user.getName());
   }
 
   protected static String updateUser(PriUser user, List<String> prives, String value) {
@@ -244,7 +320,8 @@ public final class PrivilegeStore {
       prives = PRIVILEGE_CATALOGS;
     }
 
-    return String.format(SQL_UPDATE_CATALOG, buildPrivilegeSet(prives, value), user.getHost(), on.getDb(), user.getName());
+    return String.format(SQL_UPDATE_CATALOG, buildPrivilegeSet(prives, value), user.getHost(), on.getDb(),
+            user.getName());
   }
 
   protected static String updateTable(PriUser user, PriOn on, List<String> prives) {
@@ -254,9 +331,10 @@ public final class PrivilegeStore {
 
     StringBuilder sb = new StringBuilder();
     for (String priv : prives) {
-      sb.append(priv).append(',');
+      sb.append(priv).append(COMMA);
     }
-    return String.format(SQL_UPDATE_TABLE, String.format("Table_priv='%s'", sb.length() == 0 ? "" : sb.substring(0, sb.length() - 1)),
+    return String.format(SQL_UPDATE_TABLE, String.format("Table_priv='%s'", sb.length() == 0 ? "" : sb.substring(0,
+            sb.length() - 1)),
             user.getHost(), on.getDb(), user.getName(), on.getTable());
   }
 
@@ -282,9 +360,10 @@ public final class PrivilegeStore {
 
         StringBuilder sb = new StringBuilder();
         for (String priv : tablePrive) {
-          sb.append(priv).append(',');
+          sb.append(priv).append(COMMA);
         }
-        return String.format(SQL_UPDATE_TABLE, String.format("Table_priv='%s'", sb.length() == 0 ? "" : sb.substring(0, sb.length() - 1)),
+        return String.format(SQL_UPDATE_TABLE, String.format("Table_priv='%s'", sb.length() == 0 ? ""
+                        : sb.substring(0, sb.length() - 1)),
                 user.getHost(), on.getDb(), user.getName(), on.getTable());
       }
     }
@@ -300,7 +379,7 @@ public final class PrivilegeStore {
     StringBuilder sb = new StringBuilder();
     for (String str : lists) {
       sb.append(String.format("%s='%s'", str, value));
-      sb.append(", ");
+      sb.append(",");
     }
     return sb.length() == 0 ? "" : sb.substring(0, sb.length() - 1);
   }

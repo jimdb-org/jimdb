@@ -18,47 +18,42 @@ package io.jimdb.mysql;
 import static io.jimdb.mysql.constant.MySQLVariables.MAX_EXECUTION_TIME;
 import static io.jimdb.mysql.handshake.HandshakeInfo.CLIENT_PROTOCOL_41;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import io.jimdb.core.Session;
-import io.jimdb.core.config.JimConfig;
-import io.jimdb.core.context.PrepareContext;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
-import io.jimdb.core.model.prepare.JimStatement;
+import io.jimdb.common.utils.lang.StringUtil;
+import io.jimdb.common.utils.os.SystemClock;
+import io.jimdb.core.Session;
+import io.jimdb.core.config.JimConfig;
+import io.jimdb.core.context.PreparedContext;
+import io.jimdb.core.context.PreparedStatement;
 import io.jimdb.core.model.privilege.UserInfo;
 import io.jimdb.core.model.result.ExecResult;
-import io.jimdb.core.model.result.QueryResult;
 import io.jimdb.core.model.result.impl.AckExecResult;
 import io.jimdb.core.model.result.impl.DMLExecResult;
 import io.jimdb.core.model.result.impl.PrepareResult;
-import io.jimdb.mysql.constant.MySQLColumnDataType;
-import io.jimdb.mysql.constant.MySQLCommandType;
-import io.jimdb.mysql.constant.MySQLVariables;
-import io.jimdb.mysql.handshake.HandshakeInfo;
-import io.jimdb.mysql.handshake.HandshakeResult;
-import io.jimdb.mysql.util.NullBitMap;
-import io.jimdb.mysql.util.CodecUtil;
-import io.jimdb.pb.Metapb.SQLType;
 import io.jimdb.core.plugin.PluginFactory;
 import io.jimdb.core.plugin.PrivilegeEngine;
 import io.jimdb.core.plugin.SQLEngine;
 import io.jimdb.core.plugin.SQLExecutor;
 import io.jimdb.core.types.Types;
-import io.jimdb.common.utils.lang.StringUtil;
-import io.jimdb.common.utils.os.SystemClock;
+import io.jimdb.core.values.BinaryValue;
 import io.jimdb.core.values.Value;
 import io.jimdb.core.variable.SysVariable;
+import io.jimdb.mysql.constant.MySQLColumnDataType;
+import io.jimdb.mysql.constant.MySQLCommandType;
+import io.jimdb.mysql.constant.MySQLVariables;
+import io.jimdb.mysql.handshake.HandshakeInfo;
+import io.jimdb.mysql.handshake.HandshakeResult;
+import io.jimdb.mysql.util.CodecUtil;
+import io.jimdb.pb.Metapb.SQLType;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.CompositeByteBuf;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
@@ -67,10 +62,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * @version V1.0
  */
-@SuppressFBWarnings({ "HES_EXECUTOR_OVERWRITTEN_WITHOUT_SHUTDOWN", "HES_EXECUTOR_NEVER_SHUTDOWN" })
+@SuppressFBWarnings({ "HES_EXECUTOR_OVERWRITTEN_WITHOUT_SHUTDOWN", "HES_EXECUTOR_NEVER_SHUTDOWN", "CC_CYCLOMATIC_COMPLEXITY" })
 public final class MySQLEngine implements SQLEngine {
-  private static final Logger LOG = LoggerFactory.getLogger(MySQLEngine.class);
-
   private static final String MYSQL_AUTH = "mysql_authorized";
   private static final String MYSQL_AUTH_DATA = "mysql_authorized_data";
   private static final int PAYLOAD_LENGTH = 3;
@@ -150,8 +143,6 @@ public final class MySQLEngine implements SQLEngine {
   public void handShake(Session session) {
     HandshakeResult result = new HandshakeResult(session.getConnID());
     session.putContext(MYSQL_AUTH_DATA, result.getAuthData());
-
-    byte seqID = session.getSeqID();
     session.write(result, true);
   }
 
@@ -178,6 +169,51 @@ public final class MySQLEngine implements SQLEngine {
     }
 
     return in.readRetainedSlice(payloadLength + 1);
+  }
+
+  @Override
+  public void writeResult(Session session, CompositeByteBuf out, ExecResult result) {
+    try {
+      switch (result.getType()) {
+        case HANDSHAKE:
+          CodecUtil.encode(session, out, (HandshakeResult) result);
+          break;
+        case QUERY:
+          CodecUtil.encode(session, out, result);
+          break;
+        case DML:
+          CodecUtil.encode(session, out, (DMLExecResult) result);
+          break;
+        case ACK:
+          CodecUtil.encodeACK(session, out);
+          break;
+        case PREPARE:
+          CodecUtil.encode(session, out, (PrepareResult) result);
+          break;
+        default:
+          throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_NOT_SUPPORTED_YET, "ResultType(" + result.getType().name() + ")");
+      }
+    } catch (Exception ex) {
+      JimException je;
+      if (ex instanceof JimException) {
+        je = (JimException) ex;
+      } else {
+        je = DBException.get(ErrorModule.PROTO, ErrorCode.ER_UNKNOWN_ERROR, ex);
+      }
+
+      out.readerIndex(out.writerIndex());
+      out.discardReadComponents();
+      writeError(session, out, je);
+    }
+  }
+
+  @Override
+  public void writeError(Session session, CompositeByteBuf out, JimException ex) {
+    CodecUtil.encode(session, out, ex);
+  }
+
+  @Override
+  public void close() {
   }
 
   @Override
@@ -217,13 +253,23 @@ public final class MySQLEngine implements SQLEngine {
           sql = CodecUtil.readStringEof(in);
           break;
         case MYSQL_COM_STMT_EXECUTE:
-          stmtID = handleCommandExecute(session, in);
+          stmtID = handleStmtExecute(session, in);
           break;
-        case MYSQL_COM_STMT_CLOSE:
+        case MYSQL_COM_STMT_RESET:
+          if (in.readableBytes() < 4) {
+            throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+          }
           stmtID = CodecUtil.readInt4(in);
           break;
+        case MYSQL_COM_STMT_CLOSE:
+          if (in.readableBytes() >= 4) {
+            stmtID = CodecUtil.readInt4(in);
+          }
+          break;
+        case MYSQL_COM_STMT_SEND_LONG_DATA:
+          handleStmtSendLongData(session, in);
+          return;
         default:
-          //session.writeError(DBException.get(ErrorModule.PROTO, ErrorCode.ER_NOT_SUPPORTED_YET, "Command(" + cmdType.name() + ")"));
           break;
       }
     } catch (JimException ex) {
@@ -262,11 +308,23 @@ public final class MySQLEngine implements SQLEngine {
         case MYSQL_COM_STMT_EXECUTE:
           sqlExecutor.execute(session, stmtID);
           break;
+        case MYSQL_COM_STMT_RESET:
+          PreparedStatement stmt = session.getPreparedContext().getStatement(stmtID);
+          if (stmt == null) {
+            throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_UNKNOWN_STMT_HANDLER, String.valueOf(stmtID), "stmt_reset");
+          }
+          stmt.reset();
+          session.write(AckExecResult.getInstance(), true);
+          break;
         case MYSQL_COM_STMT_CLOSE:
-          session.getPrepareContext().getPreparedStmts().remove(stmtID);
+          if (stmtID > 0) {
+            PreparedStatement stmt1 = session.getPreparedContext().getStatement(stmtID);
+            if (stmt1 != null) {
+              stmt1.close();
+            }
+          }
           break;
         default:
-          //throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_NOT_SUPPORTED_YET, "Command(" + cmdType + ")");
           session.writeError(DBException.get(ErrorModule.PROTO, ErrorCode.ER_NOT_SUPPORTED_YET, "Command(" + cmdType.name() + ")"));
           break;
       }
@@ -275,34 +333,6 @@ public final class MySQLEngine implements SQLEngine {
     } catch (Exception ex) {
       session.writeError(DBException.get(ErrorModule.PROTO, ErrorCode.ER_UNKNOWN_ERROR, ex));
     }
-  }
-
-  private int handleCommandExecute(Session session, ByteBuf in) {
-    PrepareContext context = session.getPrepareContext();
-    int stmtId = CodecUtil.readInt4(in);
-    JimStatement stmt = context.getPreparedStmts().get(stmtId);
-    int parametersNum = stmt.getParametersNum();
-    //flag
-    CodecUtil.readInt1(in);
-    //skip iteration-count
-    CodecUtil.readInt4(in);
-
-    NullBitMap nullBitmap = new NullBitMap(0, parametersNum);
-    for (int i = 0; i < nullBitmap.getBits().length; i++) {
-      nullBitmap.getBits()[i] = CodecUtil.readInt1(in);
-    }
-    List<SQLType> types;
-    // bound param
-    if (CodecUtil.readInt1(in) == 1) {
-      types = getTypes(in, parametersNum);
-    } else {
-      types = stmt.getPrepareTypes();
-    }
-
-    stmt.setPrepareTypes(types);
-    context.setPrepareTypes(types);
-    context.setPreparedParams(getParams(in, types, parametersNum));
-    return stmtId;
   }
 
   private void doAuth(Session session, ByteBuf message) {
@@ -322,65 +352,117 @@ public final class MySQLEngine implements SQLEngine {
     }
   }
 
-  @Override
-  public void writeResult(Session session, CompositeByteBuf out, ExecResult result) {
-    try {
-      switch (result.getType()) {
-        case HANDSHAKE:
-          CodecUtil.encode(session, out, (HandshakeResult) result);
-          break;
-        case QUERY:
-          CodecUtil.encode(session, out, (QueryResult) result);
-          break;
-        case DML:
-          CodecUtil.encode(session, out, (DMLExecResult) result);
-          break;
-        case ACK:
-          CodecUtil.encodeACK(session, out);
-          break;
-        case PREPARE:
-          CodecUtil.encode(session, out, (PrepareResult) result);
-          break;
-        default:
-          throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_NOT_SUPPORTED_YET, "ResultType(" + result.getType().name() + ")");
-      }
-    } catch (Exception ex) {
-      JimException je;
-      if (ex instanceof JimException) {
-        je = (JimException) ex;
+  private void handleStmtSendLongData(Session session, ByteBuf in) {
+    if (in.readableBytes() < 6) {
+      throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+    }
+
+    int stmtId = CodecUtil.readInt4(in);
+    PreparedStatement stmt = session.getPreparedContext().getStatement(stmtId);
+    if (stmt == null) {
+      throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_UNKNOWN_STMT_HANDLER, String.valueOf(stmtId), "stmt_send_longdata");
+    }
+
+    int paramId = CodecUtil.readInt2(in);
+    Value[] boundValues = stmt.getBoundValues();
+    if (paramId >= boundValues.length) {
+      throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_WRONG_ARGUMENTS, "stmt_send_longdata");
+    }
+
+    int startPos = 0;
+    int size = in.readableBytes();
+    if (size == 0) {
+      boundValues[paramId] = BinaryValue.EMPTY;
+    } else {
+      byte[] value = boundValues[paramId] == null ? null : boundValues[paramId].toByteArray();
+      byte[] result;
+      if (value != null && value.length > 0) {
+        startPos = value.length;
+        result = new byte[value.length + size];
+        System.arraycopy(value, 0, result, 0, value.length);
       } else {
-        je = DBException.get(ErrorModule.PROTO, ErrorCode.ER_UNKNOWN_ERROR, ex);
+        result = new byte[size];
+      }
+      in.readBytes(result, startPos, size);
+      boundValues[paramId] = BinaryValue.getInstance(result);
+    }
+  }
+
+  private int handleStmtExecute(Session session, ByteBuf in) {
+    if (in.readableBytes() < 9) {
+      throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+    }
+
+    int stmtId = CodecUtil.readInt4(in);
+    PreparedContext context = session.getPreparedContext();
+    PreparedStatement stmt = context.getStatement(stmtId);
+    if (stmt == null) {
+      throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_UNKNOWN_STMT_HANDLER, String.valueOf(stmtId), "stmt_execute");
+    }
+
+    // cursor flag
+    int flag = CodecUtil.readInt1(in);
+    switch (flag) {
+      case 0:
+        break;
+      default:
+        throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_NOT_SUPPORTED_YET, "flag " + flag);
+    }
+    // skip iteration-count
+    in.skipBytes(4);
+
+    int paramNum = stmt.getParams();
+    if (paramNum <= 0) {
+      return stmtId;
+    }
+
+    int nullBitLen = (paramNum + 7) >> 3;
+    if (in.readableBytes() < (nullBitLen + 1)) {
+      throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+    }
+
+    ByteBuf nullBit = in.readSlice(nullBitLen);
+    // new param bound
+    if (CodecUtil.readInt1(in) == 1) {
+      if (in.readableBytes() < (paramNum << 1)) {
+        throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
       }
 
-      out.readerIndex(out.writerIndex());
-      out.discardReadComponents();
-      writeError(session, out, je);
+      SQLType[] paramTypes = new SQLType[paramNum];
+      for (int i = 0; i < paramNum; i++) {
+        MySQLColumnDataType mySQLType = MySQLColumnDataType.valueOf(CodecUtil.readInt1(in));
+        paramTypes[i] = Types.buildSQLType(MySQLColumnDataType.valueOfType(mySQLType), CodecUtil.readInt1(in) > 0 ? true : false);
+      }
+      stmt.setParamTypes(paramTypes);
     }
+
+    Value[] paramValues = parsePrepareParams(in, stmt, nullBit);
+    stmt.reset();
+    context.setParamTypes(stmt.getParamTypes());
+    context.setParamValues(paramValues);
+    return stmtId;
   }
 
-  @Override
-  public void writeError(Session session, CompositeByteBuf out, JimException ex) {
-    CodecUtil.encode(session, out, ex);
-  }
+  private Value[] parsePrepareParams(ByteBuf in, PreparedStatement stmt, ByteBuf nullBit) {
+    int paramNum = stmt.getParams();
+    Value[] boundValues = stmt.getBoundValues();
+    Value[] paramValues = new Value[paramNum];
+    SQLType[] paramTypes = stmt.getParamTypes();
+    for (int i = 0; i < paramNum; i++) {
+      if (boundValues[i] != null) {
+        paramValues[i] = boundValues[i];
+        continue;
+      }
 
-  @Override
-  public void close() {
-  }
+      if (((nullBit.getByte(i >> 3) & 0xff) & (1 << ((long) i) % 8)) > 0) {
+        paramValues[i] = null;
+        continue;
+      }
 
-  private List<SQLType> getTypes(ByteBuf byteBuf, final int paramsNum) {
-    List<SQLType> paramTypes = new ArrayList<>(paramsNum);
-    for (int i = 0; i < paramsNum; i++) {
-
-      MySQLColumnDataType mySQLColumnDataType = MySQLColumnDataType.valueOf(CodecUtil.readInt1(byteBuf));
-      paramTypes.add(Types.buildSQLType(MySQLColumnDataType.valueOfType(mySQLColumnDataType), CodecUtil.readInt1(byteBuf) > 0 ? true : false));
-    }
-    return paramTypes;
-  }
-
-  private List<Value> getParams(ByteBuf byteBuf, List<SQLType> paramTypes, int paramsNum) {
-    List<Value> paramValues = new ArrayList<>(paramsNum);
-    for (int i = 0; i < paramsNum; i++) {
-      paramValues.add(CodecUtil.binaryRead(byteBuf, paramTypes.get(i)));
+      if (i >= paramTypes.length) {
+        throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+      }
+      paramValues[i] = CodecUtil.binaryRead(in, paramTypes[i]);
     }
     return paramValues;
   }

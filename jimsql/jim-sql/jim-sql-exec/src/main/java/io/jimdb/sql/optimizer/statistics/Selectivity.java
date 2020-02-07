@@ -25,11 +25,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
 /**
- *
+ *  Selectivity of the column or index that will be used to evaluate the cost of an access path
  */
 @SuppressFBWarnings({ "UUF_UNUSED_FIELD" })
 public class Selectivity {
-  private long id;
+  private long id; // column uid or index id
 
   private SelectivityType type;
 

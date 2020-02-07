@@ -25,10 +25,13 @@ import io.jimdb.sql.operator.OperatorUtil;
 import io.jimdb.sql.operator.RelOperator;
 import io.jimdb.sql.optimizer.physical.RangeRebuildVisitor;
 import io.jimdb.sql.optimizer.statistics.TableStatsManager;
+import io.jimdb.test.mock.meta.MockMeta;
+import io.jimdb.test.mock.meta.MockMetaStore4CompositeIndex;
 import io.jimdb.test.planner.TestBase;
 
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -48,11 +51,13 @@ public class CompositeIndexTest extends TestBase {
 
   private Checker checker = Checker.build(new CheckMethod());
   private RangeRebuildChecker rangeRebuildChecker = RangeRebuildChecker.build(new RangeRebuildCheckMethod());
+  private static MockMeta mockMeta = new MockMetaStore4CompositeIndex();
 
   @BeforeClass
-  public static void mock() {
-    //mock tables
-//    setMetaEngine(new MockMetaEngineForCompositeIndex());
+  public static void mock() throws Exception {
+//    mock tables
+    setMockMeta(mockMeta);
+    setup();
   }
 
   @After
@@ -77,8 +82,7 @@ public class CompositeIndexTest extends TestBase {
     checker.sql("select name from user where age > 10 or age < 1 ")
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,"
                     + "endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[LogicOr(GreaterInt(test.user"
-                    + ".age,10),LessInt(test.user.age,1))],accessConditions=null\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(user) -> Projection")
             .check();
   }
@@ -90,22 +94,20 @@ public class CompositeIndexTest extends TestBase {
     checker.sql("select name from user where name = 'tom' or name = 'jerry' ")
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:jerry,end:jerry}],startInclusive:true,"
                     + "endInclusive:true},{[{start:tom,end:tom}],startInclusive:true,endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
-                    + "=[EqualString(test.user.name,tom), EqualString(test.user.name,jerry)]\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"[EqualString(test"
+                    + ".user.name,tom), EqualString(test.user.name,jerry)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user)")
             .check();
   }
 
-  // todo    为什么能用索引
   @Test
   public void testOr2() {
     checker.sql("select name from user where name = 'tom' or ( name = 'jerry' and age > 1 ) ")
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:jerry,end:jerry},{start:1,end:MAX_VALUE}],"
                     + "startInclusive:false,endInclusive:true},{[{start:tom,end:tom}],startInclusive:true,"
                     + "endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
-                    + "=[EqualString(test.user.name,tom), EqualString(test.user.name,jerry), GreaterInt(test.user"
-                    + ".age,1)]\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"[EqualString(test"
+                    + ".user.name,tom), EqualString(test.user.name,jerry), GreaterInt(test.user.age,1)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user) -> Projection")
             .check();
   }
@@ -114,9 +116,9 @@ public class CompositeIndexTest extends TestBase {
   public void testOr3() {
     checker.sql("select name from user where name > 'a' and name < 'd' or ( name > 'b' and name < 'c' ) ")
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:a,end:d}],startInclusive:false,endInclusive:false}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
-                    + "=[GreaterString(test.user.name,a), LessString(test.user.name,d), GreaterString(test.user.name,"
-                    + "b), LessString(test.user.name,c)]\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"[GreaterString(test"
+                    + ".user.name,a), LessString(test.user.name,d), GreaterString(test.user.name,b), LessString(test"
+                    + ".user.name,c)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user)")
             .check();
   }
@@ -125,9 +127,9 @@ public class CompositeIndexTest extends TestBase {
   public void testOr4() {
     checker.sql("select name from user where name > 'a' and name < 'd' or ( name > 'b' and name < 'f' ) ")
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:a,end:f}],startInclusive:false,endInclusive:false}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
-                    + "=[GreaterString(test.user.name,a), LessString(test.user.name,d), GreaterString(test.user.name,"
-                    + "b), LessString(test.user.name,f)]\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"[GreaterString(test"
+                    + ".user.name,a), LessString(test.user.name,d), GreaterString(test.user.name,b), LessString(test"
+                    + ".user.name,f)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user)")
             .check();
   }
@@ -137,8 +139,8 @@ public class CompositeIndexTest extends TestBase {
     checker.sql("select name from user where  name = 'tom' and age > 10 ")
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:tom,end:tom},{start:10,end:MAX_VALUE}],"
                     + "startInclusive:false,endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
-                    + "=[EqualString(test.user.name,tom), GreaterInt(test.user.age,10)]\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"[EqualString(test"
+                    + ".user.name,tom), GreaterInt(test.user.age,10)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user) -> Projection")
             .check();
   }
@@ -148,9 +150,9 @@ public class CompositeIndexTest extends TestBase {
     checker.sql("select * from user where  name = 'tom' and age = 10 and  phone = '1212313' and score >1.11 ")
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:tom,end:tom},{start:10,end:10},{start:1212313,"
                     + "end:1212313},{start:1.11,end:MAX_VALUE}],startInclusive:false,endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
-                    + "=[EqualString(test.user.name,tom), EqualInt(test.user.age,10), EqualString(test.user.phone,"
-                    + "1212313), GreaterReal(test.user.score,1.11)]\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"[EqualString(test"
+                    + ".user.name,tom), EqualInt(test.user.age,10), EqualString(test.user.phone,1212313), GreaterReal"
+                    + "(test.user.score,1.11)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user) -> TableSource(user) -> IndexLookUp")
             .check();
   }
@@ -162,9 +164,9 @@ public class CompositeIndexTest extends TestBase {
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:tom,end:tom},{start:10,end:10},{start:1212313,"
                     + "end:1212313},{start:99.99,end:99.99},{start:1000.00,end:MAX_VALUE}],startInclusive:false,"
                     + "endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
-                    + "=[EqualString(test.user.name,tom), EqualInt(test.user.age,10), EqualString(test.user.phone,"
-                    + "1212313), EqualReal(test.user.score,99.99), GreaterDecimal(test.user.salary,1000.00)]\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"[EqualString(test"
+                    + ".user.name,tom), EqualInt(test.user.age,10), EqualString(test.user.phone,1212313), EqualReal"
+                    + "(test.user.score,99.99), GreaterDecimal(test.user.salary,1000.00)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user) -> TableSource(user) -> IndexLookUp")
             .check();
   }
@@ -176,9 +178,9 @@ public class CompositeIndexTest extends TestBase {
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:tom,end:tom},{start:10,end:10},{start:1212313,"
                     + "end:1212313},{start:99.0,end:99.0},{start:1000.00,end:MAX_VALUE}],startInclusive:false,"
                     + "endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
-                    + "=[EqualString(test.user.name,tom), EqualInt(test.user.age,10), EqualString(test.user.phone,"
-                    + "1212313), EqualReal(test.user.score,99.0), GreaterDecimal(test.user.salary,1000.00)]\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"[EqualString(test"
+                    + ".user.name,tom), EqualInt(test.user.age,10), EqualString(test.user.phone,1212313), EqualReal"
+                    + "(test.user.score,99.0), GreaterDecimal(test.user.salary,1000.00)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user) -> TableSource(user) -> Selection(EqualString(test"
                     + ".user.remark,remark)) -> IndexLookUp")
             .check();
@@ -189,8 +191,7 @@ public class CompositeIndexTest extends TestBase {
     checker.sql("select name from user_unique_idx where age > 10 or age < 1 ")
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:MIN_VALUE,end:MAX_VALUE}],startInclusive:true,"
                     + "endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"primary\":\"tableConditions=[LogicOr(GreaterInt(test"
-                    + ".user_unique_idx.age,10),LessInt(test.user_unique_idx.age,1))],accessConditions=null\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{}")
             .addCheckPoint(CheckPoint.PlanTree, "TableSource(user_unique_idx) -> Projection")
             .check();
   }
@@ -204,8 +205,8 @@ public class CompositeIndexTest extends TestBase {
     checker.sql("select name from user_unique_idx where  name = 'tom' and age > 10 ")
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:tom,end:tom},{start:10,end:MAX_VALUE}],"
                     + "startInclusive:false,endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
-                    + "=[EqualString(test.user_unique_idx.name,tom), GreaterInt(test.user_unique_idx.age,10)]\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"[EqualString(test"
+                    + ".user_unique_idx.name,tom), GreaterInt(test.user_unique_idx.age,10)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user_unique_idx) -> Projection")
             .check();
   }
@@ -216,10 +217,9 @@ public class CompositeIndexTest extends TestBase {
             + ".11 ")
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:tom,end:tom},{start:10,end:10},{start:1212313,"
                     + "end:1212313},{start:1.11,end:MAX_VALUE}],startInclusive:false,endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
-                    + "=[EqualString(test.user_unique_idx.name,tom), EqualInt(test.user_unique_idx.age,10), "
-                    + "EqualString(test.user_unique_idx.phone,1212313), GreaterReal(test.user_unique_idx.score,1.11)"
-                    + "]\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"[EqualString(test"
+                    + ".user_unique_idx.name,tom), EqualInt(test.user_unique_idx.age,10), EqualString(test"
+                    + ".user_unique_idx.phone,1212313), GreaterReal(test.user_unique_idx.score,1.11)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user_unique_idx) -> TableSource(user_unique_idx) -> "
                     + "IndexLookUp")
             .check();
@@ -232,10 +232,10 @@ public class CompositeIndexTest extends TestBase {
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:tom,end:tom},{start:10,end:10},{start:1212313,"
                     + "end:1212313},{start:99.99,end:99.99},{start:1000.00,end:MAX_VALUE}],startInclusive:false,"
                     + "endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
-                    + "=[EqualString(test.user_unique_idx.name,tom), EqualInt(test.user_unique_idx.age,10), "
-                    + "EqualString(test.user_unique_idx.phone,1212313), EqualReal(test.user_unique_idx.score,99.99), "
-                    + "GreaterDecimal(test.user_unique_idx.salary,1000.00)]\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"[EqualString(test"
+                    + ".user_unique_idx.name,tom), EqualInt(test.user_unique_idx.age,10), EqualString(test"
+                    + ".user_unique_idx.phone,1212313), EqualReal(test.user_unique_idx.score,99.99), GreaterDecimal"
+                    + "(test.user_unique_idx.salary,1000.00)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user_unique_idx) -> TableSource(user_unique_idx) -> "
                     + "IndexLookUp")
             .check();
@@ -248,10 +248,10 @@ public class CompositeIndexTest extends TestBase {
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:tom,end:tom},{start:10,end:10},{start:1212313,"
                     + "end:1212313},{start:99.0,end:99.0},{start:1000.00,end:MAX_VALUE}],startInclusive:false,"
                     + "endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
-                    + "=[EqualString(test.user_unique_idx.name,tom), EqualInt(test.user_unique_idx.age,10), "
-                    + "EqualString(test.user_unique_idx.phone,1212313), EqualReal(test.user_unique_idx.score,99.0), "
-                    + "GreaterDecimal(test.user_unique_idx.salary,1000.00)]\"}")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"[EqualString(test"
+                    + ".user_unique_idx.name,tom), EqualInt(test.user_unique_idx.age,10), EqualString(test"
+                    + ".user_unique_idx.phone,1212313), EqualReal(test.user_unique_idx.score,99.0), GreaterDecimal"
+                    + "(test.user_unique_idx.salary,1000.00)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user_unique_idx) -> TableSource(user_unique_idx) -> "
                     + "Selection(EqualString(test.user_unique_idx.remark,remark)) -> IndexLookUp")
             .check();
@@ -260,15 +260,13 @@ public class CompositeIndexTest extends TestBase {
   @Test
   public void testDate() {
     checker.sql("select * from user_date_unique_idx where  name = 'tom' and age = 10 and  phone = '1212313' and "
-            + "salary = 1000.00 and date = '2013-01-12' and time < '23:23:56' ")
-            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:tom,end:tom},{start:10,end:10},{start:1212313,"
-                    + "end:1212313},{start:1000.00,end:1000.00},{start:1841576423408533504,end:1841576423408533504},"
-                    + "{start:MIN_VALUE,end:84236000000}],startInclusive:true,endInclusive:false}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_name_age_phone_salary_date_time\":\"accessConditions"
-                    + "=[EqualString(test.user_date_unique_idx.name,tom), EqualInt(test.user_date_unique_idx.age,10),"
-                    + " EqualString(test.user_date_unique_idx.phone,1212313), EqualDecimal(test.user_date_unique_idx"
-                    + ".salary,1000.00), EqualDate(test.user_date_unique_idx.date,1841576423408533504), LessTime(test"
-                    + ".user_date_unique_idx.time,84236000000)]\"}")
+            + " score = 99.0 and salary = 1000.00 and date = '2013-01-12' and time < '23:23:56' ")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:tom,end:tom},{start:10,end:10},{start:1212313,end:1212313},{start:99.0,end:99.0},{start:1000.00,end:1000.00},{start:1841576423408533504,end:1841576423408533504},{start:MIN_VALUE,end:84236000000}],startInclusive:true,endInclusive:false}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"idx_name_age_phone_salary_date_time\":\"[EqualString(test"
+                    + ".user_date_unique_idx.name,tom), EqualInt(test.user_date_unique_idx.age,10), EqualString(test"
+                    + ".user_date_unique_idx.phone,1212313), EqualReal(test.user_date_unique_idx.score,99.0), "
+                    + "EqualDecimal(test.user_date_unique_idx.salary,1000.00), EqualDate(test.user_date_unique_idx"
+                    + ".date,1841576423408533504), LessTime(test.user_date_unique_idx.time,84236000000)]\"}")
             .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user_date_unique_idx) -> TableSource"
                     + "(user_date_unique_idx) -> IndexLookUp")
             .check();
@@ -278,20 +276,20 @@ public class CompositeIndexTest extends TestBase {
 
   // region unique composite index  with date 、time
 
-  @Test
-  public void testIn() {
-    checker.sql("select * from user where name in ('tom','jerry') ")
-            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:tom,end:tom},{start:10,end:10},{start:1212313,"
-                    + "end:1212313},{start:99.0,end:99.0},{start:1000.00,end:MAX_VALUE}],startInclusive:false,"
-                    + "endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
-                    + "=[EqualString(test.user_unique_idx.name,tom), EqualInt(test.user_unique_idx.age,10), "
-                    + "EqualString(test.user_unique_idx.phone,1212313), EqualReal(test.user_unique_idx.score,99.0), "
-                    + "GreaterDecimal(test.user_unique_idx.salary,1000.00)]\"}")
-            .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user_unique_idx) -> TableSource(user_unique_idx) -> "
-                    + "Selection(EqualString(test.user_unique_idx.remark,remark)) -> IndexLookUp")
-            .check();
-  }
+//  @Test
+//  public void testIn() {
+//    checker.sql("select * from user where name in ('tom','jerry') ")
+//            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:tom,end:tom},{start:10,end:10},{start:1212313,"
+//                    + "end:1212313},{start:99.0,end:99.0},{start:1000.00,end:MAX_VALUE}],startInclusive:false,"
+//                    + "endInclusive:true}]")
+//            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_name_age_phone_score_salary\":\"accessConditions"
+//                    + "=[EqualString(test.user_unique_idx.name,tom), EqualInt(test.user_unique_idx.age,10), "
+//                    + "EqualString(test.user_unique_idx.phone,1212313), EqualReal(test.user_unique_idx.score,99.0), "
+//                    + "GreaterDecimal(test.user_unique_idx.salary,1000.00)]\"}")
+//            .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user_unique_idx) -> TableSource(user_unique_idx) -> "
+//                    + "Selection(EqualString(test.user_unique_idx.remark,remark)) -> IndexLookUp")
+//            .check();
+//  }
 
   // endregion
 
@@ -304,14 +302,12 @@ public class CompositeIndexTest extends TestBase {
             "from fix\n" +
             "where t_unique = '8427'")
             .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:8427,end:8427}],startInclusive:true,endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_t_unique\":\"accessConditions=[EqualString(test.fix"
-                    + ".t_unique,8427)]\"}")
-            .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user_unique_idx) -> TableSource(user_unique_idx) -> "
-                    + "Selection(EqualString(test.user_unique_idx.remark,remark)) -> IndexLookUp")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_t_unique\":\"[EqualString(test.fix.t_unique,8427)]\"}")
+            .addCheckPoint(CheckPoint.PlanTree, "IndexSource(fix) -> TableSource(fix) -> HashAgg(COUNT(1),DISTINCT(test.fix.t_int),DISTINCT(test.fix.t_unique),DISTINCT(test.fix.t_index),DISTINCT(test.fix.t_tinyint),DISTINCT(test.fix.t_smallint),DISTINCT(test.fix.t_varchar)) -> IndexLookUp -> HashAgg(COUNT(col_0),DISTINCT(col_1),DISTINCT(col_2),DISTINCT(col_3),DISTINCT(col_4),DISTINCT(col_5),DISTINCT(col_6))")
             .check();
   }
 
-  @Test
+//  @Test
   public void testFixParallel() {
 
     ExecutorService executorService = Executors.newFixedThreadPool(200);
@@ -333,7 +329,7 @@ public class CompositeIndexTest extends TestBase {
     }
   }
 
-  @Test
+//  @Test
   public void testFixParallel2() {
     Flux.range(1, 1000)
             .map(i -> "select count(1) as countRecord, t_int, t_unique, t_index\n" +
@@ -372,12 +368,9 @@ public class CompositeIndexTest extends TestBase {
             + "    from fix\n"
             + "    where t_unique = '108'\n"
             + "    group by t_tinyint")
-            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:8427,end:8427}],startInclusive:true,"
-                    + "endInclusive:true}]")
-            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_t_unique\":\"accessConditions=[EqualString(test.fix"
-                    + ".t_unique,8427)]\"}")
-            .addCheckPoint(CheckPoint.PlanTree, "IndexSource(user_unique_idx) -> TableSource(user_unique_idx) -> "
-                    + "Selection(EqualString(test.user_unique_idx.remark,remark)) -> IndexLookUp")
+            .addCheckPoint(CheckPoint.ColumnRange, "[{[{start:108,end:108}],startInclusive:true,endInclusive:true}]")
+            .addCheckPoint(CheckPoint.DetachConditions, "{\"uni_t_unique\":\"[EqualString(test.fix.t_unique,108)]\"}")
+            .addCheckPoint(CheckPoint.PlanTree, "IndexSource(fix) -> TableSource(fix) -> HashAgg(MIN(test.fix.t_float),MAX(test.fix.t_double),COUNT(test.fix.t_unique),SUM(test.fix.t_int),DISTINCT(test.fix.t_int),DISTINCT(test.fix.t_unique),DISTINCT(test.fix.t_index),DISTINCT(test.fix.t_tinyint),DISTINCT(test.fix.t_smallint),DISTINCT(test.fix.t_varchar),DISTINCT(test.fix.t_float),DISTINCT(test.fix.t_double)) -> IndexLookUp -> HashAgg(MIN(col_0),MAX(col_1),COUNT(col_2),SUM(col_3),DISTINCT(col_4),DISTINCT(col_5),DISTINCT(col_6),DISTINCT(col_7),DISTINCT(col_8),DISTINCT(col_9),DISTINCT(col_10),DISTINCT(col_11))")
             .check();
   }
 

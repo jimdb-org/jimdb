@@ -243,7 +243,7 @@ public class StatisticsVisitor extends ParameterizedOperatorVisitor<OperatorStat
             .getResultType());
     path.setRanges(ranges);
 
-    double count = tableSourceStatInfo.estimateRowCountByNonIndexedRanges(session, primaryKeyColumnExpr.getId(),
+    double count = tableSourceStatInfo.estimateRowCountByColumnRanges(session, primaryKeyColumnExpr.getId(),
             path.getRanges());
     if (count > 0) {
       // when the pseudo count is ready, this count should not be 0
@@ -369,8 +369,7 @@ public class StatisticsVisitor extends ParameterizedOperatorVisitor<OperatorStat
       OperatorStatsInfo statInfo = new OperatorStatsInfo(0);
       tableSource.setStatInfo(statInfo);
 
-      Schema schema = new Schema(session, tableSource.getTable().getReadableColumns());
-      TableStatsManager.addToCache(tableSource.getTable(), new TableStats(session, tableSource.getTable(), schema, 0));
+      TableStatsManager.addToCache(tableSource.getTable(), new TableStats(tableSource.getTable(), 0));
       return statInfo;
     }
 
@@ -382,25 +381,25 @@ public class StatisticsVisitor extends ParameterizedOperatorVisitor<OperatorStat
 
     // We first set the table source stat and then estimate the path cost
     tableSource.setStatInfo(operatorStatsInfo);
-    List<Expression> conditions = tableSource.getPushDownPredicates();
+//    List<Expression> conditions = tableSource.getPushDownPredicates();
 
-    for (TableAccessPath path : tableSource.getTableAccessPaths()) {
-
-      if (path.isTablePath()) {
-        boolean noIntervalInRanges = deriveTablePathStats(session, tableSource, tableSourceStatInfo, path, conditions);
-        if (noIntervalInRanges || path.getRanges().isEmpty()) {
-          tableSource.setTableAccessPaths(Collections.singletonList(path));
-          break;
-        }
-        continue;
-      }
-
-      boolean noIntervalInRanges = deriveIndexPathStats(session, tableSource, tableSourceStatInfo, path, conditions);
-      if ((noIntervalInRanges && path.getIndex().isUnique()) || path.getRanges().isEmpty()) {
-        tableSource.setTableAccessPaths(Collections.singletonList(path));
-        break;
-      }
-    }
+//    for (TableAccessPath path : tableSource.getTableAccessPaths()) {
+//
+//      if (path.isTablePath()) {
+//        boolean noIntervalInRanges = deriveTablePathStats(session, tableSource, tableSourceStatInfo, path, conditions);
+//        if (noIntervalInRanges || path.getRanges().isEmpty()) {
+//          tableSource.setTableAccessPaths(Collections.singletonList(path));
+//          break;
+//        }
+//        continue;
+//      }
+//
+//      boolean noIntervalInRanges = deriveIndexPathStats(session, tableSource, tableSourceStatInfo, path, conditions);
+//      if ((noIntervalInRanges && path.getIndex().isUnique()) || path.getRanges().isEmpty()) {
+//        tableSource.setTableAccessPaths(Collections.singletonList(path));
+//        break;
+//      }
+//    }
 
     // FIXME from TiDB: 'if ds.ctx.GetSessionVars().OptimizerSelectivityLevel >= 1 {
     //  ds.stats.HistColl = ds.stats.HistColl.NewHistCollBySelectivity(ds.ctx.GetSessionVars().StmtCtx, nodes)

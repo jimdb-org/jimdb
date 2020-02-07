@@ -3,7 +3,7 @@ if [ "$1" == "pid" ]
 then
     PIDPROC=`cat ./jim.pid`
 else
-    PIDPROC=`ps -ef | grep 'io.jimdb.server.JimBootstrap' | grep -v 'grep'| awk '{print $2}'`
+    PIDPROC=`ps -ef | grep 'io.jimdb.sql.server.JimBootstrap' | grep -v 'grep'| awk '{print $2}'`
 fi
 
 if [ -z "$PIDPROC" ];then

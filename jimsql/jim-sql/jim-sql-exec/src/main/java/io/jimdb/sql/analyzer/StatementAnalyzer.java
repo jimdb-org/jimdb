@@ -24,11 +24,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import io.jimdb.core.context.StatementContext;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.core.context.PreparedContext;
+import io.jimdb.core.context.StatementContext;
 import io.jimdb.core.expression.Assignment;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
@@ -44,6 +45,9 @@ import io.jimdb.core.expression.functions.builtin.cast.CastFuncBuilder;
 import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.meta.Table;
+import io.jimdb.core.model.privilege.PrivilegeType;
+import io.jimdb.core.values.LongValue;
+import io.jimdb.core.values.Value;
 import io.jimdb.sql.operator.Aggregation;
 import io.jimdb.sql.operator.DualTable;
 import io.jimdb.sql.operator.Limit;
@@ -56,7 +60,6 @@ import io.jimdb.sql.operator.TableSource;
 import io.jimdb.sql.operator.Update;
 import io.jimdb.sql.optimizer.IndexHint;
 import io.jimdb.sql.optimizer.OptimizeFlag;
-import io.jimdb.core.values.Value;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -79,6 +82,7 @@ import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
 import com.alibaba.druid.sql.ast.expr.SQLUnaryExpr;
 import com.alibaba.druid.sql.ast.expr.SQLUnaryOperator;
 import com.alibaba.druid.sql.ast.expr.SQLValuableExpr;
+import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
 import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
 import com.alibaba.druid.sql.ast.statement.SQLJoinTableSource;
 import com.alibaba.druid.sql.ast.statement.SQLSelectGroupByClause;
@@ -133,11 +137,10 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
     return false;
   }
 
-  protected Operator analyzeUpdate(RelOperator selectOp, List<SQLUpdateSetItem> items, SQLTableSource tableSource)
-          throws JimException {
+  protected Operator analyzeUpdate(RelOperator selectOp, List<SQLUpdateSetItem> items, SQLTableSource tableSource) throws JimException {
     this.clause = ClauseType.FIELDLIST;
     Table table = AnalyzerUtil.resolveTable(session, tableSource);
-
+    session.getStmtContext().addPrivilegeInfo(table.getCatalog().getName(), table.getName(), PrivilegeType.UPDATE_PRIV);
     ColumnExpr column;
     List<Assignment> updItems = new ArrayList<>(items.size());
     for (SQLUpdateSetItem item : items) {
@@ -243,7 +246,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
     }
     String tblName = sqlTableSource.getName().getSimpleName();
     Table table = session.getTxnContext().getMetaData().getTable(catalog, tblName);
-
+    session.getStmtContext().addPrivilegeInfo(catalog, tblName, PrivilegeType.SELECT_PRIV);
     if (table == null) {
       throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NO_SUCH_TABLE, catalog, tblName);
     }
@@ -314,8 +317,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
     return indexHints;
   }
 
-  protected List<SQLSelectItem> expandStar(final RelOperator op, final List<SQLSelectItem> selectItems) throws
-          JimException {
+  protected List<SQLSelectItem> expandStar(final RelOperator op, final List<SQLSelectItem> selectItems) throws JimException {
     List<ColumnExpr> columnExps = op.getSchema().getColumns();
     List<SQLSelectItem> resultItems = new ArrayList<>(columnExps.size());
 
@@ -419,6 +421,12 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
       } else {
         aliasTable = ((SQLPropertyExpr) ownerExpr).getSimpleName();
         dbName = ((SQLPropertyExpr) ownerExpr).getOwnernName();
+      }
+    } else if (sqlExpr instanceof SQLAggregateExpr) {
+      if (StringUtils.isBlank(sqlItem.getAlias())) {
+        oriCol = sqlItem.toString();
+      } else {
+        oriCol = sqlItem.getAlias();
       }
     } else {
       oriCol = sqlItem.toString();
@@ -672,8 +680,10 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
 
   protected RelOperator analyzeLimit(final RelOperator op, SQLLimit limit) throws JimException {
     this.optimizationFlag |= OptimizeFlag.PUSHDOWNTOPN;
-    long offset = AnalyzerUtil.resolveLimt(limit.getOffset());
-    long count = AnalyzerUtil.resolveLimt(limit.getRowCount());
+    PreparedContext prepareContext = session.getPreparedContext();
+
+    long offset = getOffset(limit, prepareContext);
+    long count = getCount(limit, prepareContext);
     long maxCnt = Long.MAX_VALUE - offset;
 
     if (count > maxCnt) {
@@ -687,6 +697,30 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
     Limit limitOperator = new Limit(offset, count);
     limitOperator.setChildren(op);
     return limitOperator;
+  }
+
+  static long getCount(SQLLimit limit, PreparedContext context) {
+    long count;
+    if (context.getParamValues() != null && limit.getRowCount() instanceof SQLVariantRefExpr) {
+      SQLVariantRefExpr variantRefExpr = (SQLVariantRefExpr) limit.getRowCount();
+      LongValue value = (LongValue) context.getParamValues()[variantRefExpr.getIndex()];
+      count = value.getValue();
+    } else {
+      count = AnalyzerUtil.resolveLimt(limit.getRowCount());
+    }
+    return count;
+  }
+
+  static long getOffset(SQLLimit limit, PreparedContext context) {
+    long offset;
+    if (context.getParamValues() != null && limit.getOffset() instanceof SQLVariantRefExpr) {
+      SQLVariantRefExpr variantRefExpr = (SQLVariantRefExpr) limit.getOffset();
+      LongValue value = (LongValue) context.getParamValues()[variantRefExpr.getIndex()];
+      offset = value.getValue();
+    } else {
+      offset = AnalyzerUtil.resolveLimt(limit.getOffset());
+    }
+    return offset;
   }
 
   protected RelOperator analyzeGroupBy(final RelOperator op, final List<SQLSelectItem> selects,
@@ -898,12 +932,10 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
   protected Tuple2<Optional<Expression>, RelOperator> analyzeExpression(final RelOperator op, final SQLObject expr,
                                                                         final Map<SQLAggregateExpr, Integer> aggMapper,
                                                                         final boolean isScalar, final
-                                                                        Function<SQLObject, SQLObject> preFunc)
-          throws JimException {
+                                                                        Function<SQLObject, SQLObject> preFunc) throws JimException {
     final StatementContext stmtCtx = session.getStmtContext();
     try {
-      final ExpressionAnalyzer exprAnalyzer = (ExpressionAnalyzer) stmtCtx.retainAnalyzer
-              (this::buildExpressionAnalyzer);
+      final ExpressionAnalyzer exprAnalyzer = (ExpressionAnalyzer) stmtCtx.retainAnalyzer(this::buildExpressionAnalyzer);
       exprAnalyzer.isExprAnalyzer = true;
       exprAnalyzer.expr = expr;
       exprAnalyzer.aggMapper = aggMapper;

@@ -23,6 +23,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.jimdb.common.exception.ErrorCode;
+import io.jimdb.core.plugin.MetaStore;
+import io.jimdb.core.plugin.RouterStore;
+import io.jimdb.core.values.ValueChecker;
 import io.jimdb.pb.Basepb;
 import io.jimdb.pb.Metapb;
 import io.jimdb.pb.Metapb.ColumnInfo;
@@ -30,9 +33,6 @@ import io.jimdb.pb.Metapb.MetaState;
 import io.jimdb.pb.Metapb.TableInfo;
 import io.jimdb.pb.Mspb;
 import io.jimdb.pb.Mspb.DeleteRangesRequest;
-import io.jimdb.core.plugin.MetaStore;
-import io.jimdb.core.plugin.RouterStore;
-import io.jimdb.core.values.ValueChecker;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -71,7 +71,16 @@ final class TaskTableHandler {
         }
 
         //store auto_increment meta
-        long autoInitId = buildAutoIdInfo(metaStore, tableInfo, tableInfo.getAutoInitId());
+        long autoInitId = tableInfo.getAutoInitId();
+        ColumnInfo autoIncrColumn = getAutoColumn(tableInfo);
+        if (autoIncrColumn != null) {
+          Metapb.AutoIdInfo autoIdInfo = buildAutoInfo(autoInitId, autoIncrColumn.getSqlType());
+          Metapb.AutoIdInfo existValue = metaStore.storeAutoIdInfo(dbId, tableInfo.getId(), autoIdInfo, null);
+          if (existValue != null) {
+            throw new DDLException(DDLException.ErrorType.CONCURRENT, String.format("Table[%d] occur concurrent process error", tableInfo.getId()));
+          }
+        }
+
         //create range on master
         createRange(routerStore, tableInfo, replicaNum);
         //store table meta
@@ -152,60 +161,46 @@ final class TaskTableHandler {
     return MetaState.Public;
   }
 
-  static MetaState alterAutoInitId(MetaStore metaStore, TableInfo tableInfo, long incrId) {
-    incrId = buildAutoIdInfo(metaStore, tableInfo, incrId);
-    TableInfo.Builder builder = tableInfo.toBuilder().setAutoInitId(incrId - 1);
-    if (!metaStore.storeTable(tableInfo, builder.build())) {
-      throw new DDLException(DDLException.ErrorType.CONCURRENT, String.format("Table[%d] occur concurrent process error", builder.getId()));
+  static MetaState alterAutoInitId(MetaStore metaStore, TableInfo tableInfo, long alterId) {
+    ColumnInfo autoIncrColumn = getAutoColumn(tableInfo);
+    if (autoIncrColumn == null) {
+      return MetaState.Public;
+    }
+
+    boolean neecUpdate = true;
+    Metapb.AutoIdInfo oldAutoIdInfo = metaStore.getAutoIdInfo(tableInfo.getDbId(), tableInfo.getId());
+    if (oldAutoIdInfo != null) {
+      BigInteger oldInitId = new BigInteger(Long.toUnsignedString(oldAutoIdInfo.getInitId()));
+      long step = oldAutoIdInfo.getStep();
+      List<Long> startList = oldAutoIdInfo.getStartList();
+      for (int i = 0; i < startList.size(); i++) {
+        BigInteger needStart = oldInitId.add(new BigInteger(Long.toUnsignedString(step * i)));
+        BigInteger allocStart = new BigInteger(Long.toUnsignedString(startList.get(i)));
+        if (needStart.compareTo(allocStart) != 0) {
+          neecUpdate = false;
+          BigInteger alterInitId = new BigInteger(Long.toUnsignedString(alterId));
+          if (alterInitId.compareTo(oldInitId) > 0) {
+            throw new DDLException(DDLException.ErrorType.FAILED, String.format("invalid auto_increment id %d, old auto_increment id %d)",
+                    alterId, oldInitId.toString()));
+          }
+          break;
+        }
+      }
+    }
+
+    if (neecUpdate) {
+      Metapb.AutoIdInfo autoIdInfo = buildAutoInfo(alterId, autoIncrColumn.getSqlType());
+      Metapb.AutoIdInfo existValue = metaStore.storeAutoIdInfo(tableInfo.getDbId(), tableInfo.getId(), autoIdInfo, oldAutoIdInfo);
+      if (existValue != null) {
+        throw new DDLException(DDLException.ErrorType.CONCURRENT, String.format("Table[%d] occur concurrent process error", tableInfo.getId()));
+      }
     }
     return MetaState.Public;
   }
 
-  private static long buildAutoIdInfo(MetaStore metaStore, Metapb.TableInfo tableInfo, long autoInitId) {
-    ColumnInfo autoIncrColumn = getAutoColumn(tableInfo);
-    if (autoIncrColumn == null) {
-      return autoInitId;
-    }
-
-    Metapb.SQLType sqlType = autoIncrColumn.getSqlType();
-    int dbId = tableInfo.getDbId();
-    int tableId = tableInfo.getId();
-    Metapb.AutoIdInfo autoIdInfo = buildAutoInfo(autoInitId, sqlType);
-    Metapb.AutoIdInfo expectedAutoIdInfo = metaStore.storeAutoIdInfo(dbId, tableId, autoIdInfo, null);
-    int retry = 3;
-    while (expectedAutoIdInfo != null && retry > 0) {
-      retry--;
-
-      BigInteger oldAutoInitId = new BigInteger(Long.toUnsignedString(expectedAutoIdInfo.getInitId()));
-      long step = expectedAutoIdInfo.getStep();
-      List<Long> startList = expectedAutoIdInfo.getStartList();
-
-      BigInteger nextAutoId = oldAutoInitId;
-      for (int i = 0; i < startList.size(); i++) {
-        BigInteger needStart = oldAutoInitId.add(new BigInteger(Long.toUnsignedString(step * i)));
-        BigInteger allocStart = new BigInteger(Long.toUnsignedString(startList.get(i)));
-        if (needStart.compareTo(allocStart) < 0) {
-          nextAutoId = allocStart;
-        }
-      }
-
-      if (nextAutoId.compareTo(oldAutoInitId) == 0) {
-        //only support update when no alloc
-        expectedAutoIdInfo = metaStore.storeAutoIdInfo(dbId, tableId, autoIdInfo, expectedAutoIdInfo);
-        continue;
-      } else {
-        throw new DDLException(DDLException.ErrorType.FAILED, String.format("invalid auto_increment id %d, "
-                + "old auto_increment id %d, current min auto_id %d)", autoInitId, nextAutoId));
-      }
-    }
-    if (retry == 0) {
-      throw new DDLException(DDLException.ErrorType.FAILED, String.format("invalid auto_increment %d)", autoInitId));
-    }
-    return autoInitId;
-  }
-
   private static ColumnInfo getAutoColumn(Metapb.TableInfo tableInfo) {
-    Optional<ColumnInfo> any = tableInfo.getColumnsList().stream().filter(columnInfo -> columnInfo.getPrimary() && columnInfo.getAutoIncr() && columnInfo.getSqlType().getUnsigned()).findAny();
+    Optional<ColumnInfo> any = tableInfo.getColumnsList().stream()
+            .filter(columnInfo -> columnInfo.getPrimary() && columnInfo.getAutoIncr() && columnInfo.getSqlType().getUnsigned()).findAny();
     if (any.isPresent()) {
       return any.get();
     }
@@ -230,7 +225,8 @@ final class TaskTableHandler {
     return Metapb.AutoIdInfo.newBuilder()
             .setInitId(autoInitId)
             .setStep(sequence)
-            .addAllStart(scopeStartList).build();
+            .addAllStart(scopeStartList)
+            .build();
   }
 
   private static void createRange(RouterStore routerStore, TableInfo tableInfo, int replicaNum) {

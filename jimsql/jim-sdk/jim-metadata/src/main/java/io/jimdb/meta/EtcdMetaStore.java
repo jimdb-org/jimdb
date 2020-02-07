@@ -24,18 +24,18 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.LongConsumer;
 
-import io.jimdb.core.config.JimConfig;
+import io.etcd.jetcd.ByteSequence;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.core.config.JimConfig;
+import io.jimdb.core.plugin.MetaStore;
 import io.jimdb.meta.client.EtcdClient;
 import io.jimdb.pb.Ddlpb.IndexReorg;
 import io.jimdb.pb.Ddlpb.Task;
 import io.jimdb.pb.Ddlpb.TaskState;
 import io.jimdb.pb.Metapb;
-import io.jimdb.core.plugin.MetaStore;
-import io.etcd.jetcd.ByteSequence;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -377,22 +377,23 @@ public final class EtcdMetaStore implements MetaStore {
   }
 
   @Override
-  public Metapb.AutoIdInfo storeAutoIdInfo(int catalogID, int tableID, Metapb.AutoIdInfo autoIdInfo, Metapb.AutoIdInfo expectedAutoIdInfo) {
-    ByteSequence key = ByteSequence.from(String.format(TABLE_AUTO_ID_PATH, String.valueOf(catalogID), String.valueOf(tableID)),
-            StandardCharsets.UTF_8);
+  public Metapb.AutoIdInfo storeAutoIdInfo(int catalogID, int tableID, Metapb.AutoIdInfo autoIdInfo, Metapb.AutoIdInfo expect) {
+    ByteSequence key = ByteSequence.from(String.format(TABLE_AUTO_ID_PATH, String.valueOf(catalogID),
+            String.valueOf(tableID)), StandardCharsets.UTF_8);
     ByteSequence updValue = ByteSequence.from(autoIdInfo.toByteString());
 
     ByteSequence existValue;
-    if (expectedAutoIdInfo == null) {
+    if (expect == null) {
       existValue = etcdClient.putIfAbsent(key, updValue, false);
     } else {
-      ByteSequence expectedValue = ByteSequence.from(expectedAutoIdInfo.toByteString());
+      ByteSequence expectedValue = ByteSequence.from(expect.toByteString());
       existValue = etcdClient.comparePutAndGet(key, expectedValue, updValue, false);
     }
     if (existValue == null || existValue.equals(updValue)) {
       //put success
       return null;
     }
+
     //return old value
     try {
       return Metapb.AutoIdInfo.parseFrom(existValue.getBytes());
@@ -446,6 +447,10 @@ public final class EtcdMetaStore implements MetaStore {
 
     Task task = tasks[0];
     try {
+      if (task.getData() == null || task.getData().isEmpty()) {
+        return etcdClient.comparePut(String.format(TASK_INDEX_PATH, String.valueOf(task.getId())), expect.toByteString(), task.toByteString());
+      }
+
       IndexReorg reorg = IndexReorg.parseFrom(task.getData());
       return etcdClient.comparePut(String.format(TASK_INDEX_RANGE, String.valueOf(task.getId()), String.valueOf(reorg.getOffset())),
               expect.toByteString(), task.toByteString());
@@ -474,7 +479,7 @@ public final class EtcdMetaStore implements MetaStore {
         break;
       case INDEXTASK:
         final String key;
-        if (task.getData() == null) {
+        if (task.getData() == null || task.getData().isEmpty()) {
           key = String.format(TASK_INDEX_PATH, id);
         } else {
           try {

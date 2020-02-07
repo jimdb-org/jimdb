@@ -15,17 +15,26 @@
  */
 package io.jimdb.test.mysql.suite;
 
+import io.jimdb.test.mysql.ddl.CatalogTest;
+import io.jimdb.test.mysql.ddl.ColumnTest;
+import io.jimdb.test.mysql.ddl.ReOrgTest;
+import io.jimdb.test.mysql.ddl.ShowTest;
+import io.jimdb.test.mysql.ddl.TableTest;
+import io.jimdb.test.mysql.dml.AutoCommitTest;
+import io.jimdb.test.mysql.dml.CodecTest;
 import io.jimdb.test.mysql.dml.ExplainTest;
 import io.jimdb.test.mysql.dml.InsertTest;
 import io.jimdb.test.mysql.dml.KeyDeleteTest;
 import io.jimdb.test.mysql.dml.KeyGetTest;
 import io.jimdb.test.mysql.dml.KeyUpdateTest;
 import io.jimdb.test.mysql.dml.MyDecimalSqlTest;
+import io.jimdb.test.mysql.dml.OnUpdateTest;
 import io.jimdb.test.mysql.dml.PreparedStmtTest;
 import io.jimdb.test.mysql.dml.SelectAggTest;
 import io.jimdb.test.mysql.dml.SelectIndexTest;
 import io.jimdb.test.mysql.dml.SelectTest;
 import io.jimdb.test.mysql.dml.SortTest;
+import io.jimdb.test.mysql.dml.ValueCheckerTest;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestSuite;
@@ -39,6 +48,17 @@ public class SqlTestSuite {
     TestSuite suite = new TestSuite("Smoke tests for all sql test which data is from data-server.");
 
     // unit optimize
+    // ddl
+    suite.addTest(new JUnit4TestAdapter(CatalogTest.class));
+    suite.addTest(new JUnit4TestAdapter(ColumnTest.class));
+    suite.addTest(new JUnit4TestAdapter(ReOrgTest.class));
+    suite.addTest(new JUnit4TestAdapter(ShowTest.class));
+    suite.addTest(new JUnit4TestAdapter(TableTest.class));
+
+    // dml
+    suite.addTest(new JUnit4TestAdapter(AutoCommitTest.class));
+    suite.addTest(new JUnit4TestAdapter(CodecTest.class));
+    suite.addTest(new JUnit4TestAdapter(InsertTest.class));
     suite.addTest(new JUnit4TestAdapter(InsertTest.class));
     suite.addTest(new JUnit4TestAdapter(KeyUpdateTest.class));
     suite.addTest(new JUnit4TestAdapter(KeyGetTest.class));
@@ -50,6 +70,8 @@ public class SqlTestSuite {
     suite.addTest(new JUnit4TestAdapter(SortTest.class));
     suite.addTest(new JUnit4TestAdapter(ExplainTest.class));
     suite.addTest(new JUnit4TestAdapter(MyDecimalSqlTest.class));
+    suite.addTest(new JUnit4TestAdapter(OnUpdateTest.class));
+    suite.addTest(new JUnit4TestAdapter(ValueCheckerTest.class));
     return suite;
   }
 

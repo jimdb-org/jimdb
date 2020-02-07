@@ -35,7 +35,7 @@ import org.junit.Test;
 public class CboTest extends TestBase {
 
   // get table from catalog.
-  static final Table table = MetaData.Holder.getMetaData().getTable(CATALOG, USER_TABLE);
+  static final Table table = MetaData.Holder.get().getTable(CATALOG, USER_TABLE);
   static final List<MockTableData.User> userDataList = MockTableData.getUserDataList();
 
   @BeforeClass

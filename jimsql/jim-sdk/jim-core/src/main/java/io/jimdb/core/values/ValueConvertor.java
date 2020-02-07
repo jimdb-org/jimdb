@@ -123,7 +123,8 @@ public final class ValueConvertor {
       case STRING:
         return (StringValue) src;
       case DATE:
-        str = ((DateValue) src).convertToString(type.getType());
+        TimeZone zone = session == null ? null : session.getStmtContext().getLocalTimeZone();
+        str = ((DateValue) src).convertToString(type == null ? null : type.getType(), zone);
         break;
       case TIME:
         str = ((TimeValue) src).convertToString();
@@ -140,13 +141,13 @@ public final class ValueConvertor {
   }
 
   private static StringValue getStringWithType(String str, SQLType type) {
-    final int precision = type.getPrecision();
+    final long precision = type.getPrecision();
     if (precision > 0) {
       if (str.length() > precision) {
         throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_TOO_LONG, String.valueOf(precision),
                 String.valueOf(str.length()));
       } else if (type.getType() == DataType.Char && str.length() < precision) {
-        str = StringUtils.rightPad(str, precision - str.length());
+        str = StringUtils.rightPad(str, (int) precision - str.length());
       }
     }
 
@@ -250,7 +251,7 @@ public final class ValueConvertor {
   }
 
   private static DoubleValue getDoubleWithType(double val, SQLType type) {
-    int precision = type.getPrecision();
+    int precision = (int) type.getPrecision();
     int scale = type.getScale();
     if (precision > 0 && scale >= 0) {
       if (Double.isNaN(val)) {
@@ -303,11 +304,11 @@ public final class ValueConvertor {
         result = new BigDecimal(src.getString().trim());
     }
 
-    return type == null ? DecimalValue.getInstance(result) : getDecimalWithType(result, type);
+    return type == null ? DecimalValue.getInstance(result, result.precision(), result.scale()) : getDecimalWithType(result, type);
   }
 
   private static DecimalValue getDecimalWithType(BigDecimal val, SQLType type) {
-    int precision = type.getPrecision();
+    int precision = (int) type.getPrecision();
     int scale = type.getScale();
     if (precision > 0 && scale >= 0) {
       int frac = val.scale();
@@ -324,7 +325,7 @@ public final class ValueConvertor {
       throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OVER_FLOW, String.format("DECIMAL(%d,%d)",
               precision, scale), val.toString());
     }
-    return DecimalValue.getInstance(val, type.getPrecision(), type.getScale());
+    return DecimalValue.getInstance(val, (int) type.getPrecision(), type.getScale());
   }
 
   public static DateValue convertToDate(final Session session, final Value src, final SQLType type) {

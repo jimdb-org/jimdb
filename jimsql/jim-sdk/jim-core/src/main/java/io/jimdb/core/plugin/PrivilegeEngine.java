@@ -68,4 +68,9 @@ public interface PrivilegeEngine extends Plugin {
    * @return
    */
   List<String> showGrant(UserInfo userInfo, String user, String host);
+
+  /**
+   * Catalog Is Visible
+   */
+  boolean catalogIsVisible(String user, String host, String db);
 }

@@ -24,6 +24,7 @@ import java.util.Optional;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
+import io.jimdb.common.utils.lang.StringUtil;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.Schema;
@@ -31,6 +32,10 @@ import io.jimdb.core.expression.ValueExpr;
 import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.meta.Table;
+import io.jimdb.core.model.privilege.PrivilegeInfo;
+import io.jimdb.core.model.privilege.PrivilegeType;
+import io.jimdb.core.types.Types;
+import io.jimdb.core.values.StringValue;
 import io.jimdb.pb.Basepb;
 import io.jimdb.pb.Basepb.DataType;
 import io.jimdb.pb.Metapb;
@@ -65,9 +70,6 @@ import io.jimdb.sql.operator.show.ShowStatus;
 import io.jimdb.sql.operator.show.ShowTables;
 import io.jimdb.sql.operator.show.ShowVariables;
 import io.jimdb.sql.optimizer.OptimizeFlag;
-import io.jimdb.core.types.Types;
-import io.jimdb.common.utils.lang.StringUtil;
-import io.jimdb.core.values.StringValue;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -136,7 +138,8 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
   private static final String[] SHOW_CHARSET_COLUMNS = { "Charset", "Description", "Default collation", "Maxlen" };
   private static final DataType[] SHOW_CHARSET_TYPES = { DataType.Varchar, DataType.Varchar, DataType.Varchar, DataType.BigInt };
   private static final String[] SHOW_DATABASE_COLUMNS = { "Database" };
-  private static final DataType[] SHOW_DATABASE_TYPES = { DataType.BigInt, DataType.Varchar, DataType.BigInt, DataType.BigInt };
+  private static final String[] SHOW_DATABASE_ORC_COLUMNS = { "SCHEMA_NAME" };
+  private static final DataType[] SHOW_DATABASE_TYPES = { DataType.Varchar };
   private static final String[] SHOW_TABLE_COLUMNS = { "Tables_in_" };
   private static final DataType[] SHOW_TABLE_TYPES = { DataType.Varchar };
   private static final String[] SHOW_STATUS_COLUMNS = {};
@@ -313,7 +316,9 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
   @Override
   public boolean visit(SQLSetStatement stmt) {
     SQLSetStatement.Option option = stmt.getOption();
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
     if (option == SQLSetStatement.Option.PASSWORD) {
+      privilegeInfos.add(new PrivilegeInfo("", "", "", PrivilegeType.CREATE_USER_PRIV));
       this.resultOperator = PrivilegeAnalyzer.analyzeSetPass(stmt);
       return false;
     }
@@ -433,28 +438,32 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
   public boolean visit(MySqlShowVariantsStatement statement) {
     ShowVariables showVariables = new ShowVariables();
     showVariables.setGlobal(statement.isGlobal());
-    analyzeShow(showVariables, SHOW_VARIABLE_COLUMNS, null, statement.getLike(), statement.getWhere());
+    analyzeShow(showVariables, SHOW_VARIABLE_COLUMNS, null, null, statement.getLike(), statement.getWhere());
     return false;
   }
 
   @Override
   public boolean visit(MySqlShowCollationStatement statement) {
-    analyzeShow(new ShowCollation(), SHOW_COLLATION_COLUMNS, SHOW_COLLATION_TYPES, null, statement.getWhere());
+    analyzeShow(new ShowCollation(), SHOW_COLLATION_COLUMNS, null, SHOW_COLLATION_TYPES, null, statement.getWhere());
     return false;
   }
 
   @Override
   public boolean visit(MySqlShowCharacterSetStatement statement) {
-    analyzeShow(new ShowCharacter(), SHOW_CHARSET_COLUMNS, SHOW_CHARSET_TYPES, statement.getPattern(), statement.getWhere());
+    analyzeShow(new ShowCharacter(), SHOW_CHARSET_COLUMNS, null, SHOW_CHARSET_TYPES, statement.getPattern(), statement.getWhere());
     return false;
   }
 
-  private void analyzeShow(RelOperator operator, String[] names, DataType[] types, SQLExpr like, SQLExpr where) {
+  private void analyzeShow(RelOperator operator, String[] names, String[] oriNames, DataType[] types, SQLExpr like, SQLExpr where) {
     List<ColumnExpr> columnExprs = new ArrayList<>(names.length);
     for (int i = 0; i < names.length; i++) {
       ColumnExpr columnExpr = new ColumnExpr(session.allocColumnID());
-      columnExpr.setOriCol(names[i]);
       columnExpr.setAliasCol(names[i]);
+      if (oriNames != null) {
+        columnExpr.setOriCol(oriNames[i]);
+      } else {
+        columnExpr.setOriCol(names[i]);
+      }
       Metapb.SQLType sqlType;
       if (types != null) {
         sqlType = Types.buildSQLType(types[i]);
@@ -501,24 +510,7 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
   public boolean visit(MySqlExplainStatement stmt) {
     if (!stmt.isDescribe()) {
       // explain
-      Operator child = getResultOperator();
-      resultOperator = new Explain(child);
-      List<ColumnExpr> columnExprs = new ArrayList<>(EXPLAIN_COLUMNS.length);
-      for (int i = 0; i < EXPLAIN_COLUMNS.length; i++) {
-        ColumnExpr columnExpr = new ColumnExpr(session.allocColumnID());
-        columnExpr.setOriCol(EXPLAIN_COLUMNS[i]);
-        columnExpr.setAliasCol(EXPLAIN_COLUMNS[i]);
-        Metapb.SQLType sqlType;
-        if (EXPLAIN_TYPES != null) {
-          sqlType = Metapb.SQLType.newBuilder().setType(EXPLAIN_TYPES[i]).build();
-        } else {
-          sqlType = Metapb.SQLType.newBuilder().setType(Basepb.DataType.Varchar).build();
-        }
-        columnExpr.setResultType(sqlType);
-        columnExprs.add(columnExpr);
-      }
-      resultOperator.setSchema(new Schema(columnExprs));
-      return false;
+      return true;
     }
 
     // desc
@@ -538,19 +530,43 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
       dbName = session.getVarContext().getDefaultCatalog();
     }
 
-    analyzeShow(new ShowColumns(dbName, tableName, false), SHOW_COLUMNS_COLUMNS, null, null, null);
+    analyzeShow(new ShowColumns(dbName, tableName, false), SHOW_COLUMNS_COLUMNS, null, null, null, null);
     return false;
   }
 
   @Override
+  public void endVisit(MySqlExplainStatement stmt) {
+    if (stmt.isDescribe()) {
+      return;
+    }
+    Operator child = getResultOperator();
+    resultOperator = new Explain(child);
+    List<ColumnExpr> columnExprs = new ArrayList<>(EXPLAIN_COLUMNS.length);
+    for (int i = 0; i < EXPLAIN_COLUMNS.length; i++) {
+      ColumnExpr columnExpr = new ColumnExpr(session.allocColumnID());
+      columnExpr.setOriCol(EXPLAIN_COLUMNS[i]);
+      columnExpr.setAliasCol(EXPLAIN_COLUMNS[i]);
+      Metapb.SQLType sqlType;
+      if (EXPLAIN_TYPES != null) {
+        sqlType = Metapb.SQLType.newBuilder().setType(EXPLAIN_TYPES[i]).build();
+      } else {
+        sqlType = Metapb.SQLType.newBuilder().setType(Basepb.DataType.Varchar).build();
+      }
+      columnExpr.setResultType(sqlType);
+      columnExprs.add(columnExpr);
+    }
+    resultOperator.setSchema(new Schema(columnExprs));
+  }
+
+  @Override
   public boolean visit(MySqlShowDatabasesStatement x) {
-    analyzeShow(new ShowDatabases(), SHOW_DATABASE_COLUMNS, SHOW_DATABASE_TYPES, x.getLike(), x.getWhere());
+    analyzeShow(new ShowDatabases(), SHOW_DATABASE_COLUMNS, SHOW_DATABASE_ORC_COLUMNS, SHOW_DATABASE_TYPES, x.getLike(), x.getWhere());
     return false;
   }
 
   @Override
   public boolean visit(MySqlShowStatusStatement x) {
-    analyzeShow(new ShowStatus(), SHOW_STATUS_COLUMNS, SHOW_STATUS_TYPES, null, null);
+    analyzeShow(new ShowStatus(), SHOW_STATUS_COLUMNS, null, SHOW_STATUS_TYPES, null, null);
     return false;
   }
 
@@ -564,7 +580,7 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
     if (StringUtil.isBlank(dbName)) {
       dbName = session.getVarContext().getDefaultCatalog();
     }
-    analyzeShow(new ShowTables(dbName), new String[]{ SHOW_TABLE_COLUMNS[0] + dbName }, SHOW_TABLE_TYPES, null, null);
+    analyzeShow(new ShowTables(dbName), new String[]{ SHOW_TABLE_COLUMNS[0] + dbName }, null, SHOW_TABLE_TYPES, null, null);
     return false;
   }
 
@@ -580,13 +596,13 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
 
   @Override
   public boolean visit(SQLCreateDatabaseStatement stmt) {
-    this.resultOperator = DDLAnalyzer.analyzeCreateDatabase(stmt);
+    this.resultOperator = DDLAnalyzer.analyzeCreateDatabase(session, stmt);
     return false;
   }
 
   @Override
   public boolean visit(SQLDropDatabaseStatement stmt) {
-    this.resultOperator = DDLAnalyzer.analyzeDropDatabase(stmt);
+    this.resultOperator = DDLAnalyzer.analyzeDropDatabase(session, stmt);
     return false;
   }
 
@@ -612,7 +628,7 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
         tableSource.setExpr(table);
       }
     }
-    this.resultOperator = DDLAnalyzer.analyzeDropTable(stmt);
+    this.resultOperator = DDLAnalyzer.analyzeDropTable(session, stmt);
     return false;
   }
 
@@ -629,7 +645,7 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
       }
     }
 
-    this.resultOperator = DDLAnalyzer.analyzeRenameTable(stmt);
+    this.resultOperator = DDLAnalyzer.analyzeRenameTable(session, stmt);
     return false;
   }
 
@@ -641,7 +657,7 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
       stmt.setTable((SQLPropertyExpr) table);
     }
 
-    this.resultOperator = DDLAnalyzer.analyzeCreateIndex(stmt);
+    this.resultOperator = DDLAnalyzer.analyzeCreateIndex(session, stmt);
     return false;
   }
 
@@ -652,7 +668,7 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
       table = new SQLPropertyExpr(new SQLIdentifierExpr(session.getVarContext().getDefaultCatalog()), table.toString());
       stmt.getTableName().setExpr(table);
     }
-    this.resultOperator = DDLAnalyzer.analyzeDropIndex(stmt);
+    this.resultOperator = DDLAnalyzer.analyzeDropIndex(session, stmt);
     return false;
   }
 
@@ -688,19 +704,19 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
 
   @Override
   public boolean visit(MySqlCreateUserStatement stmt) {
-    this.resultOperator = PrivilegeAnalyzer.analyzeCreateUser(stmt);
+    this.resultOperator = PrivilegeAnalyzer.analyzeCreateUser(session, stmt);
     return false;
   }
 
   @Override
   public boolean visit(SQLDropUserStatement stmt) {
-    this.resultOperator = PrivilegeAnalyzer.analyzeDropUser(stmt);
+    this.resultOperator = PrivilegeAnalyzer.analyzeDropUser(session, stmt);
     return false;
   }
 
   @Override
   public boolean visit(MySqlAlterUserStatement stmt) {
-    this.resultOperator = PrivilegeAnalyzer.analyzeAlterUser(stmt);
+    this.resultOperator = PrivilegeAnalyzer.analyzeAlterUser(session, stmt);
     return false;
   }
 
@@ -727,7 +743,7 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
         dbName = session.getVarContext().getDefaultCatalog();
       }
     }
-    analyzeShow(new ShowIndex(dbName, stmt.getTable().getSimpleName()), SHOW_INDEX_COLUMNS, SHOW_INDEX_TYPES,
+    analyzeShow(new ShowIndex(dbName, stmt.getTable().getSimpleName()), SHOW_INDEX_COLUMNS, null, SHOW_INDEX_TYPES,
             null, null);
     return false;
   }
@@ -747,7 +763,8 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
     }
 
     analyzeShow(new ShowColumns(dbName, tableName, stmt.isFull()), stmt.isFull() ? SHOW_FULL_COLUMNS_COLUMNS : SHOW_COLUMNS_COLUMNS,
-            null, stmt.getLike(), stmt.getWhere());
+
+            null, null, stmt.getLike(), stmt.getWhere());
 
     return false;
   }
@@ -770,7 +787,7 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
       dbName = session.getVarContext().getDefaultCatalog();
     }
 
-    analyzeShow(new ShowCreateTable(dbName, tableName), SHOW_CREATE_TABLE_COLUMNS, null, null, null);
+    analyzeShow(new ShowCreateTable(dbName, tableName), SHOW_CREATE_TABLE_COLUMNS, null, null, null, null);
     return false;
   }
 

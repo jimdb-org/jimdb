@@ -634,7 +634,7 @@ final class DDLWorker implements Closeable {
       }
 
       if (dbID == 0) {
-        errorCode = ErrorCode.ER_BAD_DB_ERROR;
+        errorCode = task.getOp() == OpType.DropCatalog ? ErrorCode.ER_DB_DROP_EXISTS : ErrorCode.ER_BAD_DB_ERROR;
         error = DBException.message(errorCode, dbName);
       } else if (StringUtils.isNotBlank(tableName)) {
         List<TableInfo> tables = metaStore.getTables(dbID);

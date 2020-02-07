@@ -22,12 +22,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.jimdb.core.Session;
-import io.jimdb.core.codec.Codec;
-import io.jimdb.core.codec.ValueCodec;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
+import io.jimdb.common.utils.os.SystemClock;
+import io.jimdb.core.Session;
+import io.jimdb.core.codec.Codec;
+import io.jimdb.core.codec.ValueCodec;
+import io.jimdb.core.model.privilege.PrivilegeInfo;
+import io.jimdb.core.model.privilege.PrivilegeType;
+import io.jimdb.core.types.Types;
+import io.jimdb.core.values.DateValue;
+import io.jimdb.core.values.LongValue;
+import io.jimdb.core.values.StringValue;
+import io.jimdb.core.values.Value;
+import io.jimdb.core.values.ValueConvertor;
 import io.jimdb.pb.Basepb.DataType;
 import io.jimdb.pb.Basepb.StoreType;
 import io.jimdb.pb.Ddlpb;
@@ -44,18 +53,12 @@ import io.jimdb.pb.Metapb.TableInfo;
 import io.jimdb.sql.analyzer.AnalyzerUtil;
 import io.jimdb.sql.ddl.DDLUtils;
 import io.jimdb.sql.operator.DDL;
-import io.jimdb.core.types.Types;
-import io.jimdb.common.utils.os.SystemClock;
-import io.jimdb.core.values.DateValue;
-import io.jimdb.core.values.LongValue;
-import io.jimdb.core.values.StringValue;
-import io.jimdb.core.values.Value;
-import io.jimdb.core.values.ValueConvertor;
 import io.netty.buffer.ByteBuf;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.SQLName;
 import com.alibaba.druid.sql.ast.SQLObject;
 import com.alibaba.druid.sql.ast.SQLPartition;
 import com.alibaba.druid.sql.ast.SQLPartitionBy;
@@ -65,6 +68,7 @@ import com.alibaba.druid.sql.ast.expr.SQLCharExpr;
 import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.expr.SQLIntegerExpr;
 import com.alibaba.druid.sql.ast.expr.SQLMethodInvokeExpr;
+import com.alibaba.druid.sql.ast.expr.SQLNullExpr;
 import com.alibaba.druid.sql.ast.expr.SQLNumberExpr;
 import com.alibaba.druid.sql.ast.expr.SQLNumericLiteralExpr;
 import com.alibaba.druid.sql.ast.statement.SQLAlterTableAddColumn;
@@ -134,20 +138,26 @@ final class DDLAnalyzer {
   private DDLAnalyzer() {
   }
 
-  static DDL analyzeCreateDatabase(SQLCreateDatabaseStatement stmt) {
-    String name = DDLUtils.trimName(stmt.getName().toString());
+  static DDL analyzeCreateDatabase(Session session, SQLCreateDatabaseStatement stmt) {
+    String name = getName(stmt.getName());
     verifyDatabaseName(name, false);
 
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
+    privilegeInfos.add(new PrivilegeInfo(name, "", "", PrivilegeType.CREATE_PRIV));
+
     CatalogInfo.Builder builder = CatalogInfo.newBuilder();
-    builder.setName(stmt.getName().toString())
+    builder.setName(name)
             .setState(MetaState.Absent)
             .setCreateTime(SystemClock.currentTimeMillis());
     return new DDL(OpType.CreateCatalog, builder.build(), stmt.isIfNotExists());
   }
 
-  static DDL analyzeDropDatabase(SQLDropDatabaseStatement stmt) {
-    String name = DDLUtils.trimName(stmt.getDatabase().toString());
+  static DDL analyzeDropDatabase(Session session, SQLDropDatabaseStatement stmt) {
+    String name = getName((SQLName) stmt.getDatabase());
     verifyDatabaseName(name, true);
+
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
+    privilegeInfos.add(new PrivilegeInfo(name, "", "", PrivilegeType.DROP_PRIV));
 
     CatalogInfo.Builder builder = CatalogInfo.newBuilder();
     builder.setName(name)
@@ -158,9 +168,13 @@ final class DDLAnalyzer {
 
   static DDL analyzeCreateTable(Session session, MySqlCreateTableStatement stmt) {
     // verify name
-    Tuple2<String, String> names = getAndVerifyTableName(stmt.getTableSource().getExpr());
+    Tuple2<String, String> names = getAndVerifyTableName(stmt.getTableSource().getExpr(), false);
     String dbName = names.getT1();
     String tableName = names.getT2();
+
+    // add privilegeInfo
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
+    privilegeInfos.add(new PrivilegeInfo(dbName, tableName, "", PrivilegeType.CREATE_PRIV));
 
     // unsupport Grammar
     if (stmt.getType() != null) {
@@ -228,12 +242,17 @@ final class DDLAnalyzer {
     return new DDL(OpType.CreateTable, builder.build(), stmt.isIfNotExiists());
   }
 
-  static DDL analyzeDropTable(SQLDropTableStatement stmt) {
+  static DDL analyzeDropTable(Session session, SQLDropTableStatement stmt) {
     List<SQLExprTableSource> tableSourceList = stmt.getTableSources();
     List<AlterTableInfo> alterInfos = new ArrayList<>(tableSourceList.size());
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
 
     for (SQLExprTableSource table : tableSourceList) {
-      Tuple2<String, String> names = getAndVerifyTableName(table.getExpr());
+      Tuple2<String, String> names = getAndVerifyTableName(table.getExpr(), true);
+
+      // add privilegeInfo
+      privilegeInfos.add(new PrivilegeInfo(names.getT1(), names.getT2(), "", PrivilegeType.DROP_PRIV));
+
       AlterTableInfo.Builder builder = AlterTableInfo.newBuilder();
       builder.setDbName(names.getT1())
               .setTableName(names.getT2())
@@ -244,20 +263,27 @@ final class DDLAnalyzer {
     return new DDL(OpType.DropTable, alterInfos, stmt.isIfExists());
   }
 
-  static DDL analyzeRenameTable(MySqlRenameTableStatement stmt) {
+  static DDL analyzeRenameTable(Session session, MySqlRenameTableStatement stmt) {
     if (stmt.getItems().size() != 1) {
       throw DBException.get(ErrorModule.DDL, ErrorCode.ER_NOT_SUPPORTED_YET, "schema batch rename table");
     }
 
     MySqlRenameTableStatement.Item item = stmt.getItems().get(0);
-    Tuple2<String, String> from = getAndVerifyTableName(item.getName());
-    Tuple2<String, String> to = getAndVerifyTableName(item.getTo());
+    Tuple2<String, String> from = getAndVerifyTableName(item.getName(), true);
+    Tuple2<String, String> to = getAndVerifyTableName(item.getTo(), true);
     if (!from.getT1().equalsIgnoreCase(to.getT1())) {
       throw DBException.get(ErrorModule.DDL, ErrorCode.ER_NOT_SUPPORTED_YET, "schema rename table between different databases");
     }
     if (from.getT2().equalsIgnoreCase(to.getT2())) {
       throw DBException.get(ErrorModule.DDL, ErrorCode.ER_NOT_SUPPORTED_YET, "schema rename table to the same name");
     }
+
+    // add privilegeInfo
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
+    privilegeInfos.add(new PrivilegeInfo(from.getT1(), from.getT2(), "", PrivilegeType.ALTER_PRIV));
+    privilegeInfos.add(new PrivilegeInfo(from.getT1(), from.getT2(), "", PrivilegeType.DROP_PRIV));
+    privilegeInfos.add(new PrivilegeInfo(to.getT1(), to.getT2(), "", PrivilegeType.CREATE_PRIV));
+    privilegeInfos.add(new PrivilegeInfo(to.getT1(), to.getT2(), "", PrivilegeType.INSERT_PRIV));
 
     TableInfo tableInfo = TableInfo.newBuilder()
             .setName(to.getT2())
@@ -275,20 +301,26 @@ final class DDLAnalyzer {
 
   static DDL analyzeAlterTable(Session session, SQLAlterTableStatement stmt) {
     SQLExpr name = stmt.getTableSource().getExpr();
-    Tuple2<String, String> names = getAndVerifyTableName(name);
+    Tuple2<String, String> names = getAndVerifyTableName(name, true);
     String dbName = names.getT1();
     String tableName = names.getT2();
+
+    // add privilegeInfo
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
+    privilegeInfos.add(new PrivilegeInfo(names.getT1(), names.getT2(), "", PrivilegeType.ALTER_PRIV));
 
     List<AlterTableInfo> alterInfos = new ArrayList<>(stmt.getItems().size());
     for (SQLAlterTableItem item : stmt.getItems()) {
       // add index
       if (item instanceof SQLAlterTableAddIndex) {
+        privilegeInfos.add(new PrivilegeInfo(names.getT1(), names.getT2(), "", PrivilegeType.INDEX_PRIV));
         AlterTableInfo value = analyzeAlterAddIndex((SQLAlterTableAddIndex) item, dbName, tableName);
         alterInfos.add(value);
         continue;
       }
       // drop index
       if (item instanceof SQLAlterTableDropIndex) {
+        privilegeInfos.add(new PrivilegeInfo(names.getT1(), names.getT2(), "", PrivilegeType.INDEX_PRIV));
         AlterTableInfo value = analyzeAlterDropIndex(item, dbName, tableName);
         alterInfos.add(value);
         continue;
@@ -332,11 +364,11 @@ final class DDLAnalyzer {
     return new DDL(OpType.AlterTable, alterInfos, false);
   }
 
-  static DDL analyzeCreateIndex(SQLCreateIndexStatement stmt) {
-    Tuple2<String, String> names = getAndVerifyTableName(((SQLExprTableSource) stmt.getTable()).getExpr());
+  static DDL analyzeCreateIndex(Session session, SQLCreateIndexStatement stmt) {
+    Tuple2<String, String> names = getAndVerifyTableName(((SQLExprTableSource) stmt.getTable()).getExpr(), true);
     String dbName = names.getT1();
     String tableName = names.getT2();
-    String indexName = stmt.getName() == null ? "" : stmt.getName().toString();
+    String indexName = getName(stmt.getName());
     String indexType = StringUtils.isBlank(stmt.getUsing()) ? "" : stmt.getUsing();
     String comment = stmt.getComment() == null ? "" : stmt.getComment().toString();
     boolean unique = false;
@@ -347,6 +379,9 @@ final class DDLAnalyzer {
         throw DBException.get(ErrorModule.DDL, ErrorCode.ER_NOT_SUPPORTED_YET, stmt.getType() + " index");
       }
     }
+
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
+    privilegeInfos.add(new PrivilegeInfo(dbName, tableName, "", PrivilegeType.INDEX_PRIV));
 
     List<String> columns = verifyIndex(dbName, tableName, indexName, indexType, comment, false, stmt.getItems());
     AddIndexInfo indexInfo = AddIndexInfo.newBuilder()
@@ -370,10 +405,13 @@ final class DDLAnalyzer {
     return new DDL(OpType.AlterTable, Collections.singletonList(alterInfo), false);
   }
 
-  static DDL analyzeDropIndex(SQLDropIndexStatement stmt) {
-    Tuple2<String, String> names = getAndVerifyTableName(stmt.getTableName().getExpr());
-    String indexName = stmt.getIndexName().toString();
+  static DDL analyzeDropIndex(Session session, SQLDropIndexStatement stmt) {
+    Tuple2<String, String> names = getAndVerifyTableName(stmt.getTableName().getExpr(), true);
+    String indexName = getName(stmt.getIndexName());
     verifyIndexName(indexName, true);
+
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
+    privilegeInfos.add(new PrivilegeInfo(names.getT1(), names.getT2(), "", PrivilegeType.INDEX_PRIV));
 
     IndexInfo indexInfo = IndexInfo.newBuilder().setName(indexName).build();
     AlterTableInfo alterInfo = AlterTableInfo.newBuilder()
@@ -450,7 +488,7 @@ final class DDLAnalyzer {
     SQLConstraint constraint = stmt.getConstraint();
     if (constraint instanceof MySqlUnique) {
       MySqlUnique uniqueIndex = (MySqlUnique) constraint;
-      String indexName = uniqueIndex.getName() == null ? "" : uniqueIndex.getName().toString();
+      String indexName = getName(uniqueIndex.getName());
       String indexType = StringUtils.isBlank(uniqueIndex.getIndexType()) ? "" : uniqueIndex.getIndexType();
       String comment = uniqueIndex.getComment() == null ? "" : uniqueIndex.getComment().toString();
 
@@ -479,7 +517,7 @@ final class DDLAnalyzer {
   }
 
   private static AlterTableInfo analyzeAlterAddIndex(SQLAlterTableAddIndex stmt, String dbName, String tableName) {
-    String indexName = stmt.getName() == null ? "" : stmt.getName().toString();
+    String indexName = getName(stmt.getName());
     String indexType = StringUtils.isBlank(stmt.getType()) ? "" : stmt.getType();
     String comment = stmt.getComment() == null ? "" : stmt.getComment().toString();
 
@@ -505,7 +543,7 @@ final class DDLAnalyzer {
   }
 
   private static AlterTableInfo analyzeAlterDropIndex(SQLAlterTableItem stmt, String dbName, String tableName) {
-    String indexName = stmt instanceof SQLAlterTableDropIndex ? ((SQLAlterTableDropIndex) stmt).getIndexName().toString() : ((SQLAlterTableDropKey) stmt).getKeyName().toString();
+    String indexName = stmt instanceof SQLAlterTableDropIndex ? getName(((SQLAlterTableDropIndex) stmt).getIndexName()) : getName(((SQLAlterTableDropKey) stmt).getKeyName());
     verifyIndexName(indexName, true);
 
     IndexInfo indexInfo = IndexInfo.newBuilder().setName(indexName).build();
@@ -519,8 +557,8 @@ final class DDLAnalyzer {
   }
 
   private static AlterTableInfo analyzeAlterRenameIndex(SQLAlterTableRenameIndex stmt, String dbName, String tableName) {
-    String from = stmt.getName().toString();
-    String to = stmt.getTo().toString();
+    String from = getName(stmt.getName());
+    String to = getName(stmt.getTo());
 
     verifyIndexName(from, false);
     verifyIndexName(to, false);
@@ -820,7 +858,8 @@ final class DDLAnalyzer {
     }
     //on update
     SQLExpr onUpdateExpr = colDef.getOnUpdate();
-    if (onUpdateExpr != null && Types.isTimestampFunc(onUpdateExpr, sqlTypeBuilder.getType())) {
+    if (onUpdateExpr != null && Types.isTimestampFunc(onUpdateExpr, sqlTypeBuilder.getType(),
+            sqlTypeBuilder.getScale(), colName)) {
       sqlTypeBuilder.setOnUpdate(true);
     }
     ColumnInfo.Builder columnBuilder = ColumnInfo.newBuilder().setSqlType(sqlTypeBuilder);
@@ -848,13 +887,13 @@ final class DDLAnalyzer {
                                           String colName, Boolean notNull) {
     Value defaultValue = null;
     DataType dt = sqlTypeBuilder.getType();
-    if (defaultExpr != null) {
+    if (defaultExpr != null && !(defaultExpr instanceof SQLNullExpr)) {
       //The BLOB, TEXT, GEOMETRY, and JSON data types cannot be assigned a default value.
-      if (dt == DataType.Json || dt == DataType.Text) {
+      if (dt == DataType.Json || dt == DataType.Text || dt == DataType.TinyBlob
+              || dt == DataType.Blob || dt == DataType.MediumBlob || dt == DataType.LongBlob) {
         throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_BLOB_CANT_HAVE_DEFAULT, colName);
       }
-      if (Types.isTimestampFunc(defaultExpr, dt)) {
-//        int funcFsp =
+      if (Types.isTimestampFunc(defaultExpr, dt, sqlTypeBuilder.getScale(), colName)) {
         sqlTypeBuilder.setOnInit(true);
       } else {
         defaultValue = AnalyzerUtil.resolveValueExpr(defaultExpr, null);
@@ -930,27 +969,27 @@ final class DDLAnalyzer {
       boolean isUnique = false;
       if (element instanceof MySqlPrimaryKey) {
         MySqlPrimaryKey primaryKey = (MySqlPrimaryKey) element;
-        indexName = primaryKey.getName() == null ? "" : primaryKey.getName().toString();
+        indexName = getName(primaryKey.getName());
         comment = primaryKey.getComment() == null ? "" : primaryKey.getComment().toString();
         indexType = primaryKey.getIndexType();
         indexCols = primaryKey.getColumns();
         isPrimary = true;
       } else if (element instanceof MySqlUnique) {
         MySqlUnique unique = (MySqlUnique) element;
-        indexName = unique.getName() == null ? "" : unique.getName().toString();
+        indexName = getName(unique.getName());
         comment = unique.getComment() == null ? "" : unique.getComment().toString();
         indexType = unique.getIndexType();
         indexCols = unique.getColumns();
         isUnique = true;
       } else if (element instanceof MySqlKey) {
         MySqlKey key = (MySqlKey) element;
-        indexName = key.getName() == null ? "" : key.getName().toString();
+        indexName = getName(key.getName());
         comment = key.getComment() == null ? "" : key.getComment().toString();
         indexType = key.getIndexType();
         indexCols = key.getColumns();
       } else if (element instanceof MySqlTableIndex) {
         MySqlTableIndex index = (MySqlTableIndex) element;
-        indexName = index.getName() == null ? "" : index.getName().toString();
+        indexName = getName(index.getName());
         indexType = index.getIndexType();
         indexCols = index.getColumns();
       }
@@ -1008,7 +1047,7 @@ final class DDLAnalyzer {
     if (!(partitionBy instanceof SQLPartitionByRange)) {
       throw DBException.get(ErrorModule.DDL, ErrorCode.ER_NOT_SUPPORTED_YET, "Non-Range Partition Type");
     }
-    if (partitionCols != null && (partitionCols.size() > 1 || !partitionCols.get(0).toString().equalsIgnoreCase(primaryKey.getName()))) {
+    if (partitionCols != null && (partitionCols.size() > 1 || !getName((SQLName) partitionCols.get(0)).equalsIgnoreCase(primaryKey.getName()))) {
       throw DBException.get(ErrorModule.DDL, ErrorCode.ER_META_UNSUPPORTED_PARTITION);
     }
 
@@ -1047,7 +1086,7 @@ final class DDLAnalyzer {
       case Int:
       case BigInt:
         if (!(expr instanceof SQLIntegerExpr)) {
-          if ("MAXVALUE".equalsIgnoreCase(expr.toString())) {
+          if ("MAXVALUE".equalsIgnoreCase(DDLUtils.trimName(expr.toString()))) {
             return null;
           }
           throw DBException.get(ErrorModule.DDL, ErrorCode.ER_WRONG_TYPE_COLUMN_VALUE_ERROR);
@@ -1060,7 +1099,7 @@ final class DDLAnalyzer {
       case Double:
       case Decimal:
         if (!(expr instanceof SQLNumberExpr || expr instanceof SQLIntegerExpr)) {
-          if ("MAXVALUE".equalsIgnoreCase(expr.toString())) {
+          if ("MAXVALUE".equalsIgnoreCase(DDLUtils.trimName(expr.toString()))) {
             return null;
           }
           throw DBException.get(ErrorModule.DDL, ErrorCode.ER_WRONG_TYPE_COLUMN_VALUE_ERROR);
@@ -1071,7 +1110,7 @@ final class DDLAnalyzer {
 
       default:
         if (!(expr instanceof SQLCharExpr)) {
-          if ("MAXVALUE".equalsIgnoreCase(expr.toString())) {
+          if ("MAXVALUE".equalsIgnoreCase(DDLUtils.trimName(expr.toString()))) {
             return null;
           }
           throw DBException.get(ErrorModule.DDL, ErrorCode.ER_WRONG_TYPE_COLUMN_VALUE_ERROR);
@@ -1079,22 +1118,22 @@ final class DDLAnalyzer {
 
         value = ((SQLCharExpr) expr).getValue().toString();
     }
-    return value;
+    return DDLUtils.trimName(value);
   }
 
   private static void analyzeTableOptions(TableInfo.Builder builder, MySqlCreateTableStatement stmt) {
-    builder.setType(StoreType.Store_Mix);
+    builder.setType(StoreType.Store_Hot);
     builder.setAutoInitId(1);
     Map<String, SQLObject> options = stmt.getTableOptions();
     if (options != null) {
       for (Map.Entry<String, SQLObject> option : options.entrySet()) {
-        if ("ENGINE".equalsIgnoreCase(option.getKey())) {
-          StoreType type = getEngineOption(option.getValue().toString());
+        if ("ENGINE".equalsIgnoreCase(DDLUtils.trimName(option.getKey()))) {
+          StoreType type = getEngineOption(DDLUtils.trimName(option.getValue().toString()));
           builder.setType(type);
           continue;
         }
 
-        if ("AUTO_INCREMENT".equalsIgnoreCase(option.getKey())) {
+        if ("AUTO_INCREMENT".equalsIgnoreCase(DDLUtils.trimName(option.getKey()))) {
           long autoInitId = getAutoInitIdOption(option.getValue());
           builder.setAutoInitId(autoInitId);
           continue;
@@ -1187,10 +1226,10 @@ final class DDLAnalyzer {
     return true;
   }
 
-  private static Tuple2<String, String> getAndVerifyTableName(SQLExpr expr) {
+  private static Tuple2<String, String> getAndVerifyTableName(SQLExpr expr, boolean reserve) {
     // verify name
     Tuple2<String, String> names = DDLUtils.splitTableName(expr);
-    verifyDatabaseName(names.getT1(), true);
+    verifyDatabaseName(names.getT1(), reserve);
     verifyTableName(names.getT2());
     return names;
   }
@@ -1266,5 +1305,13 @@ final class DDLAnalyzer {
     }
 
     return name;
+  }
+
+  private static String getName(SQLName name) {
+    if (name == null) {
+      return "";
+    }
+
+    return DDLUtils.trimName(name.toString());
   }
 }

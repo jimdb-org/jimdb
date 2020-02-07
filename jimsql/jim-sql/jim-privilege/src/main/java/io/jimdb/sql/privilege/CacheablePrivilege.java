@@ -24,25 +24,26 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import io.jimdb.core.config.JimConfig;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
-import io.jimdb.core.model.privilege.PrivilegeInfo;
-import io.jimdb.core.model.privilege.PrivilegeType;
-import io.jimdb.core.model.privilege.UserInfo;
-import io.jimdb.pb.Ddlpb;
-import io.jimdb.core.plugin.MetaStore;
-import io.jimdb.core.plugin.PluginFactory;
-import io.jimdb.core.plugin.PrivilegeEngine;
-import io.jimdb.sql.privilege.cache.CatalogCache;
-import io.jimdb.sql.privilege.cache.PrivilegeCache;
-import io.jimdb.sql.privilege.cache.TableCache;
-import io.jimdb.sql.privilege.cache.UserCache;
 import io.jimdb.common.utils.lang.NamedThreadFactory;
 import io.jimdb.common.utils.lang.StringUtil;
 import io.jimdb.common.utils.os.SystemClock;
+import io.jimdb.core.config.JimConfig;
+import io.jimdb.core.model.privilege.PrivilegeInfo;
+import io.jimdb.core.model.privilege.PrivilegeType;
+import io.jimdb.core.model.privilege.UserInfo;
+import io.jimdb.core.plugin.MetaStore;
+import io.jimdb.core.plugin.PluginFactory;
+import io.jimdb.core.plugin.PrivilegeEngine;
+import io.jimdb.pb.Ddlpb;
+import io.jimdb.sql.privilege.cache.CatalogCache;
+import io.jimdb.sql.privilege.cache.PrivilegeCache;
+import io.jimdb.sql.privilege.cache.PrivilegeCacheHolder;
+import io.jimdb.sql.privilege.cache.TableCache;
+import io.jimdb.sql.privilege.cache.UserCache;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -126,7 +127,7 @@ public final class CacheablePrivilege implements PrivilegeEngine {
 
   @Override
   public boolean verify(UserInfo userInfo, PrivilegeInfo... privilegeInfo) {
-    PrivilegeCache privilege = PrivilegeCache.Holder.get();
+    PrivilegeCache privilege = PrivilegeCacheHolder.get();
     for (PrivilegeInfo info : privilegeInfo) {
       UserCache userCache = privilege.matchUser(userInfo.getUser(), userInfo.getHost());
       if (userCache != null && (userCache.getPrivilege() & info.getType().getCode()) > 0) {
@@ -148,7 +149,7 @@ public final class CacheablePrivilege implements PrivilegeEngine {
 
   @Override
   public List<String> showGrant(UserInfo userInfo, String user, String host) {
-    PrivilegeCache privilege = PrivilegeCache.Holder.get();
+    PrivilegeCache privilege = PrivilegeCacheHolder.get();
     List<String> grants = new ArrayList<>(16);
     List<UserCache> userCaches = privilege.getUserPrivileges();
     int currentPriv = 0;
@@ -245,19 +246,9 @@ public final class CacheablePrivilege implements PrivilegeEngine {
     return grants;
   }
 
-  public boolean catalogIsVisible(UserInfo userInfo, String user, String host, String db) {
-    PrivilegeCache privilege = PrivilegeCache.Holder.get();
-    if (!catalogIsVisible(privilege, user, host, db)) {
-      if (catalogIsVisible(privilege, userInfo.getUser(), userInfo.getHost(), db)) {
-        return true;
-      }
-    } else {
-      return true;
-    }
-    return false;
-  }
-
-  public boolean catalogIsVisible(PrivilegeCache privilege, String user, String host, String db) {
+  @Override
+  public boolean catalogIsVisible(String user, String host, String db) {
+    PrivilegeCache privilege = PrivilegeCacheHolder.get();
     UserCache userCache = privilege.matchUser(user, host);
     if (null != userCache && userCache.getPrivilege() != 0) {
       return true;
@@ -282,7 +273,7 @@ public final class CacheablePrivilege implements PrivilegeEngine {
       return false;
     }
 
-    if (catalog != null && !verify(userInfo, new PrivilegeInfo(catalog, null, PrivilegeType.SHOW_DB_PRIV))) {
+    if (catalog != null && !catalogIsVisible(userInfo.getUser(), userInfo.getHost(), catalog)) {
       return false;
     }
 
@@ -320,7 +311,7 @@ public final class CacheablePrivilege implements PrivilegeEngine {
   }
 
   private String connectionVerification(String user, String host) {
-    PrivilegeCache privilege = PrivilegeCache.Holder.get();
+    PrivilegeCache privilege = PrivilegeCacheHolder.get();
     UserCache matchUser = privilege.matchUser(user, host);
     return null == matchUser ? null : matchUser.getPassword();
   }

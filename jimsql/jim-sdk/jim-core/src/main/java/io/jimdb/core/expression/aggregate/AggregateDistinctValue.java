@@ -16,9 +16,8 @@
 package io.jimdb.core.expression.aggregate;
 
 import io.jimdb.core.Session;
+import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
-import io.jimdb.core.values.Value;
-import io.jimdb.core.expression.aggregate.util.ValueUtil;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -39,13 +38,13 @@ public class AggregateDistinctValue extends AggregateFunc {
       return partialResult;
     }
 
+    Expression expression = aggregateFunc.getArgs()[0];
     for (ValueAccessor valueAccessor : rowsInGroup) {
       if (partialResult.getDistinctSet() != null && !partialResult.getDistinctSet().add(valueAccessor)) {
         continue;
       }
 
-      Value value = ValueUtil.exec(session, aggregateFunc.getArgs()[0], valueAccessor, aggregateFunc.getSqlType().getType());
-      cell.setValue(value);
+      cell.setValue(expression.exec(valueAccessor));
       cell.setFirstValue(true);
     }
 
@@ -60,8 +59,7 @@ public class AggregateDistinctValue extends AggregateFunc {
     }
 
     for (ValueAccessor valueAccessor : rowsInGroup) {
-      Value value = ValueUtil.exec(session, aggregateFunc.getArgs()[0], valueAccessor, aggregateFunc.getSqlType().getType());
-      cell.setValue(value);
+      cell.setValue(aggregateFunc.getArgs()[0].exec(valueAccessor));
       cell.setFirstValue(true);
       break;
     }

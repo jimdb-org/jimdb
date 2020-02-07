@@ -20,9 +20,9 @@ package io.jimdb.core.expression;
  */
 public class ConditionChecker {
 
-  private long columnId;
+  private int columnId;
 
-  public ConditionChecker(long columnId) {
+  public ConditionChecker(int columnId) {
     this.columnId = columnId;
   }
 

@@ -20,6 +20,7 @@ import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.expression.functions.BinaryFuncBuilder;
 import io.jimdb.core.expression.functions.Func;
+import io.jimdb.core.types.Types;
 import io.jimdb.core.types.ValueType;
 import io.jimdb.core.values.DecimalValue;
 import io.jimdb.core.values.DoubleValue;
@@ -53,17 +54,22 @@ public class DIVFunc extends Func {
     return divFunc;
   }
 
+  @Override
   public LongValue execLong(ValueAccessor accessor) throws JimException {
-    LongValue v1 = args[0].execLong(session, accessor);
-    if (v1 == null) {
-      return null;
+    if (Types.sqlToValueType(args[0].getResultType()) == ValueType.LONG
+            && Types.sqlToValueType(args[1].getResultType()) == ValueType.LONG) {
+      LongValue v1 = args[0].execLong(session, accessor);
+      if (v1 == null) {
+        return null;
+      }
+      LongValue v2 = args[1].execLong(session, accessor);
+      if (v2 == null) {
+        return null;
+      }
+      return ValueConvertor.convertToLong(session, v1.div(session, v2), null);
     }
-    LongValue v2 = args[1].execLong(session, accessor);
-    if (v2 == null) {
-      return null;
-    }
-
-    return ValueConvertor.convertToLong(session, v1.divide(session, v2), null);
+    DecimalValue decimalValue = execDecimal(accessor);
+    return ValueConvertor.convertToLong(session, decimalValue, null);
   }
 
   @Override
@@ -77,7 +83,7 @@ public class DIVFunc extends Func {
       return null;
     }
 
-    return (UnsignedLongValue) v1.divide(session, v2);
+    return ValueConvertor.convertToUnsignedLong(session, v1.div(session, v2), null);
   }
 
   @Override
@@ -90,7 +96,7 @@ public class DIVFunc extends Func {
     if (v2 == null) {
       return null;
     }
-    return (DoubleValue) v1.divide(session, v2);
+    return ValueConvertor.convertToDouble(session, v1.div(session, v2), null);
   }
 
   @Override
@@ -104,7 +110,7 @@ public class DIVFunc extends Func {
       return null;
     }
 
-    return (DecimalValue) v1.divide(session, v2);
+    return ValueConvertor.convertToDecimal(session, v1.div(session, v2), null);
   }
 
   /**
@@ -124,8 +130,8 @@ public class DIVFunc extends Func {
       ValueType arg2ValueType = ArithmeticUtil.getArithmeticType(arg2Type);
 
       if (arg1ValueType == ValueType.LONG && arg2ValueType == ValueType.LONG) {
-        DIVFunc result = new DIVFunc(session, Exprpb.ExprType.IntDivInt, args, ValueType.LONG, ValueType.DOUBLE,
-                ValueType.DOUBLE);
+        DIVFunc result = new DIVFunc(session, Exprpb.ExprType.IntDivInt, args, ValueType.LONG, ValueType.LONG,
+                ValueType.LONG);
         if (arg1Type.getUnsigned() || arg2Type.getUnsigned()) {
           SQLType.Builder resultType = result.getResultType().toBuilder();
           resultType.setUnsigned(true);

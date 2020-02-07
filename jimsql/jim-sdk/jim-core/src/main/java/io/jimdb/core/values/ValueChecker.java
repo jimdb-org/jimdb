@@ -72,6 +72,9 @@ public class ValueChecker {
   }
 
   static void checkLongBound(SQLType sqlType, LongValue value) {
+    if (sqlType == null) {
+      return;
+    }
     long result = value.getValue();
     if (sqlType.getUnsigned()) {
       long lower = 0;
@@ -99,6 +102,9 @@ public class ValueChecker {
   }
 
   static void checkUnsignedLongBound(SQLType sqlType, UnsignedLongValue value) {
+    if (sqlType == null) {
+      return;
+    }
     BigInteger result = value.getValue();
     if (sqlType.getUnsigned()) {
       BigInteger lower = BigInteger.valueOf(0);

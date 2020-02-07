@@ -31,24 +31,24 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import io.jimdb.common.exception.JimException;
+import io.jimdb.common.utils.lang.NamedThreadFactory;
 import io.jimdb.core.Session;
 import io.jimdb.core.config.JimConfig;
-import io.jimdb.common.exception.JimException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Schema;
-import io.jimdb.meta.client.MasterClient;
 import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.meta.MetaData;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.QueryExecResult;
+import io.jimdb.core.plugin.PluginFactory;
+import io.jimdb.core.plugin.store.Transaction;
+import io.jimdb.meta.client.MasterClient;
 import io.jimdb.pb.Exprpb;
 import io.jimdb.pb.Mspb;
 import io.jimdb.pb.Processorpb;
-import io.jimdb.core.plugin.PluginFactory;
-import io.jimdb.core.plugin.store.Transaction;
-import io.jimdb.common.utils.lang.NamedThreadFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,12 +105,7 @@ public class TableStatsManager {
     enableBackgroundStatsCollector = jimConfig.isEnableBackgroundStatsCollector();
     if (enableBackgroundStatsCollector) {
       statsCollectorService.scheduleWithFixedDelay(
-          new Runnable() {
-            @Override
-            public void run() {
-              initTableStatsCache();
-            }
-          }, statsRefreshPeriod, statsRefreshPeriod, TimeUnit.MILLISECONDS);
+              TableStatsManager::initTableStatsCache, statsRefreshPeriod, statsRefreshPeriod, TimeUnit.MILLISECONDS);
     }
 
     enableStatsPushDown = jimConfig.isEnableStatsPushDown();
@@ -135,7 +130,7 @@ public class TableStatsManager {
     // go through the table stat response and extract the stats info
     List<Mspb.Counter> counterList = getTableStatsResponse.getListList();
     for (Mspb.Counter counter : counterList) {
-      Table table = MetaData.Holder.getMetaData().getTable(counter.getDbId(), counter.getTableId());
+      Table table = MetaData.Holder.get().getTable(counter.getDbId(), counter.getTableId());
 
       // TODO if table is null, should we update the metadata?
       if (table == null) {
@@ -145,7 +140,7 @@ public class TableStatsManager {
       // initialize active table cache
       final long rowCount = counter.getCount();
       final Schema schema = new Schema(session, table.getReadableColumns());
-      tableStatsCache.put(table, new TableStats(session, table, schema, rowCount));
+      tableStatsCache.put(table, new TableStats(table, rowCount));
     }
   }
 
@@ -178,7 +173,7 @@ public class TableStatsManager {
     // go through the table stat response and extract the stats info
     List<Mspb.Counter> counterList = getTableStatsResponse.getListList();
     for (Mspb.Counter counter : counterList) {
-      Table table = MetaData.Holder.getMetaData().getTable(counter.getDbId(), counter.getTableId());
+      Table table = MetaData.Holder.get().getTable(counter.getDbId(), counter.getTableId());
       long rowCount = counter.getCount();
 
       if (table == null) {
@@ -188,7 +183,7 @@ public class TableStatsManager {
 
       TableStats tableStats = tableStatsCache.getIfPresent(table);
       if (tableStats == null) {
-        tableStatsCache.put(table, new TableStats(session, table, new Schema(session, table.getReadableColumns()), rowCount));
+        tableStatsCache.put(table, new TableStats(table, rowCount));
         continue;
       }
 
@@ -244,7 +239,7 @@ public class TableStatsManager {
     // at this point, we may not have the row count retrieved from master yet, but it does not matter since we already got the result
     TableStats tableStats = tableStatsCache.getIfPresent(table);
     if (tableStats == null) {
-      tableStats = new TableStats(session, table, new Schema(session, table.getReadableColumns()), 0);
+      tableStats = new TableStats(table, 0);
     }
 
     tableStats.update(session, execResult);
@@ -265,8 +260,7 @@ public class TableStatsManager {
     TableStats tableStats = tableStatsCache.getIfPresent(table);
 
     if (tableStats == null) {
-      Schema schema = new Schema(session, table.getReadableColumns());
-      tableStats = new TableStats(session, table, schema, 0);
+      tableStats = new TableStats(table, 0);
     }
 
     tableStats.updateIndexStats(index, histogram, countMinSketch);
@@ -285,8 +279,7 @@ public class TableStatsManager {
     TableStats tableStats = tableStatsCache.getIfPresent(table);
 
     if (tableStats == null) {
-      Schema schema = new Schema(session, table.getReadableColumns());
-      tableStats = new TableStats(session, table, schema, 0);
+      tableStats = new TableStats(table, 0);
     }
 
     tableStats.updateColumnStats(column, histogram, countMinSketch);
@@ -303,6 +296,11 @@ public class TableStatsManager {
 
   public static void resetAllTableStats() {
     tableStatsCache.cleanUp();
+  }
+
+  // We need to ensure all the schemas are created by the same session in StatsManager
+  public static Schema schemaFromStatsManager(Table table) {
+    return new Schema(session, table.getReadableColumns());
   }
 
   // get the stats for the given table
@@ -323,6 +321,7 @@ public class TableStatsManager {
     tableStats = tableStatsCache.getIfPresent(table);
     if (tableStats == null) {
       LOG.error("Something wrong with updating the table stats for table {}", table.getName());
+      return new TableStats(table, 0);
     }
 
     return tableStats;

@@ -17,20 +17,18 @@ package io.jimdb.core.plugin.store;
 
 import java.util.List;
 
+import io.jimdb.common.exception.JimException;
+import io.jimdb.core.expression.Assignment;
+import io.jimdb.core.expression.ColumnExpr;
+import io.jimdb.core.expression.Expression;
+import io.jimdb.core.expression.ValueRange;
 import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.QueryResult;
-import io.jimdb.common.exception.JimException;
-import io.jimdb.core.expression.Assignment;
-import io.jimdb.core.expression.ColumnExpr;
-import io.jimdb.core.expression.Expression;
-import io.jimdb.core.expression.ValueAccessor;
-import io.jimdb.core.expression.ValueRange;
-import io.jimdb.pb.Processorpb;
-import io.jimdb.pb.Txn;
 import io.jimdb.core.values.Value;
+import io.jimdb.pb.Processorpb;
 
 import reactor.core.publisher.Flux;
 
@@ -88,15 +86,22 @@ public interface Transaction {
    */
   Flux<ExecResult> get(List<Index> indexs, List<Value[]> values, ColumnExpr[] resultColumns);
 
+  /**
+   * Backfill index data, and return the lask key traversed.
+   *
+   * @param index
+   * @param startKey
+   * @param endKey
+   * @param limit
+   * @return lask key
+   */
+  byte[] addIndex(Index index, byte[] startKey, byte[] endKey, int limit);
+
   Flux<ExecResult> select(Table table, List<Processorpb.Processor.Builder> processors, ColumnExpr[] resultColumns,
                           List<Integer> outputOffsetList) throws JimException;
 
   Flux<ExecResult> select(Index index, List<Processorpb.Processor.Builder> processors, ColumnExpr[] resultColumns,
                           List<Integer> outputOffsetList, List<ValueRange> ranges) throws JimException;
-
-  Flux<ValueAccessor[]> selectByStream(Table table, Txn.SelectFlowRequest.Builder selectFlowBuilder, ColumnExpr[] resultColumns) throws JimException;
-
-  void addIndex(Index index, ColumnExpr[] columns, ValueAccessor[] rows);
 
   Flux<ExecResult> commit() throws JimException;
 

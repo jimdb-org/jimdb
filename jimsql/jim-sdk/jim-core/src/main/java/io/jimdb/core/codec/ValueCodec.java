@@ -18,7 +18,6 @@ package io.jimdb.core.codec;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 
-import io.jimdb.pb.Basepb;
 import io.jimdb.common.utils.lang.ByteUtil;
 import io.jimdb.core.values.BinaryValue;
 import io.jimdb.core.values.DateValue;
@@ -33,6 +32,7 @@ import io.jimdb.core.values.TimeValue;
 import io.jimdb.core.values.UnsignedLongValue;
 import io.jimdb.core.values.Value;
 import io.jimdb.core.values.YearValue;
+import io.jimdb.pb.Basepb;
 import io.netty.buffer.ByteBuf;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -439,7 +439,7 @@ public final class ValueCodec {
     buf.readBytes(value);
     BigDecimal decimal = MySqlDecimalConverter.decodeFromMySqlDecimal(value);
     DecodeValue<DecimalValue> decodeResult = new DecodeValue<>();
-    decodeResult.setValue(DecimalValue.getInstance(decimal));
+    decodeResult.setValue(DecimalValue.getInstance(decimal, precision, scale));
     return decodeResult;
   }
 
@@ -470,11 +470,11 @@ public final class ValueCodec {
     return decodeResult;
   }
 
-  public static DecodeValue<DateValue> decodeDateValue(ByteBuf buf, Basepb.DataType dataType) {
+  public static DecodeValue<DateValue> decodeDateValue(ByteBuf buf, Basepb.DataType dataType, int fsp) {
     decodeValueTypeAssert(buf, TagType.Date);
     DecodeValue<LongValue> longDecodeResult = decodeNonsortingUvarint(buf);
     DecodeValue<DateValue> decodeResult = new DecodeValue<>();
-    decodeResult.setValue(DateValue.getInstance(longDecodeResult.getValue().getValue(), dataType));
+    decodeResult.setValue(DateValue.getInstance(longDecodeResult.getValue().getValue(), dataType, fsp));
     return decodeResult;
   }
 

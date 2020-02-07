@@ -19,16 +19,14 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
+import io.jimdb.common.exception.JimException;
 import io.jimdb.core.Session;
+import io.jimdb.core.expression.ValueRange;
 import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.meta.RangeInfo;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.plugin.Plugin;
-import io.jimdb.core.context.ReorgContext;
-import io.jimdb.common.exception.JimException;
-import io.jimdb.core.expression.ValueRange;
-import io.jimdb.pb.Ddlpb;
 import io.jimdb.pb.Statspb;
 
 import reactor.core.publisher.Flux;
@@ -47,8 +45,6 @@ public interface Engine extends Plugin {
   Flux<Boolean> delete(Table table, byte[] key, Instant timeout) throws JimException;
 
   Set<RangeInfo> getRanges(Table table) throws JimException;
-
-  void reOrganize(ReorgContext context, Table table, Index index, Ddlpb.OpType opType) throws JimException;
 
   Flux<List<Tuple2<Statspb.Histogram, Statspb.CMSketch>>> analyzeIndex(Table table, Index index, Instant timeout, List<ValueRange> ranges,
                                                                        Statspb.IndexStatsRequest.Builder reqBuilder) throws JimException;

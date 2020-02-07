@@ -61,10 +61,9 @@ public final class XorFunc extends Func {
     if (longValue0 == null || longValue1 == null) {
       return null;
     }
-    if (longValue0.getValue() != longValue1.getValue()) {
-      return LongValue.getInstance(1);
-    }
-    return LongValue.getInstance(0);
+    long l1 = longValue0.getValue();
+    long l2 = longValue1.getValue();
+    return LongValue.getInstance(l1 ^ l2);
   }
 
   /**

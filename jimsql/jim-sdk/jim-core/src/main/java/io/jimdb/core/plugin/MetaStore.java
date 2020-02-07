@@ -67,7 +67,7 @@ public interface MetaStore extends Plugin {
 
   AutoIdInfo getAutoIdInfo(int catalogID, int tableID);
 
-  AutoIdInfo storeAutoIdInfo(int catalogID, int tableID, AutoIdInfo autoIdInfo, AutoIdInfo expectedAutoIdInfo);
+  AutoIdInfo storeAutoIdInfo(int catalogID, int tableID, AutoIdInfo autoIdInfo, AutoIdInfo expect);
 
   boolean storeTask(TaskType type, Task expect, Task... task);
 

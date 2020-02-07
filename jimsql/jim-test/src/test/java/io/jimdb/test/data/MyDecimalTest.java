@@ -96,6 +96,7 @@ public class MyDecimalTest {
   List<BigDecimal> builderTestcase() {
     List<BigDecimal> dataList = new ArrayList<>();
 
+    dataList.add(new BigDecimal("0"));
     dataList.add(new BigDecimal("1"));
     dataList.add(new BigDecimal("12345678"));
     dataList.add(new BigDecimal("123456789"));
@@ -225,6 +226,7 @@ public class MyDecimalTest {
 
   private List<Checker> buildtestcase() {
     List<Checker> list = new ArrayList<>();
+    list.add(Checker.build().value(new BigDecimal("0")).precision(10).scale(0).expected("0"));
     list.add(Checker.build().value(new BigDecimal("1")).precision(1).scale(0).expected("1"));
     list.add(Checker.build().value(new BigDecimal("12345678")).precision(8).scale(0).expected("12345678"));
     list.add(Checker.build().value(new BigDecimal("123456789")).precision(9).scale(0).expected("123456789"));
@@ -247,9 +249,19 @@ public class MyDecimalTest {
     return list;
   }
 
+  /**
+   * BigDecimal precision : the number of digits in the unscaled value(zero is one) {@link BigDecimal#precision()}
+   * BigDecimal unscaledValue: the unscaled value of this {@code BigDecimal} {@link BigDecimal#unscaledValue()}
+   * mysql decimal: The precision represents the number of significant digits that are stored for values,
+   * and the scale represents the number of digits that can be stored following the decimal point
+   *
+   * so convert BigDecimal to Mysql decimal to see {@link }
+   */
   @Test
   public void testPrecision() {
-    BigDecimal bigDecimal = new BigDecimal("0.11");
+    BigDecimal bigDecimal = new BigDecimal("0.00");
+    System.out.println(bigDecimal.toPlainString() + "--" + bigDecimal.precision() + "--" + bigDecimal.scale());
+    bigDecimal = new BigDecimal("0.11");
     System.out.println(bigDecimal.toPlainString() + "--" + bigDecimal.precision() + "--" + bigDecimal.scale());
     bigDecimal = new BigDecimal("1.11");
     System.out.println(bigDecimal.toPlainString() + "--" + bigDecimal.precision() + "--" + bigDecimal.scale());

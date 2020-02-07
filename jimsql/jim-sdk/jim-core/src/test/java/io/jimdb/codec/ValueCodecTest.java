@@ -17,14 +17,14 @@ package io.jimdb.codec;
 
 import java.util.Arrays;
 
+import io.jimdb.common.utils.lang.ByteUtil;
 import io.jimdb.core.codec.DecodeValue;
 import io.jimdb.core.codec.ValueCodec;
-import io.jimdb.pb.Basepb;
-import io.jimdb.common.utils.lang.ByteUtil;
 import io.jimdb.core.values.DateValue;
 import io.jimdb.core.values.LongValue;
 import io.jimdb.core.values.TimeUtil;
 import io.jimdb.core.values.TimeValue;
+import io.jimdb.pb.Basepb;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.UnpooledByteBufAllocator;
 
@@ -111,7 +111,7 @@ public class ValueCodecTest {
       //[20, -3, 25, -106, -84, 0, 0, 0, 0, 0]
       //keep ascending order
       System.out.println("bytes= " + Arrays.toString(bytes));
-      System.out.println(DateValue.getInstance(num, Basepb.DataType.DateTime).getValue());
+      System.out.println(DateValue.getInstance(num, Basepb.DataType.DateTime, 6).getValue());
     }
   }
 
@@ -142,7 +142,7 @@ public class ValueCodecTest {
       System.out.println("value bytes= " + Arrays.toString(bytes));
 
       buf.resetReaderIndex();
-      DecodeValue<DateValue> decodeValue = ValueCodec.decodeDateValue(buf, Basepb.DataType.TimeStamp);
+      DecodeValue<DateValue> decodeValue = ValueCodec.decodeDateValue(buf, Basepb.DataType.TimeStamp, 6);
       System.out.println("decode value " + decodeValue.getValue().getValue());
     }
   }

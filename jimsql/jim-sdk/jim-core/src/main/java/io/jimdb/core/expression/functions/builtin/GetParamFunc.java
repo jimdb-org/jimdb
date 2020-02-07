@@ -15,13 +15,13 @@
  */
 package io.jimdb.core.expression.functions.builtin;
 
-import io.jimdb.core.expression.functions.Func;
-import io.jimdb.core.expression.functions.UnaryFuncBuilder;
-import io.jimdb.core.Session;
-import io.jimdb.core.context.PrepareContext;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.core.Session;
+import io.jimdb.core.context.PreparedContext;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
+import io.jimdb.core.expression.functions.Func;
+import io.jimdb.core.expression.functions.UnaryFuncBuilder;
 import io.jimdb.core.types.ValueType;
 import io.jimdb.core.values.DateValue;
 import io.jimdb.core.values.DecimalValue;
@@ -112,9 +112,9 @@ public class GetParamFunc extends Func {
   }
 
   private Value getValue() {
-    PrepareContext prepareContext = session.getPrepareContext();
+    PreparedContext prepareContext = session.getPreparedContext();
     LongValue longValue = args[0].execLong(session, null);
     Long value = longValue.getValue();
-    return prepareContext.getPreparedParams().get(value.intValue());
+    return prepareContext.getParamValues()[value.intValue()];
   }
 }

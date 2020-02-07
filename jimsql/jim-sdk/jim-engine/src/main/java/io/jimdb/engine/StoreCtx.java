@@ -16,16 +16,15 @@
 package io.jimdb.engine;
 
 import java.time.Instant;
-import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import io.jimdb.common.utils.os.SystemClock;
+import io.jimdb.common.utils.retry.RetryPolicy;
+import io.jimdb.core.model.meta.Table;
 import io.jimdb.engine.sender.DistSender;
 import io.jimdb.meta.RouterManager;
 import io.jimdb.meta.route.RoutePolicy;
-import io.jimdb.core.model.meta.Table;
-import io.jimdb.common.utils.os.SystemClock;
-import io.jimdb.common.utils.retry.RetryPolicy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +41,6 @@ public class StoreCtx {
   private Table table;
   private RoutePolicy routePolicy;
   private final Instant timeout;
-
-  private TimeZone timeZone = TimeZone.getDefault();
 
   private final RouterManager rpcManager;
   private final DistSender sender;
@@ -121,9 +118,5 @@ public class StoreCtx {
 
   public long getCxtId() {
     return cxtId;
-  }
-
-  public TimeZone getTimeZone() {
-    return timeZone;
   }
 }

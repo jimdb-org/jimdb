@@ -44,7 +44,7 @@ public class TableStatsTest extends CboTest {
   public static void tableStatsTestSetup() {
     schema = new Schema(session, table.getReadableColumns());
     queryExecResult = (QueryExecResult) ((MockTransaction) session.getTxn()).getExecResult(table, schema.getColumns().toArray(new ColumnExpr[0]), null);
-    tableStats = new TableStats(session, table, schema, 0);
+    tableStats = new TableStats(table, 0);
   }
 
   @Test
@@ -69,7 +69,7 @@ public class TableStatsTest extends CboTest {
     final int expectedNonIndexedColumnCount = nonIndexColOffsets.length;
 
     Assert.assertEquals("indexStatsMap size should be equal", expectedIndexCount, tableStats.getIndexStatsMap().size());
-    Assert.assertEquals("nonIndexedColumnStatsMap size should be equal", expectedNonIndexedColumnCount, tableStats.getNonIndexedColumnStatsMap().size());
+    Assert.assertEquals("nonIndexedColumnStatsMap size should be equal", expectedNonIndexedColumnCount, tableStats.getColumnStatsMap().size());
 
     Assert.assertEquals("rowCount should be equal", expectedRowCount, tableStats.getEstimatedRowCount());
   }

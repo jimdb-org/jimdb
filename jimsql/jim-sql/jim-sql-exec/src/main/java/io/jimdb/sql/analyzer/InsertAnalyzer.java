@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import io.jimdb.core.Session;
-import io.jimdb.core.context.StatementContext;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.core.Session;
+import io.jimdb.core.context.StatementContext;
 import io.jimdb.core.expression.Assignment;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
@@ -35,11 +35,11 @@ import io.jimdb.core.expression.ValueExpr;
 import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.meta.Table;
+import io.jimdb.core.values.NullValue;
 import io.jimdb.sql.operator.DualTable;
 import io.jimdb.sql.operator.Insert;
 import io.jimdb.sql.operator.Operator;
 import io.jimdb.sql.operator.RelOperator;
-import io.jimdb.core.values.NullValue;
 
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLName;
@@ -75,8 +75,15 @@ public final class InsertAnalyzer {
     if (tblName == null) {
       throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NO_SUCH_TABLE, dbName, "");
     }
-
-    Table table = session.getTxnContext().getMetaData().getTable(dbName, tblName);
+    Table table;
+    try {
+      table = session.getTxnContext().getMetaData().getTable(dbName, tblName);
+    } catch (JimException ex) {
+      if (ex.getCode() == ErrorCode.ER_BAD_TABLE_ERROR || ex.getCode() == ErrorCode.ER_BAD_DB_ERROR) {
+        throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NO_SUCH_TABLE, ex, dbName, tblName);
+      }
+      throw ex;
+    }
     Schema schema = buildSchema(session, dbName, table);
     Insert insertop = new Insert(table, schema);
     DualTable mockTable = new DualTable(0);

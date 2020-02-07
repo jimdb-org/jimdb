@@ -136,6 +136,11 @@ public final class LongValue extends Value<LongValue> {
   }
 
   @Override
+  protected Value divSafe(LongValue v2) {
+    return divideSafe(v2);
+  }
+
+  @Override
   protected Value modSafe(LongValue v2) {
     if (v2.value == 0) {
       throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_DIVISION_BY_ZERO);

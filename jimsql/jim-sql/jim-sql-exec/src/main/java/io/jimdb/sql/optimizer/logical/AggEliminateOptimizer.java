@@ -18,10 +18,10 @@ package io.jimdb.sql.optimizer.logical;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
+import io.jimdb.core.Session;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.FuncExpr;
@@ -32,21 +32,21 @@ import io.jimdb.core.expression.aggregate.AggregateExpr;
 import io.jimdb.core.expression.aggregate.AggregateType;
 import io.jimdb.core.expression.functions.FuncType;
 import io.jimdb.core.expression.functions.builtin.cast.CastFuncBuilder;
+import io.jimdb.core.types.Types;
+import io.jimdb.core.values.LongValue;
 import io.jimdb.pb.Basepb.DataType;
 import io.jimdb.pb.Metapb.SQLType;
 import io.jimdb.sql.operator.Aggregation;
 import io.jimdb.sql.operator.Projection;
 import io.jimdb.sql.operator.RelOperator;
 import io.jimdb.sql.optimizer.physical.NFDetacher;
-import io.jimdb.core.types.Types;
-import io.jimdb.core.values.LongValue;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * AggEliminateOptimizer
  */
-@SuppressFBWarnings({"CFS_CONFUSING_FUNCTION_SEMANTICS"})
+@SuppressFBWarnings({ "CFS_CONFUSING_FUNCTION_SEMANTICS" })
 public class AggEliminateOptimizer implements IRuleOptimizer {
 
   @Override
@@ -97,7 +97,11 @@ public class AggEliminateOptimizer implements IRuleOptimizer {
       Schema groupBySchema = new Schema(groupByColumnsExprsList);
       boolean hasUniqueKey = false;
       for (KeyColumn keyColumn : aggregation.getChildren()[0].getSchema().getKeyColumns()) {
-        List<Integer> posList = groupBySchema.indexPosInSchema(keyColumn.getColumnExprs());
+        List<ColumnExpr> columnExprs = keyColumn.getColumnExprs();
+        if (columnExprs == null || columnExprs.isEmpty()) {
+          continue;
+        }
+        List<Integer> posList = groupBySchema.indexPosInSchema(columnExprs);
         if (posList != null) {
           hasUniqueKey = true;
           break;

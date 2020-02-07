@@ -54,7 +54,7 @@ import reactor.util.function.Tuples;
 public class TableStats {
   private static final Logger LOGGER = LoggerFactory.getLogger(TableStats.class);
 
-  private Map<Integer, ColumnStats> nonIndexedColumnStatsMap;
+  private Map<Integer, ColumnStats> columnStatsMap;
 
   private Map<Integer, IndexStats> indexStatsMap;
 
@@ -69,18 +69,17 @@ public class TableStats {
   private Table table;
 
   // Note that the session can only be the session in TableStatsManager
-  public TableStats(Session session, Table table, Schema schema, long retrievedRowCount) {
+  public TableStats(Table table, long retrievedRowCount) {
     this.table = table;
-    this.nonIndexedColumnStatsMap = Maps.newHashMapWithExpectedSize(table.getReadableColumns().length);
+    this.columnStatsMap = Maps.newHashMapWithExpectedSize(table.getReadableColumns().length);
     this.indexStatsMap = Maps.newHashMapWithExpectedSize(table.getReadableIndices().length);
     this.estimatedRowCount = 0;
     this.modifiedCount = 0;
     this.retrievedRowCount = retrievedRowCount;
-    this.schema = new Schema(session, table.getReadableColumns());
   }
 
-  public Map<Integer, ColumnStats> getNonIndexedColumnStatsMap() {
-    return nonIndexedColumnStatsMap;
+  public Map<Integer, ColumnStats> getColumnStatsMap() {
+    return columnStatsMap;
   }
 
   public Map<Integer, IndexStats> getIndexStatsMap() {
@@ -97,11 +96,11 @@ public class TableStats {
   }
 
   public void updateColumnStats(Column column, Histogram histogram, CountMinSketch countMinSketch) {
-    if (!nonIndexedColumnStatsMap.containsKey(column.getId())) {
-      nonIndexedColumnStatsMap.put(column.getId(), new ColumnStats(countMinSketch, histogram, column));
+    if (!columnStatsMap.containsKey(column.getId())) {
+      columnStatsMap.put(column.getId(), new ColumnStats(countMinSketch, histogram, column));
     }
 
-    ColumnStats columnStats = nonIndexedColumnStatsMap.get(column.getId());
+    ColumnStats columnStats = columnStatsMap.get(column.getId());
     columnStats.reset(countMinSketch, histogram);
   }
 
@@ -109,9 +108,9 @@ public class TableStats {
     return modifiedCount;
   }
 
-  public Schema getSchema() {
-    return this.schema;
-  }
+//  public Schema getSchema() {
+//    return this.schema;
+//  }
 
   public long getEstimatedRowCount() {
     return estimatedRowCount;
@@ -189,7 +188,7 @@ public class TableStats {
       Column columnInfo = columns[nonIndexColOffsets[i]];
       // TODO we must ensure that the samples are sorted by the row id.
       ColumnStats columnStats = buildNonIndexedColumnStats(session, columnInfo, sampleCollector, this.estimatedRowCount);
-      this.nonIndexedColumnStatsMap.put(columnStats.getColumnInfo().getId(), columnStats);
+      this.columnStatsMap.put(columnStats.getColumnInfo().getId(), columnStats);
     }
   }
 
@@ -283,7 +282,17 @@ public class TableStats {
   }
 
   @VisibleForTesting
-  public ColumnStats getColumnStats(Long columnId) {
-    return nonIndexedColumnStatsMap.get(columnId);
+  public ColumnStats getColumnStats(int columnId) {
+    return columnStatsMap.get(columnId);
+  }
+
+  public double calculateColumnNdv(int columnId) {
+    ColumnStats columnStats = this.getColumnStats(columnId);
+    if (null != columnStats && columnStats.getTotalRowCount() > 0) {
+      double ratio = (double) this.getEstimatedRowCount() / (double) columnStats.getTotalRowCount();
+      return columnStats.getHistogram().getNdv() * ratio;
+    } else {
+      return this.getEstimatedRowCount() * StatsUtils.DISTINCT_RATIO;
+    }
   }
 }

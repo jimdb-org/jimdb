@@ -577,7 +577,7 @@ public final class MySQLVariables {
     addVariable("innodb_create_intrinsic", new SysVariable(SysVariable.SCOPE_SESSION, "innodb_create_intrinsic", ""));
     addVariable("gtid_executed_compression_period", new SysVariable(SysVariable.SCOPE_GLOBAL, "gtid_executed_compression_period", ""));
     addVariable("ndb_log_empty_epochs", new SysVariable(SysVariable.SCOPE_GLOBAL, "ndb_log_empty_epochs", ""));
-    addVariable(MAX_PREPARED_STMT_COUNT, new SysVariable(SysVariable.SCOPE_GLOBAL, MAX_PREPARED_STMT_COUNT, "10"));
+    addVariable(MAX_PREPARED_STMT_COUNT, new SysVariable(SysVariable.SCOPE_GLOBAL, MAX_PREPARED_STMT_COUNT, "100"));
     addVariable("have_geometry", new SysVariable(SysVariable.SCOPE_NONE, "have_geometry", "YES"));
     addVariable("optimizer_trace_max_mem_size", new SysVariable(SysVariable.SCOPE_GLOBAL | SysVariable.SCOPE_SESSION, "optimizer_trace_max_mem_size", "16384"));
     addVariable("net_retry_count", new SysVariable(SysVariable.SCOPE_GLOBAL | SysVariable.SCOPE_SESSION, "net_retry_count", "10"));

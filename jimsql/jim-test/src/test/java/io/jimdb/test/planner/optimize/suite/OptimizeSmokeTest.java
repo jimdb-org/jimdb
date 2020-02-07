@@ -21,6 +21,7 @@ import io.jimdb.test.planner.optimize.unit.AggregationEliminateTest;
 import io.jimdb.test.planner.optimize.unit.AggregationTest;
 import io.jimdb.test.planner.optimize.unit.BuildKeyTest;
 import io.jimdb.test.planner.optimize.unit.ColumnPruneTest;
+import io.jimdb.test.planner.optimize.unit.CompositeIndexTest;
 import io.jimdb.test.planner.optimize.unit.ConstantPropagatorTest;
 import io.jimdb.test.planner.optimize.unit.PredPushDownTest;
 import io.jimdb.test.planner.optimize.unit.ProjectionEliminateTest;
@@ -43,6 +44,7 @@ public class OptimizeSmokeTest {
     suite.addTest(new JUnit4TestAdapter(ConstantPropagatorTest.class));
     suite.addTest(new JUnit4TestAdapter(AggregationTest.class));
     suite.addTest(new JUnit4TestAdapter(AggregationEliminateTest.class));
+    suite.addTest(new JUnit4TestAdapter(CompositeIndexTest.class));
 
     // integration
     suite.addTest(new JUnit4TestAdapter(LogicalOptimizationTest.class));

@@ -20,11 +20,18 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import io.jimdb.core.config.JimConfig;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
+import io.jimdb.common.utils.lang.NamedThreadFactory;
+import io.jimdb.common.utils.os.SystemClock;
+import io.jimdb.core.config.JimConfig;
 import io.jimdb.core.model.meta.MetaData;
+import io.jimdb.core.plugin.MetaStore;
+import io.jimdb.core.plugin.MetaStore.TaskType;
+import io.jimdb.core.plugin.PluginFactory;
+import io.jimdb.core.plugin.RouterStore;
+import io.jimdb.core.plugin.store.Engine;
 import io.jimdb.pb.Ddlpb.AddIndexInfo;
 import io.jimdb.pb.Ddlpb.AlterTableInfo;
 import io.jimdb.pb.Ddlpb.OpType;
@@ -35,13 +42,6 @@ import io.jimdb.pb.Metapb.ColumnInfo;
 import io.jimdb.pb.Metapb.IndexInfo;
 import io.jimdb.pb.Metapb.MetaState;
 import io.jimdb.pb.Metapb.TableInfo;
-import io.jimdb.core.plugin.MetaStore;
-import io.jimdb.core.plugin.MetaStore.TaskType;
-import io.jimdb.core.plugin.PluginFactory;
-import io.jimdb.core.plugin.RouterStore;
-import io.jimdb.core.plugin.store.Engine;
-import io.jimdb.common.utils.lang.NamedThreadFactory;
-import io.jimdb.common.utils.os.SystemClock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +81,7 @@ public final class DDLExecutor {
 
     final long lease = config.getMetaLease();
     delay = Math.min(2 * lease, 1000);
-    syncer = new DDLSyncer(metaStore, lease, 2 * lease);
+    syncer = new DDLSyncer(metaStore, 2 * lease);
     syncer.start();
     worker = new DDLWorker(metaStore, routerStore, storeEngine, syncer);
     worker.start();
@@ -169,7 +169,7 @@ public final class DDLExecutor {
             .setTableId(tableID)
             .setOp(op)
             .setData(metaInfo.toByteString())
-            .setMetaVersion(MetaData.Holder.getMetaData().getVersion())
+            .setMetaVersion(MetaData.Holder.get().getVersion())
             .setCreateTime(SystemClock.currentTimeMillis())
             .setState(TaskState.Init)
             .setMetaState(MetaState.Absent);

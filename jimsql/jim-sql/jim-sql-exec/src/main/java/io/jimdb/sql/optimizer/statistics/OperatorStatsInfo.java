@@ -15,6 +15,12 @@
  */
 package io.jimdb.sql.optimizer.statistics;
 
+import java.util.List;
+
+import io.jimdb.core.Session;
+import io.jimdb.core.expression.Expression;
+import io.jimdb.core.expression.ValueRange;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +71,7 @@ public class OperatorStatsInfo {
 
   public double getCardinality(int index) {
     if (index >= cardinalityList.length) {
-      LOG.error("index {} is out of array cardinalityList's bound {}", index, cardinalityList.length);
+      LOG.debug("index {} is out of array cardinalityList's bound {}", index, cardinalityList.length);
       return 0;
     }
 
@@ -78,5 +84,17 @@ public class OperatorStatsInfo {
       cardinality[i] = Math.min(this.cardinalityList[i], rowCount);
     }
     return cardinality;
+  }
+
+  public double estimateRowCountByColumnRanges(Session session, long uid, List<ValueRange> ranges) {
+    return 0;
+  }
+
+  public double estimateRowCountByIndexedRanges(Session session, int indexId, List<ValueRange> ranges) {
+    return 0;
+  }
+
+  public double calculateSelectivity(Session session, List<Expression> expressionList) {
+    return 0;
   }
 }

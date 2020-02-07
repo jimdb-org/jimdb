@@ -113,15 +113,26 @@ public enum MySQLColumnDataType {
     MYSQL_TYPE_MAP.put(DataType.Char, MYSQL_DATA_TYPE_STRING);
     MYSQL_TYPE_MAP.put(DataType.NChar, MYSQL_DATA_TYPE_STRING);
     MYSQL_TYPE_MAP.put(DataType.Varchar, MYSQL_DATA_TYPE_VARCHAR);
-    MYSQL_TYPE_MAP.put(DataType.Text, MYSQL_DATA_TYPE_BLOB);
-    MYSQL_TYPE_MAP.put(DataType.Binary, MYSQL_DATA_TYPE_STRING);
-    MYSQL_TYPE_MAP.put(DataType.VarBinary, MYSQL_DATA_TYPE_VAR_STRING);
     MYSQL_TYPE_MAP.put(DataType.Date, MYSQL_DATA_TYPE_DATE);
     MYSQL_TYPE_MAP.put(DataType.Time, MYSQL_DATA_TYPE_TIME);
     MYSQL_TYPE_MAP.put(DataType.DateTime, MYSQL_DATA_TYPE_DATETIME2);
+    MYSQL_TYPE_MAP.put(DataType.DateTime, MYSQL_DATA_TYPE_DATETIME);
     MYSQL_TYPE_MAP.put(DataType.TimeStamp, MYSQL_DATA_TYPE_TIMESTAMP);
     MYSQL_TYPE_MAP.put(DataType.Year, MYSQL_DATA_TYPE_YEAR);
-    MYSQL_TYPE_MAP.put(DataType.Invalid, MYSQL_DATA_TYPE_NULL);
+    MYSQL_TYPE_MAP.put(DataType.TinyText, MYSQL_DATA_TYPE_TINY_BLOB);
+    MYSQL_TYPE_MAP.put(DataType.Text, MYSQL_DATA_TYPE_BLOB);
+    MYSQL_TYPE_MAP.put(DataType.MediumText, MYSQL_DATA_TYPE_MEDIUM_BLOB);
+    MYSQL_TYPE_MAP.put(DataType.LongText, MYSQL_DATA_TYPE_LONG_BLOB);
+    MYSQL_TYPE_MAP.put(DataType.Binary, MYSQL_DATA_TYPE_STRING);
+    MYSQL_TYPE_MAP.put(DataType.VarBinary, MYSQL_DATA_TYPE_VAR_STRING);
+    MYSQL_TYPE_MAP.put(DataType.TinyBlob, MYSQL_DATA_TYPE_TINY_BLOB);
+    MYSQL_TYPE_MAP.put(DataType.Blob, MYSQL_DATA_TYPE_BLOB);
+    MYSQL_TYPE_MAP.put(DataType.MediumBlob, MYSQL_DATA_TYPE_MEDIUM_BLOB);
+    MYSQL_TYPE_MAP.put(DataType.LongBlob, MYSQL_DATA_TYPE_LONG_BLOB);
+    MYSQL_TYPE_MAP.put(DataType.Bit, MYSQL_DATA_TYPE_BIT);
+    MYSQL_TYPE_MAP.put(DataType.Enum, MYSQL_DATA_TYPE_ENUM);
+    MYSQL_TYPE_MAP.put(DataType.Set, MYSQL_DATA_TYPE_SET);
+    MYSQL_TYPE_MAP.put(DataType.Null, MYSQL_DATA_TYPE_NULL);
 
     MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_TINY, DataType.TinyInt);
     MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_SHORT, DataType.SmallInt);
@@ -134,15 +145,22 @@ public enum MySQLColumnDataType {
     MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_STRING, DataType.Char);
     MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_STRING, DataType.NChar);
     MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_VARCHAR, DataType.Varchar);
-    MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_BLOB, DataType.Text);
     MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_STRING, DataType.Varchar);
     MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_VAR_STRING, DataType.Varchar);
     MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_DATE, DataType.Date);
     MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_TIME, DataType.Time);
+    MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_DATETIME, DataType.DateTime);
     MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_DATETIME2, DataType.DateTime);
     MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_TIMESTAMP, DataType.TimeStamp);
     MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_YEAR, DataType.Year);
-    MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_NULL, DataType.Invalid);
+    MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_BIT, DataType.Bit);
+    MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_TINY_BLOB, DataType.TinyBlob);
+    MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_BLOB, DataType.Blob);
+    MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_MEDIUM_BLOB, DataType.MediumBlob);
+    MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_LONG_BLOB, DataType.LongBlob);
+    MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_ENUM, DataType.Enum);
+    MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_SET, DataType.Set);
+    MYSQL_DS_TYPE_MAP.put(MYSQL_DATA_TYPE_NULL, DataType.Null);
   }
 
   public static MySQLColumnDataType valueOfJDBCType(DataType sqlType) {
@@ -150,7 +168,8 @@ public enum MySQLColumnDataType {
   }
 
   public static DataType valueOfType(MySQLColumnDataType sqlType) {
-    return MYSQL_DS_TYPE_MAP.get(sqlType);
+    DataType type = MYSQL_DS_TYPE_MAP.get(sqlType);
+    return type == null ? DataType.Invalid : type;
   }
 
   /**

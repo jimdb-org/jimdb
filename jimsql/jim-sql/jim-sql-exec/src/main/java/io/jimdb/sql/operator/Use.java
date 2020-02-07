@@ -15,13 +15,14 @@
  */
 package io.jimdb.sql.operator;
 
-import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.core.Session;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.AckExecResult;
+import io.jimdb.core.plugin.PluginFactory;
 import io.jimdb.sql.ddl.DDLUtils;
 
 import reactor.core.publisher.Flux;
@@ -46,6 +47,11 @@ public final class Use extends Operator {
     if (null == session.getTxnContext().getMetaData().getCatalog(DDLUtils.trimName(databases))) {
       throw DBException.get(ErrorModule.EXECUTOR, ErrorCode.ER_BAD_DB_ERROR, databases);
     } else {
+      if (!PluginFactory.getPrivilegeEngine().catalogIsVisible(session.getUserInfo().getUser(), session.getUserInfo()
+              .getHost(), DDLUtils.trimName(databases))) {
+        throw DBException.get(ErrorModule.EXECUTOR, ErrorCode.ER_DBACCESS_DENIED_ERROR, session.getUserInfo().getUser
+                (), session.getUserInfo().getHost(), databases);
+      }
       session.getVarContext().setDefaultCatalog(DDLUtils.trimName(databases));
       return Flux.just(AckExecResult.getInstance());
     }

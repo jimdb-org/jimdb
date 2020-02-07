@@ -20,19 +20,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import io.jimdb.core.context.PrepareContext;
+import io.jimdb.common.exception.JimException;
+import io.jimdb.common.utils.generator.ConnIDGenerator;
+import io.jimdb.common.utils.lang.Resetable;
+import io.jimdb.common.utils.os.SystemClock;
+import io.jimdb.core.context.PreparedContext;
 import io.jimdb.core.context.StatementContext;
 import io.jimdb.core.context.TransactionContext;
 import io.jimdb.core.context.VariableContext;
-import io.jimdb.common.exception.JimException;
 import io.jimdb.core.model.privilege.UserInfo;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.plugin.SQLEngine;
 import io.jimdb.core.plugin.store.Engine;
 import io.jimdb.core.plugin.store.Transaction;
-import io.jimdb.common.utils.generator.ConnIDGenerator;
-import io.jimdb.common.utils.lang.Resetable;
-import io.jimdb.common.utils.os.SystemClock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,11 +64,12 @@ public class Session implements Resetable {
   protected final VariableContext varContext;
   protected final StatementContext stmtContext;
   protected final TransactionContext txnContext;
-  protected final PrepareContext prepareContext;
+  protected final PreparedContext preparedContext;
   protected final Map<String, Object> context;
   protected final AtomicBoolean closed = new AtomicBoolean(false);
 
   public Session(final SQLEngine sqlEngine, final Engine storeEngine) {
+    this.storeEngine = storeEngine;
     this.connID = ConnIDGenerator.next();
     this.sessionID = SEQ_GEN.incrementAndGet();
     this.lastTime = SystemClock.currentTimeMillis();
@@ -76,8 +77,7 @@ public class Session implements Resetable {
     this.varContext = new VariableContext(sqlEngine, null);
     this.stmtContext = new StatementContext();
     this.txnContext = new TransactionContext();
-    this.storeEngine = storeEngine;
-    this.prepareContext = new PrepareContext();
+    this.preparedContext = new PreparedContext();
   }
 
   public final long allocColumnID() {
@@ -90,10 +90,6 @@ public class Session implements Resetable {
 
   public final Long getSessionID() {
     return sessionID;
-  }
-
-  public void setSeqID(byte seqID) {
-    this.seqID = seqID;
   }
 
   public final byte getSeqID() {
@@ -128,8 +124,8 @@ public class Session implements Resetable {
     return txnContext;
   }
 
-  public PrepareContext getPrepareContext() {
-    return prepareContext;
+  public PreparedContext getPreparedContext() {
+    return preparedContext;
   }
 
   public final void putContext(String key, Object val) {
@@ -190,14 +186,13 @@ public class Session implements Resetable {
       txnContext.reset();
     }
     this.varContext.reset();
+    this.preparedContext.reset();
     this.stmtContext.close();
   }
 
   @Override
   public void close() {
     if (closed.compareAndSet(false, true)) {
-      txnContext.close();
-
       synchronized (this) {
         if (txn != null && txn.isPending()) {
           txn.rollback().subscribe(r -> {
@@ -207,6 +202,13 @@ public class Session implements Resetable {
           }, e -> LOG.error("transaction rollback failed when session close", e));
         }
       }
+
+      txnContext.close();
+      varContext.close();
+      stmtContext.close();
+      txnContext.close();
+      preparedContext.close();
+      context.clear();
     }
   }
 

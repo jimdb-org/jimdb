@@ -141,9 +141,9 @@ public class ShowTest extends SqlTestBase {
     execUpdate(sql, 0, true);
 
     List<String> expected = expectedStr(new String[]{
-            "Field=id; Type=bigint(20); Null=NO; Key=PRI; Default=; Extra=",
-            "Field=user; Type=varchar(32); Null=NO; Key=UNI; Default=; Extra=",
-            "Field=host; Type=varchar(32); Null=YES; Key=; Default=; Extra="
+            "Field=id; Type=bigint(20); Null=NO; Key=PRI; Default=null; Extra=",
+            "Field=user; Type=varchar(32); Null=NO; Key=UNI; Default=null; Extra=",
+            "Field=host; Type=varchar(32); Null=YES; Key=; Default=null; Extra="
     });
     execQuery("show columns from test in " + DB_NAME, expected);
 
@@ -164,8 +164,8 @@ public class ShowTest extends SqlTestBase {
                     " `id` bigint(20) NOT NULL,\n" +
                     " `user` varchar(32) NOT NULL,\n" +
                     " `host` varchar(32),\n" +
-                    "  UNIQUE KEY `user_2`(`user`),\n" +
                     "  PRIMARY KEY (`id`),\n" +
+                    "  UNIQUE KEY `user_2`(`user`),\n" +
                     ") ENGINE=MEMORY COMMENT=''REPLICA=1''"
     });
     execQuery(String.format("show create table %s.test", DB_NAME), expected);

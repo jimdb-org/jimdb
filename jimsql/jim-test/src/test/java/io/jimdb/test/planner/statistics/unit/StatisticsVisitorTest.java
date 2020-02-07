@@ -228,8 +228,8 @@ public class StatisticsVisitorTest extends TestBase {
     when(tableSourceStatInfo.getEstimatedRowCount()).thenReturn(10.0);
     when(tableSourceStatInfo.calculateSelectivity(session, tableSource.getPushDownPredicates())).thenReturn(2.0);
     when(tableSourceStatInfo.adjust(2.0)).thenReturn(tableSourceStatInfo);
-    when(tableSourceStatInfo.estimateRowCountByNonIndexedRanges(any(), anyLong(), anyList())).thenReturn(10.0);
-    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyLong(), anyList())).thenReturn(5.0);
+    when(tableSourceStatInfo.estimateRowCountByColumnRanges(any(), anyLong(), anyList())).thenReturn(10.0);
+    when(tableSourceStatInfo.estimateRowCountByIndexedRanges(any(), anyInt(), anyList())).thenReturn(5.0);
 
     TableStats tableStats = PowerMockito.mock(TableStats.class);
     TableStatsManager.addToCache(tableSource.getTable(), tableStats);

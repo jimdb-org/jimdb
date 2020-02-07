@@ -20,8 +20,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import io.jimdb.core.types.ValueType;
 import io.jimdb.common.utils.lang.ByteUtil;
+import io.jimdb.core.types.ValueType;
 
 import com.google.common.primitives.Longs;
 
@@ -32,11 +32,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 @SuppressFBWarnings("EI_EXPOSE_REP")
 public final class BinaryValue extends Value<BinaryValue> {
-  protected static final BinaryValue EMPTY = new BinaryValue(new byte[]{});
+  private static volatile SoftReference<BinaryValue[]> binaryCache = new SoftReference(new BinaryValue[VALUE_CACHE_SIZE]);
 
-  private static volatile SoftReference<BinaryValue[]> binaryCache =
-          new SoftReference(new BinaryValue[VALUE_CACHE_SIZE]);
-
+  public static final BinaryValue EMPTY = new BinaryValue(new byte[]{});
   public static final BinaryValue MAX_VALUE = new BinaryValue(Longs.toByteArray(Long.MAX_VALUE));
   public static final BinaryValue MIN_VALUE = new BinaryValue(Longs.toByteArray(Long.MIN_VALUE));
 

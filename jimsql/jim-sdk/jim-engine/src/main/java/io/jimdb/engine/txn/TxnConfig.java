@@ -22,10 +22,10 @@ import java.util.List;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.core.model.meta.Table;
-import io.jimdb.pb.Txn;
 import io.jimdb.common.utils.generator.UUIDGenerator;
 import io.jimdb.common.utils.lang.ByteUtil;
+import io.jimdb.core.model.meta.Table;
+import io.jimdb.pb.Txn;
 
 import com.google.protobuf.ByteString;
 
@@ -33,7 +33,7 @@ import com.google.protobuf.ByteString;
  * @version V1.0
  */
 public class TxnConfig {
-  public static final int TXN_INTENT_MAX_LENGTH = 100;
+  public static final int TXN_INTENT_MAX_LENGTH = 500;
 
   private String txnId;
   /**

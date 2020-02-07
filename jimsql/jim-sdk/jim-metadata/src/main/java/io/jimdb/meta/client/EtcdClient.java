@@ -25,9 +25,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.LongConsumer;
 
-import io.jimdb.common.exception.DBException;
-import io.jimdb.common.exception.ErrorCode;
-import io.jimdb.common.exception.ErrorModule;
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.Client;
 import io.etcd.jetcd.KV;
@@ -50,6 +47,9 @@ import io.etcd.jetcd.options.PutOption;
 import io.etcd.jetcd.options.WatchOption;
 import io.etcd.jetcd.watch.WatchEvent;
 import io.grpc.stub.StreamObserver;
+import io.jimdb.common.exception.DBException;
+import io.jimdb.common.exception.ErrorCode;
+import io.jimdb.common.exception.ErrorModule;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -97,7 +97,7 @@ public final class EtcdClient {
   }
 
   private long initLease(long ttl) {
-    ttl = ttl < 20 ? 20 : ttl;
+    ttl = ttl < 30 ? 30 : ttl;
     try {
       long leaseId = leaseClient.grant(ttl).get(REQ_TIMEOUT, TimeUnit.MILLISECONDS).getID();
       leaseClient.keepAlive(leaseId, new StreamObserver<LeaseKeepAliveResponse>() {

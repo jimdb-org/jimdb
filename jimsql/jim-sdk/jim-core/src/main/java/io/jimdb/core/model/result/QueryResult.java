@@ -37,5 +37,4 @@ public interface QueryResult extends RefCountResult {
   void forEach(Consumer<ValueAccessor> action);
 
   void accept(Consumer<ValueAccessor[]> action);
-
 }

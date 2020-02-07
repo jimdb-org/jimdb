@@ -94,29 +94,36 @@ public final class ShowColumns extends RelOperator {
       } else if (column.hasMultipleKeyFlag()) {
         keyFlag = "MUL";
       }
-      String defaultValueStr = null;
+
+      String defaultValueStr;
+      Value descValue = null;
       if (column.hasDefaultValue()) {
-        Value defaultValue = column.getDefaultValue();
-        if (defaultValue instanceof StringValue) {
-          defaultValueStr = ((StringValue) defaultValue).getValue();
+        descValue = column.getDefaultValue();
+        if (descValue instanceof StringValue) {
+          defaultValueStr = ((StringValue) descValue).getValue();
           if ((column.getType().getType() == DataType.TimeStamp
                   || column.getType().getType() == DataType.DateTime)
                   && CURRENT_TIMESTAMP.equalsIgnoreCase(defaultValueStr) && column.getType().getScale() > 0) {
-            defaultValueStr = String.format("%s(%d)", defaultValueStr, column.getType().getScale());
+            descValue = StringValue.getInstance(String.format("%s(%d)", defaultValueStr, column.getType().getScale()));
           }
-        } else {
-          defaultValueStr = defaultValue.getString();
-          if (column.getType().getType() == DataType.TimeStamp && !ZERO_DATETIME.equals(defaultValueStr)
-                  && !defaultValueStr.toLowerCase().startsWith(CURRENT_TIMESTAMP)) {
-            if (column.getDefaultValue() instanceof TimeValue) {
-              TimeValue value = (TimeValue) column.getDefaultValue();
-              defaultValueStr = value.convertToString();
-            }
+        }
+      }
+
+      if (descValue != null) {
+        defaultValueStr = descValue.getString();
+        if (column.getType().getType() == DataType.TimeStamp && !ZERO_DATETIME.equals(defaultValueStr)
+                && !defaultValueStr.toLowerCase().startsWith(CURRENT_TIMESTAMP)) {
+          if (column.getDefaultValue() instanceof TimeValue) {
+            TimeValue value = (TimeValue) column.getDefaultValue();
+            defaultValueStr = value.convertToString();
           }
+        }
 //        if (column.getType().getType() == DataType.Bit) {
 //
 //        }
-        }
+        descValue = StringValue.getInstance(defaultValueStr);
+      } else {
+        descValue = NullValue.getInstance();
       }
 
       String extra = "";
@@ -135,7 +142,7 @@ public final class ShowColumns extends RelOperator {
                 hasCharset ? StringValue.getInstance(column.getCollation()) : NullValue.getInstance(),
                 StringValue.getInstance(nullable),
                 StringValue.getInstance(keyFlag),
-                StringValue.getInstance(defaultValueStr),
+                descValue,
                 StringValue.getInstance(extra),
                 StringValue.getInstance(DEFAULT_PRIVILEGES),
                 StringValue.getInstance(column.getComment())
@@ -146,7 +153,7 @@ public final class ShowColumns extends RelOperator {
                 StringValue.getInstance(column.getTypeDesc()),
                 StringValue.getInstance(nullable),
                 StringValue.getInstance(keyFlag),
-                StringValue.getInstance(defaultValueStr),
+                descValue,
                 StringValue.getInstance(extra)
         };
       }

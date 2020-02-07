@@ -22,6 +22,8 @@ import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
+import io.jimdb.core.model.privilege.PrivilegeInfo;
+import io.jimdb.core.model.privilege.PrivilegeType;
 import io.jimdb.pb.Ddlpb.OpType;
 import io.jimdb.pb.Ddlpb.PriLevel;
 import io.jimdb.pb.Ddlpb.PriOn;
@@ -31,6 +33,7 @@ import io.jimdb.sql.ddl.DDLUtils;
 import io.jimdb.sql.operator.Privilege;
 import io.jimdb.sql.operator.RelOperator;
 import io.jimdb.sql.operator.show.ShowGrants;
+import io.jimdb.sql.privilege.PrivilegeStore;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -55,7 +58,7 @@ import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowGrantsStatemen
 /**
  * @version V1.0
  */
-final class PrivilegeAnalyzer {
+public final class PrivilegeAnalyzer {
   private static final int MAX_LEN_HOSTNAME = 60;
   private static final int MAX_LEN_USERNAME = 16;
   private static final int MAX_LEN_PASSWORD = 41;
@@ -81,21 +84,26 @@ final class PrivilegeAnalyzer {
     List<SQLExpr> sqlExprList = stmt.getPrivileges();
     SQLObject objectOn = stmt.getOn();
     SQLExpr exprTo = stmt.getTo();
-    return new Privilege(OpType.PriRevoke, getPrivilegeOp(session, sqlExprList, objectOn, exprTo));
+    return new Privilege(OpType.PriGrant, getPrivilegeOp(session, sqlExprList, objectOn, exprTo, Boolean.TRUE));
   }
 
   static Privilege analyzeRevoke(Session session, SQLRevokeStatement stmt) {
     List<SQLExpr> sqlExprList = stmt.getPrivileges();
     SQLObject objectOn = stmt.getOn();
     SQLExpr exprFrom = stmt.getFrom();
-    return new Privilege(OpType.PriRevoke, getPrivilegeOp(session, sqlExprList, objectOn, exprFrom));
+
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
+    privilegeInfos.add(new PrivilegeInfo("", "", "", PrivilegeType.SUPER_PRIV));
+    return new Privilege(OpType.PriRevoke, getPrivilegeOp(session, sqlExprList, objectOn, exprFrom, Boolean.FALSE));
   }
 
-  static Privilege analyzeCreateUser(MySqlCreateUserStatement stmt) {
+  static Privilege analyzeCreateUser(Session session, MySqlCreateUserStatement stmt) {
     String name = null;
     String host = null;
     String password = null;
 
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
+    privilegeInfos.add(new PrivilegeInfo("", "", "", PrivilegeType.CREATE_USER_PRIV));
     List<MySqlCreateUserStatement.UserSpecification> users = stmt.getUsers();
     List<PriUser> createUsers = new ArrayList<>(users.size());
 
@@ -135,9 +143,12 @@ final class PrivilegeAnalyzer {
     return new Privilege(OpType.PriCreateUser, builder.build());
   }
 
-  static Privilege analyzeDropUser(SQLDropUserStatement stmt) {
+  static Privilege analyzeDropUser(Session session, SQLDropUserStatement stmt) {
     String name = null;
     String host = null;
+
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
+    privilegeInfos.add(new PrivilegeInfo("", "", "", PrivilegeType.CREATE_USER_PRIV));
 
     List<SQLExpr> users = stmt.getUsers();
     List<PriUser> dropUsers = new ArrayList<>(users.size());
@@ -167,10 +178,13 @@ final class PrivilegeAnalyzer {
     return new Privilege(OpType.PriDropUser, builder.build());
   }
 
-  static Privilege analyzeAlterUser(MySqlAlterUserStatement stmt) {
+  static Privilege analyzeAlterUser(Session session, MySqlAlterUserStatement stmt) {
     String name = null;
     String host = null;
     String password = null;
+
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
+    privilegeInfos.add(new PrivilegeInfo("", "", "", PrivilegeType.CREATE_USER_PRIV));
 
     List<SQLExpr> users = stmt.getUsers();
     List<PriUser> alterUsers = new ArrayList<>(users.size());
@@ -292,15 +306,7 @@ final class PrivilegeAnalyzer {
   }
 
   private static PrivilegeOp getPrivilegeOp(Session session, List<SQLExpr> sqlExprList, SQLObject objectOn,
-                                            SQLExpr expr) {
-    List<String> privList = new ArrayList<>();
-    for (SQLExpr sqlExpr : sqlExprList) {
-      if (sqlExpr instanceof SQLIdentifierExpr) {
-        String priv = ((SQLIdentifierExpr) sqlExpr).getName();
-        privList.add(priv);
-      }
-    }
-
+                                            SQLExpr expr, Boolean isGrant) {
     String db = null;
     String table = null;
     if (objectOn instanceof SQLExprTableSource) {
@@ -319,6 +325,55 @@ final class PrivilegeAnalyzer {
       }
     }
 
+    PriOn.Builder priOnBuilder = getPriOnBuilder(db, table);
+    List<String> privList = new ArrayList<>();
+    List<String> privs = new ArrayList<>();
+    if (isGrant) {
+      List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
+      privilegeInfos.add(new PrivilegeInfo(db, table, "", PrivilegeType.GRANT_PRIV));
+
+      for (SQLExpr sqlExpr : sqlExprList) {
+        if (sqlExpr instanceof SQLIdentifierExpr) {
+          // SELECT
+          String privStr = ((SQLIdentifierExpr) sqlExpr).getName();
+          // Select_priv
+          String priv = PrivilegeStore.PRIV_STR_TO_PRIVILEGE.get(privStr);
+          privList.add(priv);
+
+          if ("ALL".equals(privStr) || "ALL PRIVILEGES".equals(privStr)) {
+            switch (priOnBuilder.getLevel()) {
+              case Global:
+                privs = PrivilegeStore.PRIVILEGE_USERS;
+                break;
+              case Table:
+                privs = PrivilegeStore.PRIVILEGE_CATALOGS;
+                break;
+              case DB:
+                privs = PrivilegeStore.PRIVILEGE_TABLES;
+                break;
+              default:
+                break;
+            }
+          }
+          privilegeInfos.add(new PrivilegeInfo(db, table, "", PrivilegeStore.PRIVILEGE_TO_PRIVILEGE_TYPE.get(priv)));
+        }
+      }
+
+      for (String priv : privs) {
+        privilegeInfos.add(new PrivilegeInfo(db, table, "", PrivilegeStore.PRIVILEGE_TO_PRIVILEGE_TYPE.get(priv)));
+      }
+    } else {
+      for (SQLExpr sqlExpr : sqlExprList) {
+        if (sqlExpr instanceof SQLIdentifierExpr) {
+          // SELECT
+          String privStr = ((SQLIdentifierExpr) sqlExpr).getName();
+          // Select_priv
+          String priv = PrivilegeStore.PRIV_STR_TO_PRIVILEGE.get(privStr);
+          privList.add(priv);
+        }
+      }
+    }
+
     List<PriUser> users = new ArrayList<>();
     String name = null;
     String host = null;
@@ -330,12 +385,11 @@ final class PrivilegeAnalyzer {
     } else if (expr instanceof SQLIdentifierExpr) {
       name = ((SQLIdentifierExpr) expr).getName();
     }
-
     users.add(checkPriUser(name, host, password));
 
     PrivilegeOp.Builder builder = PrivilegeOp.newBuilder();
     builder.addAllPrivileges(privList)
-            .setOn(getPriOnBuilder(db, table))
+            .setOn(priOnBuilder)
             .addAllUsers(users);
 
     return builder.build();

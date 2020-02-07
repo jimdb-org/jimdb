@@ -19,19 +19,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.core.Session;
+import io.jimdb.core.context.PreparedContext;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Schema;
 import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.meta.Table;
-import io.jimdb.sql.operator.KeyGet;
+import io.jimdb.core.model.privilege.PrivilegeType;
+import io.jimdb.core.values.LongValue;
 import io.jimdb.core.values.Value;
 import io.jimdb.core.values.ValueConvertor;
+import io.jimdb.sql.operator.KeyGet;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -43,6 +46,7 @@ import com.alibaba.druid.sql.ast.expr.SQLBinaryOpExpr;
 import com.alibaba.druid.sql.ast.expr.SQLBinaryOperator;
 import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
 import com.alibaba.druid.sql.ast.expr.SQLValuableExpr;
+import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
 import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
 import com.alibaba.druid.sql.ast.statement.SQLSelectItem;
 import com.alibaba.druid.sql.ast.statement.SQLSelectQueryBlock;
@@ -71,11 +75,16 @@ public final class KeyGetAnalyzer {
 
     SQLLimit limit = queryBlock.getLimit();
     if (limit != null) {
-      long offset = AnalyzerUtil.resolveLimt(limit.getOffset());
+      if (limit.getOffset() instanceof SQLVariantRefExpr || limit.getRowCount() instanceof SQLVariantRefExpr) {
+        return null;
+      }
+
+      PreparedContext context = session.getPreparedContext();
+      long offset = getOffset(limit, context);
+      long count = getCount(limit, context);
       if (offset > 0) {
         return null;
       }
-      long count = AnalyzerUtil.resolveLimt(limit.getRowCount());
       if (count == 0) {
         return null;
       }
@@ -86,6 +95,7 @@ public final class KeyGetAnalyzer {
     if (StringUtils.isNotBlank(queryBlock.getFrom().getAlias())) {
       aliasTable = queryBlock.getFrom().getAlias();
     }
+    session.getStmtContext().addPrivilegeInfo(table.getCatalog().getName(), table.getName(), PrivilegeType.SELECT_PRIV);
     Schema schema = buildSchema(table, aliasTable, queryBlock.getSelectList(), analyzerType);
     if (schema == null) {
       return null;
@@ -132,6 +142,30 @@ public final class KeyGetAnalyzer {
     }
 
     return new KeyGet(indexs, values, schema);
+  }
+
+  static long getCount(SQLLimit limit, PreparedContext context) {
+    long count;
+    if (context.getParamValues() != null && limit.getRowCount() instanceof SQLVariantRefExpr) {
+      SQLVariantRefExpr variantRefExpr = (SQLVariantRefExpr) limit.getRowCount();
+      LongValue value = (LongValue) context.getParamValues()[variantRefExpr.getIndex()];
+      count = value.getValue();
+    } else {
+      count = AnalyzerUtil.resolveLimt(limit.getRowCount());
+    }
+    return count;
+  }
+
+  static long getOffset(SQLLimit limit, PreparedContext context) {
+    long offset;
+    if (context.getParamValues() != null && limit.getOffset() instanceof SQLVariantRefExpr) {
+      SQLVariantRefExpr variantRefExpr = (SQLVariantRefExpr) limit.getOffset();
+      LongValue value = (LongValue) context.getParamValues()[variantRefExpr.getIndex()];
+      offset = value.getValue();
+    } else {
+      offset = AnalyzerUtil.resolveLimt(limit.getOffset());
+    }
+    return offset;
   }
 
   protected static List<ConditionExpr> analyzeFilter(Table table, String aliasTable, SQLExpr expr, AnalyzerType analyzerType) {

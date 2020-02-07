@@ -17,8 +17,8 @@ package io.jimdb.core.context;
 
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
-import io.jimdb.core.model.meta.MetaData;
 import io.jimdb.common.utils.lang.Resetable;
+import io.jimdb.core.model.meta.MetaData;
 
 /**
  * @version V1.0
@@ -32,7 +32,7 @@ public final class TransactionContext implements Resetable {
   public MetaData getMetaData() {
     MetaData result = metaData;
     if (result == null) {
-      result = MetaData.Holder.getMetaData();
+      result = MetaData.Holder.get();
       metaData = result;
     }
     return result;
@@ -40,7 +40,7 @@ public final class TransactionContext implements Resetable {
 
   public void init() {
     if (REFCNT_UPDATER.compareAndSet(this, 0, 1)) {
-      this.metaData = MetaData.Holder.getRetainedMetaData();
+      this.metaData = MetaData.Holder.getRetained();
     }
   }
 

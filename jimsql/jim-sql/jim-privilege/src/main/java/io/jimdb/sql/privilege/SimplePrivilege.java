@@ -20,13 +20,13 @@ import java.security.MessageDigest;
 import java.util.Collections;
 import java.util.List;
 
+import io.jimdb.common.utils.lang.StringUtil;
 import io.jimdb.core.config.JimConfig;
 import io.jimdb.core.model.meta.MetaData;
 import io.jimdb.core.model.privilege.PrivilegeInfo;
 import io.jimdb.core.model.privilege.UserInfo;
-import io.jimdb.pb.Ddlpb;
 import io.jimdb.core.plugin.PrivilegeEngine;
-import io.jimdb.common.utils.lang.StringUtil;
+import io.jimdb.pb.Ddlpb;
 
 import com.google.common.base.Strings;
 
@@ -61,9 +61,14 @@ public final class SimplePrivilege implements PrivilegeEngine {
   }
 
   @Override
+  public boolean catalogIsVisible(String user, String host, String db) {
+    return true;
+  }
+
+  @Override
   public boolean auth(UserInfo userInfo, String catalog, byte[] auth, byte[] salt) {
     if (!StringUtil.isBlank(catalog)) {
-      if (null == MetaData.Holder.getMetaData().getCatalog(catalog)) {
+      if (null == MetaData.Holder.get().getCatalog(catalog)) {
         return false;
       }
     }

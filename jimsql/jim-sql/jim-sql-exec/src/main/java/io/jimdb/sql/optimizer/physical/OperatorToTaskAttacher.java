@@ -16,6 +16,8 @@
 
 package io.jimdb.sql.optimizer.physical;
 
+import static io.jimdb.core.expression.ExpressionUtil.extractColumns;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -288,13 +290,12 @@ public class OperatorToTaskAttacher extends ParameterizedOperatorVisitor<Task[],
       if (orderExpressions != null) {
         columnExprs = Lists.newArrayListWithExpectedSize(orderExpressions.length);
         for (Order.OrderExpression orderExpression : orderExpressions) {
-          columnExprs.add((ColumnExpr) orderExpression.getExpression());
+          extractColumns(columnExprs, orderExpression.getExpression(), null);
         }
       }
 
       if (!dsTask.isIndexFinished()
-//              && OptimizationUtil.columnsCoveredByIndex(columnExprs, dsTask.getPushedDownIndexPlan().getSchema().getColumns())
-      ) {
+              && OptimizationUtil.columnsCoveredByIndex(columnExprs, dsTask.getPushedDownIndexPlan().getSchema().getColumns())) {
         dsTask.attachOperatorToPushedDownIndexPlan(topN);
       } else {
         dsTask.finishIndexPlan();

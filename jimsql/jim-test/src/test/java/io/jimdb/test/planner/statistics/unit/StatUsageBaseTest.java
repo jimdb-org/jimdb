@@ -68,7 +68,7 @@ public class StatUsageBaseTest extends TestBase {
 
     when(tableSourceStatInfo.getEstimatedRowCount()).thenReturn(10.0);
     when(tableSourceStatInfo.adjust(anyDouble())).thenReturn(tableSourceStatInfo);
-    when(tableSourceStatInfo.estimateRowCountByNonIndexedRanges(any(), anyLong(), anyList())).thenReturn(10.0);
+    when(tableSourceStatInfo.estimateRowCountByColumnRanges(any(), anyLong(), anyList())).thenReturn(10.0);
 
     when(tableSourceStatInfo.newCardinalityList(anyDouble())).thenReturn(new double[]{ 1.0 });
     when(tableSourceStatInfo.getCardinality(anyInt())).thenReturn(1.0);
@@ -76,7 +76,7 @@ public class StatUsageBaseTest extends TestBase {
 
   protected void run(Checker checker) {
     try {
-      Table table = MetaData.Holder.getMetaData().getTable(CATALOG, USER_TABLE);
+      Table table = MetaData.Holder.get().getTable(CATALOG, USER_TABLE);
       TableStatsManager.addToCache(table, tableStats);
 
       RelOperator relOperator = buildPlanAndOptimize(checker.getSql());

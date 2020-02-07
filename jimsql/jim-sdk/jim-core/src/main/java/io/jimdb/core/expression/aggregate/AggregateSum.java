@@ -21,8 +21,6 @@ import io.jimdb.core.Session;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.values.Value;
-import io.jimdb.core.expression.aggregate.util.ValueUtil;
-import io.jimdb.pb.Basepb;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -40,16 +38,14 @@ public class AggregateSum extends AggregateFunc {
 
     Value value;
     Set distinctSet = partialResult.getDistinctSet();
-    Basepb.DataType type = aggregateFunc.getSqlType().getType();
     Expression expression = aggregateFunc.getArgs()[0];
     for (ValueAccessor valueAccessor : rowsInGroup) {
 
-      value = ValueUtil.exec(session, expression, valueAccessor, type);
+      value = expression.exec(valueAccessor);
 
       if (distinctSet != null && !distinctSet.add(value)) {
         continue;
       }
-
       partialResult.plus(session, value);
     }
 
@@ -59,12 +55,9 @@ public class AggregateSum extends AggregateFunc {
   private static AggFuncExec valuePartialFunction = (session, rowsInGroup, aggregateFunc, partialResult) -> {
 
     Value value;
-    Basepb.DataType type = aggregateFunc.getSqlType().getType();
     Expression expression = aggregateFunc.getArgs()[0];
     for (ValueAccessor valueAccessor : rowsInGroup) {
-
-      value = ValueUtil.exec(session, expression, valueAccessor, type);
-
+      value = expression.exec(valueAccessor);
       partialResult.plus(session, value);
     }
 

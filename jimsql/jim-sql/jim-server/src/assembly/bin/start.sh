@@ -38,6 +38,6 @@ nohup "$JAVACMD"\
   -classpath "$CLASSPATH" \
   -Dbasedir="$BASEDIR" \
   -Dfile.encoding="UTF-8" \
-  io.jimdb.server.JimBootstrap \
+  io.jimdb.sql.server.JimBootstrap \
   "$@" >/dev/null 2>/dev/null &
 echo $! > jim.pid

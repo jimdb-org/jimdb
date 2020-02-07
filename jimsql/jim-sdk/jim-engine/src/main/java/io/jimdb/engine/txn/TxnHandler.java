@@ -22,30 +22,30 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import io.jimdb.core.codec.Codec;
-import io.jimdb.core.codec.KvPair;
-import io.jimdb.engine.StoreCtx;
-import io.jimdb.engine.client.RequestContext;
-import io.jimdb.engine.sender.DistSender;
-import io.jimdb.engine.sender.Util;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
 import io.jimdb.common.exception.RangeRouteException;
+import io.jimdb.common.utils.callback.Callback;
+import io.jimdb.common.utils.lang.ByteUtil;
+import io.jimdb.core.codec.Codec;
+import io.jimdb.core.codec.KvPair;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
 import io.jimdb.core.expression.ValueAccessor;
-import io.jimdb.core.model.meta.RangeInfo;
-import io.jimdb.meta.route.RoutePolicy;
 import io.jimdb.core.model.meta.Index;
+import io.jimdb.core.model.meta.RangeInfo;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.AckExecResult;
+import io.jimdb.engine.StoreCtx;
+import io.jimdb.engine.client.RequestContext;
+import io.jimdb.engine.sender.DistSender;
+import io.jimdb.engine.sender.Util;
+import io.jimdb.meta.route.RoutePolicy;
 import io.jimdb.pb.Api.RangeRequest.ReqCase;
 import io.jimdb.pb.Txn;
-import io.jimdb.common.utils.callback.Callback;
-import io.jimdb.common.utils.lang.ByteUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.reactivestreams.Subscription;
@@ -463,7 +463,7 @@ public class TxnHandler {
         if (LOG.isDebugEnabled()) {
           LOG.debug("decode row: {}", ByteUtil.bytes2hex01(NettyByteString.asByteArray(row.getFields())));
         }
-        decodeList.add(Codec.decodeRow(resultColumns, row, storeCtx.getTimeZone()));
+        decodeList.add(Codec.decodeRow(resultColumns, row));
       });
       ValueAccessor[] rowArray = new ValueAccessor[decodeList.size()];
       return decodeList.toArray(rowArray);
@@ -475,24 +475,24 @@ public class TxnHandler {
                                                          ColumnExpr[] resultColumns, KvPair kvPair) {
     DistSender sender = storeCtx.getSender();
     return sender.txnSelectFlowForRange(storeCtx, reqBuilder, kvPair)
-            .map(rows -> handleFlowValue(resultColumns, rows, storeCtx));
+            .map(rows -> handleFlowValue(resultColumns, rows));
   }
 
   public static Flux<ValueAccessor[]> selectFlowForKeys(StoreCtx storeCtx, MessageOrBuilder reqBuilder,
                                                         ColumnExpr[] resultColumns, List<ByteString> keys) {
     DistSender sender = storeCtx.getSender();
     return sender.txnSelectFlowForKeys(storeCtx, reqBuilder, keys)
-            .map(rows -> handleFlowValue(resultColumns, rows, storeCtx));
+            .map(rows -> handleFlowValue(resultColumns, rows));
   }
 
   //Txn.SelectFlowRequest.Builder
-  public static Flux<ValueAccessor[]> selectFlowStream(StoreCtx storeCtx, Txn.SelectFlowRequest.Builder reqBuilder,
-                                                       ColumnExpr[] resultColumns, KvPair kvPair) {
+  protected static Flux<ValueAccessor[]> selectFlowStream(StoreCtx storeCtx, Txn.SelectFlowRequest.Builder reqBuilder,
+                                                          ColumnExpr[] resultColumns, KvPair kvPair) {
     DistSender sender = storeCtx.getSender();
-    return sender.txnSelectFlowStream(storeCtx, reqBuilder, kvPair).map(rows -> handleFlowValue(resultColumns, rows, storeCtx));
+    return sender.txnSelectFlowStream(storeCtx, reqBuilder, kvPair).map(rows -> handleFlowValue(resultColumns, rows));
   }
 
-  private static ValueAccessor[] handleFlowValue(ColumnExpr[] resultColumns, List<Txn.Row> rows, StoreCtx storeCtx) {
+  private static ValueAccessor[] handleFlowValue(ColumnExpr[] resultColumns, List<Txn.Row> rows) {
     if (rows == null || rows.isEmpty()) {
       return TxnHandler.ROW_VALUE_ACCESSORS_EMPTY;
     }
@@ -502,12 +502,11 @@ public class TxnHandler {
       if (LOG.isInfoEnabled()) {
         LOG.info("decode row: {}", ByteUtil.bytes2hex01(NettyByteString.asByteArray(rowValue.getFields())));
       }
-      decodeList.add(Codec.decodeRowWithOpt(resultColumns, rowValue, row.getPks(), storeCtx.getTimeZone()));
+      decodeList.add(Codec.decodeRowWithOpt(resultColumns, rowValue, row.getPks()));
     });
     ValueAccessor[] rowArray = new ValueAccessor[decodeList.size()];
     return decodeList.toArray(rowArray);
   }
-
 
   public static Flux<Txn.TxnStatus> txnGetLockInfo(StoreCtx storeCtx, String txnId, ByteString primaryKey) {
     Txn.GetLockInfoRequest.Builder request = Txn.GetLockInfoRequest.newBuilder()
@@ -834,7 +833,6 @@ public class TxnHandler {
     };
   }
 
-
   public static Function<Throwable, Flux<ValueAccessor[]>> getErrHandler(StoreCtx context, SelectFlowKeysFunc func,
                                                                          Txn.SelectFlowRequest.Builder reqBuilder,
                                                                          ColumnExpr[] exprs, List<ByteString> keys) {
@@ -1001,7 +999,6 @@ public class TxnHandler {
       case NOT_UNIQUE:
         return DBException.get(ErrorModule.ENGINE, ErrorCode.ER_DUP_ENTRY,
                 Arrays.toString(txError.getNotUnique().getKey().toByteArray()), "INDEX");
-//        return DBException.get(ErrorModule.ENGINE, ErrorCode.ER_SHARD_RESPONSE_ERROR, txError.getErrType().name(), "NOT UNIQUE");
       case TXN_CONFLICT:
         Txn.TxnConflict txnConflict = txError.getTxnConflict();
         return DBException.get(ErrorModule.ENGINE, ErrorCode.ER_TXN_CONFLICT, txnConflict.getExpectedTxnId(),

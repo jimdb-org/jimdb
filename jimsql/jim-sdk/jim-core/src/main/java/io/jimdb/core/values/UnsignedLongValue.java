@@ -115,6 +115,11 @@ public final class UnsignedLongValue extends Value<UnsignedLongValue> {
   }
 
   @Override
+  protected Value divSafe(UnsignedLongValue v2) {
+    return divideSafe(v2);
+  }
+
+  @Override
   protected Value modSafe(UnsignedLongValue v2) {
     if (v2.value.signum() == 0) {
       throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_DIVISION_BY_ZERO);

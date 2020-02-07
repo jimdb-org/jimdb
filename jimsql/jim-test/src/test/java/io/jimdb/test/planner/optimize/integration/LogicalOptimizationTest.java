@@ -76,7 +76,7 @@ public class LogicalOptimizationTest extends TestBase {
             .addCheckPoint(CheckPoint.PlanTree,
                     "TableSource(user) -> Order -> Projection")
             .addCheckPoint(CheckPoint.PredicatesPushDown,
-                    "TableSource.pushDownPredicates=[FUNC-EqualInt(score,80)]")
+                    "TableSource.pushDownPredicates=[FUNC-EqualReal(score,80.0)]")
             .addCheckPoint(CheckPoint.ColumnPrune,
                     "TableSource.columns=[name,phone,score]");
 
@@ -141,7 +141,7 @@ public class LogicalOptimizationTest extends TestBase {
             .addCheckPoint(CheckPoint.ColumnPrune,
                     "TableSource.columns=[name,age,score]")
             .addCheckPoint(CheckPoint.PredicatesPushDown,
-                    "TableSource.pushDownPredicates=[FUNC-EqualInt(age,score)]"));
+                    "TableSource.pushDownPredicates=[FUNC-EqualReal(,score)]"));
     checkerList.add(Checker.build()
             .sql("select name from user where 1=1")
             .addCheckPoint(CheckPoint.PlanTree,
@@ -174,10 +174,7 @@ public class LogicalOptimizationTest extends TestBase {
     Checker checker = Checker.build()
             .sql("select phone,count(age),count(name)+sum(age),sum(age+score) from user u " +
                     "where score=age+10 and (name='Tom' or age=10) order by sum(score)+1 limit 1,5")
-            .addCheckPoint(CheckPoint.PlanTree, "TableSource(u) -> HashAgg(COUNT(test.u.age)," +
-                    "COUNT(test.u.name),SUM(test.u.age),SUM(PlusInt(test.u.age,test.u.score)),SUM(test.u.score)," +
-                    "DISTINCT(test.u.phone)) -> TopN(Exprs=(PlusInt(agg_col_4,1),ASC),Offset=1,Count=5) -> " +
-                    "Projection -> Projection");
+            .addCheckPoint(CheckPoint.PlanTree, "TableSource(u) -> HashAgg(COUNT(test.u.age),COUNT(test.u.name),SUM(test.u.age),SUM(PlusReal(CastIntToReal(test.u.age),test.u.score)),SUM(test.u.score),DISTINCT(test.u.phone)) -> TopN(Exprs=(PlusReal(agg_col_4,1.0),ASC),Offset=1,Count=5) -> Projection -> Projection");
 
     try {
       RelOperator planTree = buildPlanAndLogicalOptimizeOnly(checker.getSql());
@@ -295,16 +292,15 @@ public class LogicalOptimizationTest extends TestBase {
     checkerList.add(Checker.build()
             .sql("select name as c1, age as c2 from user order by 1, score+score limit 2")
             .addCheckPoint(CheckPoint.PlanTree,
-                    "TableSource(user) -> TopN(Exprs=((test.user.name,ASC)(PlusInt(test.user.score,test.user.score),"
-                            + "ASC)),Offset=0,Count=2) -> Projection"));
+                    "TableSource(user) -> TopN(Exprs=((test.user.name,ASC)(PlusReal(test.user.score,test.user.score),ASC)),Offset=0,Count=2) -> Projection"));
 
     checkerList.add(Checker.build()
             .sql("select phone,count(age),count(name)+sum(age),sum(age+score) from user u " +
                     "where score=age+10 and (name='Tom' or age=10) order by sum(score)+1 limit 1,5")
-            .addCheckPoint(CheckPoint.PlanTree, "TableSource(u) -> HashAgg(COUNT(test.u.age)," +
-                    "COUNT(test.u.name),SUM(test.u.age),SUM(PlusInt(test.u.age,test.u.score)),SUM(test.u.score)," +
-                    "DISTINCT(test.u.phone)) -> TopN(Exprs=(PlusInt(agg_col_4,1),ASC),Offset=1,Count=5) -> " +
-                    "Projection -> Projection"));
+            .addCheckPoint(CheckPoint.PlanTree, "TableSource(u) -> HashAgg(COUNT(test.u.age),COUNT(test.u"
+                    + ".name),SUM(test.u.age),SUM(PlusReal(CastIntToReal(test.u.age),test.u.score)),SUM(test.u.score)"
+                    + ",DISTINCT(test.u.phone)) -> TopN(Exprs=(PlusReal(agg_col_4,1.0),ASC),Offset=1,Count=5) -> "
+                    + "Projection -> Projection"));
 
     return checkerList;
   }

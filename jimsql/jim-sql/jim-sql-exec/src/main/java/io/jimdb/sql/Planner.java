@@ -57,7 +57,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public final class Planner {
   private static final SQLParserFeature[] SQL_FEATURES = new SQLParserFeature[]{
           SQLParserFeature.UseInsertColumnsCache,
-//          SQLParserFeature.OptimizedForParameterized,
           SQLParserFeature.SkipComments };
 
   private final SQLEngine.DBType dbType;
@@ -108,24 +107,21 @@ public final class Planner {
   }
 
   /**
-   * Perform analysis on the parsed SQL statement(for test case)
-   *
-   * @param session
-   * @param stmt
-   * @return
-   */
-  public Operator analyze1(Session session, SQLStatement stmt) {
-    return this.analyze(session, stmt).getResultOperator();
-  }
-
-  /**
    * Perform analysis on the parsed SQL statement
    *
    * @param session current query session
    * @param stmt    parsed SQL statement
    * @return analyzed & generated plan tree
    */
-  public StatementAnalyzer analyze(Session session, SQLStatement stmt) {
+  public Operator analyze(Session session, SQLStatement stmt) {
+    return analyze(session, stmt, false);
+  }
+
+  public Operator analyzeAndOptimize(Session session, SQLStatement stmt) {
+    return analyze(session, stmt, true);
+  }
+
+  private Operator analyze(Session session, SQLStatement stmt, boolean isOptimize) {
     final StatementContext stmtCtx = session.getStmtContext();
     stmtCtx.reset();
 
@@ -138,7 +134,17 @@ public final class Planner {
         throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NOT_SUPPORTED_YET, stmt.toLowerCaseString());
       }
 
-      return analyzer;
+      if (isOptimize) {
+        if (op instanceof Explain) {
+          Explain explain = (Explain) op;
+          op = optimize(session, explain.getChild(), analyzer.getOptimizationFlag());
+          explain.setChild(op);
+          return explain;
+        }
+
+        return optimize(session, op, analyzer.getOptimizationFlag());
+      }
+      return op;
     } finally {
       stmtCtx.releaseAnalyzer();
     }
@@ -152,7 +158,8 @@ public final class Planner {
    * @return optimized plan tree
    */
   private Operator optimize(Session session, Operator planOp, int optimizationFlag) {
-    checkPrivilege(engine, session);
+    checkPrivilege(session);
+
     Operator.OperatorType type = planOp.getOperatorType();
     if (type == Operator.OperatorType.SIMPLE || type == Operator.OperatorType.INSERT
             || type == Operator.OperatorType.DDL || type == Operator.OperatorType.ANALYZE) {
@@ -193,18 +200,6 @@ public final class Planner {
     return Optimizer.optimize(session, (RelOperator) planOp, optimizationFlag);
   }
 
-  public Operator analyzeAndOptimize(Session session, SQLStatement stmt) {
-    StatementAnalyzer analyzer = analyze(session, stmt);
-    Operator operator = analyzer.getResultOperator();
-    if (operator instanceof Explain) {
-      Explain explain = (Explain) operator;
-      operator = optimize(session, explain.getChild(), analyzer.getOptimizationFlag());
-      explain.setChild(operator);
-      return explain;
-    }
-    return optimize(session, operator, analyzer.getOptimizationFlag());
-  }
-
   @SuppressFBWarnings("CFS_CONFUSING_FUNCTION_SEMANTICS")
   private RelOperator substituteDualTablePlaceHolder(RelOperator src, RelOperator dst) {
     if (src instanceof DualTable) {
@@ -221,9 +216,13 @@ public final class Planner {
     return src;
   }
 
-  public void checkPrivilege(PrivilegeEngine engine, Session session) {
-    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
+  public void checkPrivilege(Session session) {
     UserInfo userInfo = session.getUserInfo();
+    if (userInfo == null) {
+      return;
+    }
+
+    List<PrivilegeInfo> privilegeInfos = session.getStmtContext().getPrivilegeInfos();
     for (PrivilegeInfo privilegeInfo : privilegeInfos) {
       if (!engine.verify(userInfo, privilegeInfo)) {
         JimException replyErr = null;
