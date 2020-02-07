@@ -1,8 +1,8 @@
 syntax = "proto3";
 package mspb;
 
-import "github.com/chubaodb/chubaodb/proto/basepb/basepb.proto";
-import "github.com/chubaodb/chubaodb/proto/dspb/schedule.proto";
+import "github.com/jimdb-org/jimdb/protocol/basepb/basepb.proto";
+import "github.com/jimdb-org/jimdb/protocol/dspb/schedule.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.marshaler_all) = true;
@@ -166,9 +166,10 @@ message RegisterNodeRequest {
     uint32 server_port = 2;
     uint32 raft_port = 3;
     uint32 admin_port = 4;
-    string version = 5;
+    string version = 5; // build version
     StorageEngine st_engine = 6;
     repeated RangeFingerprint ranges = 7;
+    int32 protocol_version = 8; 
 }
 
 message RegisterNodeResponse {
@@ -241,20 +242,15 @@ message GetDBRequest {
     string name = 2;
 }
 
-message CreateRangesRequest {
+
+message CountTableRequest {
     RequestHeader header = 1;
-    int32 db_id = 2;
-    int32 table_id = 3;
-    int32 replicas = 4;
-    repeated basepb.Range ranges = 5;
+    repeated Counter tables = 2;
 }
 
-message DeleteRangesRequest {
-    RequestHeader header = 1;
-    int32 db_id = 2;    // delete db if only has db_id
-    int32 table_id = 3;
-    basepb.RangeType range_type = 4;
-    int32 index_id = 5;
+message CountTableResponse {
+    ResponseHeader header = 1;
+    repeated Counter list = 2;
 }
 
 message GeneralResponse {
@@ -265,8 +261,6 @@ message Counter {
     int32 db_id = 1;
     int32 table_id = 2;
     uint64 count = 3;
-    string db_name = 4;
-    string table_name = 5;
 }
 
 message GetTableRequest {
@@ -292,12 +286,20 @@ message GetNodeInfo {
     dspb.NodeInfoResponse info = 3;
 }
 
-message GetColumnRequest {
+message CreateRangesRequest {
     RequestHeader header = 1;
     int32 db_id = 2;
     int32 table_id = 3;
-    uint64 col_id = 4;
-    string col_name = 5;
+    int32 replicas = 4;
+    repeated basepb.Range ranges = 5;
+}
+
+message DeleteRangesRequest {
+    RequestHeader header = 1;
+    int32 db_id = 2;    // delete db if only has db_id
+    int32 table_id = 3;
+    basepb.RangeType range_type = 4;
+    int32 index_id = 5;
 }
 
 message RequestHeader {

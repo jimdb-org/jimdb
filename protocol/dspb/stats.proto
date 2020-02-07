@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+package dspb;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "dspb/expr.proto";
+import "dspb/processorpb.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+//message StatsRequest {
+//    uint64 start_ts = 1;
+//    uint64 flags = 2;
+//    int64 time_zone_offset = 3;
+//    KeyRange range = 4;
+//    oneof req {
+//        IndexStatsRequest idx_stats = 5;
+//        ColumnsStatsRequest cols_stats = 6;
+//    }
+//}
+
+message IndexStatsRequest {
+    // bucket_max is the max histograms bucket size.
+    int64 bucket_max= 1;
+
+    // columns_info in the index.
+    repeated ColumnInfo columns_info =  2;
+
+    int32 cmsketch_depth = 3;
+
+    int32 cmsketch_width = 4;
+
+    KeyRange range = 5;
+    // is unique index
+    bool unique = 6;
+}
+
+message ColumnsStatsRequest {
+    // bucket_max is the max histograms bucket size  
+    int64 bucket_max = 1;
+
+    // sample_max is the max number of samples that will be collected.
+    int64 sample_max = 2;
+
+    // sketch_max is the max sketch size.
+    int64 sketch_max = 3;
+
+    // columns_info is the info of all the columns that needs to be statisticed.
+    repeated ColumnInfo columns_info = 4;
+
+    int32 cmsketch_depth = 5;
+
+    int32 cmsketch_width = 6;
+
+    KeyRange range = 7;
+}
+
+message ColumnsStatsResponse {
+    int32 code = 1;
+
+    // pk_hist is the histogram for primary key when it is the handle.
+    Histogram pk_hist = 2;
+
+    // collectors is the sample collectors for columns.
+    repeated SampleCollector collectors = 3;
+}
+
+message IndexStatsResponse {
+    int32 code     = 1;
+    Histogram hist = 2;
+    CMSketch cms   = 3;
+    uint64 null_count = 4;
+}
+
+// Bucket is an element of histogram.
+message Bucket {
+    int64 count = 1;
+    bytes lower_bound = 2;
+    bytes upper_bound = 3;
+    int64 repeats = 4;
+}
+
+message Histogram {
+    // num_dist is the number of distinct values.
+    int64 num_dist = 1;
+
+    // buckets represents all the buckets.
+    repeated Bucket buckets = 2;
+}
+
+// FMSketch is used to count distinct values for columns.
+message FMSketch {
+    uint64 mask = 1;
+    repeated uint64 set = 2;
+}
+
+// SampleCollector is used for collect samples and calculate the count and num_dist of an column.
+message SampleCollector {
+    int64 null_count = 1;
+    int64 count = 2;
+    FMSketch fm_sketch = 3;
+    CMSketch cm_sketch = 4;
+    int64 total_size = 5;
+    repeated bytes samples = 6;
+}
+
+message CMSketchRow {
+    repeated uint32 counters = 1;
+}
+
+message CMSketchTopN {
+    bytes data = 1;
+    uint64 count = 2;
+}
+
+message CMSketch {
+    repeated CMSketchRow rows = 1;
+    repeated CMSketchTopN top_n = 2;
+    uint64 default_value = 3;
+}

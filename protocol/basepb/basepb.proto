@@ -41,10 +41,20 @@ enum DataType {
     Binary         = 31;
     Char           = 32;
     NChar          = 33;
-    Text           = 34;
-    VarBinary      = 35;
+    VarBinary      = 34;
+    TinyBlob       = 35;
+    Blob           = 36;
+    MediumBlob     = 37;
+    LongBlob       = 38;
+    Json           = 39;
 
-    Json           = 40;
+    TinyText       = 40;
+    Text           = 41;
+    MediumText     = 42;
+    LongText       = 43;
+
+    Enum           = 44;
+    Set            = 45;
 
     Null           = 50;
 }
@@ -97,6 +107,7 @@ message Node {
     repeated RangePeer range_peers = 8;
     int64 last_update_time = 9;
     StoreType type = 10;
+    int32 protocol_version = 11;
 }
 
 enum PeerType {

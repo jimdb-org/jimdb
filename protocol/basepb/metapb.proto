@@ -19,7 +19,7 @@ message SQLType {
     bool         not_null  = 4;
     bool         on_update = 5;
     bool         on_init   = 6;
-    int32        precision = 7;
+    int64        precision = 7;
     int32        scale     = 8;
     string       charset   = 9;
     string       collate   = 10;

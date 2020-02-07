@@ -31,7 +31,7 @@ fi
 
 echo "gogo found in gopath: "${GOGO_GOPATH}
 
-files=("basepb/basepb.proto" "dspb/admin.proto" "dspb/error.proto" "dspb/expr.proto" "dspb/function.proto" "dspb/kv.proto" "dspb/schedule.proto" "mspb/mspb.proto" "dspb/processorpb.proto" "dspb/api.proto" "dspb/txn.proto")
+files=("basepb/basepb.proto" "dspb/admin.proto" "dspb/error.proto" "dspb/expr.proto" "dspb/function.proto" "dspb/kv.proto" "dspb/schedule.proto" "mspb/mspb.proto" "dspb/processorpb.proto" "dspb/txn.proto")
 
 echo "generate go code..."
 for file in ${files[@]}; do
@@ -44,6 +44,6 @@ for file in ${files[@]}; do
     out_file=${out_dir}"/${pkg_name}/"${base_name}".pb.go"
 
     protoc -I${GOGO_GOPATH} --gofast_out=plugins=grpc:${out_dir} $file
-    sed 's/github.com\/chubaodb\/chubaodb\/proto\//github.com\/chubaodb\/chubaodb\/master\/entity\/pkg\//' ${out_file} > tmpfile
+    sed 's/github.com\/jimdb-org\/jimdb\/protocol\//github.com\/jimdb-org\/jimdb\/master\/entity\/pkg\//' ${out_file} > tmpfile
     mv tmpfile ${out_file}
 done

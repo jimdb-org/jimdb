@@ -7,6 +7,7 @@ import "github.com/jimdb-org/jimdb/protocol/basepb/basepb.proto";
 import "dspb/error.proto";
 import "dspb/kv.proto";
 import "dspb/txn.proto";
+import "dspb/stats.proto";
 
 // RangeRequest data request to a range
 message RangeRequest {
@@ -35,6 +36,10 @@ message RangeRequest {
         KvScanRequest kv_scan = 23;
         KvDelRangeRequest kv_del_range = 24;
         RedisRequest redis = 25;
+
+        // statistics api
+        IndexStatsRequest index_stats = 30;
+        ColumnsStatsRequest columns_stats = 31;
     }
 }
 
@@ -63,5 +68,9 @@ message RangeResponse {
         KvScanReponse kv_scan = 23;
         KvDelRangeResponse kv_del_range = 24;
         RedisResponse redis = 25;
+
+        // statistics api
+        IndexStatsResponse idx_stats = 30;
+        ColumnsStatsResponse cols_stats = 31;
     }
 }

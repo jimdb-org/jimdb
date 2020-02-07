@@ -8,6 +8,7 @@ import "github.com/jimdb-org/jimdb/protocol/basepb/basepb.proto";
 
 import "dspb/kv.proto";
 import "dspb/txn.proto";
+import "dspb/stats.proto";
 
 option (gogoproto.marshaler_all) = true;
 option (gogoproto.sizer_all) = true;
@@ -55,6 +56,9 @@ enum CmdType {
     KvScan        = 23;
     KvDelRange    = 24;
 
+    IdxStatsGet   = 30;
+    ColsStatsGet  = 31;
+
     AdminSplit    = 100;
     UpdateStats   = 101;
 }
@@ -77,6 +81,9 @@ message Command {
     KvScanRequest kv_scan_req             = 23;
     KvDelRangeRequest kv_del_range_req    = 24;
     RedisRequest redis_req                = 25;
+
+    IndexStatsRequest idx_stats_req       = 30;
+    ColumnsStatsRequest cols_stats_req    = 31;
 
     SplitCommand split_cmd                = 100;
     UpdateStatsCommand update_stats_cmd   = 101;

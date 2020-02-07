@@ -1,8 +1,8 @@
 syntax = "proto3";
 package mspb;
 
-import "github.com/chubaodb/chubaodb/proto/basepb/basepb.proto";
-import "github.com/chubaodb/chubaodb/proto/dspb/schedule.proto";
+import "github.com/jimdb-org/jimdb/protocol/basepb/basepb.proto";
+import "github.com/jimdb-org/jimdb/protocol/dspb/schedule.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.marshaler_all) = true;
