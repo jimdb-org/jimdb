@@ -99,6 +99,11 @@ public:
     int8_t GetResultFrac() const;
     void SetResultFrac(int8_t resultFrac);
 
+    int8_t GetHexDigitsFrac() const;
+    void SetHexDigitsFrac(const int8_t hexDigitsFrac);
+    int8_t GetHexDigitsInt() const;
+    void SetHexDigitsInt(const int8_t hexDigitsInt);
+
     int32_t GetWordDigit(const int i) const;
     void SetWordDigit(const int i, const int32_t val);
 
@@ -150,6 +155,9 @@ public:
 
 private:
     typedef int32_t decimal_digit_t;
+
+    int8_t hexDigitsInt_;
+    int8_t hexDigitsFrac_;
 
     int8_t digitsInt_;
     int8_t digitsFrac_;

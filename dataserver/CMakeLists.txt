@@ -59,9 +59,12 @@ include(cmake/third-party.cmake)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 # generate proto
-include(cmake/gen-proto.cmake)
-include_directories(${proto_INCLUDE_DIR})
-add_library(jim-proto STATIC ${proto_SOURCES})
+set(JIM_PROTO_PATH "${PROJECT_SOURCE_DIR}/../protocol" CACHE PATH "jim protocol path")
+if (NOT EXISTS ${JIM_PROTO_PATH})
+    message(FATAL_ERROR "Invalid Jim Protocol Path: " ${JIM_PROTO_PATH})
+endif()
+add_subdirectory(${JIM_PROTO_PATH} ${CMAKE_BINARY_DIR}/proto)
+include_directories(${CMAKE_BINARY_DIR}/proto/gen ${CMAKE_BINARY_DIR})
 
 set(SOURCES
     src/server/main.cpp

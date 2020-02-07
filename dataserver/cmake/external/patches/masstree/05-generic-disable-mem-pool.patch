@@ -6,7 +6,7 @@ index fc03339..00669c6 100644
      static int no_pool_value;
  #endif
      static bool use_pool() {
-+        return false; // add by jimdb, disable pool use, TODO: use a config
++        return false; // add by jimkv, disable pool use, TODO: use a config
  #if ENABLE_ASSERTIONS
          return !no_pool_value;
  #else

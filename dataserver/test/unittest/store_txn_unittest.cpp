@@ -66,12 +66,27 @@ static void randomIntent(TxnIntent& intent) {
     }
 }
 
+static void randomIntent(TxnIntent& intent, const std::string& txn_id, const uint64_t& version) {
+    intent.set_typ(randomInt() % 2 == 0 ? INSERT : DELETE);
+    intent.set_key(randomString(20));
+    if (intent.typ() == INSERT) {
+        storage::pb::InternalTag tag;
+        tag.set_txn_id(txn_id);
+        std::string db_value;
+        auto s = assembleValue(db_value, std::move(randomString(100)), version, &tag);
+        if (!s.ok()) {
+            std::cerr << s.ToString() << std::endl;
+        }
+        intent.set_value(std::move(db_value));
+    }
+}
+
 static void randomTxnValue(TxnValue& value) {
     value.set_txn_id(randomString(10, 20));
-    randomIntent(*value.mutable_intent());
     value.set_primary_key(randomString(15));
     value.set_expired_at(calExpireAt(10));
     value.set_version(randomInt());
+    randomIntent(*value.mutable_intent(), value.txn_id(), value.version());
 }
 
 TEST(StoreUtilTest, Assemble) {
@@ -109,6 +124,80 @@ TEST_F(StoreTxnTest, Prepare) {
     store_->TxnPrepare(prepare_req, version, &resp);
     ASSERT_TRUE(resp.errors_size() == 0);
 }
+
+TEST_F(StoreTxnTest, PrepareAndGet) {
+    dspb::TxnIntent tnt;
+    tnt.set_typ(INSERT);
+    tnt.set_key(randomString(20));
+    if (tnt.typ() == INSERT) {
+        tnt.set_value(randomString(100));
+    }
+    std::string txn_id = randomString(10);
+    std::string str_key = tnt.key();
+    std::string str_value = tnt.value();
+    std::string str_pri_key = randomString(10);
+
+    dspb::PrepareRequest prepare_req;
+    prepare_req.set_txn_id(txn_id);
+    prepare_req.set_primary_key(str_pri_key);
+    auto intnt = prepare_req.add_intents();
+    intnt->CopyFrom(tnt);
+
+    PrepareResponse resp;
+    uint64_t  version{1};
+    store_->TxnPrepare(prepare_req, version, &resp);
+    ASSERT_TRUE(resp.errors_size() == 0);
+    dspb::TxnValue tmpTxnValue;
+    store_->GetTxnValue( str_key, &tmpTxnValue);
+
+    ASSERT_TRUE(txn_id == tmpTxnValue.txn_id());
+    ASSERT_TRUE(str_pri_key == tmpTxnValue.primary_key());
+//    ASSERT_TRUE(0 == tmpTxnValue.version());
+    ASSERT_TRUE(INSERT == tmpTxnValue.intent().typ());
+    ASSERT_TRUE(str_key == tmpTxnValue.intent().key());
+    auto tp1_value = tmpTxnValue.intent().value();
+
+    std::string tmp_str;
+    pb::InternalTag tag;
+    tag.set_txn_id(txn_id);
+    assembleValue(tmp_str, str_value, version, &tag);
+    ASSERT_TRUE(tmp_str.size()==tp1_value.size());
+    ASSERT_TRUE(tmp_str==tp1_value);
+}
+
+TEST_F(StoreTxnTest, PrepareAndSelect) {
+
+    dspb::TxnIntent tnt;
+    tnt.set_typ(INSERT);
+    tnt.set_key(randomString(20));
+    if (tnt.typ() == INSERT) {
+        tnt.set_value(randomString(100));
+    }
+    randomIntent(tnt);
+    std::string txn_id = randomString(10);
+    std::string str_key = tnt.key();
+    std::string str_value = tnt.value();
+    std::string str_pri_key = randomString(10);
+
+    dspb::PrepareRequest prepare_req;
+    prepare_req.set_txn_id(txn_id);
+    prepare_req.set_primary_key(str_pri_key);
+    auto intnt = prepare_req.add_intents();
+    intnt->CopyFrom(tnt);
+
+    PrepareResponse resp;
+    uint64_t  version{1};
+    store_->TxnPrepare(prepare_req, version, &resp);
+    ASSERT_TRUE(resp.errors_size() == 0);
+
+    dspb::SelectRequest select_req;
+    select_req.set_key(str_key);
+
+    dspb::SelectResponse select_resp;
+    store_->TxnSelect(select_req, &select_resp);
+    ASSERT_TRUE(select_resp.code() == 0);
+}
+
 
 TEST_F(StoreTxnTest, InsertDelete) {
     // insert
@@ -300,6 +389,8 @@ TEST_F(StoreTxnTest, Scan) {
         ASSERT_EQ(resp.code(), 0);
     }
 
+//    std::map<std::string, bool> tmp_hav_intent;
+
     // insert some keys
     struct Elem {
         std::string key;
@@ -333,6 +424,7 @@ TEST_F(StoreTxnTest, Scan) {
             ASSERT_TRUE(s.ok()) << s.ToString();
             expected.back().db_value = user_value;
         }
+//        tmp_hav_intent[key] = has_intent;
         if (has_intent) {
             TxnValue txn_val;
             randomTxnValue(txn_val);
@@ -362,8 +454,18 @@ TEST_F(StoreTxnTest, Scan) {
                 ASSERT_EQ(intent.op_type(), txn_value.intent().typ());
                 ASSERT_EQ(intent.txn_id(), txn_value.txn_id());
                 ASSERT_EQ(intent.primary_key(), txn_value.primary_key());
-                auto expected_val = txn_value.intent().value();
+                std::string expected_val = txn_value.intent().value();
 //                EncodeIntValue(&expected_val, kVersionColumnID, txn_value.version());
+                if (txn_value.intent().typ() == INSERT) {
+                    size_t user_value_size = 0;
+                    uint64_t tmp_version = 0;
+                    s = disassembleValue(expected_val, user_value_size, tmp_version, nullptr);
+                    if (!s.ok()) {
+                        std::cerr << s.ToString() << std::endl;
+                    }
+                    expected_val = expected_val.substr(0, user_value_size);
+                }
+
                 ASSERT_EQ(intent.value(), expected_val);
             }
         }

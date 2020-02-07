@@ -218,7 +218,7 @@ TEST(Encoding, DecimalValue) {
         ASSERT_TRUE(DecodeValueTag(buf, offset, &actual_col_id, &type));
         ASSERT_LE(offset, buf.size());
         ASSERT_EQ(type, EncodeType::Decimal);
-        ASSERT_EQ(actual_col_id, i);
+        ASSERT_EQ(actual_col_id, static_cast<uint64_t>(i));
     }
 }
 
@@ -298,7 +298,7 @@ TEST(Encoding, DateValue) {
                 << ", type:" << static_cast<int>(type)
                 << ", i:" << i
                 << ", Time->src: " << dt_src;
-            ASSERT_EQ(actual_col_id, i)
+            ASSERT_EQ(actual_col_id, static_cast<uint64_t>(i))
                 << "buf:" << EncodeToHexString(buf)
                 << ", Time->src.ToInt:" << dt_src.ToPackInt64()
                 << ", actual_col_id:" << actual_col_id
@@ -380,7 +380,7 @@ TEST(Encoding, TimeValue) {
             << ", type:" << static_cast<int>(type)
             << ", i:" << i
             << ", Time->src: " << dt_src;
-        ASSERT_EQ(actual_col_id, i)
+        ASSERT_EQ(actual_col_id, static_cast<uint64_t>(i))
             << "buf:" << EncodeToHexString(buf)
             << ", Time->src.ToInt:" << dt_src.ToPackInt64()
             << ", actual_col_id:" << actual_col_id
@@ -592,10 +592,9 @@ TEST(Encoding, TimeAscending) {
 //TEST(Encoding, DecimalValue2222) {
 //        std::string buf;
 //        datatype::MyDecimal dec_src;
-//        //"12.34"
-//        //Decimal(4,2) = 12.34
+//        //Decimal(10,0) = 0
 //
-//        int32_t err_t = dec_src.FromString("12.34");
+//        int32_t err_t = dec_src.FromString("1");
 //        std::cerr << err_t << std::endl;
 //        if ( err_t == 0 ) {
 //            std::cerr << "GetDigitsInt:" << static_cast<int32_t>(dec_src.GetDigitsInt()) << std::endl
@@ -606,9 +605,9 @@ TEST(Encoding, TimeAscending) {
 //                    << "String:" << dec_src.String() << std::endl ;
 //
 //        }
-//        EncodeDecimalValue(&buf, 10000, &dec_src);
+//        EncodeDecimalValue(&buf, 0, &dec_src);
 //
-//        std::cerr << "hex buf:" << toHex(buf) << std::endl;
+//        std::cerr << "dec_src hex buf:" << toHex(buf) << std::endl;
 //
 //        size_t offset = 0;
 //
@@ -618,13 +617,36 @@ TEST(Encoding, TimeAscending) {
 //        ASSERT_EQ(offset, buf.size());
 //        ASSERT_TRUE(dec_src.Compare(dec_dst) == 0 );
 //
+//        std::string buf2;
+//        EncodeDecimalValue(&buf2, 0, &dec_dst);
+//        std::cerr << "dec_dst hex buf:" << toHex(buf2) << std::endl;
+//
+//        std::string buf3, buf4;
+//        int32_t error = 0;
+//        dec_src.ToBin(10, 0, buf3, error);
+//        dec_dst.ToBin(20, 0, buf4, error);
+//        std::cerr << "hex buf3:" << toHex(buf3) << std::endl;
+//        std::cerr << "hex buf4:" << toHex(buf4) << std::endl;
+//
+//        datatype::MyDecimal dec1, dec2;
+//        int32_t binsize1, binsize2;
+//        dec1.FromBin(buf3, 10, 0, binsize1, error);
+//        dec2.FromBin(buf4, 20, 0, binsize2, error);
+//
+//        std::string buf5, buf6;
+//        dec1.ToBin(20, 0, buf5, error);
+//        dec2.ToBin(10, 0, buf6, error);
+//        std::cerr << "hex buf5:" << toHex(buf5) << std::endl;
+//        std::cerr << "hex buf6:" << toHex(buf6) << std::endl;
+//
+//
 //        EncodeType type;
 //        offset = 0;
 //        uint32_t actual_col_id = 0;
 //        ASSERT_TRUE(DecodeValueTag(buf, offset, &actual_col_id, &type));
 //        ASSERT_LE(offset, buf.size());
 //        ASSERT_EQ(type, EncodeType::Decimal);
-//        ASSERT_EQ(actual_col_id, 10000);
+//        ASSERT_EQ(actual_col_id, 0);
 //}
 
 // end namespace

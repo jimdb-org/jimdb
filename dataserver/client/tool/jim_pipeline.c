@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "jim_client.h"
+#include "jimdb_client.h"
 #include "jim_log.h"
 
 size_t set_cmd_len[3] = {3, 1, 1};

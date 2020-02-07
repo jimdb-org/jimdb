@@ -301,8 +301,8 @@ void EncodeDecimalValue(std::string* buf, uint32_t col_id, const datatype::MyDec
     assert(buf != nullptr);
     encodeValueTag(buf, col_id, EncodeType::Decimal);
 
-    int8_t intg = d->GetDigitsInt();
-    int8_t frac = d->GetDigitsFrac();
+    int8_t intg = d->GetHexDigitsInt();
+    int8_t frac = d->GetHexDigitsFrac();
 
     int8_t precision = intg + frac;
     std::string bin;
@@ -419,6 +419,8 @@ bool DecodeDecimalValueAfterTag(const std::string& data, size_t& offset, datatyp
     } else {
         offset += 2;
         offset +=  bin_size2;
+        d->SetHexDigitsInt(intg);
+        d->SetHexDigitsFrac(frac);
         return true;
     }
 

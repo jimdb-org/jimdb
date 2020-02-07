@@ -40,7 +40,7 @@ public:
     void Set(const basepb::Range& to);
     void Set(basepb::Range&& to);
 
-    uint64_t GetTableID() const;
+    int32_t GetTableID() const;
     std::string GetStartKey() const;
     std::string GetEndKey() const;
 
@@ -74,6 +74,6 @@ private:
     std::atomic<basepb::Range *> meta_ptr_ = { nullptr };
 };
 
-}  // namespace range
-}  // namespace ds
-}  // namespace jim
+} // namespace range
+} // namespace ds
+} // namespace jim

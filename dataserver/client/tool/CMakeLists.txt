@@ -55,9 +55,13 @@ endforeach()
 
 add_executable(jimkv_test jimdb_test.c)
 target_link_libraries(jimkv_test ${bs_DEPS})
+set_source_files_properties(jimdb_test.c PROPERTIES
+        COMPILE_DEFINITIONS "__FNAME__=\"jimdb_test.c\"")
 
 add_executable(jim_sdk_benchmark jim_sdk_benchmark.c)
 target_link_libraries(jim_sdk_benchmark ${bs_DEPS})
+set_source_files_properties(jim_sdk_benchmark.c PROPERTIES
+        COMPILE_DEFINITIONS "__FNAME__=\"jim_sdk_benchmark.c\"")
 
 add_executable(batch_stress ${bs_SOURCES})
 target_link_libraries(batch_stress ${bs_DEPS})

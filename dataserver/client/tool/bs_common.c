@@ -1,7 +1,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include "batch_stress.h"
-#include "jim_client.h"
+#include "jimdb_client.h"
 #include "jim_log.h"
 
 static char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

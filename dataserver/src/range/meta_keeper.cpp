@@ -102,7 +102,7 @@ uint64_t MetaKeeper::GetVersion() const {
     return get()->range_epoch().version();
 }
 
-uint64_t MetaKeeper::GetTableID() const {
+int32_t MetaKeeper::GetTableID() const {
     return get()->table_id();
 }
 

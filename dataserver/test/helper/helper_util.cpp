@@ -98,7 +98,19 @@ void EncodeKvKey(std::string* kv_key, const basepb::ColumnInfo& col, const std::
         }
 
         case basepb::Varchar:
-        case basepb::Binary: {
+        case basepb::Binary:
+        case basepb::Char:
+        case basepb::NChar:
+        case basepb::VarBinary:
+        case basepb::TinyBlob:
+        case basepb::Blob:
+        case basepb::MediumBlob:
+        case basepb::LongBlob:
+        case basepb::TinyText:
+        case basepb::Text:
+        case basepb::MediumText:
+        case basepb::LongText:
+        case basepb::Json: {
             EncodeBytesAscending(kv_key, val.c_str(), val.size());
             break;
         }
@@ -174,9 +186,20 @@ void EncodeKvValue(std::string* kv_value, const basepb::ColumnInfo& col, const s
         EncodeFloatValue(kv_value, static_cast<uint32_t>(col.id()), d);
         break;
     }
-
     case basepb::Varchar:
-    case basepb::Binary: {
+    case basepb::Binary:
+    case basepb::Char:
+    case basepb::NChar:
+    case basepb::VarBinary:
+    case basepb::TinyBlob:
+    case basepb::Blob:
+    case basepb::MediumBlob:
+    case basepb::LongBlob:
+    case basepb::TinyText:
+    case basepb::Text:
+    case basepb::MediumText:
+    case basepb::LongText:
+    case basepb::Json: {
         EncodeBytesValue(kv_value, static_cast<uint32_t>(col.id()), val.c_str(), val.size());
         break;
     }
@@ -257,7 +280,19 @@ void DecodeValueColumn(const std::string& buf, size_t& offset, const dspb::Colum
     }
 
     case basepb::Varchar:
-    case basepb::Binary: {
+    case basepb::Binary:
+    case basepb::Char:
+    case basepb::NChar:
+    case basepb::VarBinary:
+    case basepb::TinyBlob:
+    case basepb::Blob:
+    case basepb::MediumBlob:
+    case basepb::LongBlob:
+    case basepb::TinyText:
+    case basepb::Text:
+    case basepb::MediumText:
+    case basepb::LongText:
+    case basepb::Json: {
         DecodeBytesValue(buf, offset, val);
         break;
     }

@@ -3,8 +3,8 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#include "jim_client.h"
-#include "jim_macro.h"
+#include "jimdb_client.h"
+#include "jimdb_macro.h"
 
 void sdk_reply_callback(jimkv_reply_t *rep, void *cb_handle) {
     switch (rep->type) {

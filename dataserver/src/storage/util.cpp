@@ -102,8 +102,15 @@ Status decodeKeyColumn(const std::string& key, size_t& offset,
         case basepb::Binary:
         case basepb::Char:
         case basepb::NChar:
-        case basepb::Text:
         case basepb::VarBinary:
+        case basepb::TinyBlob:
+        case basepb::Blob:
+        case basepb::MediumBlob:
+        case basepb::LongBlob:
+        case basepb::TinyText:
+        case basepb::Text:
+        case basepb::MediumText:
+        case basepb::LongText:
         case basepb::Json: {
             std::string s;
             if (!DecodeBytesAscending(key, offset, &s)) {
@@ -226,8 +233,15 @@ Status decodeKeyColumn(const std::string& key, size_t& offset,
         case basepb::Binary:
         case basepb::Char:
         case basepb::NChar:
-        case basepb::Text:
         case basepb::VarBinary:
+        case basepb::TinyBlob:
+        case basepb::Blob:
+        case basepb::MediumBlob:
+        case basepb::LongBlob:
+        case basepb::TinyText:
+        case basepb::Text:
+        case basepb::MediumText:
+        case basepb::LongText:
         case basepb::Json: {
             std::string s;
             if (!DecodeBytesAscending(key, offset, &s)) {
@@ -323,8 +337,15 @@ Status decodeValueColumn(const std::string& buf, size_t& offset,
         case basepb::Binary:
         case basepb::Char:
         case basepb::NChar:
-        case basepb::Text:
         case basepb::VarBinary:
+        case basepb::TinyBlob:
+        case basepb::Blob:
+        case basepb::MediumBlob:
+        case basepb::LongBlob:
+        case basepb::TinyText:
+        case basepb::Text:
+        case basepb::MediumText:
+        case basepb::LongText:
         case basepb::Json: {
             std::string s;
             if (!DecodeBytesValue(buf, offset, &s)) {
@@ -428,8 +449,15 @@ Status decodeValueColumn(const std::string& buf, size_t& offset,
         case basepb::Binary:
         case basepb::Char:
         case basepb::NChar:
-        case basepb::Text:
         case basepb::VarBinary:
+        case basepb::TinyBlob:
+        case basepb::Blob:
+        case basepb::MediumBlob:
+        case basepb::LongBlob:
+        case basepb::TinyText:
+        case basepb::Text:
+        case basepb::MediumText:
+        case basepb::LongText:
         case basepb::Json: {
 
             if ( EncodeType::Bytes != type) {
@@ -557,8 +585,15 @@ void makeConstValExpr(const basepb::ColumnInfo& col, const std::string& value, d
         case basepb::Binary:
         case basepb::Char:
         case basepb::NChar:
-        case basepb::Text:
         case basepb::VarBinary:
+        case basepb::TinyBlob:
+        case basepb::Blob:
+        case basepb::MediumBlob:
+        case basepb::LongBlob:
+        case basepb::TinyText:
+        case basepb::Text:
+        case basepb::MediumText:
+        case basepb::LongText:
         case basepb::Json:
             expr->set_expr_type(dspb::Const_Bytes);
             break;

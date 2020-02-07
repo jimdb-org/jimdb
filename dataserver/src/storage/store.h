@@ -45,7 +45,7 @@ public:
     Store(const Store&) = delete;
     Store& operator=(const Store&) = delete;
 
-    uint64_t GetTableID() const {  return table_id_; }
+    int32_t GetTableID() const {  return table_id_; }
     uint64_t GetRangeID() const {  return range_id_; }
 
     std::string GetStartKey() const;
@@ -135,7 +135,7 @@ private:
             uint64_t& bytes_written, db::WriteBatch* batch);
 
 private:
-    const uint64_t table_id_ = 0;
+    const int32_t table_id_ = 0;
     const uint64_t range_id_ = 0;
     const std::string start_key_;
     uint64_t kv_count_;

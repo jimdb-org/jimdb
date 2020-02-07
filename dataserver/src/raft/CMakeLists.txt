@@ -47,8 +47,8 @@ add_dependencies(jim-raft build-3rd)
 set(raft_test_Deps
      jim-raft
      jim-net
-     jim-base
      jim-common
+     jim-base
      ${PROTOBUF_LIBRARY}
      ${JEMALLOC_LIBRARY}
      pthread

@@ -1202,6 +1202,9 @@ MyDecimal::MyDecimal()
     this->digitsInt_ = 1;
     this->digitsFrac_ = 0;
     this->resultFrac_ = 0;
+    this->hexDigitsInt_ = this->digitsInt_;
+    this->hexDigitsFrac_ = this->digitsFrac_;
+
     this->negative_ = false;
 
     for ( int i = 0; i < WORD_BUF_LEN; i++) {
@@ -1214,6 +1217,8 @@ MyDecimal::MyDecimal( const int8_t digitsInt, const int8_t digitsFrac, bool nega
     this->digitsInt_ = digitsInt;
     this->digitsFrac_ = digitsFrac;
     this->resultFrac_ = digitsFrac;
+    this->hexDigitsInt_ = this->digitsInt_;
+    this->hexDigitsFrac_ = this->digitsFrac_;
     this->negative_ = negative;
 
     for ( int i = 0; i < WORD_BUF_LEN; i++) {
@@ -1226,6 +1231,8 @@ MyDecimal::MyDecimal( const MyDecimal & other)
     this->digitsInt_ = other.digitsInt_;
     this->digitsFrac_ = other.digitsFrac_;
     this->resultFrac_ = other.resultFrac_;
+    this->hexDigitsInt_ = other.hexDigitsInt_;
+    this->hexDigitsFrac_ = other.hexDigitsFrac_;
     this->negative_ = other.negative_;
 
     for ( int i = 0; i < WORD_BUF_LEN; i++) {
@@ -1242,6 +1249,8 @@ MyDecimal & MyDecimal::operator = ( const MyDecimal & other)
     this->digitsInt_ = other.digitsInt_;
     this->digitsFrac_ = other.digitsFrac_;
     this->resultFrac_ = other.resultFrac_;
+    this->hexDigitsInt_ = other.hexDigitsInt_;
+    this->hexDigitsFrac_ = other.hexDigitsFrac_;
     this->negative_ = other.negative_;
 
     for ( int i = 0; i < WORD_BUF_LEN; i++) {
@@ -1296,6 +1305,26 @@ void MyDecimal::SetResultFrac(int8_t resultFrac)
     this->resultFrac_ = resultFrac;
 }
 
+int8_t MyDecimal::GetHexDigitsFrac() const
+{
+    return this->hexDigitsFrac_;
+}
+
+void MyDecimal::SetHexDigitsFrac(const int8_t hexDigitsFrac)
+{
+    this->hexDigitsFrac_ = hexDigitsFrac;
+}
+
+int8_t MyDecimal::GetHexDigitsInt() const
+{
+    return this->hexDigitsInt_;
+}
+
+void MyDecimal::SetHexDigitsInt(const int8_t hexDigitsInt)
+{
+    this->hexDigitsInt_ = hexDigitsInt;
+}
+
 int32_t MyDecimal::GetWordDigit(const int i) const
 {
     assert( i>=0 && i < WORD_BUF_LEN );
@@ -1320,6 +1349,8 @@ void MyDecimal::Swap(MyDecimal & other)
     std::swap(this->digitsInt_, other.digitsInt_);
     std::swap(this->digitsFrac_, other.digitsFrac_);
     std::swap(this->resultFrac_, other.resultFrac_);
+    std::swap(this->hexDigitsInt_, other.hexDigitsInt_);
+    std::swap(this->hexDigitsFrac_, other.hexDigitsFrac_);
     std::swap(this->negative_, other.negative_);
     std::swap(this->word_buf_, other.word_buf_);
 }
@@ -1647,6 +1678,8 @@ int32_t MyDecimal::FromString( const std::string & str)
     }
 
     this->resultFrac_ = this->digitsFrac_;
+    this->hexDigitsInt_ = this->digitsInt_;
+    this->hexDigitsFrac_ = this->digitsFrac_;
 
     return error;
 }
@@ -2126,6 +2159,10 @@ MyDecimal& MyDecimal::FromUint( const uint64_t val )
         this->word_buf_[wordIdx] = static_cast<int32_t>(x - y * WORD_BASE);
         x = y;
     }
+
+    this->hexDigitsInt_ = this->digitsInt_;
+    this->hexDigitsFrac_ = this->digitsFrac_;
+
     return *this;
 }
 

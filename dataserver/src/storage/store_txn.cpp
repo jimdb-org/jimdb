@@ -41,7 +41,22 @@ using namespace dspb;
 // TODO: add metrics
 static void fillTxnValue(const PrepareRequest& req, const TxnIntent& intent, uint64_t version, TxnValue* value) {
     value->set_txn_id(req.txn_id());
-    value->mutable_intent()->CopyFrom(intent);
+//    value->mutable_intent()->CopyFrom(intent);
+    value->mutable_intent()->set_typ(intent.typ());
+    value->mutable_intent()->set_key(intent.key());
+
+    pb::InternalTag tag;
+    tag.set_txn_id(req.txn_id());
+    std::string db_value;
+    auto s = assembleValue(db_value, intent.value(), version, &tag);
+    if (!s.ok())  {
+        //return s;
+    }
+    value->mutable_intent()->set_value(std::move(db_value));
+
+    value->mutable_intent()->set_check_unique(intent.check_unique());
+    value->mutable_intent()->set_expected_ver(intent.expected_ver());
+    value->mutable_intent()->set_is_primary(intent.is_primary());
     value->set_primary_key(req.primary_key());
     value->set_expired_at(calExpireAt(req.lock_ttl()));
     value->set_version(version);
@@ -232,7 +247,7 @@ uint64_t Store::prepareLocal(const dspb::PrepareRequest& req, uint64_t version, 
     auto batch = db_->NewWriteBatch();
     uint64_t bytes_written = 0;
     bool exist_flag = false;
-    for (const auto& intent: req.intents()) {
+    for (auto intent: req.intents()) {
         // check lockable
         auto err = checkLockable(intent.key(), req.txn_id(), &exist_flag);
         if (err != nullptr) {
@@ -252,8 +267,20 @@ uint64_t Store::prepareLocal(const dspb::PrepareRequest& req, uint64_t version, 
                 return 0;
             }
         }
+
+        std::string db_value;
+        pb::InternalTag tag;
+        tag.set_txn_id(req.txn_id());
+        auto s = assembleValue(db_value, intent.value(), version, &tag);
+        if (!s.ok()) {
+            setTxnServerErr(resp->add_errors(), s.code(), s.ToString());
+            return 0;
+        }
+
+        intent.set_value(std::move(db_value));
+
         // commit directly
-        auto s = commitIntent(intent, version, req.txn_id(), bytes_written, batch.get());
+        s = commitIntent(intent, version, req.txn_id(), bytes_written, batch.get());
         if (!s.ok()) {
             setTxnServerErr(resp->add_errors(), s.code(), s.ToString());
             return 0;
@@ -342,15 +369,8 @@ Status Store::commitIntent(const dspb::TxnIntent& intent, uint64_t version,
             s = batch->Delete(intent.key());
             break;
         case dspb::OpType::INSERT: {
-            pb::InternalTag tag;
-            tag.set_txn_id(txn_id);
-            std::string db_value;
-            s = assembleValue(db_value, intent.value(), version, &tag);;
-            if (!s.ok()) {
-                return s;
-            }
-            s = batch->Put(intent.key(), db_value);
-            bytes_written += intent.key().size() + db_value.size();
+            s = batch->Put(intent.key(), intent.value());
+            bytes_written += intent.key().size() + intent.value().size();
             break;
         }
         case dspb::OpType::LOCK:
@@ -621,7 +641,17 @@ Status Store::TxnScan(const dspb::ScanRequest& req, dspb::ScanResponse* resp) {
             resp_intent->set_txn_id(tv.txn_id());
             resp_intent->set_primary_key(tv.primary_key());
             // append version column
-            resp_intent->set_allocated_value(tv.mutable_intent()->release_value());
+
+            if (!has_del_intent) {
+                size_t payload_len = 0;
+                uint64_t version = 0;
+                s = disassembleValue( tv.intent().value(), payload_len, version, nullptr);
+                if (!s.ok()) {
+                    break;
+                }
+                resp_intent->set_value( tv.intent().value().substr(0, payload_len));
+            }
+            //resp_intent->set_allocated_value(tv.mutable_intent()->release_value());
             resp_intent->set_version(tv.version());
         }
 

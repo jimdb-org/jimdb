@@ -5,7 +5,7 @@
 #include <signal.h>
 #include <sys/syscall.h>
 
-#include "jim_client.h"
+#include "jimdb_client.h"
 #include "jim_log.h"
 
 void *cc = NULL;
@@ -28,7 +28,15 @@ void set_command_type() {
     //bs_type_call[BS_COMMAND_HYPER_LOG_LOG]   = hyper_log_log_command;
 }
 static pid_t get_tid() {
-    return syscall(__NR_gettid);
+#ifdef __linux__
+    return syscall(SYS_gettid);
+#elif __APPLE__
+    uint64_t thread_id = 0;
+    pthread_threadid_np(NULL, &thread_id);
+    return thread_id;
+#else
+    return 0;
+#endif
 }
 void *thread_write(void *arg) {
     char *key = NULL;

@@ -11,7 +11,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-#include "jim_client.h"
+#include "jimdb_client.h"
 #include "jim_log.h"
 
 

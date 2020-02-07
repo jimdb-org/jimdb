@@ -148,7 +148,7 @@ Status RowFetcher::addIntent(const dspb::SelectRequest& req, dspb::TxnValue& val
             return s;
         }
         if (matched) {
-            result.SetVersion(val.version());
+//            result.SetVersion(val.version());
             result.EncodeTo(req, row.mutable_intent()->mutable_value());
             has_intent_row = true;
         }

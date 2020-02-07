@@ -17,7 +17,7 @@
 #include "base/fs_util.h"
 #include "query_parser.h"
 #include "helper_util.h"
-
+#include "storage/util.h"
 #include "common/server_config.h"
 
 namespace jim {
@@ -177,6 +177,8 @@ void StoreTestFixture::testTxn(std::vector<dspb::TxnIntent>& intents) {
 
     auto txn_id = randomString(20, 50);
     Status s;
+    std::map<std::string, uint64_t> tmp_map;
+    uint64_t ver = 0;
 
     {
         // prepare primary
@@ -189,9 +191,13 @@ void StoreTestFixture::testTxn(std::vector<dspb::TxnIntent>& intents) {
             req.add_secondary_keys(intents[i].key());
         }
         dspb::PrepareResponse resp;
-        store_->TxnPrepare(req, 1, &resp);
+
+        ver = (++raft_index_);
+        tmp_map[intents[0].key()] = ver;
+        store_->TxnPrepare(req, ver, &resp);
         ASSERT_EQ(resp.errors_size(), 0) << resp.DebugString();
     }
+
 
     // prepare secondary
     for (size_t i = 1; i < intents.size(); ++i) {
@@ -201,13 +207,30 @@ void StoreTestFixture::testTxn(std::vector<dspb::TxnIntent>& intents) {
         req.set_lock_ttl(1000000);
         req.add_intents()->CopyFrom(intents[i]);
 
+        ver = (++raft_index_);
+        tmp_map[intents[i].key()] = ver;
+
         dspb::PrepareResponse resp;
-        store_->TxnPrepare(req, ++raft_index_, &resp);
+        store_->TxnPrepare(req, ver, &resp);
         ASSERT_EQ(resp.errors_size(), 0) << resp.DebugString();
     }
 
+    std::vector<dspb::TxnIntent> tmpIntents;
+    for (const auto& t : intents) {
+        dspb::TxnIntent tmpt(t);
+        auto ver2 = tmp_map[tmpt.key()];
+        std::string db_v;
+        pb::InternalTag tag;
+        tag.set_txn_id(txn_id);
+        auto s = assembleValue(db_v, tmpt.value(), ver2, &tag);
+        ASSERT_TRUE(s.ok());
+        tmpt.set_value(std::move(db_v));
+
+        tmpIntents.push_back(tmpt);
+    }
+
     // check prepare result
-    for (const auto& intent: intents) {
+    for (const auto& intent: tmpIntents) {
         dspb::TxnValue txn_value;
         s = store_->GetTxnValue(intent.key(), &txn_value);
         ASSERT_TRUE(s.ok()) << s.ToString();

@@ -295,7 +295,7 @@ bool ServerConfig::loadRaftConfig(const INIReader& reader) {
     if (!ret) return false;
 
     std::tie(raft_config.tick_interval_ms, ret) =
-            loadIntegerAtLeast<size_t>(reader, section, "tick_interval", 500, 100);
+            loadIntegerAtLeast<size_t>(reader, section, "tick_interval", 200, 100);
     if (!ret) return false;
 
     std::tie(raft_config.max_msg_size, ret) =

@@ -2,7 +2,7 @@ set(ASIO_TAG asio-1-14-0)
 set(ASIO_INCLUDE_DIR ${EXTERNAL_PATH}/asio/asio/include)
 if (NOT EXISTS ${ASIO_INCLUDE_DIR})
     ExternalProject_Add(asio
-            PREFIX sio
+            PREFIX asio
             GIT_REPOSITORY ${ASIO_URL}
             GIT_TAG ${ASIO_TAG}
             SOURCE_DIR ${EXTERNAL_PATH}/asio

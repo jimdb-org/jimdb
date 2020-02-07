@@ -172,7 +172,7 @@ public:
     }
 
     const datatype::MyTime& Time() const {
-        if (type_ != FieldType::kTime || value_.dateval == nullptr)
+        if (type_ != FieldType::kTime || value_.timeval == nullptr)
             return kDefaultTime;
         return *value_.timeval;
     }
