@@ -1,5 +1,5 @@
-Single-Machine Deployment Beta
-==================================
+Single-Machine Beta Deployment
+==============================================
 
 Prerequisite
 ----------------

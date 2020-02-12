@@ -3,8 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to JIMDB Documentation
+JIMDB Documentation
 ===============================================
+
+JIMDB is a cloud-native key-value and SQL database with intelligent storage tiering.
+
+Our motivation is to build a scalable and fast enough database system which makes the frontend caching cluster not needed, but itself does not use too many RAM nodes. 
 
 .. toctree::
    :maxdepth: 2
@@ -21,6 +25,13 @@ Welcome to JIMDB Documentation
    deploy/singleBeta
    deploy/sourceBased
 
+.. toctree::
+   :maxdepth: 2
+   :caption: User Documentation
+   
+   user-manual/redis/redis
+   user-manual/sql/sql
+
 
 .. toctree::
    :maxdepth: 2
@@ -34,13 +45,6 @@ Welcome to JIMDB Documentation
    design/raft
    design/schema
 
-
-.. toctree::
-   :maxdepth: 2
-   :caption: User Documentation
-
-   user-manual/sql
-   user-manual/redis
 
 
 .. toctree::

@@ -1,44 +1,45 @@
 # Key Features
 
-JIMDB is a cloud native distributed database with intelligent storage tiering. 
+JIMDB is a cloud-native key-value and SQL database with intelligent storage tiering
+
+## Highly Scalable and Reliable
+
+sharding by table ranges, multi-raft replication, logical split, dynamic rebalancing
+
 
 ## Multiple APIs
 
 key-value interface: redis protocol compatible
 
-SQL interface: MySQL protocol 
-
-RESTful
+SQL interface: MySQL protocol
 
 
-## highly scalable and reliable
+## Smart Scheduling of Storage Tiers
 
-table ranges, multi-raft replication, logical split, dynamic rebalancing
-
-
-## smart scheduling of storage tiers
-
-according to the access temperature, intelligent transition of hot/warm/cold ranges among RAM, SSD and disks.  
+according to the access temperature and QoS(Quality of Service), intelligent transition of hot/warm/cold ranges among RAM (masstree), SSD (rocksdb) and disks (rocksdb on CFS) 
 
 
-## transactions
+## Distributed Transactions
 
 read committed, currently implemented
 
 txn record, intent, version, 2PC
 
-## change data capture
 
-## online schema change
+## Cloud Native
 
-## backup & recovery
+Orchestrated by Kubernetes
 
-on CFS
 
-## deployment
+## Esay to Use
 
-Kubernetes native
+change data capture
 
+online schema change
+
+backup & recovery
+
+management system, alarm system, rich monitoring report
 
 
 
