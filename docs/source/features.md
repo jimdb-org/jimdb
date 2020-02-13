@@ -6,6 +6,8 @@ JIMDB is a cloud-native key-value and SQL database with intelligent storage tier
 
 sharding by table ranges, multi-raft replication, logical split, dynamic rebalancing
 
+backup & recovery
+
 
 ## Multiple APIs
 
@@ -36,8 +38,6 @@ Orchestrated by Kubernetes
 change data capture
 
 online schema change
-
-backup & recovery
 
 management system, alarm system, rich monitoring report
 
