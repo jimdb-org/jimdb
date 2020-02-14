@@ -463,7 +463,7 @@ public class TxnHandler {
         if (LOG.isDebugEnabled()) {
           LOG.debug("decode row: {}", ByteUtil.bytes2hex01(NettyByteString.asByteArray(row.getFields())));
         }
-        decodeList.add(Codec.decodeRow(resultColumns, row));
+        decodeList.add(Codec.decodeRow(resultColumns, row, storeCtx.getTimeZone()));
       });
       ValueAccessor[] rowArray = new ValueAccessor[decodeList.size()];
       return decodeList.toArray(rowArray);
@@ -475,24 +475,24 @@ public class TxnHandler {
                                                          ColumnExpr[] resultColumns, KvPair kvPair) {
     DistSender sender = storeCtx.getSender();
     return sender.txnSelectFlowForRange(storeCtx, reqBuilder, kvPair)
-            .map(rows -> handleFlowValue(resultColumns, rows));
+            .map(rows -> handleFlowValue(resultColumns, rows, storeCtx));
   }
 
   public static Flux<ValueAccessor[]> selectFlowForKeys(StoreCtx storeCtx, MessageOrBuilder reqBuilder,
                                                         ColumnExpr[] resultColumns, List<ByteString> keys) {
     DistSender sender = storeCtx.getSender();
     return sender.txnSelectFlowForKeys(storeCtx, reqBuilder, keys)
-            .map(rows -> handleFlowValue(resultColumns, rows));
+            .map(rows -> handleFlowValue(resultColumns, rows, storeCtx));
   }
 
   //Txn.SelectFlowRequest.Builder
   protected static Flux<ValueAccessor[]> selectFlowStream(StoreCtx storeCtx, Txn.SelectFlowRequest.Builder reqBuilder,
                                                           ColumnExpr[] resultColumns, KvPair kvPair) {
     DistSender sender = storeCtx.getSender();
-    return sender.txnSelectFlowStream(storeCtx, reqBuilder, kvPair).map(rows -> handleFlowValue(resultColumns, rows));
+    return sender.txnSelectFlowStream(storeCtx, reqBuilder, kvPair).map(rows -> handleFlowValue(resultColumns, rows, storeCtx));
   }
 
-  private static ValueAccessor[] handleFlowValue(ColumnExpr[] resultColumns, List<Txn.Row> rows) {
+  private static ValueAccessor[] handleFlowValue(ColumnExpr[] resultColumns, List<Txn.Row> rows, StoreCtx storeCtx) {
     if (rows == null || rows.isEmpty()) {
       return TxnHandler.ROW_VALUE_ACCESSORS_EMPTY;
     }
@@ -502,7 +502,7 @@ public class TxnHandler {
       if (LOG.isInfoEnabled()) {
         LOG.info("decode row: {}", ByteUtil.bytes2hex01(NettyByteString.asByteArray(rowValue.getFields())));
       }
-      decodeList.add(Codec.decodeRowWithOpt(resultColumns, rowValue, row.getPks()));
+      decodeList.add(Codec.decodeRowWithOpt(resultColumns, rowValue, row.getPks(), storeCtx.getTimeZone()));
     });
     ValueAccessor[] rowArray = new ValueAccessor[decodeList.size()];
     return decodeList.toArray(rowArray);

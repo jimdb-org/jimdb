@@ -97,6 +97,7 @@ public final class TableSource extends RelOperator {
     this.pushDownTablePlan = tableSource.pushDownTablePlan;
     this.pushDownPredicates = tableSource.pushDownPredicates;
     this.allPredicates = tableSource.allPredicates;
+    this.accessConditions = tableSource.accessConditions;
     this.copyBaseParameters(tableSource);
 //    this.schema = tableSource.getSchema().clone();
     this.schema = tableSource.getSchema();
@@ -129,10 +130,7 @@ public final class TableSource extends RelOperator {
 
   @Override
   public Flux<ExecResult> execute(Session session) throws JimException {
-
-    if (processors == null) {
-      processors = createProcessors();
-    }
+    processors = createProcessors();
 
     List<Integer> outputOffsets = new ArrayList<>(getSchema().getColumns().size());
     for (ColumnExpr columnExpr : this.getSchema().getColumns()) {

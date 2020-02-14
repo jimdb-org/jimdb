@@ -58,13 +58,13 @@ public class OnUpdateTest extends SqlTestBase {
     sql = String.format("select v_time from %s.%s;", DB_NAME, TABLE_NAME);
     List<String> execResult = execQuery(sql);
     String resultString = execResult.get(0);
-    resultString = resultString.substring(7, resultString.length() - 2);
+    resultString = resultString.substring(7);
     Assert.assertNotNull(resultString);
 
     sql = String.format("select v_time from %s.%s where v_time = '%s'", DB_NAME, TABLE_NAME, resultString);
     execResult = execQuery(sql);
     String resultString2 = execResult.get(0);
-    resultString2 = resultString2.substring(7, resultString.length() - 2);
+    resultString2 = resultString2.substring(7);
 
     Assert.assertEquals(resultString, resultString2);
 
@@ -76,7 +76,7 @@ public class OnUpdateTest extends SqlTestBase {
     String DB_NAME = "on_update_test_db" + System.nanoTime();
     createCatalog(DB_NAME);
 
-    String sql = String.format("create table %s.%s (id bigint unsigned primary key, " +
+    String sql = String.format("create table if not exists %s.%s (id bigint unsigned primary key, " +
                     "name varchar(20), " +
                     "v_time timestamp null ON UPDATE CURRENT_TIMESTAMP, " +
                     "v_time2 timestamp null ON UPDATE CURRENT_TIMESTAMP) " +
@@ -90,8 +90,10 @@ public class OnUpdateTest extends SqlTestBase {
     List<String> expected = expectedStr(new String[]{ "id=1; name=null; v_time=null; v_time2=null" });
     execQuery(String.format("select * from %s.%s", DB_NAME, TABLE_NAME), expected);
 
+    // UTC Time
     DateValue beforeUpdateTs = DateValue.getNow(Basepb.DataType.TimeStamp, 0, TimeZone.getDefault());
-    System.out.println(beforeUpdateTs.convertToString(null, TimeZone.getDefault()));
+    System.out.println(beforeUpdateTs.convertToString(null));
+
     sql = String.format("update %s.%s set name = 'a' where id = 1", DB_NAME, TABLE_NAME);
     execUpdate(sql, 1, true);
 
@@ -102,6 +104,8 @@ public class OnUpdateTest extends SqlTestBase {
     String[] fields = execResult.get(0).split(";");
     Assert.assertEquals("id=1", fields[0].trim());
     Assert.assertEquals("name=a", fields[1].trim());
+
+    // UTC Time
     DateValue ts1 = DateValue.getInstance(StringUtils.substringAfter(fields[2], "v_time="),
             Basepb.DataType.TimeStamp, 1, TimeZone.getDefault());
     DateValue ts2 = DateValue.getInstance(StringUtils.substringAfter(fields[3], "v_time2="),
@@ -124,7 +128,7 @@ public class OnUpdateTest extends SqlTestBase {
     String DB_NAME = "on_update_test_db" + System.nanoTime();
     createCatalog(DB_NAME);
 
-    String sql = String.format("create table %s.%s (id bigint unsigned primary key, " +
+    String sql = String.format("create table if not exists %s.%s (id bigint unsigned primary key, " +
                     "name varchar(20), " +
                     "v_time timestamp null ON UPDATE CURRENT_TIMESTAMP) " +
                     "AUTO_INCREMENT=0 %s",

@@ -51,23 +51,31 @@ final class IndexCodec {
     return IndexNonUniqueCodec.encodeKV(index, values, rowKey, offsetFlag);
   }
 
-  static List<KvPair> encodeKeyRanges(int indexID, List<ValueRange> ranges) {
+  static List<KvPair> encodeKeyRanges(int indexID, int colsSize, List<ValueRange> ranges, boolean isOptimizeKey) {
     List<KvPair> kvPairs = new ArrayList<>(ranges.size());
     for (ValueRange range : ranges) {
-      ByteString lowKey = encodeKeyRange(indexID, range.getStarts());
-      ByteString highKey = encodeKeyRange(indexID, range.getEnds());
-      if (!range.isStartInclusive()) {
-        lowKey = Codec.nextKey(lowKey);
-      }
-      if (range.isEndInclusive()) {
-        highKey = Codec.nextKey(highKey);
-      }
-      kvPairs.add(new KvPair(lowKey, highKey));
+      kvPairs.add(encodeKeyRange(indexID, colsSize, range, isOptimizeKey));
     }
     return kvPairs;
   }
 
-  private static ByteString encodeKeyRange(int indexID, List<Value> values) {
+  private static KvPair encodeKeyRange(int indexID, int colsSize, ValueRange range, boolean isOptimizeKey) {
+    ByteString startKey = encodeValues(indexID, range.getStarts());
+    if (isOptimizeKey && colsSize == range.getStarts().size() && range.getStarts().equals(range.getEnds())) {
+      return new KvPair(startKey, startKey, true);
+    } else {
+      ByteString endKey = encodeValues(indexID, range.getEnds());
+      if (!range.isStartInclusive()) {
+        startKey = Codec.nextKey(startKey);
+      }
+      if (range.isEndInclusive()) {
+        endKey = Codec.nextKey(endKey);
+      }
+      return new KvPair(startKey, endKey, false);
+    }
+  }
+
+  private static ByteString encodeValues(int indexID, List<Value> values) {
     ByteBuf buf = Codec.allocBuffer(128);
     Codec.encodePrefix(buf, indexID);
     for (Value value : values) {
@@ -139,7 +147,7 @@ final class IndexCodec {
       Column[] columns = index.getColumns();
       for (int i = 0; i < columns.length; i++) {
         Value colValue = encodeAscendingKey(buf, values, offsetFlag, columns, i);
-        if (colValue == null) {
+        if (colValue == null || colValue.isNull()) {
           nullFlag = true;
         }
       }
@@ -160,7 +168,7 @@ final class IndexCodec {
       Column[] columns = index.getColumns();
       for (int i = 0; i < columns.length; i++) {
         Value colValue = encodeAscendingKey(buf, values, offsetFlag, columns, i);
-        if (colValue == null) {
+        if (colValue == null || colValue.isNull()) {
           nullFlag = true;
         }
       }

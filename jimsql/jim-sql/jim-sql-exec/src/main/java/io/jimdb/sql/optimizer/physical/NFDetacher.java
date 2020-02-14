@@ -408,7 +408,7 @@ public class NFDetacher {
 
     final int equalCount = accessConditions.size();
     if (equalCount == columns.size()) {
-      List<ValueRange> ranges = RangeBuilder.buildCNFIndexRanges(session, accessConditions, columns, lengths, equalCount, returnTypes);
+      List<ValueRange> ranges = RangeBuilder.buildCNFIndexRanges(session, accessConditions, lengths, equalCount, returnTypes);
       return new DetacherResult(ranges, accessConditions, remainingConditions, false);
     }
 
@@ -419,7 +419,7 @@ public class NFDetacher {
     accessConditions.addAll(detached.getT1());
     remainingConditions = detached.getT2();
 
-    List<ValueRange> ranges = RangeBuilder.buildCNFIndexRanges(session, accessConditions, columns, lengths, equalCount, returnTypes);
+    List<ValueRange> ranges = RangeBuilder.buildCNFIndexRanges(session, accessConditions, lengths, equalCount, returnTypes);
     return new DetacherResult(ranges, accessConditions, remainingConditions, false);
   }
 

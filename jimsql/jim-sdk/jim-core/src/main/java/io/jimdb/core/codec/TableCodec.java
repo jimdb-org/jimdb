@@ -95,23 +95,31 @@ final class TableCodec {
     return new KvPair(startKey, endKey);
   }
 
-  static List<KvPair> encodeKeyRanges(int tableID, List<ValueRange> ranges) {
+  static List<KvPair> encodeKeyRanges(int tableID, int colsSize, List<ValueRange> ranges, boolean isOptimizeKey) {
     List<KvPair> kvPairs = new ArrayList<>(ranges.size());
     for (ValueRange range : ranges) {
-      ByteString lowKey = encodeKeyRange(tableID, range.getStarts());
-      ByteString highKey = encodeKeyRange(tableID, range.getEnds());
-      if (!range.isStartInclusive()) {
-        lowKey = Codec.nextKey(lowKey);
-      }
-      if (range.isEndInclusive()) {
-        highKey = Codec.nextKey(highKey);
-      }
-      kvPairs.add(new KvPair(lowKey, highKey));
+      kvPairs.add(encodeKeyRange(tableID, colsSize, range, isOptimizeKey));
     }
     return kvPairs;
   }
 
-  private static ByteString encodeKeyRange(int tableID, List<Value> values) {
+  private static KvPair encodeKeyRange(int tableID, int colsSize, ValueRange range, boolean isOptimizeKey) {
+    ByteString startKey = encodeValues(tableID, range.getStarts());
+    if (isOptimizeKey && colsSize == range.getStarts().size() && range.getStarts().equals(range.getEnds())) {
+      return new KvPair(startKey, startKey, true);
+    } else {
+      ByteString endKey = encodeValues(tableID, range.getEnds());
+      if (!range.isStartInclusive()) {
+        startKey = Codec.nextKey(startKey);
+      }
+      if (range.isEndInclusive()) {
+        endKey = Codec.nextKey(endKey);
+      }
+      return new KvPair(startKey, endKey, false);
+    }
+  }
+
+  private static ByteString encodeValues(int tableID, List<Value> values) {
     ByteBuf buf = Codec.allocBuffer(32);
     Codec.encodePrefix(buf, tableID);
     for (Value value : values) {

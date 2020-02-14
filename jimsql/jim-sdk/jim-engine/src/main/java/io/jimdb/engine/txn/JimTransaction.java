@@ -15,10 +15,11 @@
  */
 package io.jimdb.engine.txn;
 
+import static java.util.Collections.EMPTY_LIST;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,10 +48,12 @@ import io.jimdb.core.model.result.impl.AckExecResult;
 import io.jimdb.core.model.result.impl.DMLExecResult;
 import io.jimdb.core.model.result.impl.QueryExecResult;
 import io.jimdb.core.plugin.store.Transaction;
+import io.jimdb.core.types.ValueType;
 import io.jimdb.core.values.DateValue;
 import io.jimdb.core.values.LongValue;
 import io.jimdb.core.values.NullValue;
 import io.jimdb.core.values.StringValue;
+import io.jimdb.core.values.TimeUtil;
 import io.jimdb.core.values.UnsignedLongValue;
 import io.jimdb.core.values.Value;
 import io.jimdb.core.values.ValueChecker;
@@ -101,6 +104,7 @@ public final class JimTransaction implements Transaction {
   private static final SelectFlowKeysFunc SELECT_KEYS_FLOW_FUNC = TxnHandler::selectFlowForKeys;
   private static final SelectFlowRangeFunc SELECT_RANGE_FLOW_FUNC = TxnHandler::selectFlowForRange;
   private static final SelectFlowFunc SELECT_FLOW_STREAM_FUNC = TxnHandler::selectFlowStream;
+  private static final boolean GATHER_TRACE = false;
 
   private final Session session;
   private TxnConfig config;
@@ -329,8 +333,8 @@ public final class JimTransaction implements Transaction {
     Flux<Long>[] versionFlux = new Flux[1];
     rows.forEach(row -> {
       LongValue recordVersion = (LongValue) row.get(row.size() - 1);
-      Value[] oldData = accessValues(row, rows.getColumns());
-      Value[] newData = computeNewValues(session, table, oldData, row, assignments);
+      Value[] oldData = accessValues(storeCtx, row, rows.getColumns());
+      Value[] newData = computeNewValues(session, table, oldData, assignFlag, row, assignments);
       versionFlux[0] = updateRow(table, indexes, storeCtx, versionFlux[0], assignFlag, recordVersion, oldData, newData);
     });
 
@@ -540,8 +544,7 @@ public final class JimTransaction implements Transaction {
   }
 
   @Override
-  public Flux<ExecResult> select(Table table, List<Processor.Builder> processors,
-                                 ColumnExpr[] resultColumns,
+  public Flux<ExecResult> select(Table table, List<Processor.Builder> processors, ColumnExpr[] resultColumns,
                                  List<Integer> outputOffsetList) throws JimException {
     if (processors == null || processors.isEmpty()) {
       return changeRowsToValueAccessor(resultColumns, null);
@@ -555,25 +558,22 @@ public final class JimTransaction implements Transaction {
   }
 
   @Override
-  public Flux<ExecResult> select(Index index, List<Processor.Builder> processors,
-                                 ColumnExpr[] resultColumns,
+  public Flux<ExecResult> select(Index index, List<Processor.Builder> processors, ColumnExpr[] resultColumns,
                                  List<Integer> outputOffsetList, List<ValueRange> ranges) throws JimException {
     if (processors == null || processors.isEmpty()) {
       return changeRowsToValueAccessor(resultColumns, null);
     }
 
-    List<KvPair> kvPairs = Codec.encodeKeyRanges(index, ranges);
-
-    Table table = index.getTable();
-    StoreCtx storeCtx = getStoreCtx(table);
-    List<ByteString> keys = new ArrayList<>(1);
-    List<KvPair> rangePairs = new ArrayList<>(1);
-    //table reader
-    if (index.isPrimary()) {
-      for (int i = 0; i < ranges.size(); i++) {
-        ValueRange valueRange = ranges.get(i);
-        KvPair kvPair = kvPairs.get(i);
-        if (valueRange.getStarts().equals(valueRange.getEnds())) {
+    boolean isPrimary = index.isPrimary();
+    boolean isOptimizeKey = isPrimary || index.isUnique();
+    List<ByteString> keys = EMPTY_LIST;
+    List<KvPair> rangePairs;
+    List<KvPair> kvPairs = Codec.encodeKeyRanges(index, ranges, isOptimizeKey);
+    if (isOptimizeKey && !kvPairs.isEmpty()) {   // when primary-key or unique could use both of key and range
+      rangePairs = new ArrayList<>(kvPairs.size());
+      keys = new ArrayList<>(kvPairs.size());
+      for (KvPair kvPair : kvPairs) {
+        if (kvPair.isKey()) {
           keys.add(kvPair.getKey());
         } else {
           rangePairs.add(kvPair);
@@ -583,16 +583,15 @@ public final class JimTransaction implements Transaction {
       rangePairs = kvPairs;
     }
 
-    Flux<ValueAccessor[]> valuesFlux = getSelectFluxForTableKeys(processors, resultColumns, outputOffsetList, storeCtx, keys);
-    if (!rangePairs.isEmpty()) {
-      for (KvPair kvPair : rangePairs) {
-        Flux<ValueAccessor[]> valuesEachRangeFlux = getSelectFluxForRange(processors, resultColumns, outputOffsetList,
-                storeCtx, kvPair, index.isPrimary());
-        if (valuesFlux == null) {
-          valuesFlux = valuesEachRangeFlux;
-        } else {
-          valuesFlux = valuesFlux.zipWith(valuesEachRangeFlux, (f1, f2) -> getValueAccessors(f1, f2));
-        }
+    StoreCtx storeCtx = getStoreCtx(index.getTable());
+    Flux<ValueAccessor[]> valuesFlux = getSelectFluxForKeys(processors, resultColumns, outputOffsetList, storeCtx, keys, isPrimary);
+    for (KvPair kvPair : rangePairs) {
+      Flux<ValueAccessor[]> valuesEachRangeFlux = getSelectFluxForRange(processors, resultColumns, outputOffsetList,
+              storeCtx, kvPair, isPrimary);
+      if (valuesFlux == null) {
+        valuesFlux = valuesEachRangeFlux;
+      } else {
+        valuesFlux = valuesFlux.zipWith(valuesEachRangeFlux, (f1, f2) -> getValueAccessors(f1, f2));
       }
     }
     return changeRowsToValueAccessor(resultColumns, valuesFlux);
@@ -620,12 +619,14 @@ public final class JimTransaction implements Transaction {
             .onErrorResume(TxnHandler.getErrHandler(storeCtx, SELECT_RANGE_FLOW_FUNC, builder, resultColumns, kvPair));
   }
 
-  private Flux<ValueAccessor[]> getSelectFluxForTableKeys(List<Processor.Builder> processors, ColumnExpr[] resultColumns,
-                                                          List<Integer> outputOffsetList, StoreCtx storeCtx, List<ByteString> keys) {
+  private Flux<ValueAccessor[]> getSelectFluxForKeys(List<Processor.Builder> processors, ColumnExpr[] resultColumns,
+                                                     List<Integer> outputOffsetList, StoreCtx storeCtx,
+                                                     List<ByteString> keys, boolean isPrimary) {
     if (keys.isEmpty()) {
       return null;
     }
-    SelectFlowRequest.Builder builder = getTableReaderReqForKeys(processors, outputOffsetList, keys);
+    SelectFlowRequest.Builder builder = isPrimary ? getTableReaderReqForKeys(processors, outputOffsetList, keys)
+            : getIndexReaderReqForKeys(processors, outputOffsetList, keys);
     return SELECT_KEYS_FLOW_FUNC.apply(storeCtx, builder, resultColumns, keys)
             .onErrorResume(TxnHandler.getErrHandler(storeCtx, SELECT_KEYS_FLOW_FUNC, builder, resultColumns, keys));
   }
@@ -642,7 +643,7 @@ public final class JimTransaction implements Transaction {
       }
       builder.addProcessors(processor);
     }
-    builder.addAllOutputOffsets(outputOffsetList).setGatherTrace(true);
+    builder.addAllOutputOffsets(outputOffsetList).setGatherTrace(GATHER_TRACE);
     return builder;
   }
 
@@ -659,7 +660,7 @@ public final class JimTransaction implements Transaction {
       }
       builder.addProcessors(processor);
     }
-    builder.addAllOutputOffsets(outputOffsetList).setGatherTrace(true);
+    builder.addAllOutputOffsets(outputOffsetList).setGatherTrace(GATHER_TRACE);
     return builder;
   }
 
@@ -675,7 +676,23 @@ public final class JimTransaction implements Transaction {
       }
       builder.addProcessors(processor);
     }
-    builder.addAllOutputOffsets(outputOffsetList).setGatherTrace(true);
+    builder.addAllOutputOffsets(outputOffsetList).setGatherTrace(GATHER_TRACE);
+    return builder;
+  }
+
+  private SelectFlowRequest.Builder getIndexReaderReqForKeys(List<Processor.Builder> processors,
+                                                             List<Integer> outputOffsetList, List<ByteString> keys) {
+    SelectFlowRequest.Builder builder = SelectFlowRequest.newBuilder();
+    for (Processor.Builder processor : processors) {
+      if (processor.getType() == ProcessorType.INDEX_READ_TYPE) {
+        IndexRead.Builder indexRead = IndexRead.newBuilder(processor.getIndexRead())
+                .setType(KeyType.PRIMARY_KEY_TYPE)
+                .addAllIndexKeys(keys);
+        processor.setIndexRead(indexRead);
+      }
+      builder.addProcessors(processor);
+    }
+    builder.addAllOutputOffsets(outputOffsetList).setGatherTrace(GATHER_TRACE);
     return builder;
   }
 
@@ -755,7 +772,7 @@ public final class JimTransaction implements Transaction {
             .addProcessors(tableReader)
             .addProcessors(limitReader)
             .addAllOutputOffsets(outputOffsetList)
-            .setGatherTrace(false);
+            .setGatherTrace(GATHER_TRACE);
   }
 
   private void doAddIndex(Index index, ColumnExpr[] columns, ValueAccessor[] values) {
@@ -877,18 +894,22 @@ public final class JimTransaction implements Transaction {
     return values;
   }
 
-  private Value[] accessValues(ValueAccessor accessor, ColumnExpr[] columns) {
+  private Value[] accessValues(StoreCtx storeCtx, ValueAccessor accessor, ColumnExpr[] columns) {
     int colLength = columns.length;
     Value[] values = new Value[colLength];
     for (int i = 0; i < colLength; i++) {
       ColumnExpr expr = columns[i];
       Value value = expr.exec(accessor);
+      if (expr.getResultType().getType() == Basepb.DataType.TimeStamp && null != value && value.getType() != ValueType.NULL) {
+        value = DateValue.convertTimeZone((DateValue) value, storeCtx.getTimeZone(), TimeUtil.UTC_ZONE);
+      }
       values[expr.getOffset()] = value;
     }
     return values;
   }
 
-  private Value[] computeNewValues(Session session, Table table, Value[] oldValues, ValueAccessor values, Assignment[] assignments) {
+  private Value[] computeNewValues(Session session, Table table, Value[] oldValues, boolean[] assignFlag,
+                                   ValueAccessor values, Assignment[] assignments) {
     Value[] newValues = cloneValue(oldValues);
     // An auto-updated column remains unchanged if all other columns are set to their current values.
     Map<Integer, Boolean> changes = new HashMap<>();
@@ -937,6 +958,7 @@ public final class JimTransaction implements Transaction {
       }
       autoUpdateValue = DateValue.getNow(type, column.getType().getScale(), session.getStmtContext().getLocalTimeZone());
 
+      assignFlag[column.getOffset()] = true;
       newValues[column.getOffset()] = autoUpdateValue;
       values.set(column.getOffset(), autoUpdateValue);
     }
@@ -1059,7 +1081,7 @@ public final class JimTransaction implements Transaction {
     request.setMaxCount(10000);
     return TxnHandler.txnScan(storeCtx, request).map(kvs -> {
       if (kvs.isEmpty()) {
-        return Collections.EMPTY_LIST;
+        return EMPTY_LIST;
       }
 
       List<ByteString> pkValuesList = new ArrayList<>(kvs.size());

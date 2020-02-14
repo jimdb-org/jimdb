@@ -71,13 +71,13 @@ public class DateValueTest {
     System.out.println(targetTimestamp2);
 
     DateValue timestampValue = DateValue.getNow(DataType.TimeStamp, 3, localZone);
-    System.out.println(timestampValue.convertToString(null, localZone));
+    System.out.println(timestampValue.convertToString(null));
 
     DateValue datetimeValue = DateValue.getNow(DataType.DateTime, 4, null);
-    System.out.println(datetimeValue.convertToString(null, null));
+    System.out.println(datetimeValue.convertToString(null));
 
     DateValue dateValue = DateValue.getNow(DataType.Date, 0, null);
-    System.out.println(dateValue.convertToString(null, null));
+    System.out.println(dateValue.convertToString(null));
 
 //    String ids[] = TimeZone.getAvailableIDs();
 //    System.out.println(TimeZone.getDefault().getDisplayName());

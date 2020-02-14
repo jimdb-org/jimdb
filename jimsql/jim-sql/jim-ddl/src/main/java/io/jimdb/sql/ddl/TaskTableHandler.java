@@ -180,7 +180,7 @@ final class TaskTableHandler {
           neecUpdate = false;
           BigInteger alterInitId = new BigInteger(Long.toUnsignedString(alterId));
           if (alterInitId.compareTo(oldInitId) > 0) {
-            throw new DDLException(DDLException.ErrorType.FAILED, String.format("invalid auto_increment id %d, old auto_increment id %d)",
+            throw new DDLException(DDLException.ErrorType.FAILED, String.format("invalid auto_increment_id %d, old auto_increment_id is %s)",
                     alterId, oldInitId.toString()));
           }
           break;

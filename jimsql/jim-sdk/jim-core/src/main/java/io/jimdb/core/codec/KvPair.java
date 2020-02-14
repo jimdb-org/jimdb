@@ -26,6 +26,7 @@ import com.google.protobuf.NettyByteString;
 public final class KvPair {
   private ByteString key;
   private ByteString value;
+  private boolean isKey;
 
   public KvPair(ByteString key) {
     this(key, null);
@@ -34,6 +35,12 @@ public final class KvPair {
   public KvPair(ByteString key, ByteString value) {
     this.key = key;
     this.value = value;
+  }
+
+  public KvPair(ByteString key, ByteString value, boolean isKey) {
+    this.key = key;
+    this.value = value;
+    this.isKey = isKey;
   }
 
   public ByteString getKey() {
@@ -50,6 +57,10 @@ public final class KvPair {
 
   public void setValue(ByteString value) {
     this.value = value;
+  }
+
+  public boolean isKey() {
+    return isKey;
   }
 
   @Override

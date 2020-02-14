@@ -123,8 +123,7 @@ public final class ValueConvertor {
       case STRING:
         return (StringValue) src;
       case DATE:
-        TimeZone zone = session == null ? null : session.getStmtContext().getLocalTimeZone();
-        str = ((DateValue) src).convertToString(type == null ? null : type.getType(), zone);
+        str = ((DateValue) src).convertToString(type == null ? null : type.getType());
         break;
       case TIME:
         str = ((TimeValue) src).convertToString();

@@ -152,7 +152,6 @@ public final class ValueCodec {
 
   public static void encodeNullAscending(ByteBuf buf) {
     buf.writeByte(ENCODE_NULL);
-    return;
   }
 
   public static void encodeUvarintAscending(ByteBuf buff, long data) {

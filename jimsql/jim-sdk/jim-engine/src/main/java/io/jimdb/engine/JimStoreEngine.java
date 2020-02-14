@@ -121,7 +121,7 @@ public final class JimStoreEngine implements Engine {
           Table table, Index index, Instant timeout, List<ValueRange> ranges, Statspb.IndexStatsRequest.Builder reqBuilder) {
 
     // set the range in request builder
-    List<KvPair> kvPairs = Codec.encodeKeyRanges(index, ranges);
+    List<KvPair> kvPairs = Codec.encodeKeyRanges(index, ranges, false);
     Processorpb.KeyRange.Builder keyRangeBuilder = Processorpb.KeyRange.newBuilder().setStartKey(kvPairs.get(0).getKey()).setEndKey(kvPairs.get(0).getValue());
     reqBuilder.setRange(keyRangeBuilder);
 
@@ -137,7 +137,7 @@ public final class JimStoreEngine implements Engine {
   public Flux<List<Tuple2<Statspb.Histogram, List<Statspb.SampleCollector>>>> analyzeColumns(
           Table table, Column[] columns, Instant timeout, List<ValueRange> ranges, Statspb.ColumnsStatsRequest.Builder reqBuilder) {
     // set the range in request builder
-    List<KvPair> kvPairs = Codec.encodeKeyRanges(table.getReadableIndices()[0], ranges); // table.getIndexes()[0] is the primary key index
+    List<KvPair> kvPairs = Codec.encodeKeyRanges(table.getReadableIndices()[0], ranges, false); // table.getIndexes()[0] is the primary key index
     Processorpb.KeyRange.Builder keyRangeBuilder = Processorpb.KeyRange.newBuilder().setStartKey(kvPairs.get(0).getKey()).setEndKey(kvPairs.get(0).getValue());
     reqBuilder.setRange(keyRangeBuilder);
 

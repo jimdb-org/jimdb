@@ -161,12 +161,12 @@ public class AutoIncrIDAllocator implements IDAllocator {
         }
         throw DBException.get(ErrorModule.META, ErrorCode.ER_META_GET_AUTO_INCR);
       }
-      allocIds.stream().forEach(ids -> idPairQueue.offer(ids));
+      allocIds.forEach(ids -> idPairQueue.offer(ids));
     }
 
     public List<UnsignedLongValue> alloc(int size) {
       List<UnsignedLongValue> values = allocFromQueue(size);
-      if (values.size() != size) {
+      if (null == values || values.size() != size) {
         throw DBException.get(ErrorModule.ENGINE, ErrorCode.ER_META_GET_AUTO_INCR);
       }
       return values;
@@ -201,15 +201,15 @@ public class AutoIncrIDAllocator implements IDAllocator {
             unsatisfiedSizeList.add(idPair);
             continue;
           }
-          BigInteger newEnd = start.add(sizeValue);
-          List<UnsignedLongValue> values = convertIdPairs(start, newEnd, size);
+          BigInteger newStart = start.add(sizeValue);
+          List<UnsignedLongValue> values = convertIdPairs(start, newStart, size);
           if (scope.compareTo(sizeValue) > 0) {
             if (LOGGER.isDebugEnabled()) {
-              LOGGER.debug("alloc auto_increment id[{}, {}), use size: {}, newEnd:{}.", start, end, sizeValue, newEnd);
+              LOGGER.debug("alloc auto_increment id[{}, {}), use size: {}, newStart:{}.", start, end, sizeValue, newStart);
             }
-            idPairQueue.offer(Tuples.of(newEnd, end));
+            idPairQueue.offer(Tuples.of(newStart, end));
             if (LOGGER.isDebugEnabled()) {
-              LOGGER.debug("alloc auto_increment id:[{}, {}) after use.", newEnd, end);
+              LOGGER.debug("alloc auto_increment id:[{}, {}) after use.", newStart, end);
             }
           }
           return values;

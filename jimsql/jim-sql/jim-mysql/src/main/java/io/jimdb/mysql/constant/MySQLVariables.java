@@ -15,6 +15,8 @@
  */
 package io.jimdb.mysql.constant;
 
+import static io.jimdb.mysql.constant.MySQLVersion.MYSQL_SERVER_VERSION_5_6_0;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -153,6 +155,9 @@ public final class MySQLVariables {
   public static final String PROTOCOL_VERSION = "protocol_version";
 
   public static final String MAX_EXECUTION_TIME = "max_execution_time";
+
+  // CHARSET - utf8
+  public static final String MYSQL_SERVER_ENCODING_UTF8 = "UTF-8";
 
   static {
     initSysVariables();
@@ -376,7 +381,7 @@ public final class MySQLVariables {
     addVariable("innodb_purge_batch_size", new SysVariable(SysVariable.SCOPE_GLOBAL, "innodb_purge_batch_size", "300"));
     addVariable("have_profiling", new SysVariable(SysVariable.SCOPE_NONE, "have_profiling", "NO"));
     addVariable("slave_checkpoint_group", new SysVariable(SysVariable.SCOPE_GLOBAL, "slave_checkpoint_group", "512"));
-    addVariable("character_set_client", new SysVariable(SysVariable.SCOPE_GLOBAL | SysVariable.SCOPE_SESSION, "character_set_client", "UTF-8"));
+    addVariable("character_set_client", new SysVariable(SysVariable.SCOPE_GLOBAL | SysVariable.SCOPE_SESSION, "character_set_client", MYSQL_SERVER_ENCODING_UTF8));
     addVariable("slave_load_tmpdir", new SysVariable(SysVariable.SCOPE_NONE, "slave_load_tmpdir", "/var/tmp/"));
     addVariable("innodb_buffer_pool_dump_now", new SysVariable(SysVariable.SCOPE_GLOBAL, "innodb_buffer_pool_dump_now", "OFF"));
     addVariable("relay_log_purge", new SysVariable(SysVariable.SCOPE_GLOBAL, "relay_log_purge", "ON"));
@@ -496,7 +501,7 @@ public final class MySQLVariables {
     addVariable("innodb_read_only", new SysVariable(SysVariable.SCOPE_NONE, "innodb_read_only", "OFF"));
     addVariable("datetime_format", new SysVariable(SysVariable.SCOPE_NONE, "datetime_format", "%Y-%m-%d %H:%i:%s"));
     addVariable("log_syslog", new SysVariable(SysVariable.SCOPE_GLOBAL, "log_syslog", ""));
-    addVariable("version", new SysVariable(SysVariable.SCOPE_NONE, "version", "5.6.0"));
+    addVariable(MYSQL_SERVER_VERSION, new SysVariable(SysVariable.SCOPE_NONE, MYSQL_SERVER_VERSION, MYSQL_SERVER_VERSION_5_6_0));
     addVariable("transaction_alloc_block_size", new SysVariable(SysVariable.SCOPE_GLOBAL | SysVariable.SCOPE_SESSION, "transaction_alloc_block_size", "8192"));
     addVariable("sql_slave_skip_counter", new SysVariable(SysVariable.SCOPE_GLOBAL, "sql_slave_skip_counter", "0"));
     addVariable("innodb_large_prefix", new SysVariable(SysVariable.SCOPE_GLOBAL, "innodb_large_prefix", "OFF"));
@@ -680,7 +685,7 @@ public final class MySQLVariables {
     addVariable("innodb_online_alter_log_max_size", new SysVariable(SysVariable.SCOPE_GLOBAL, "innodb_online_alter_log_max_size", "134217728"));
     addVariable(WARNING_COUNT, new SysVariable(SysVariable.SCOPE_SESSION, WARNING_COUNT, "0"));
     addVariable(ERROR_COUNT, new SysVariable(SysVariable.SCOPE_SESSION, ERROR_COUNT, "0"));
-    addVariable("MYSQL_SERVER_ENCODING", new SysVariable(SysVariable.SCOPE_NONE, "MYSQL_SERVER_ENCODING", "UTF-8"));
+    addVariable("MYSQL_SERVER_ENCODING", new SysVariable(SysVariable.SCOPE_NONE, "MYSQL_SERVER_ENCODING", MYSQL_SERVER_ENCODING_UTF8));
     addVariable(MAX_EXECUTION_TIME, new SysVariable(SysVariable.SCOPE_GLOBAL | SysVariable.SCOPE_SESSION, "max_execution_time", "0"));
   }
 

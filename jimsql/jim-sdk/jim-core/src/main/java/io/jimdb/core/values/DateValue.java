@@ -481,7 +481,7 @@ public final class DateValue extends Value<DateValue> {
     return yearValue.getValue();
   }
 
-  public String convertToString(DataType type, TimeZone tz) {
+  public String convertToString(DataType type) {
     if (type == null) {
       type = this.getDateType();
     }
@@ -500,9 +500,6 @@ public final class DateValue extends Value<DateValue> {
       dataEncode = "0000-00-00 00:00:00";
       fspPart = "000000";
     } else {
-      if (type == DataType.TimeStamp) {
-        value = TimeUtil.changeTimeZone(value, TimeUtil.UTC_ZONE, tz);
-      }
       dataEncode = new SimpleDateFormat(DATETIME_FORMAT).format(value);
       fspPart = String.format("%06d", value.getNanos() / 1000);
     }
@@ -544,10 +541,10 @@ public final class DateValue extends Value<DateValue> {
     return new DateValue(timeValue, dateType, fsp);
   }
 
-//  public static DateValue convertTimeZone(DateValue fromValue, TimeZone fz, TimeZone tz) {
-//    Timestamp timeValue = TimeUtil.changeTimeZone(fromValue.value, fz, tz);
-//    return new DateValue(timeValue, fromValue.getDateType(), fromValue.getFsp());
-//  }
+  public static DateValue convertTimeZone(DateValue fromValue, TimeZone fz, TimeZone tz) {
+    Timestamp timeValue = TimeUtil.changeTimeZone(fromValue.value, fz, tz);
+    return new DateValue(timeValue, fromValue.getDateType(), fromValue.getFsp());
+  }
 
   public Timestamp getValue() {
     return this.value;
