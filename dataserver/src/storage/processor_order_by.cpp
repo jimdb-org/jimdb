@@ -32,7 +32,7 @@ OrderBy::OrderBy(const dspb::Ordering &ordering, std::unique_ptr<Processor> proc
             colInfo.asc = column.asc();
             col_order_by_infos_.push_back(std::move(colInfo));
         }
-        FetchOrderByRows();
+        //FetchOrderByRows();
     }
 }
 
@@ -58,7 +58,7 @@ Status OrderBy::OrderingCheck() {
     return Status::OK();
 }
 
-void OrderBy::FetchOrderByRows() {
+Status OrderBy::FetchOrderByRows() {
     std::chrono::system_clock::time_point time_begin;
     if (gather_trace_) {
         time_begin = std::chrono::system_clock::now();
@@ -91,15 +91,28 @@ void OrderBy::FetchOrderByRows() {
             set_result_.insert(row);
         }
     }
-    set_result_it_ = set_result_.begin();
     if (gather_trace_) {
         time_processed_ns_ += std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now() - time_begin).count();
     }
+    return s;
 }
 
 Status OrderBy::next(RowResult &row) {
+
     if (!status_check_ordering_.ok()) {
         return status_check_ordering_;
+    }
+
+    if (!has_fetch_row_) {
+        auto s = FetchOrderByRows();
+        if (s.code() == Status::kNoMoreData) {
+            ; //
+        } else if (!s.ok()){
+            return s;
+        }
+
+        has_fetch_row_ = true;
+        set_result_it_ = set_result_.begin();
     }
 
     if (set_result_it_ == set_result_.end()) {

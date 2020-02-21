@@ -34,12 +34,11 @@ RowFetcher::RowFetcher(Store& s, const dspb::SelectRequest& req) :
     kv_fetcher_(KvFetcher::Create(s, req)) {
 }
 
-RowFetcher::RowFetcher(Store& s, const dspb::TableRead & req,
-        const std::string & start_key, const std::string & end_key) :
+RowFetcher::RowFetcher(Store& s, const dspb::TableRead& req,
+        const std::string & start_key, const std::string & end_key, bool require_version) :
     store_(s),
-    decoder_(Decoder::CreateDecoder(s.GetKeySchema(), req)),
-    kv_fetcher_(KvFetcher::Create(s, req, start_key, end_key)) {
-
+    decoder_(Decoder::CreateDecoder(s.GetKeySchema(), req, require_version)) {
+    kv_fetcher_ = KvFetcher::Create(s, req, start_key, end_key, !decoder_->ShouldDecodeValue());
 }
 
 RowFetcher::RowFetcher(Store& s, const dspb::IndexRead & req,
@@ -56,7 +55,9 @@ RowFetcher::RowFetcher(Store& s, const dspb::DataSample & req,
     kv_fetcher_(KvFetcher::Create(s, req, start_key, end_key)) {
 }
 
-RowFetcher::~RowFetcher() = default;
+RowFetcher::~RowFetcher() {
+    store_.addMetricRead(iter_count_, iter_bytes_);
+}
 
 Status RowFetcher::Next(RowResult& row, bool &over) {
     Status s;
@@ -77,8 +78,7 @@ Status RowFetcher::Next(RowResult& row, bool &over) {
         }
         addMetric(kv);
 
-        // 非唯一索引没有value
-        // if (!kv.HasValue()) continue;
+        if (!kv.HasValue()) continue;
 
         matched = false;
         row.Reset();
@@ -125,8 +125,8 @@ Status RowFetcher::Next(const dspb::SelectRequest& req, dspb::Row& row, bool& ov
 }
 
 void RowFetcher::addMetric(const KvRecord& kv) {
-    store_.addMetricRead(1, kv.Size());
     ++iter_count_;
+    iter_bytes_ += kv.Size();
     if (iter_count_ % kIteratorTooManyKeys == kIteratorTooManyKeys - 1) {
         FLOG_WARN("range[{}] iterator too many keys({}), filters: {}",
                 store_.GetRangeID(), iter_count_, decoder_->DebugString());

@@ -165,7 +165,7 @@ int MasstreeWrapper::Scan(const std::string& begin, F& scanner) {
 }
 
 std::unique_ptr<Iterator> MasstreeWrapper::NewIterator(const std::string& start, const std::string& limit, size_t max_per_scan) {
-    std::unique_ptr<Iterator> ptr(new MassIterator(this, start, limit, max_per_scan));
+    std::unique_ptr<Iterator> ptr(new MassIterator(this, start, limit, IteratorOptions(), max_per_scan));
     return ptr;
 }
 

@@ -60,7 +60,7 @@ Status DataSample::next( RowResult & row)
     }
 
     s = row_fetcher_->Next( row, over_);
-    if (over_) {
+    if (over_ && s.ok()) {
         s = Status( Status::kNoMoreData, " last key: ", EncodeToHexString(get_last_key()) );
     }
 
@@ -73,7 +73,6 @@ Status DataSample::next( RowResult & row)
         time_processed_ns_ += std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now() - time_begin).count();
     }
     return s;
-
 }
 
 const std::vector<uint64_t> DataSample::get_col_ids()

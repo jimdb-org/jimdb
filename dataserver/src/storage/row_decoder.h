@@ -166,13 +166,18 @@ public:
     virtual std::string DebugString() const = 0;
 
     static std::unique_ptr<Decoder> CreateDecoder(const basepb::KeySchema &key_schema,
-                                                  const dspb::SelectRequest &req);
+                                                  const dspb::SelectRequest &req
+                                                  );
     static std::unique_ptr<Decoder> CreateDecoder(const basepb::KeySchema &key_schema,
-                                                  const dspb::TableRead &req);
+                                                  const dspb::TableRead &req,
+                                                  bool require_version = true
+                                                  );
     static std::unique_ptr<Decoder> CreateDecoder(const basepb::KeySchema &key_schema,
                                                   const dspb::IndexRead &req);
     static std::unique_ptr<Decoder> CreateDecoder(const basepb::KeySchema &key_schema,
                                                   const dspb::DataSample &req);
+    virtual bool ShouldDecodeKey() const { return true; }
+    virtual bool ShouldDecodeValue() const { return true; }
 
 private:
     virtual void addExprColumn(const dspb::Expr &expr) = 0;
@@ -183,7 +188,7 @@ private:
 class RowDecoder : public Decoder {
 public:
     RowDecoder(const basepb::KeySchema &key_schema, const dspb::SelectRequest &req);
-    RowDecoder(const basepb::KeySchema &key_schema, const dspb::TableRead &req);
+    RowDecoder(const basepb::KeySchema &key_schema, const dspb::TableRead &req, bool require_version = true);
     RowDecoder(const basepb::KeySchema &key_schema, const dspb::DataSample &req);
 
     ~RowDecoder();
@@ -196,13 +201,19 @@ public:
 
     virtual std::string DebugString() const;
 
+    bool ShouldDecodeValue() const override { return decode_value_; }
+
 private:
+    bool isKeyCol(int32_t id);
+
     virtual void addExprColumn(const dspb::Expr &expr);
     virtual Status decodeKeyColumns(const std::string &key, RowResult &result);
     virtual Status decodeValueColumns(const std::string &buf, RowResult &result);
 
+
 private:
     const basepb::KeySchema &key_schema_;
+    bool decode_value_ = true;
     std::unordered_map<uint64_t, dspb::ColumnInfo> cols_;
     std::unique_ptr<dspb::Expr> where_expr_;
     std::map<uint64_t, dspb::ColumnInfo> read_cols_;

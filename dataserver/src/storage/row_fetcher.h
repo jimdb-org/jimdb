@@ -26,7 +26,7 @@ class RowFetcher {
 public:
     RowFetcher(Store& s, const dspb::SelectRequest& req);
     RowFetcher(Store& s, const dspb::TableRead& req,
-            const std::string & start_key, const std::string & end_key);
+            const std::string & start_key, const std::string & end_key, bool require_version = true);
     RowFetcher(Store& s, const dspb::IndexRead& req,
             const std::string & start_key, const std::string & end_key);
     RowFetcher(Store& s, const dspb::DataSample& req,
@@ -54,6 +54,7 @@ private:
     std::unique_ptr<Decoder> decoder_;
     std::unique_ptr<KvFetcher> kv_fetcher_;
     size_t iter_count_ = 0;
+    uint64_t iter_bytes_ = 0;
 };
 
 } /* namespace storage */

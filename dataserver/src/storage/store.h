@@ -98,8 +98,10 @@ public:
     bool keyInScop(const std::string & key) const;
     IterPtr NewIterator(const std::string& start = "", const std::string& limit = "");
 
+    // ignore_value: only return key (value will be empty) for data cf
     Status NewIterators(IterPtr &data_iter, IterPtr &txn_iter,
-            const std::string& start = "", const std::string& limit = "");
+            const std::string& start = "", const std::string& limit = "",
+            bool ignore_value = false);
 
     Status GetSnapshot(uint64_t apply_index, std::string&& context,
             std::shared_ptr<raft::Snapshot>* snapshot);

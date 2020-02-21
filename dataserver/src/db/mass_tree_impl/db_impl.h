@@ -74,6 +74,11 @@ public:
     Status NewIterators(const std::string& start, const std::string& limit,
             IteratorPtr &data_iter, IteratorPtr &txn_iter) override;
 
+    Status NewIterators(
+            const KeyRange& range,
+            const std::vector<IteratorDescriptor>& descs,
+            std::vector<IteratorPtr>& iterators) override;
+
     Status SplitDB(uint64_t split_range_id, const std::string& split_key,
             uint64_t raft_index, std::unique_ptr<DB>& split_db) override;
 

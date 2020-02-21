@@ -39,9 +39,9 @@ std::unique_ptr<KvFetcher> KvFetcher::Create(
         Store& store,
         const dspb::TableRead & req,
         const std::string & start_key,
-        const std::string & end_key
-) {
-
+        const std::string & end_key,
+        bool ignore_value)
+{
     if (req.type() == dspb::DEFAULT_RANGE_TYPE) {
         return Create(store, start_key, end_key);
     } else if (req.type() == dspb::PRIMARY_KEY_TYPE) {
@@ -54,14 +54,12 @@ std::unique_ptr<KvFetcher> KvFetcher::Create(
         return std::unique_ptr<KvFetcher>( new PointersKvFetcher( store, vec, false ) );
     } else if (req.type() == dspb::KEYS_RANGE_TYPE) {
 
-        return std::unique_ptr<KvFetcher>( new TxnRangeKvFetcher( store, req.range().start_key(), req.range().end_key()));
+        return std::unique_ptr<KvFetcher>(
+                new TxnRangeKvFetcher( store, req.range().start_key(), req.range().end_key(), ignore_value));
     } else {
-
         return nullptr;// nerver to here.
     }
-
     return nullptr;
-
 }
 
 std::unique_ptr<KvFetcher> KvFetcher::Create(
@@ -238,16 +236,16 @@ Status RangeKvFetcher::Next(KvRecord& rec) {
     return status_;
 }
 
-TxnRangeKvFetcher::TxnRangeKvFetcher(Store& s, const std::string& start, const std::string& limit) {
+TxnRangeKvFetcher::TxnRangeKvFetcher(Store& s, const std::string& start, const std::string& limit, bool ignore_value) {
     auto stort_start_key = s.GetStartKey();
     auto store_end_key = s.GetEndKey();
     if (start > limit
         || (!limit.empty() && limit < stort_start_key)
         || (!start.empty() && start > store_end_key)) {
-        status_ = Status(Status::kOutOfBound, "range error. ", 
-            "store range:[" + stort_start_key + "," + store_end_key + ") input range:[" + start + "," + limit + ")");
+        status_ = Status(Status::kOutOfBound, "range error. ",
+                         "store range:[" + stort_start_key + "," + store_end_key + ") input range:[" + start + "," + limit + ")");
     } else {
-        status_ = s.NewIterators(data_iter_, txn_iter_, start, limit);
+        status_ = s.NewIterators(data_iter_, txn_iter_, start, limit, ignore_value);
     }
 }
 

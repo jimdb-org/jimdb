@@ -322,6 +322,17 @@ Status MasstreeDBImpl::NewIterators(const std::string& start, const std::string&
     return Status::OK();
 }
 
+Status MasstreeDBImpl::NewIterators(
+        const KeyRange& range,
+        const std::vector<IteratorDescriptor>& descs,
+        std::vector<IteratorPtr>& iterators) {
+    for (const auto& desc: descs) {
+        IteratorPtr iter(new MassIterator(getTree(desc.cf), range.start, range.limit, desc.options));
+        iterators.push_back(std::move(iter));
+    }
+    return Status::OK();
+}
+
 Status MasstreeDBImpl::SplitDB(uint64_t split_range_id, const std::string& split_key,
              uint64_t raft_index, std::unique_ptr<DB>& split_db) {
     auto split_path = manager_->GetDBPath(split_range_id);

@@ -54,7 +54,8 @@ void RowResult::CopyFrom(const RowResult &other) {
 }
 
 RowResult::~RowResult() {
-    Reset();
+    std::for_each(fields_.begin(), fields_.end(),
+                  [](std::map<uint64_t, FieldValue*>::value_type& p) { delete p.second; });
 }
 
 bool RowResult::AddField(uint64_t col, std::unique_ptr<FieldValue>& field) {
@@ -128,10 +129,10 @@ std::unique_ptr<Decoder> Decoder::CreateDecoder( const basepb::KeySchema& key_sc
 }
 
 std::unique_ptr<Decoder> Decoder::CreateDecoder(const basepb::KeySchema& key_schema,
-        const dspb::TableRead & req)
+        const dspb::TableRead & req, bool require_version)
 {
     return std::unique_ptr<Decoder>(dynamic_cast<Decoder*> (
-            new RowDecoder( key_schema, req )
+            new RowDecoder( key_schema, req, require_version)
             ));
 }
 
@@ -160,7 +161,7 @@ RowDecoder::RowDecoder(const basepb::KeySchema& key_schema, const dspb::SelectRe
     }
 
     for (const auto& field: req.field_list()) {
-        if (field.has_column()) {
+       if (field.has_column()) {
             cols_.emplace(field.column().id(), field.column());
         }
     }
@@ -169,12 +170,16 @@ RowDecoder::RowDecoder(const basepb::KeySchema& key_schema, const dspb::SelectRe
     }
 }
 
-RowDecoder::RowDecoder(const basepb::KeySchema& key_schema, const dspb::TableRead& req)
-            : key_schema_(key_schema) {
-
+RowDecoder::RowDecoder(const basepb::KeySchema &key_schema, const dspb::TableRead &req, bool require_version)
+    : key_schema_(key_schema) {
+    bool has_value_col = false;
     for (const auto& col: req.columns()) {
         cols_.emplace(col.id(), col);
+        if (!has_value_col && !isKeyCol(col.id())) {
+            has_value_col = true;
+        }
     }
+    decode_value_ = require_version || has_value_col;
 }
 
 RowDecoder::RowDecoder(const basepb::KeySchema& key_schema, const dspb::DataSample& req)
@@ -183,6 +188,15 @@ RowDecoder::RowDecoder(const basepb::KeySchema& key_schema, const dspb::DataSamp
     for (const auto& col: req.columns()) {
         cols_.emplace(col.id(), col);
     }
+}
+
+bool RowDecoder::isKeyCol(int32_t id) {
+    for (const auto& col : key_schema_.key_cols()) {
+        if (col.id() == id) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void RowDecoder::addExprColumn(const dspb::Expr& expr) {
@@ -284,7 +298,6 @@ Status RowDecoder::decodeValueColumns(const std::string& buf, RowResult& result)
 }
 
 Status RowDecoder::Decode(const std::string& key, const std::string& buf, RowResult& result) {
-
     for ( auto & m : cols_) {
         read_cols_.emplace(std::make_pair(m.first, m.second));
     }
@@ -294,9 +307,11 @@ Status RowDecoder::Decode(const std::string& key, const std::string& buf, RowRes
         return s;
     }
 
-    s = decodeValueColumns(buf, result);
-    if (!s.ok()) {
-        return s;
+    if (decode_value_) {
+        s = decodeValueColumns(buf, result);
+        if (!s.ok()) {
+            return s;
+        }
     }
 
     for (auto & m : read_cols_) {

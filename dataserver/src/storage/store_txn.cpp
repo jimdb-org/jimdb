@@ -39,7 +39,8 @@ namespace storage {
 using namespace dspb;
 
 // TODO: add metrics
-static void fillTxnValue(const PrepareRequest& req, const TxnIntent& intent, uint64_t version, TxnValue* value) {
+static Status fillTxnValue(const PrepareRequest& req, const TxnIntent& intent, uint64_t version, TxnValue* value) {
+    Status s;
     value->set_txn_id(req.txn_id());
 //    value->mutable_intent()->CopyFrom(intent);
     value->mutable_intent()->set_typ(intent.typ());
@@ -48,10 +49,12 @@ static void fillTxnValue(const PrepareRequest& req, const TxnIntent& intent, uin
     pb::InternalTag tag;
     tag.set_txn_id(req.txn_id());
     std::string db_value;
-    auto s = assembleValue(db_value, intent.value(), version, &tag);
+    s = assembleValue(db_value, intent.value(), version, &tag);
     if (!s.ok())  {
-        //return s;
+        FLOG_WARN("fillTxnValue: txn_id:{}, error info: {}", req.txn_id(), s.ToString());
+        return s;
     }
+
     value->mutable_intent()->set_value(std::move(db_value));
 
     value->mutable_intent()->set_check_unique(intent.check_unique());
@@ -65,6 +68,7 @@ static void fillTxnValue(const PrepareRequest& req, const TxnIntent& intent, uin
             value->add_secondary_keys(key);
         }
     }
+    return s;
 }
 
 static void setTxnServerErr(TxnError* err, int32_t code, const std::string& msg) {
@@ -319,8 +323,11 @@ TxnErrorPtr Store::prepareIntent(const PrepareRequest& req, const TxnIntent& int
 
     // append to batch
     TxnValue txn_value;
-    fillTxnValue(req, intent, version, &txn_value);
-    auto s = writeTxnValue(txn_value, batch);
+    auto s = fillTxnValue(req, intent, version, &txn_value);
+    if (!s.ok()) {
+        return newTxnServerErr(s.code(), "serialize txn value failed. error info " + s.ToString());
+    }
+    s = writeTxnValue(txn_value, batch);
     if (!s.ok()) {
         return newTxnServerErr(s.code(), "serialize txn value failed");
     }
@@ -665,6 +672,15 @@ Status Store::TxnScan(const dspb::ScanRequest& req, dspb::ScanResponse* resp) {
     return s;
 }
 
+static bool requireVersion(const dspb::SelectFlowRequest& req) {
+    for (const auto& proc: req.processors()) {
+        if (proc.has_aggregation()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 Status Store::TxnSelectFlow(const dspb::SelectFlowRequest& req, dspb::SelectFlowResponse* resp)
 {
     Status s;
@@ -684,7 +700,8 @@ Status Store::TxnSelectFlow(const dspb::SelectFlowRequest& req, dspb::SelectFlow
     auto processors = req.processors();
     switch (processors[0].type()) {
     case dspb::TABLE_READ_TYPE:
-        ptr = std::unique_ptr<Processor>(new storage::TableRead( processors[0].table_read(), range_default, *this , gather_trace));
+        ptr = std::unique_ptr<Processor>(new storage::TableRead( processors[0].table_read(), range_default,
+                *this , gather_trace, requireVersion(req)));
         col_num = processors[0].table_read().columns_size();
         break;
     case dspb::INDEX_READ_TYPE:

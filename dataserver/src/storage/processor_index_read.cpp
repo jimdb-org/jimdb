@@ -56,7 +56,7 @@ Status IndexRead::next( RowResult & row)
     }
     Status s = row_fetcher_->Next( row, over_);
 
-    if (over_) {
+    if (over_ && s.ok()) {
         s = Status( Status::kNoMoreData, " last key: ", EncodeToHexString(get_last_key()) );
     }
 

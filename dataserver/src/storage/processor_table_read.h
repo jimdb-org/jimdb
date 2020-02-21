@@ -32,7 +32,8 @@ namespace storage {
 class TableRead : public Processor {
 
 public:
-    TableRead( const dspb::TableRead & table_read, const dspb::KeyRange & range_default, Store & s , bool gather_trace);
+    TableRead( const dspb::TableRead & table_read, const dspb::KeyRange & range_default,
+            Store & s , bool gather_trace, bool require_version = true);
     ~TableRead();
 
     TableRead() = delete;
@@ -50,6 +51,7 @@ public:
 private:
     std::string str_last_key_;
     bool over_;
+    std::chrono::system_clock::time_point begin_time_;
 
     basepb::KeySchema key_schema_;
     std::unique_ptr<RowFetcher> row_fetcher_;

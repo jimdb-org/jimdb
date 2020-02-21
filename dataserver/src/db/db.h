@@ -63,6 +63,36 @@ public:
 };
 
 using IteratorPtr= std::unique_ptr<Iterator>;
+
+struct IteratorOptions {
+    bool ignore_key = false;
+    bool ignore_value = false;
+};
+
+struct IteratorDescriptor{
+    CFType cf = CFType::kTxn;
+    IteratorOptions options;
+
+    explicit IteratorDescriptor(CFType cf_arg,
+            bool ignore_key = false, bool ignore_value = false)
+        : cf(cf_arg) {
+        options.ignore_key = ignore_key;
+        options.ignore_value = ignore_value;
+    }
+};
+
+struct KeyRange {
+    std::string start;
+    std::string limit;
+
+    KeyRange() = default;
+
+    KeyRange(std::string start_arg, std::string limit_arg) :
+        start(std::move(start_arg)),
+        limit(std::move(limit_arg)) {
+    }
+};
+
 using WriteBatchPtr= std::unique_ptr<WriteBatch>;
 
 class DB {
@@ -94,6 +124,11 @@ public:
     virtual IteratorPtr NewIterator(const std::string& start, const std::string& limit) = 0;
     virtual Status NewIterators(const std::string& start, const std::string& limit,
             IteratorPtr& data_iter, IteratorPtr& txn_iter) = 0;
+
+    virtual Status NewIterators(
+            const KeyRange& range,
+            const std::vector<IteratorDescriptor>& descs,
+            std::vector<IteratorPtr>& iterators) = 0;
 
     virtual Status SplitDB(uint64_t split_range_id, const std::string& split_key,
             uint64_t raft_index, std::unique_ptr<DB>& split_db) = 0;

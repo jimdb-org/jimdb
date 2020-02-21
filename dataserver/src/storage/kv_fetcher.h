@@ -69,7 +69,8 @@ public:
             Store& store,
             const dspb::TableRead& req,
             const std::string & start_key,
-            const std::string & end_key
+            const std::string & end_key,
+            bool ignore_value = false
     );
     static std::unique_ptr<KvFetcher> Create(
             Store& store,
@@ -127,7 +128,7 @@ private:
 
 class TxnRangeKvFetcher : public KvFetcher {
 public:
-    TxnRangeKvFetcher(Store& s, const std::string& start, const std::string& limit);
+    TxnRangeKvFetcher(Store& s, const std::string& start, const std::string& limit, bool ignore_value = false);
 
     Status Next(KvRecord& rec) override;
 
