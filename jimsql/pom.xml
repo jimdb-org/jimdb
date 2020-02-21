@@ -51,7 +51,7 @@
         <jmh.version>1.21</jmh.version>
 
 
-        <checkstyle.version>8.19</checkstyle.version>
+        <checkstyle.version>8.29</checkstyle.version>
         <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
         <hydromatic-toolbox.version>0.3</hydromatic-toolbox.version>
         <jsr305.version>3.0.2</jsr305.version>
