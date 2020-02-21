@@ -71,6 +71,7 @@ public final class DateValue extends Value<DateValue> {
   private int fsp;
   private final Timestamp value;
   private DataType dateType;
+  private String valueString;
 
   private DateValue(Timestamp timeValue, DataType dateType, int fsp) {
     this.value = timeValue;
@@ -99,6 +100,7 @@ public final class DateValue extends Value<DateValue> {
       }
     }
     this.dateType = dateType;
+    this.valueString = valueS;
   }
 
   public static DateValue convertToDateValue(long number, DataType dateType, int fsp) {
@@ -469,7 +471,7 @@ public final class DateValue extends Value<DateValue> {
     dateCal.clear();
     dateCal.set(year, month - 1, day, hour, minute, second);
     Timestamp ts = new Timestamp(dateCal.getTimeInMillis());
-    ts.setNanos(micros / 1000);
+    ts.setNanos(micros * 1000);
     if (zone != null) {
       return TimeUtil.changeTimeZone(ts, zone, TimeUtil.UTC_ZONE);
     }
@@ -608,6 +610,17 @@ public final class DateValue extends Value<DateValue> {
 
   public long formatToLong() {
     return Long.parseLong(new SimpleDateFormat("yyyyMMddHHmmss").format(this.value.getTime()));
+  }
+
+  public String formatToString() {
+    if (valueString != null) {
+      return valueString;
+    }
+    if (this.dateType == DataType.Date) {
+      return new SimpleDateFormat(DATE_FORMAT).format(this.value.getTime());
+    } else {
+      return new SimpleDateFormat(DATETIME_FORMAT).format(this.value.getTime());
+    }
   }
 
   @Override

@@ -77,7 +77,7 @@ public final class TimeValue extends Value<TimeValue> {
     }
 
     boolean negative = false;
-    if (signIndex != -1) {
+    if (signIndex == 0) {
       negative = true;
       valueS = valueS.substring(1);
     }
@@ -128,6 +128,7 @@ public final class TimeValue extends Value<TimeValue> {
         fsp = Integer.parseInt(valueS.substring(9));
         break;
       default:
+        // todo mysql treat '2019-01-02' like '00:20:19'
         throw new IllegalArgumentException(String.format("time %s: no valid ", valueS));
     }
     return new TimeValue(hour, minute, second, micros, fsp, negative);

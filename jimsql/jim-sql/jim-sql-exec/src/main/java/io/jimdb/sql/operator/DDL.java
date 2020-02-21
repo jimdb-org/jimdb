@@ -73,7 +73,7 @@ public final class DDL extends Operator {
         result = DDLExecutor.dropCatalog((CatalogInfo) stmt)
                 .onErrorReturn(err -> {
                   if (err instanceof JimException) {
-                    return isNotExists && ((JimException) err).getCode() == ErrorCode.ER_BAD_DB_ERROR;
+                    return isNotExists && ((JimException) err).getCode() == ErrorCode.ER_DB_DROP_EXISTS;
                   }
                   return false;
                 }, Boolean.TRUE);
@@ -95,7 +95,8 @@ public final class DDL extends Operator {
           Flux.just(dropTables.toArray(new AlterTableInfo[0]))
                   .flatMap(table -> DDLExecutor.alterTable(table)
                           .onErrorReturn(err -> {
-                            if (err instanceof JimException && ((JimException) err).getCode() == ErrorCode.ER_BAD_TABLE_ERROR) {
+                            if (err instanceof JimException && (((JimException) err).getCode() == ErrorCode.ER_BAD_DB_ERROR
+                                    || ((JimException) err).getCode() == ErrorCode.ER_BAD_TABLE_ERROR)) {
                               notExists.add(table.getTableName());
                               return true;
                             }

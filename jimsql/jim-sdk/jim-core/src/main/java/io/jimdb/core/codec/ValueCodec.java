@@ -226,7 +226,7 @@ public final class ValueCodec {
       buff.writeByte(DOUBLE_ZERO);
       return;
     }
-    if ((intValue & (1 << 63)) != 0) {
+    if ((intValue & 0x8000000000000000L) != 0) {
       intValue = ~intValue;
       buff.writeByte(DOUBLE_NEG);
     } else {

@@ -87,7 +87,7 @@ public final class ValueConvertor {
       throw ex;
     } catch (Exception ex) {
       throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_CONVERT_ERROR, ex, value.getType().name(),
-              type.name());
+              type.name(), value.getString());
     }
   }
 

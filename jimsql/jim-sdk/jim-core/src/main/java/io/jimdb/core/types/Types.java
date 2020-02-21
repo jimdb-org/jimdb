@@ -213,8 +213,9 @@ public final class Types {
     TYPE_DEFAULT_PRECISION_MAP.put(DataType.Date, new long[]{ 10, 0 });
     TYPE_DEFAULT_PRECISION_MAP.put(DataType.DateTime, new long[]{ 19, 0 });
     TYPE_DEFAULT_PRECISION_MAP.put(DataType.TimeStamp, new long[]{ 19, 0 });
-    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Char, new long[]{ 1, 0 });
-    TYPE_DEFAULT_PRECISION_MAP.put(DataType.NChar, new long[]{ 1, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Char, new long[]{ 0, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.NChar, new long[]{ 0, 0 });
+    TYPE_DEFAULT_PRECISION_MAP.put(DataType.Varchar, new long[]{ 0, 0 });
     TYPE_DEFAULT_PRECISION_MAP.put(DataType.Binary, new long[]{ 1, 0 });
     TYPE_DEFAULT_PRECISION_MAP.put(DataType.TinyBlob, new long[]{ 255, 0 });
     TYPE_DEFAULT_PRECISION_MAP.put(DataType.Blob, new long[]{ 65535, 0 });
@@ -766,8 +767,8 @@ public final class Types {
 
   public static double maxDouble(int precision, int scale) {
     int intLen = precision - scale;
-    double v = Math.pow(intLen, 10);
-    v -= Math.pow(-scale, 10);
+    double v = Math.pow(10, intLen);
+    v -= Math.pow(10, -scale);
     return v;
   }
 

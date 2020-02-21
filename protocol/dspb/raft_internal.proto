@@ -55,6 +55,7 @@ enum CmdType {
     KvDelete      = 22;
     KvScan        = 23;
     KvDelRange    = 24;
+    KvRedis       = 25;
 
     IdxStatsGet   = 30;
     ColsStatsGet  = 31;

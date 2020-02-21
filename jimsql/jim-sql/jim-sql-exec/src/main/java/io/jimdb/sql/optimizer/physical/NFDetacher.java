@@ -456,6 +456,7 @@ public class NFDetacher {
         ranges.addAll(indexRanges);
         accessConditions.add(expression);
       } else {
+        remainingConditions = Collections.singletonList(condition);
         return new DetacherResult(Collections.singletonList(RangeBuilder.fullRange()), Collections.emptyList(), remainingConditions, true);
       }
     }

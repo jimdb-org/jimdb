@@ -20,6 +20,10 @@ import io.jimdb.core.Session;
 import io.jimdb.common.exception.JimException;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
+import io.jimdb.core.values.DateValue;
+import io.jimdb.core.values.TimeValue;
+import io.jimdb.core.values.Value;
+import io.jimdb.core.values.ValueConvertor;
 import io.jimdb.pb.Exprpb;
 import io.jimdb.pb.Metapb.SQLType;
 import io.jimdb.core.values.LongValue;
@@ -49,6 +53,26 @@ final class CastDateFunc extends Func {
   @Override
   public StringValue execString(ValueAccessor accessor) throws JimException {
     return args[0].execString(session, accessor);
+  }
+
+  @Override
+  public DateValue execDate(ValueAccessor accessor) throws JimException {
+    final Expression arg = args[0];
+    final Value value = arg.execDate(session, accessor);
+    if (value == null) {
+      return null;
+    }
+    return ValueConvertor.convertToDate(session, value, resultType);
+  }
+
+  @Override
+  public TimeValue execTime(ValueAccessor accessor) throws JimException {
+    final Expression arg = args[0];
+    final Value value = arg.execTime(session, accessor);
+    if (value == null) {
+      return null;
+    }
+    return ValueConvertor.convertToTime(session, value, resultType);
   }
 
   @Override

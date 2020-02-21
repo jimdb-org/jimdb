@@ -40,6 +40,7 @@ message RangeRequest {
         // statistics api
         IndexStatsRequest index_stats = 30;
         ColumnsStatsRequest columns_stats = 31;
+
     }
 }
 
@@ -72,5 +73,6 @@ message RangeResponse {
         // statistics api
         IndexStatsResponse idx_stats = 30;
         ColumnsStatsResponse cols_stats = 31;
+    
     }
 }

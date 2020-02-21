@@ -29,6 +29,9 @@ import io.jimdb.core.expression.FuncExpr;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.expression.aggregate.AggregateExpr;
 import io.jimdb.core.model.meta.Column;
+import io.jimdb.core.types.ValueType;
+import io.jimdb.core.values.DateValue;
+import io.jimdb.core.values.Value;
 import io.jimdb.pb.Exprpb;
 import io.jimdb.pb.Processorpb;
 import io.jimdb.sql.operator.Aggregation;
@@ -41,8 +44,6 @@ import io.jimdb.sql.operator.Selection;
 import io.jimdb.sql.operator.TableSource;
 import io.jimdb.sql.operator.TopN;
 import io.jimdb.sql.optimizer.OperatorVisitor;
-import io.jimdb.core.types.ValueType;
-import io.jimdb.core.values.Value;
 
 import com.google.protobuf.ByteString;
 
@@ -179,9 +180,9 @@ public class PushDownBuilder {
 
     @Override
     public Processorpb.Processor.Builder visitOperator(TableSource tableSource) {
-      if (tableSource.getColumns() == null || tableSource.getColumns().length == 0) {
-        return null;
-      }
+//      if (tableSource.getColumns() == null || tableSource.getColumns().length == 0) {
+//        return null;
+//      }
       Processorpb.TableRead tableRead = Processorpb.TableRead.newBuilder()
               .addAllColumns(getAllColumns(tableSource.getColumns()))
               .setType(Processorpb.KeyType.KEYS_RANGE_TYPE)
@@ -232,8 +233,38 @@ public class PushDownBuilder {
 
     private Exprpb.Expr constToPBExpr(Expression expression) {
       Value value = expression.exec(ValueAccessor.EMPTY);
-      ByteString v = ByteString.copyFromUtf8(value.getString());
-      Exprpb.ExprType type = getExprType(value.getType());
+      Exprpb.ExprType type;
+      ByteString v = null;
+
+      switch (value.getType()) {
+        case UNSIGNEDLONG:
+          type = Exprpb.ExprType.Const_UInt;
+          break;
+        case STRING:
+        case BINARY:
+          type = Exprpb.ExprType.Const_Bytes;
+          break;
+        case DOUBLE:
+          type = Exprpb.ExprType.Const_Double;
+          break;
+        case DECIMAL:
+          type = Exprpb.ExprType.Const_Decimal;
+          break;
+        case TIME:
+          type = Exprpb.ExprType.Const_Time;
+          break;
+        case DATE:
+          type = Exprpb.ExprType.Const_Date;
+          v = ByteString.copyFromUtf8(((DateValue) value).formatToString());
+          break;
+        default:
+          type = Exprpb.ExprType.Const_Int;
+      }
+
+      if (v == null) {
+        v = ByteString.copyFromUtf8(value.getString());
+      }
+
       return Exprpb.Expr.newBuilder()
               .setExprType(type)
               .setValue(v)

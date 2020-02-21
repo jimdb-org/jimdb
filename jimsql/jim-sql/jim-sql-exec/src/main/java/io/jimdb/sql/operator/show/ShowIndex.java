@@ -64,7 +64,6 @@ public final class ShowIndex extends RelOperator {
       throw DBException.get(ErrorModule.EXECUTOR, ErrorCode.ER_NO_SUCH_TABLE, database, table);
     }
 
-    String colIfNull = "YES";
     String indexComment;
     Table tableInfo = session.getTxnContext().getMetaData().getTable(database, table);
     List<ValueAccessor> rows = new ArrayList<>();
@@ -72,6 +71,7 @@ public final class ShowIndex extends RelOperator {
       Index[] indices = tableInfo.getReadableIndices();
       for (Index index : indices) {
         int nonUnique = 1;
+        String colIfNull = "YES";
         indexComment = index.getIndexComment();
         if (index.isPrimary()) {
           nonUnique = 0;

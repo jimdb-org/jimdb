@@ -71,9 +71,11 @@ public class HashAggExecutor extends AggExecutor {
   public Flux<ExecResult> execute(Session session, ExecResult execResult) {
 
     if (execResult.size() == 0) {
-      ValueAccessor row = initEmptyRow(finalAggFuncs);
+//      ValueAccessor row = initEmptyRow(finalAggFuncs);
+//      return Flux.just(new QueryExecResult(schema.getColumns().toArray(new ColumnExpr[schema.getColumns().size()]),
+//              new ValueAccessor[] {row}));
       return Flux.just(new QueryExecResult(schema.getColumns().toArray(new ColumnExpr[schema.getColumns().size()]),
-              new ValueAccessor[] {row}));
+              new ValueAccessor[] {}));
     }
 
     if (isSingleRun(execResult.size())) {

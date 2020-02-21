@@ -23,6 +23,7 @@ import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
+import io.jimdb.common.utils.lang.StringUtil;
 import io.jimdb.core.Session;
 import io.jimdb.core.context.StatementContext;
 import io.jimdb.core.expression.Assignment;
@@ -45,6 +46,7 @@ import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLName;
 import com.alibaba.druid.sql.ast.SQLObject;
 import com.alibaba.druid.sql.ast.expr.SQLBinaryOpExpr;
+import com.alibaba.druid.sql.ast.expr.SQLDefaultExpr;
 import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
 import com.alibaba.druid.sql.ast.statement.SQLInsertStatement;
@@ -71,6 +73,9 @@ public final class InsertAnalyzer {
         tblName = ((SQLPropertyExpr) tableSource).getSimpleName();
         dbName = ((SQLPropertyExpr) tableSource).getOwnernName();
       }
+    }
+    if (StringUtil.isBlank(dbName)) {
+      throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NO_DB_ERROR);
     }
     if (tblName == null) {
       throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NO_SUCH_TABLE, dbName, "");
@@ -158,7 +163,12 @@ public final class InsertAnalyzer {
       Expression[] colExprs = new Expression[insertColumns.length];
       for (int j = 0, k = 0; j < insertColumns.length; j++) {
         final Column insertColumn = insertColumns[j];
-        Tuple2<Optional<Expression>, RelOperator> rewriteValue = analyzer.analyzeExpression(mockTable, colValues.get(k++),
+        SQLExpr sqlExpr = colValues.get(k++);
+        if (sqlExpr.getClass() == SQLDefaultExpr.class) {
+          colExprs[j] = new ValueExpr(insertColumn.getDefaultValue(), insertColumn.getType());
+          continue;
+        }
+        Tuple2<Optional<Expression>, RelOperator> rewriteValue = analyzer.analyzeExpression(mockTable, sqlExpr,
                 null, true, sqlObj -> checkRefColumn(insertop, sqlObj));
         colExprs[j] = rewriteValue.getT1().orElseGet(() -> new ValueExpr(NullValue.getInstance(), insertColumn.getType()));
       }
