@@ -52,7 +52,7 @@ public:
         return processor_->get_col_ids();
     }
 private:
-    void FetchRow(const dspb::Aggregation &agg);
+    Status FetchRow(const dspb::Aggregation &agg);
 
     virtual void get_stats(std::vector<ProcessorStat> &stats) override;
 
@@ -63,6 +63,9 @@ private:
     res_map unordered_map_res;
     res_map::const_iterator unordered_map_it_;
     std::vector<RowColumnInfo> agg_group_by_columns_;
+    std::vector<std::unique_ptr<AggreCalculator>> plain_calculators_; // no group by
+    const dspb::Aggregation &agg_;
+    bool has_fetch_row_ = false;
 };
 
 } /* namespace storage */

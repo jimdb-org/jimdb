@@ -22,6 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -305,7 +306,7 @@ public abstract class SqlTestBase {
       }
       long start = System.currentTimeMillis();
       resultSet = stmt.executeQuery(sql);
-      System.out.println("sql elapse: " + (System.currentTimeMillis() - start) + "ms");
+      System.out.println(sql + ", sql elapse: " + (System.currentTimeMillis() - start) + "ms");
       if (expect != null) {
         expect.accept(resultSet);
       }
@@ -452,6 +453,8 @@ public abstract class SqlTestBase {
           stmt.setDate(i + 1, (Date) args[i]);
         } else if (args[i].getClass() == Timestamp.class) {
           stmt.setTimestamp(i + 1, (Timestamp) args[i]);
+        } else if (args[i].getClass() == Time.class) {
+          stmt.setTime(i + 1, (Time) args[i]);
         }
 //        else if (args[i].getClass() == null) {
 //          stmt.setNull(i, null);

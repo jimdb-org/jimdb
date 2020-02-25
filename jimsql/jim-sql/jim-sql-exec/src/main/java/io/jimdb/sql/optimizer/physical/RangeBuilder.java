@@ -25,13 +25,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import io.jimdb.core.Session;
-import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.Point;
 import io.jimdb.core.expression.Points;
 import io.jimdb.core.expression.ValueRange;
 import io.jimdb.core.expression.functions.FuncType;
-import io.jimdb.pb.Metapb;
 import io.jimdb.core.types.Types;
 import io.jimdb.core.types.ValueType;
 import io.jimdb.core.values.BinaryValue;
@@ -40,6 +38,7 @@ import io.jimdb.core.values.StringValue;
 import io.jimdb.core.values.UnsignedLongValue;
 import io.jimdb.core.values.Value;
 import io.jimdb.core.values.ValueConvertor;
+import io.jimdb.pb.Metapb;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.UnpooledByteBufAllocator;
@@ -331,7 +330,7 @@ public class RangeBuilder {
   // TODO add 'in' function support
   // Build ranges for index where the given expressions are in the form of CNF
   static List<ValueRange> buildCNFIndexRanges(Session session, List<Expression> accessConditions,
-                                              List<ColumnExpr> columnExprList, int[] prefixLengths, int equalCount, List<Metapb.SQLType> returnTypes) {
+                                              int[] prefixLengths, int equalCount, List<Metapb.SQLType> returnTypes) {
 
     final List<Metapb.SQLType> typeList = accessConditions.stream().map(Expression::getResultType).collect(Collectors.toList());
     // FIXME is this correct?
@@ -347,7 +346,7 @@ public class RangeBuilder {
       }
 
       // build ranges for equal or in access conditions
-      List<Point> points =  expression.convertToPoints(session);
+      List<Point> points = expression.convertToPoints(session);
       if (i == 0) {
         ranges = convertPointsToIndexRanges(session, points, returnTypes.get(0));
       } else {

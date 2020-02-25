@@ -294,6 +294,17 @@ Status RocksDBImpl::NewIterators(const std::string& start, const std::string& li
     return Status::OK();
 }
 
+Status RocksDBImpl::NewIterators(const KeyRange& range,
+        const std::vector<IteratorDescriptor>& descs,
+        std::vector<IteratorPtr>& iterators) {
+    std::vector<rocksdb::ColumnFamilyHandle*> cfs;
+    cfs.reserve(descs.size());
+    for (const auto& desc: descs) {
+        cfs.push_back(getColumnFamily(desc.cf));
+    }
+    return RocksIterator::Create(db_, cfs, range.start, range.limit, read_options_, iterators);
+}
+
 Status RocksDBImpl::SplitDB(uint64_t split_range_id, const std::string& split_key,
              uint64_t raft_index, std::unique_ptr<DB>& split_db) {
     auto s = manager_->CreatSplit(split_range_id, split_key, end_key_, split_db);

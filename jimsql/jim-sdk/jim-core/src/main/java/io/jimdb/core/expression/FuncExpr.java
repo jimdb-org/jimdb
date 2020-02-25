@@ -18,6 +18,7 @@ package io.jimdb.core.expression;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.jimdb.common.exception.JimException;
 import io.jimdb.core.Session;
 import io.jimdb.core.expression.functions.Func;
 import io.jimdb.core.expression.functions.FuncType;
@@ -34,7 +35,6 @@ import io.jimdb.core.values.TimeValue;
 import io.jimdb.core.values.UnsignedLongValue;
 import io.jimdb.core.values.Value;
 import io.jimdb.core.values.YearValue;
-import io.jimdb.common.exception.JimException;
 import io.jimdb.pb.Metapb.SQLType;
 
 import com.google.common.base.Preconditions;
@@ -321,6 +321,8 @@ public final class FuncExpr extends Expression {
         return this.execTime(getSession(), accessor);
       case YEAR:
         return this.execYear(getSession(), accessor);
+      case BINARY:
+        return this.execString(getSession(), accessor);
       default:
         return this.execJson(getSession(), accessor);
     }

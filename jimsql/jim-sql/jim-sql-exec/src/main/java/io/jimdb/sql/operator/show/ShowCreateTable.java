@@ -193,7 +193,7 @@ public class ShowCreateTable extends RelOperator {
     } else if (table.getEngine() == StoreType.Store_Mix) {
       engine = "MIX";
     }
-    builder.append(String.format(",%s", line)).append(String.format(") ENGINE=%s", engine));
+    builder.append(String.format("%s", line)).append(String.format(") ENGINE=%s", engine));
 
     if (existsAutoIncId) {
       long nextAutoIncId = 0;
@@ -202,7 +202,7 @@ public class ShowCreateTable extends RelOperator {
       }
     }
     if (StringUtils.isNotBlank(table.getComment())) {
-      builder.append(String.format(" COMMENT='%s'", table.getComment()));
+      builder.append(String.format(" COMMENT=%s", table.getComment()));
     }
     // PARTITION BY
 

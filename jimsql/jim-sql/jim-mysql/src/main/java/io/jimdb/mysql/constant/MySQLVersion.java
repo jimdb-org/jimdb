@@ -33,7 +33,7 @@ public final class MySQLVersion {
   /**
    * MySQL source /include/mysql_version.h
    */
-  public static final String MYSQL_SERVER_VERSION = "5.6.0";
+  public static final String MYSQL_SERVER_VERSION_5_6_0 = "5.6.0";
 
   public static final int CHARSET = 0x21;
 }

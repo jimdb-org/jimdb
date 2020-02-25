@@ -53,7 +53,7 @@ public:
     virtual void get_stats(std::vector<ProcessorStat> &stats) override;
 private:
     Status OrderingCheck();
-    void FetchOrderByRows();
+    Status FetchOrderByRows();
     
 private:
     const u_int64_t max_count_ = 1024;
@@ -66,6 +66,8 @@ private:
     std::multiset<RowResult>::const_iterator set_result_it_;
     std::vector<RowColumnInfo> col_order_by_infos_;
     std::string last_key_;
+
+    bool has_fetch_row_ = false;
 };
 
 } /* namespace storage */

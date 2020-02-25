@@ -2169,7 +2169,7 @@ Status assembleValue(std::string& db_value, const std::string& user_value,
     // append version
     *((uint64_t *)p) = htobe64(version);;
 
-    return Status(Status::OK());
+    return Status::OK();
 }
 
 Status disassembleValue(const std::string& db_value, size_t& user_value_size,

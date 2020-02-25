@@ -267,6 +267,7 @@ public final class MySQLEngine implements SQLEngine {
           }
           break;
         case MYSQL_COM_STMT_SEND_LONG_DATA:
+          session.resetSeqID();
           handleStmtSendLongData(session, in);
           return;
         default:

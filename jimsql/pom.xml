@@ -62,6 +62,7 @@
         <module>jim-rpc</module>
         <module>jim-sdk</module>
         <module>jim-sql</module>
+        <module>jim-unittest</module>
         <module>jim-test</module>
     </modules>
 

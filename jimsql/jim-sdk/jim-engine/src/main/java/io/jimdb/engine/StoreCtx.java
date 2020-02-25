@@ -16,6 +16,7 @@
 package io.jimdb.engine;
 
 import java.time.Instant;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -41,6 +42,8 @@ public class StoreCtx {
   private Table table;
   private RoutePolicy routePolicy;
   private final Instant timeout;
+
+  private TimeZone timeZone = TimeZone.getDefault();
 
   private final RouterManager rpcManager;
   private final DistSender sender;
@@ -118,5 +121,9 @@ public class StoreCtx {
 
   public long getCxtId() {
     return cxtId;
+  }
+
+  public TimeZone getTimeZone() {
+    return timeZone;
   }
 }

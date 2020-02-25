@@ -49,10 +49,6 @@ public final class ComparatorFacade {
   private ComparatorFacade() {
   }
 
-  public static ExprComparator getComparator(Expression expr1, Expression expr2) {
-    return getComparator(getCompareType(expr1, expr2));
-  }
-
   public static ExprComparator getComparator(ValueType vt) {
     final ExprComparator result = COMPARATOR_MAP.get(vt);
     if (result == null) {

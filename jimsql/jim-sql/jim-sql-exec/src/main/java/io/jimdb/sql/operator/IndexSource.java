@@ -76,9 +76,7 @@ public class IndexSource extends RelOperator {
     if (pushDownIndexPlan == null) {
       pushDownIndexPlan = this;
     }
-    if (processors == null) {
-      processors = createProcessors();
-    }
+    processors = createProcessors();
   }
 
   private List<Processorpb.Processor.Builder> createProcessors() {

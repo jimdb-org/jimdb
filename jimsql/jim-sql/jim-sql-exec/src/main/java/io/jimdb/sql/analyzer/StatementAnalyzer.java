@@ -244,6 +244,9 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
     if (StringUtils.isBlank(catalog)) {
       catalog = session.getVarContext().getDefaultCatalog();
     }
+    if (StringUtils.isBlank(catalog)) {
+      throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NO_DB_ERROR);
+    }
     String tblName = sqlTableSource.getName().getSimpleName();
     Table table = session.getTxnContext().getMetaData().getTable(catalog, tblName);
     session.getStmtContext().addPrivilegeInfo(catalog, tblName, PrivilegeType.SELECT_PRIV);

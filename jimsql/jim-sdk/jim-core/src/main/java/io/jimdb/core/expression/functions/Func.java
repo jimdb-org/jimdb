@@ -21,6 +21,7 @@ import io.jimdb.common.exception.ErrorModule;
 import io.jimdb.common.exception.JimException;
 import io.jimdb.core.Session;
 import io.jimdb.core.expression.Expression;
+import io.jimdb.core.expression.ExpressionType;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.expression.functions.builtin.cast.CastFuncBuilder;
 import io.jimdb.core.types.Types;
@@ -58,7 +59,7 @@ public abstract class Func implements Cloneable {
 
   protected Func(Session session, Expression[] args, ValueType retTp, ValueType... expectArgs) {
     Preconditions.checkArgument(args.length == expectArgs.length, "the length of args and expectArgs is not equal");
-
+    DataType dataType = this.extractDataTypeByDate(args);
     for (int i = 0; i < args.length; i++) {
       switch (expectArgs[i]) {
         case LONG:
@@ -81,7 +82,7 @@ public abstract class Func implements Cloneable {
           args[i] = wrapCastToString(session, args[i], true);
           break;
         case DATE:
-          args[i] = wrapCastToDate(session, args[i]);
+          args[i] = wrapCastToDate(session, args[i], dataType);
           break;
         case TIME:
           args[i] = wrapCastToTime(session, args[i]);
@@ -320,14 +321,14 @@ public abstract class Func implements Cloneable {
     return CastFuncBuilder.build(session, builder.build(), arg);
   }
 
-  protected final Expression wrapCastToDate(Session session, Expression arg) {
-    ValueType vt = Types.sqlToValueType(arg.getResultType());
-    if (vt == ValueType.DATE) {
+  protected final Expression wrapCastToDate(Session session, Expression arg, DataType dataType) {
+
+    if (arg.getResultType().getType() == dataType) {
       return arg;
     }
 
     SQLType.Builder builder = SQLType.newBuilder();
-    builder.setType(DataType.Date)
+    builder.setType(dataType)
             .setPrecision(Types.MAX_DATETIME_FSP_WIDTH)
             .setScale(6)
             .setCharset(Types.DEFAULT_CHARSET.name())
@@ -347,5 +348,14 @@ public abstract class Func implements Cloneable {
             .setCharset(Types.DEFAULT_CHARSET.name())
             .setCollate(Types.DEFAULT_COLLATE);
     return CastFuncBuilder.build(session, builder.build(), arg);
+  }
+
+  private DataType extractDataTypeByDate(Expression[] args) {
+    for (Expression arg : args) {
+      if (arg.getExprType() == ExpressionType.COLUMN) {
+        return arg.getResultType().getType();
+      }
+    }
+    return null;
   }
 }

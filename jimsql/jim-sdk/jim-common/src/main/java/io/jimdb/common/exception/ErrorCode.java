@@ -1461,7 +1461,7 @@ public enum ErrorCode {
   ER_SYSTEM_PARSE_ERROR(5009, "SYSTEM_PARSE_ERROR", "sql parse error: %s"),
   ER_SYSTEM_COLLATION_INVALID(5010, "SYSTEM_COLLATION_INVALID", "invalid collation name '%s'"),
   ER_SYSTEM_VALUE_TYPE_INVALID(5011, "SYSTEM_VALUE_TYPE_INVALID", "invalid value type"),
-  ER_SYSTEM_VALUE_CONVERT_ERROR(5012, "SYSTEM_VALUE_CONVERT_ERROR", "value type '%s' cant convert to '%s'"),
+  ER_SYSTEM_VALUE_CONVERT_ERROR(5012, "SYSTEM_VALUE_CONVERT_ERROR", "value type '%s' cant convert to '%s', value is '%s'"),
   ER_SYSTEM_VALUE_OPERATION_ERROR(5013, "SYSTEM_VALUE_OPERATION_ERROR", "value types(%s) unsupported operation '%s'"),
   ER_SYSTEM_VALUE_TOO_LONG(5014, "SYSTEM_VALUE_TOO_LONG", "value too long, field length %s, value length %s"),
   ER_SYSTEM_VALUE_OVER_FLOW(5015, "SYSTEM_VALUE_OVER_FLOW", "%s value is out of range in '%s'"),

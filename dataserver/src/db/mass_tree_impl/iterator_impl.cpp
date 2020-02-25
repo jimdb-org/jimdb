@@ -20,8 +20,9 @@ namespace jim {
 namespace ds {
 namespace db {
 
-MassIterator::MassIterator(MasstreeWrapper* tree, const std::string& vbegin,
-        const std::string& vend, size_t max_per_scan) :
+MassIterator::MassIterator(MasstreeWrapper* tree, const std::string& vbegin, const std::string& vend,
+    const IteratorOptions& ops, size_t max_per_scan) :
+    ops_(ops),
     batch_max_size_(max_per_scan),
     end_key_(vend),
     tree_(tree),
@@ -31,21 +32,21 @@ MassIterator::MassIterator(MasstreeWrapper* tree, const std::string& vbegin,
 }
 
 bool MassIterator::visit_value(Masstree::Str key, std::string* value, threadinfo &) {
-    auto k = std::string(key.data(), key.length());
-
-    if (!end_key_.empty() && k >= end_key_) {
+    if (!end_key_.empty() && key.compare(end_key_.data(), end_key_.size()) >= 0) {
         return false;
     }
 
     if (scan_buffer_.size() < batch_size_) {
         scan_buffer_.push_back({});
-        scan_buffer_.back().first = std::move(k);
-        if (value != nullptr) {
+        if (!ops_.ignore_key) {
+            scan_buffer_.back().first.assign(key.data(), key.length());
+        }
+        if (value != nullptr && !ops_.ignore_value) {
             scan_buffer_.back().second = *value;
         }
         return true;
     } else {
-        next_scan_key_ = std::move(k);
+        next_scan_key_ .assign(key.data(), key.length());
         scannable_ = end_key_.empty() ? true : next_scan_key_ < end_key_;
         return false;
     }

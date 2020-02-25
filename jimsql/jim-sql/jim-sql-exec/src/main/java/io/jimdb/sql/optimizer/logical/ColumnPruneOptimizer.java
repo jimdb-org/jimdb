@@ -37,6 +37,7 @@ import io.jimdb.sql.operator.RelOperator;
 import io.jimdb.sql.operator.Selection;
 import io.jimdb.sql.operator.TableSource;
 import io.jimdb.sql.optimizer.OptimizationUtil;
+import io.jimdb.sql.optimizer.ParameterizedOperatorVisitor;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -44,36 +45,29 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Column pruning optimizer removes the unused table columns during query,
  * which reduces the IO cost of reading unneeded data from the data source.
  */
-@SuppressFBWarnings("CFS_CONFUSING_FUNCTION_SEMANTICS")
+@SuppressFBWarnings({"CFS_CONFUSING_FUNCTION_SEMANTICS"})
 public class ColumnPruneOptimizer implements IRuleOptimizer {
+  public static final ColumnPruningVisitor COLUMN_PRUNING_VISITOR = new ColumnPruningVisitor();
 
   @Override
   public RelOperator optimize(RelOperator relOperator, Session session) {
-
-    // initial column list is from schema
-    List<ColumnExpr> columnExprs = new ArrayList<>(relOperator.getSchema().getColumns());
-    return relOperator.acceptVisitor(new ColumnPruningVisitor(columnExprs, session));
+    return relOperator.acceptVisitor(session, COLUMN_PRUNING_VISITOR,
+            new ColumnPruningVisitorParameter(relOperator.getSchema().getColumns()));
   }
 
   /**
    * Implementation class for column pruning visitor.
    */
   @SuppressFBWarnings({ "FCBL_FIELD_COULD_BE_LOCAL", "LII_LIST_INDEXED_ITERATING", "URF_UNREAD_FIELD" })
-  private static class ColumnPruningVisitor extends LogicalOptimizationVisitor {
-
-    //TODO add newList
-    private List<ColumnExpr> parentColumns;
-    private Session session;
-
-    ColumnPruningVisitor(List<ColumnExpr> parentColumns, Session session) {
-      this.parentColumns = parentColumns;
-      this.session = session;
-    }
+  private static class ColumnPruningVisitor extends ParameterizedOperatorVisitor<ColumnPruningVisitorParameter,
+          RelOperator> {
+    public static final String COUNT = "COUNT";
+    public static final Column[] EMPTY_COLUMNS = {};
 
     @Override
-    public RelOperator visitOperator(Projection projection) {
+    public RelOperator visitOperator(Session session, Projection projection, ColumnPruningVisitorParameter parameter) {
       Schema schema = projection.getSchema();
-      boolean[] usedIndex = findUsedPosition(parentColumns, schema);
+      boolean[] usedIndex = findUsedPosition(parameter.parentColumns, schema);
       if (usedIndex == null) {
         return projection;
       }
@@ -90,27 +84,35 @@ public class ColumnPruneOptimizer implements IRuleOptimizer {
         }
       }
 
+      if (newColumns.size() == 1) {
+        String colName = newColumns.get(0).getOriCol();
+        if (colName != null && ("COUNT(1)".equals(colName) || "COUNT(*)".equals(colName))) {
+          parameter.needCountColumnEliminate = true;
+        }
+      }
+
       projection.setExpressions(newExprs.toArray(new Expression[newExprs.size()]));
       projection.setSchema(new Schema(newColumns));
 
       List<ColumnExpr> usedColumns = new ArrayList<>(newExprs.size());
       ExpressionUtil.extractColumns(usedColumns, newExprs, null);
-      this.parentColumns = usedColumns;
+      parameter.parentColumns = usedColumns;
 
-      return visitChildren(projection);
+      return visitChildren(session, projection, parameter);
     }
 
     @Override
-    public RelOperator visitOperator(Selection selection) {
+    public RelOperator visitOperator(Session session, Selection selection, ColumnPruningVisitorParameter parameter) {
       List<Expression> conditions = selection.getConditions();
-      ExpressionUtil.extractColumns(parentColumns, conditions, null);
-      return visitChildren(selection);
+      ExpressionUtil.extractColumns(parameter.parentColumns, conditions, null);
+      return visitChildren(session, selection, parameter);
     }
 
     @Override
-    public RelOperator visitOperator(TableSource tableSource) {
+    public RelOperator visitOperator(Session session, TableSource tableSource,
+                                     ColumnPruningVisitorParameter parameter) {
       Schema schema = tableSource.getSchema();
-      boolean[] usedIndex = findUsedPosition(parentColumns, schema);
+      boolean[] usedIndex = findUsedPosition(parameter.parentColumns, schema);
       if (usedIndex == null) {
         return tableSource;
       }
@@ -124,7 +126,7 @@ public class ColumnPruneOptimizer implements IRuleOptimizer {
       Column primaryKey = null;
       ColumnExpr primaryKeyExpr = null;
 
-      for (int i = 0, j = 0; i < usedIndex.length; i++) {
+      for (int i = 0; i < usedIndex.length; i++) {
         if (currentColumns[i].isPrimary()) {
           primaryKey = currentColumns[i];
           primaryKeyExpr = currentColumnExprs.get(i);
@@ -147,15 +149,19 @@ public class ColumnPruneOptimizer implements IRuleOptimizer {
 
         currentColumnExprs.add(primaryKeyExpr);
         tableSource.setSchema(new Schema(newColumnExprs));
+        if (parameter.needCountColumnEliminate && newCols.length == 1) {
+          tableSource.setColumns(EMPTY_COLUMNS);
+        }
       }
-
       return tableSource;
     }
 
     @Override
-    public RelOperator visitOperator(Aggregation aggregation) {
+    public RelOperator visitOperator(Session session, Aggregation aggregation,
+                                     ColumnPruningVisitorParameter parameter) {
+
       Schema schema = aggregation.getSchema();
-      boolean[] usedIndex = findUsedPosition(parentColumns, schema);
+      boolean[] usedIndex = findUsedPosition(parameter.parentColumns, schema);
       if (usedIndex == null) {
         return aggregation;
       }
@@ -195,13 +201,13 @@ public class ColumnPruneOptimizer implements IRuleOptimizer {
           aggregation.setGroupByExprs(new Expression[]{ ValueExpr.ONE });
         }
       }
-      this.parentColumns = usedColumns;
+      parameter.parentColumns = usedColumns;
 
-      return visitChildren(aggregation);
+      return visitChildren(session, aggregation, parameter);
     }
 
     @Override
-    public RelOperator visitOperator(Order order) {
+    public RelOperator visitOperator(Session session, Order order, ColumnPruningVisitorParameter parameter) {
       List<ColumnExpr> extList = new ArrayList<>();
       List<Order.OrderExpression> newExprs = new ArrayList<>();
 
@@ -213,19 +219,20 @@ public class ColumnPruneOptimizer implements IRuleOptimizer {
           continue;
         } else {
           newExprs.add(orderExpression);
-          parentColumns.addAll(extList);
+          parameter.parentColumns.addAll(extList);
         }
       }
 
       order.setOrderExpressions(newExprs.toArray(new Order.OrderExpression[newExprs.size()]));
 
-      return visitChildren(order);
+      return visitChildren(session, order, parameter);
     }
 
     @Override
-    public RelOperator visitOperator(DualTable dualTable) {
+    public RelOperator visitOperator(Session session, DualTable dualTable, ColumnPruningVisitorParameter parameter) {
+
       Schema schema = dualTable.getSchema();
-      boolean[] usedIndex = findUsedPosition(parentColumns, schema);
+      boolean[] usedIndex = findUsedPosition(parameter.parentColumns, schema);
       if (usedIndex == null) {
         return dualTable;
       }
@@ -239,8 +246,23 @@ public class ColumnPruneOptimizer implements IRuleOptimizer {
       }
       dualTable.setSchema(new Schema(newColumnExprs));
 
-
       return dualTable;
+    }
+
+    public RelOperator visitChildren(Session session, RelOperator operator, ColumnPruningVisitorParameter parameter) {
+      RelOperator[] childrenOperators = operator.getChildren();
+      if (null != childrenOperators && childrenOperators.length > 0) {
+        for (RelOperator childOperator : childrenOperators) {
+          childOperator.acceptVisitor(session, this, parameter);
+        }
+      }
+      return operator;
+    }
+
+    @Override
+    public RelOperator visitOperatorByDefault(Session session, RelOperator operator,
+                                              ColumnPruningVisitorParameter parameter) {
+      return visitChildren(session, operator, parameter);
     }
 
     protected boolean[] findUsedPosition(List<ColumnExpr> parentColumns, Schema schema) {
@@ -256,6 +278,24 @@ public class ColumnPruneOptimizer implements IRuleOptimizer {
       }
 
       return position;
+    }
+  }
+
+  /**
+   * Parameter for ColumnPruneOptimizer
+   */
+  private static class ColumnPruningVisitorParameter {
+    List<ColumnExpr> parentColumns;
+    /**
+     * optimize  for :  select count(*) from t
+     * in this case, we should eliminate the count column of push down processor
+     * to avoid dataServe decode.
+     *
+     */
+    boolean needCountColumnEliminate = false;
+
+    private ColumnPruningVisitorParameter(List<ColumnExpr> columnExprs) {
+      this.parentColumns = new ArrayList<>(columnExprs);
     }
   }
 }

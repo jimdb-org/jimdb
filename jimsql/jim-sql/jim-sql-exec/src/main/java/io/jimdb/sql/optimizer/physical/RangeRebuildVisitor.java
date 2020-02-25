@@ -20,6 +20,7 @@ import java.util.List;
 
 import io.jimdb.core.Session;
 import io.jimdb.core.expression.ColumnExpr;
+import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueRange;
 import io.jimdb.sql.operator.Delete;
 import io.jimdb.sql.operator.IndexLookup;
@@ -44,19 +45,16 @@ public class RangeRebuildVisitor extends OperatorVisitor<Operator> {
     this.session = session;
   }
 
-  private static List<ValueRange> rebuildRange4IndexSource(Session session, IndexSource indexSource) {
-    List<ColumnExpr> idxCols = indexSource.getKeyValueRange().getIndexColumns();
-    return NFDetacher.buildRangeFromDetachedIndexConditions(session, indexSource.getAccessConditions(), idxCols);
+  private static List<ValueRange> rebuildRange4Index(Session session, List<ColumnExpr> idxCols, List<Expression> accessConditions) {
+    return NFDetacher.buildRangeFromDetachedIndexConditions(session, accessConditions, idxCols);
   }
 
   @Override
   public Operator visitOperator(TableSource tableSource) {
-    List<ColumnExpr> pkCols = tableSource.getKeyValueRange().getIndexColumns();
     tableSource
             .getKeyValueRange()
-            .setValueRanges(RangeBuilder.buildPKRange(session, tableSource.getAccessConditions(),
-                    pkCols.get(0).getResultType()));
-
+            .setValueRanges(rebuildRange4Index(session, tableSource.getKeyValueRange().getIndexColumns(),
+                    tableSource.getAccessConditions()));
     return tableSource;
   }
 
@@ -64,7 +62,8 @@ public class RangeRebuildVisitor extends OperatorVisitor<Operator> {
   public Operator visitOperator(IndexSource indexSource) {
     indexSource
             .getKeyValueRange()
-            .setValueRanges(rebuildRange4IndexSource(session, indexSource));
+            .setValueRanges(rebuildRange4Index(session, indexSource.getKeyValueRange().getIndexColumns(),
+                    indexSource.getAccessConditions()));
     return indexSource;
   }
 
@@ -73,7 +72,8 @@ public class RangeRebuildVisitor extends OperatorVisitor<Operator> {
     IndexSource indexSource = indexLookup.getIndexSource();
     indexSource
             .getKeyValueRange()
-            .setValueRanges(rebuildRange4IndexSource(session, indexSource));
+            .setValueRanges(rebuildRange4Index(session, indexSource.getKeyValueRange().getIndexColumns(),
+                    indexSource.getAccessConditions()));
     return indexLookup;
   }
 

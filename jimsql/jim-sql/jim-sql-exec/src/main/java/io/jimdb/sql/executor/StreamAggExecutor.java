@@ -60,9 +60,11 @@ public class StreamAggExecutor extends AggExecutor {
   @Override
   public Flux<ExecResult> execute(Session session, ExecResult childData) {
     if (childData.size() == 0) {
-      ValueAccessor row = initEmptyRow(aggFuncs);
+//      ValueAccessor row = initEmptyRow(aggFuncs);
+//      return Flux.just(new QueryExecResult(schema.getColumns().toArray(new ColumnExpr[schema.getColumns().size()]),
+//              new ValueAccessor[] {row}));
       return Flux.just(new QueryExecResult(schema.getColumns().toArray(new ColumnExpr[schema.getColumns().size()]),
-              new ValueAccessor[] {row}));
+              new ValueAccessor[] {}));
     }
 
     List<ValueAccessor> inputs = new ArrayList<>(childData.size());

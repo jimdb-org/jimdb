@@ -149,10 +149,10 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
   private static final String[] EXPLAIN_ANALYZE_COLUMNS = { "op", "count", "task", "operator_info", "execution_info", "memory" };
   private static final DataType[] EXPLAIN_ANALYZE_TYPES = { DataType.Varchar, DataType.Varchar, DataType.Varchar, DataType.Varchar, DataType.Varchar };
   private static final String[] SHOW_INDEX_COLUMNS = { "Table", "Non_unique", "Key_name", "Seq_in_index", "Column_name",
-          "Collation", "Cardinality", "Sub_part", "Packed", "Null", "Index_type", "Comment" };
+          "Collation", "Cardinality", "Sub_part", "Packed", "Null", "Index_type", "Comment", "Index_comment" };
   private static final DataType[] SHOW_INDEX_TYPES = { DataType.Varchar, DataType.BigInt, DataType.Varchar,
           DataType.BigInt, DataType.Varchar, DataType.Varchar, DataType.BigInt, DataType.BigInt, DataType.Varchar,
-          DataType.Varchar, DataType.Varchar, DataType.Varchar };
+          DataType.Varchar, DataType.Varchar, DataType.Varchar, DataType.Varchar };
   private static final String[] SHOW_COLUMNS_COLUMNS = { "Field", "Type", "Null", "Key", "Default", "Extra" };
   private static final String[] SHOW_FULL_COLUMNS_COLUMNS = { "Field", "Type", "Collation", "Null", "Key", "Default",
           "Extra", "Privileges", "Comment" };

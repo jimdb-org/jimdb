@@ -17,6 +17,7 @@ package io.jimdb.core.codec;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.TimeZone;
 
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
@@ -25,8 +26,10 @@ import io.jimdb.core.expression.ValueRange;
 import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.values.BinaryValue;
+import io.jimdb.core.values.DateValue;
 import io.jimdb.core.values.LongValue;
 import io.jimdb.core.values.NullValue;
+import io.jimdb.core.values.TimeUtil;
 import io.jimdb.core.values.UnsignedLongValue;
 import io.jimdb.core.values.Value;
 import io.jimdb.pb.Basepb.DataType;
@@ -97,12 +100,12 @@ public final class Codec {
     return IndexCodec.encodeKV(index, values, rowKey, true);
   }
 
-  public static List<KvPair> encodeKeyRanges(Index index, List<ValueRange> ranges) {
+  public static List<KvPair> encodeKeyRanges(Index index, List<ValueRange> ranges, boolean isOptimizeKey) {
     if (index.isPrimary()) {
-      return TableCodec.encodeKeyRanges(index.getTable().getId(), ranges);
+      return TableCodec.encodeKeyRanges(index.getTable().getId(), index.getColumns().length, ranges, isOptimizeKey);
     }
 
-    return IndexCodec.encodeKeyRanges(index.getId(), ranges);
+    return IndexCodec.encodeKeyRanges(index.getId(), index.getColumns().length, ranges, isOptimizeKey);
   }
 
   public static ByteString nextKey(ByteString key) {
@@ -119,21 +122,21 @@ public final class Codec {
     return null;
   }
 
-  public static ValueAccessor decodeRow(ColumnExpr[] resultColumns, Txn.RowValueOrBuilder row) {
+  public static ValueAccessor decodeRow(ColumnExpr[] resultColumns, Txn.RowValueOrBuilder row, TimeZone zone) {
     int colLength = resultColumns.length;
     int valueLength = colLength + 1;
     Value[] values = new Value[valueLength];
     ByteBuf buf = NettyByteString.asByteBuf(row.getFields());
 
     for (int i = 0; i < colLength; i++) {
-      values[i] = decodeValue(buf, resultColumns[i].getResultType(), i);
+      values[i] = decodeValue(buf, resultColumns[i].getResultType(), i, zone);
     }
     values[colLength] = LongValue.getInstance(row.getVersion());
     return new RowValueAccessor(values);
   }
 
   public static ValueAccessor decodeRowWithOpt(ColumnExpr[] resultColumns, Txn.RowValueOrBuilder row,
-                                               ByteString pkValues) {
+                                               ByteString pkValues, TimeZone zone) {
     boolean opt = !pkValues.isEmpty();
     int colLength = resultColumns.length;
     int valueLength = colLength + 1;
@@ -144,7 +147,7 @@ public final class Codec {
     ByteBuf buf = NettyByteString.asByteBuf(row.getFields());
     int i = 0;
     for (; i < colLength; i++) {
-      values[i] = decodeValue(buf, resultColumns[i].getResultType(), i);
+      values[i] = decodeValue(buf, resultColumns[i].getResultType(), i, zone);
     }
     if (opt) {
       values[i++] = BinaryValue.getInstance(pkValues.toByteArray());
@@ -153,7 +156,7 @@ public final class Codec {
     return new RowValueAccessor(values);
   }
 
-  private static Value decodeValue(ByteBuf buf, SQLType sqlType, int offset) {
+  private static Value decodeValue(ByteBuf buf, SQLType sqlType, int offset, TimeZone zone) {
     DecodeValue decodeValue = decodeValueInternal(buf, sqlType, offset);
     Value value = decodeValue.getValue();
     if (value == null || value.isNull()) {
@@ -163,9 +166,9 @@ public final class Codec {
       long number = ((LongValue) value).getValue();
       return UnsignedLongValue.getInstance(new BigInteger(Long.toUnsignedString(number)));
     }
-//    if (DataType.TimeStamp == sqlType.getType()) {
-//      return DateValue.convertTimeZone((DateValue) value, TimeUtil.UTC_ZONE, zone);
-//    }
+    if (DataType.TimeStamp == sqlType.getType()) {
+      return DateValue.convertTimeZone((DateValue) value, TimeUtil.UTC_ZONE, zone);
+    }
     return value;
   }
 

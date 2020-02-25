@@ -149,9 +149,21 @@ IterPtr Store::NewIterator(const std::string& start, const std::string& limit) {
 }
 
 Status Store::NewIterators(IterPtr &data_iter, IterPtr &txn_iter,
-        const std::string& start, const std::string& limit) {
+        const std::string& start, const std::string& limit, bool ignore_value) {
     auto scope = fixKeyScope(start, limit);
-    return db_->NewIterators(scope.first, scope.second, data_iter, txn_iter);
+    db::IteratorDescriptor data_desc(db::CFType::kData, false, ignore_value);
+    db::IteratorDescriptor txn_desc(db::CFType::kTxn);
+    std::vector<db::IteratorDescriptor>  descs{data_desc, txn_desc};
+    db::KeyRange range(std::move(scope.first), std::move(scope.second));
+    std::vector<IterPtr> iterators;
+    auto s = db_->NewIterators(range, descs, iterators);
+    if (!s.ok()) {
+        return s;
+    }
+    assert(iterators.size() == 2);
+    data_iter = std::move(iterators[0]);
+    txn_iter = std::move(iterators[1]);
+    return s;
 }
 
 Status Store::GetSnapshot(uint64_t apply_index, std::string&& context,

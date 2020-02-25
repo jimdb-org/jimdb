@@ -97,11 +97,10 @@ public class AccessPathDecorator {
             ExpressionUtil.indexToColumnExprs(tableSource.getTable().getPrimaryIndex(),
                     tableSource.getSchema().getColumns());
 
-    path.setRanges(Collections.singletonList(RangeBuilder.fullRange()));
-
-    path.setTableConditions(pushedDownConditions);
 
     if (pushedDownConditions == null || pushedDownConditions.isEmpty() || primaryKeyColumnExprs.isEmpty()) {
+      path.setRanges(Collections.singletonList(RangeBuilder.fullRange()));
+      path.setTableConditions(pushedDownConditions);
       return false;
     }
 

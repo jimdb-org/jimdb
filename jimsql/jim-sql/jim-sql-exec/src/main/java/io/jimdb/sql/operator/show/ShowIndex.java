@@ -64,15 +64,14 @@ public final class ShowIndex extends RelOperator {
       throw DBException.get(ErrorModule.EXECUTOR, ErrorCode.ER_NO_SUCH_TABLE, database, table);
     }
 
-    int nonUnique = 1;
-    Integer subPart = null;
-    String colIfNull = "YES";
     String indexComment;
     Table tableInfo = session.getTxnContext().getMetaData().getTable(database, table);
     List<ValueAccessor> rows = new ArrayList<>();
     if (tableInfo != null) {
       Index[] indices = tableInfo.getReadableIndices();
       for (Index index : indices) {
+        int nonUnique = 1;
+        String colIfNull = "YES";
         indexComment = index.getIndexComment();
         if (index.isPrimary()) {
           nonUnique = 0;
@@ -81,7 +80,6 @@ public final class ShowIndex extends RelOperator {
         }
         if (index.isUnique()) {
           nonUnique = 0;
-          subPart = index.getColumns().length;
         }
         Column[] indexColumns = index.getColumns();
         for (int i = 0; i < indexColumns.length; i++) {
@@ -93,7 +91,7 @@ public final class ShowIndex extends RelOperator {
                   StringValue.getInstance(indexColumns[i].getName()),
                   StringValue.getInstance(DEFAULT_COLLATION),
                   LongValue.getInstance(CARDINALITY),
-                  subPart == null ? NullValue.getInstance() : LongValue.getInstance(subPart),
+                  NullValue.getInstance(),
                   PACKED,
                   StringValue.getInstance(colIfNull),
                   StringValue.getInstance(DEFAULT_INDEX_TYPE),

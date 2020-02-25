@@ -38,10 +38,7 @@ import io.jimdb.test.mysql.SqlTestBase;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.alibaba.fastjson.JSON;
 
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
@@ -54,27 +51,30 @@ public class SelectIndexTest extends SqlTestBase {
   private static String INT_TABLENAME = "baker_int_idx";
   private static String FLOAT_TABLENAME = "baker_float_idx";
   private static String DATETIME_TABLENAME = "baker_datetime_idx";
+  private static String COMPOSITE_PRIMARY_KEY_TABLENAME = "baker_composite_primary_key";
   private static final int size = 1000;
 
-  protected TableDataResult INT_TABLE_DATARESULT = new TableDataResult(INT_TABLENAME);
-  protected TableDataResult FLOAT_TABLE_DATARESULT = new TableDataResult(FLOAT_TABLENAME);
-  protected TableDataResult DATETIME_TABLE_DATARESULT = new TableDataResult(DATETIME_TABLENAME);
+  private static TableDataResult INT_TABLE_DATARESULT = new TableDataResult(INT_TABLENAME);
+  private static TableDataResult FLOAT_TABLE_DATARESULT = new TableDataResult(FLOAT_TABLENAME);
+  private static TableDataResult DATETIME_TABLE_DATARESULT = new TableDataResult(DATETIME_TABLENAME);
+  private static TableDataResult COMPOSITE_PRIMARY_KEY_TABLE_DATARESULT = new TableDataResult(COMPOSITE_PRIMARY_KEY_TABLENAME);
 
 
-  @BeforeClass
+//  @BeforeClass
   public static void init() {
     createDB();
     initIntTable();
     initFloatTable();
     initDatetimeTable();
+    initCompositePrimaryKeyTable();
     initINT_TABLE_Data();
     initFloat_Table_Data();
     initDatetime_Table_Data();
+    initCompositePrimaryKey_Table_Data();
   }
 
   private static void createDB() {
     createCatalog(DBNAME);
-
     useCatalog(DBNAME);
   }
 
@@ -112,6 +112,35 @@ public class SelectIndexTest extends SqlTestBase {
             + "UNIQUE INDEX mst_composite_uniq_idx (mi3,si3,ti3) "
             + ") COMMENT 'REPLICA=1' ENGINE=MEMORY AUTO_INCREMENT=0 ";
     dropAndCreateTable(INT_TABLENAME, sql);
+  }
+
+  private static void initCompositePrimaryKeyTable() {
+    String sql = "CREATE TABLE IF NOT EXISTS `" + COMPOSITE_PRIMARY_KEY_TABLENAME + "` ( "
+            + "`t_int` int(11) NOT NULL, "
+            + "`t_varchar` varchar(100) NOT NULL, "
+            + "`t_decimal` decimal(10,2) NOT NULL,"
+            + "PRIMARY KEY (`t_int`,`t_varchar`,`t_decimal`)"
+            + ") COMMENT 'REPLICA=1' ENGINE=MEMORY ";
+    dropAndCreateTable(COMPOSITE_PRIMARY_KEY_TABLENAME, sql);
+  }
+
+  private static void initCompositePrimaryKey_Table_Data() {
+    int idx = 0;
+    for (int batch = 0; batch < size/10; batch++) {
+      int onesize = 10;
+
+      for (int n = 0; n < onesize; n++) {
+        String sql = "INSERT INTO "+ COMPOSITE_PRIMARY_KEY_TABLENAME
+                + " (t_int,t_varchar,t_decimal) VALUES";
+        sql += "("
+                + (idx + 2000)
+                + ", 't_varchar-" + idx + "'"
+                + "," + reserveBitTwo(idx * 100000 * 0.01) + ")";// todo
+        idx++;
+        execUpdate(sql, 1, true);
+      }
+    }
+    System.out.println(COMPOSITE_PRIMARY_KEY_TABLENAME + " table initData is complete.");
   }
 
   private static void initFloatTable() {
@@ -256,7 +285,7 @@ public class SelectIndexTest extends SqlTestBase {
   }
 
   private static double reserveBitTwo(double d) {
-    return new BigDecimal(d).setScale(2,BigDecimal.ROUND_FLOOR).doubleValue();
+    return new BigDecimal(d).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue();
   }
 
   @Before
@@ -272,11 +301,9 @@ public class SelectIndexTest extends SqlTestBase {
     if (DATETIME_TABLE_DATARESULT.data_result.isEmpty()) {
       selectAllfromTablebaker(DATETIME_TABLE_DATARESULT);
     }
-  }
-
-  @Test
-  public void tempSelect() {
-    selectAllfromTablebaker(FLOAT_TABLE_DATARESULT);
+    if (COMPOSITE_PRIMARY_KEY_TABLE_DATARESULT.data_result.isEmpty()) {
+      selectAllfromTablebaker(COMPOSITE_PRIMARY_KEY_TABLE_DATARESULT);
+    }
   }
 
   @Test
@@ -305,11 +332,9 @@ public class SelectIndexTest extends SqlTestBase {
             row -> row.get("i1").compareTo(1) == 0
                     && row.get("i2").compareTo(2005) == 1
                     && row.get("i2").compareTo(2007) == -1);
-    Assert.assertTrue("expected is empty !", expected.isEmpty());
+    Assert.assertTrue("expected is empty !", !expected.isEmpty());
     execPrepareQuery("select " + select.select + " from " + select.tableName + " where i1 = ? and i2 > ? and i2 < ? ", expected,1,2005,2007);
   }
-
-
 
   @Test
   public void testIndex4Int04() {
@@ -320,6 +345,15 @@ public class SelectIndexTest extends SqlTestBase {
                     && row.get("i3").compareTo(3030) == 0);
     Assert.assertTrue("expected is empty !", !expected.isEmpty());
     execPrepareQuery("select "+select.select+" from " + select.tableName + " where i1 = ? and i2 = ? and i3 = ? ", expected,3,2000,3030);
+  }
+
+  @Test
+  public void testIndex4Int05() {
+    SelectCols select = new SelectCols(INT_TABLE_DATARESULT, new String[] { "i1", "i2", "i3" } );
+    List<String> expected = this.filter(select,
+            row -> row.get("i1").compareTo(3) == 0);
+    Assert.assertTrue("expected is empty !", !expected.isEmpty());
+    execQuery("select "+select.select+" from " + select.tableName + " where i1 = 3", expected);
   }
 
   @Test
@@ -362,10 +396,8 @@ public class SelectIndexTest extends SqlTestBase {
                     && row.get("b2").compareTo(12006L) == 0
                     && row.get("b3").compareTo(13006L) == 0);
     Assert.assertTrue("expected is empty !", !expected.isEmpty());
-    execPrepareQuery("select " + select.select + " from " + select.tableName + " where b1 = ? and b2 = ? and b3 = ?", expected,10000,12006,13006);
+    execPrepareQuery("select " + select.select + " from " + select.tableName + " where b1 = ? and b2 = ? and b3 = ?", expected, 10000, 12006, 13006);
   }
-
-
 
   @Test
   public void testIndex4Varchar01() {
@@ -504,7 +536,7 @@ public class SelectIndexTest extends SqlTestBase {
                     && row.get("si1").compareTo(16) == 0
                     && row.get("ti1").compareTo(-111) == 0);
     execQuery("select " + select.select + " from " + select.tableName
-            + " where mi1 = 1 and si1 = 16 and ti1 = -111 limit 1", expected);
+            + " where mi1 = 1 and si1 = 16 and ti1 = -111 ", expected);
   }
 
   @Test
@@ -678,22 +710,34 @@ public class SelectIndexTest extends SqlTestBase {
   }
 
   @Test
-  public void testIndex4DateTime01() {
+  public void testIndex4DateTime01() throws ParseException {
 
     SelectCols select = new SelectCols(DATETIME_TABLE_DATARESULT, new String[] {"id", "datetime1", "datetime2" } );
+    DateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    Date datetime1 = timeFormat.parse("1990-01-02 12:00:00");
+    Date datetime2 = timeFormat.parse("1990-01-03 11:00:00");
+
     List<String> expected = this.filter(select,
-            row -> row.get("datetime1").compareTo("1990-01-02 12:00:00") == 0
-                    && row.get("datetime2").compareTo("1990-01-03 11:00:00") == 1);
+            row -> row.get("datetime1").compareTo(datetime1) == 0
+                    && row.get("datetime2").compareTo(datetime2) == 1);
     execQuery("select " + select.select + " from " + select.tableName + " where datetime1 = '1990-01-02 12:00:00' and datetime2 > '1990-01-03 11:00:00' ", expected);
   }
 
   @Test
-  public void testIndex4DateTime02() {
+  public void testIndex4DateTime02() throws ParseException {
     SelectCols select = new SelectCols(DATETIME_TABLE_DATARESULT, new String[] {"id", "datetime1", "datetime2" } );
+    DateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    Date datetime1 = timeFormat.parse("1990-01-02 12:00:00.0");
+    Date datetime2 = timeFormat.parse("1990-01-03 11:00:00.0");
+
+    java.sql.Date sqlDateTime1 = new java.sql.Date(datetime1.getTime());
+    java.sql.Date sqlDateTime2 = new java.sql.Date(datetime2.getTime());
+
     List<String> expected = this.filter(select,
-            row -> row.get("datetime1").equals("1990-01-02 12:00:00")
-                      && row.get("datetime2").equals("1990-01-03 12:00:00"));
-    execQuery("select " + select.select + " from " + select.tableName + " where datetime1 = '1990-01-02 12:00:00' and datetime2 = '1990-01-03 12:00:00' ", expected);
+            row -> row.get("datetime1").equals(datetime1)
+                    && row.get("datetime2").equals(datetime2));
+    execPrepareQuery("select " + select.select + " from " + select.tableName + " where datetime1 = ? and datetime2 = ? ",
+            expected, sqlDateTime1, sqlDateTime2);
   }
 
   @Test
@@ -750,14 +794,13 @@ public class SelectIndexTest extends SqlTestBase {
   public void testIndex4_DATE_COMPOSITE01() throws ParseException {
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     DateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-    Date date1 = dateFormat.parse("1990-01-02");
-    Date datetime1 = timeFormat.parse("1990-01-02 11:00:00");
-
+    Date date = dateFormat.parse("1990-01-02");
+    Date datetime = timeFormat.parse("1990-01-02 11:00:00");
 
     SelectCols select = new SelectCols(DATETIME_TABLE_DATARESULT, new String[] {"id", "date1", "datetime1" ,"year1" } );
     List<String> expected = this.filter(select,
-            row -> row.get("date1").compareTo(date1) == 0
-                    && row.get("datetime1").compareTo("1990-01-02 11:00:00") == 1);
+            row -> row.get("date1").compareTo(date) == 0
+                    && row.get("datetime1").compareTo(datetime) == 1);
     execQuery("select " + select.select + " from " + select.tableName + " where date1 = '1990-01-02' and datetime1 > '1990-01-02 11:00:00' ", expected);
   }
 
@@ -765,13 +808,15 @@ public class SelectIndexTest extends SqlTestBase {
   public void testIndex4_DATE_COMPOSITE02() throws ParseException {
     DateFormat yearFormat = new SimpleDateFormat("yyyy");
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     Date date = dateFormat.parse("1990-01-02");
     Date year = yearFormat.parse("1906");
+    Date datetime = dateTimeFormat.parse("1990-01-03 12:00:00");
 
     SelectCols select = new SelectCols(DATETIME_TABLE_DATARESULT, new String[] {"id", "date1", "datetime1" ,"year1" } );
     List<String> expected = this.filter(select,
             row -> row.get("date1").compareTo(date) == 0
-                    && row.get("datetime1").compareTo("1990-01-02 12:00:00") == 0
+                    && row.get("datetime1").compareTo(datetime) == 0
                     && row.get("year1").compareTo(year) == 0);
     execQuery("select " + select.select + " from " + select.tableName + " where date1 = '1990-01-02' and datetime1 = '1990-01-02 12:00:00' and year1 = 1906", expected);
   }
@@ -788,7 +833,7 @@ public class SelectIndexTest extends SqlTestBase {
     SelectCols select = new SelectCols(DATETIME_TABLE_DATARESULT, new String[] {"id", "date2", "datetime2" ,"year2" } );
     List<String> expected = this.filter(select,
             row -> row.get("date2").compareTo(date1) == 0
-                    && row.get("datetime2").compareTo("1990-01-03 12:00:00") == 0
+                    && row.get("datetime2").compareTo(datetime1) == 0
                     && row.get("year2").compareTo(year1) == 0);
     execQuery("select " + select.select + " from " + select.tableName + " where date2 = '1990-01-03' and datetime2 = '1990-01-03 12:00:00' and year2 = 2036", expected);
   }
@@ -797,14 +842,15 @@ public class SelectIndexTest extends SqlTestBase {
   public void testIndex4_TIME_COMPOSITE01() throws ParseException {
     DateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     Time time = new Time(14420000);    //12:00:20
-    Date timestamp1 = timeStampFormat.parse("1990-01-02 11:00:00.0");
-    Timestamp timestamp = new Timestamp(timestamp1.getTime());
+    Date datetime = timeStampFormat.parse("1990-01-02 11:00:00.0");
+    Timestamp timestamp = new Timestamp(datetime.getTime());
 
     SelectCols select = new SelectCols(DATETIME_TABLE_DATARESULT, new String[] {"id", "time1", "timestamp1" } );
     List<String> expected = this.filter(select,
             row -> row.get("time1").compareTo(time) == 0
-                      && row.get("timestamp1").compareTo(timestamp) == 1);
-    execQuery("select " + select.select + " from " + select.tableName + " where time1 = '12:00:20' and timestamp1 > '1990-01-02 11:00:00' ", expected);
+                    && row.get("timestamp1").compareTo(timestamp) > 0);
+    execPrepareQuery("select " + select.select + " from " + select.tableName + " where time1 = ? and timestamp1 > ? "
+            , expected, time, timestamp);
   }
 
   @Test
@@ -833,6 +879,76 @@ public class SelectIndexTest extends SqlTestBase {
                     && row.get("timestamp2").compareTo(timestamp1) == 0);
     execQuery("select " + select.select + " from " + select.tableName + " where time2 = '12:00:20' and timestamp2 = '1990-01-03 12:00:00' ", expected);
   }
+
+
+  //region  composite  primary key test set
+
+  @Test
+  public void testCompositePrimaryKey01() {
+    SelectCols select = new SelectCols(COMPOSITE_PRIMARY_KEY_TABLE_DATARESULT, new String[]{ "t_int",
+            "t_varchar", "t_decimal" });
+    List<String> expected = this.filter(select,
+            row -> row.get("t_int").compareTo(1) == 1
+    );
+    System.out.println(expected);
+
+    execQuery("select " + select.select + " from " + select.tableName + " where t_int > 1 ", expected);
+  }
+
+  @Test
+  public void testCompositePrimaryKey02() {
+    SelectCols select = new SelectCols(COMPOSITE_PRIMARY_KEY_TABLE_DATARESULT, new String[]{ "t_int",
+            "t_varchar", "t_decimal" });
+    List<String> expected = this.filter(select,
+            row -> row.get("t_int").compareTo(2988) == 0
+                    && row.get("t_varchar").equals("t_varchar-988")
+                    && row.get("t_decimal").compareTo(new BigDecimal(1.00)) > 0);
+    System.out.println(expected);
+
+    execPrepareQuery("select " + select.select + " from " + select.tableName + " where t_int = ? and t_varchar = ?"
+            + " and t_decimal > ?  ", expected, 2988, "t_varchar-988", reserveBitTwo(1.00));
+  }
+
+  @Test
+  public void testCompositePrimaryKey03() {
+    SelectCols select = new SelectCols(COMPOSITE_PRIMARY_KEY_TABLE_DATARESULT, new String[]{ "t_int",
+            "t_varchar", "t_decimal" });
+    List<String> expected = this.filter(select,
+            row -> row.get("t_int").compareTo(1) == 0
+                    && row.get("t_varchar").equals("t_varchar-988")
+    );
+    System.out.println(expected);
+
+    execQuery("select " + select.select + " from " + select.tableName + " where t_int = 1 and t_varchar = "
+            + "'t_varchar-988'  ", expected);
+  }
+
+  @Test
+  public void testCompositePrimaryKey04() {
+    SelectCols select = new SelectCols(COMPOSITE_PRIMARY_KEY_TABLE_DATARESULT, new String[]{ "t_int",
+            "t_varchar", "t_decimal" });
+    List<String> expected = this.filter(select,
+            row -> row.get("t_int").compareTo(2000) == 0
+    );
+
+    execQuery("select " + select.select + " from " + select.tableName + " where t_int = 2000 ", expected);
+  }
+
+  @Test
+  public void testCompositePrimaryKey05() {
+    SelectCols select = new SelectCols(COMPOSITE_PRIMARY_KEY_TABLE_DATARESULT, new String[]{ "t_int",
+            "t_varchar", "t_decimal" });
+    List<String> expected = this.filter(select,
+            row -> row.get("t_int").compareTo(2988) == 0
+                    && row.get("t_varchar").equals("t_varchar-988")
+                    && row.get("t_decimal").compareTo(new BigDecimal(1.00)) > 0);
+    System.out.println(expected);
+
+    execPrepareQuery("select " + select.select + " from " + select.tableName + " where t_int = ? and t_varchar = ?"
+            + "  ", expected, 2988, "t_varchar-988");
+  }
+
+  //endregion
 
 
   protected List<String> filter(SelectCols selectCols, Predicate<Map<String, Comparable>> predicate) {
@@ -898,7 +1014,7 @@ public class SelectIndexTest extends SqlTestBase {
     }
   }
 
-  class TableDataResult {
+  static class TableDataResult {
     String tableName;
     List<Map<String, Comparable>> data_result = new ArrayList<>();
     List<Tuple2<String, Integer>> table_meta = new ArrayList<>();

@@ -15,8 +15,8 @@
  */
 package io.jimdb.mysql.util;
 
-import static io.jimdb.mysql.constant.MySQLVariables.MYSQL_SERVER_ENCODING;
-import static io.jimdb.mysql.constant.MySQLVariables.MYSQL_SERVER_VERSION;
+import static io.jimdb.mysql.constant.MySQLVariables.MYSQL_SERVER_ENCODING_UTF8;
+import static io.jimdb.mysql.constant.MySQLVersion.MYSQL_SERVER_VERSION_5_6_0;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -50,7 +50,6 @@ import io.jimdb.mysql.constant.MySQLColumnDataType;
 import io.jimdb.mysql.constant.MySQLColumnFlag;
 import io.jimdb.mysql.constant.MySQLError;
 import io.jimdb.mysql.constant.MySQLErrorCode;
-import io.jimdb.mysql.constant.MySQLVariables;
 import io.jimdb.mysql.constant.MySQLVersion;
 import io.jimdb.mysql.handshake.HandshakeInfo;
 import io.jimdb.mysql.handshake.HandshakeResult;
@@ -83,7 +82,28 @@ public final class CodecUtil {
 
   private static final String SQL_STATE_MARKER = "#";
 
+  private static final Charset CHARSET_UTF8 = Charset.forName(MYSQL_SERVER_ENCODING_UTF8);
+
+  private static final byte[][] ZERO_BYTES = new byte[16][];
+
   private CodecUtil() {
+  }
+
+  static {
+    initZeroBytes();
+  }
+
+  /**
+   * init zero byte array
+   */
+  private static void initZeroBytes() {
+    ZERO_BYTES[0] = new byte[0];
+    for (int i = 1; i < ZERO_BYTES.length; i++) {
+      ZERO_BYTES[i] = new byte[i];
+      for (int n = 0; n < i; n++) {
+        ZERO_BYTES[i][n] = 0;
+      }
+    }
   }
 
   /**
@@ -102,12 +122,11 @@ public final class CodecUtil {
     //protocol_version (1) -- 0x0a protocol_version
     writeInt1(dataBuf, MySQLVersion.PROTOCOL_VERSION_41);
     //server_version (string.NUL) -- human-readable server version
-    writeStringWithNull(dataBuf, MySQLVariables.getVariable(MYSQL_SERVER_VERSION).getValue());
+    writeStringWithNull(dataBuf, MYSQL_SERVER_VERSION_5_6_0);
     //connection_id (4) -- connection id
     writeInt4(dataBuf, result.getConnID());
     //auth_plugin_data_part_1 (string.fix_len) -- [len=8] first 8 bytes of the auth-plugin data
-    writeStringWithNull(dataBuf, new String(result.authData1, MySQLVariables.getVariable(MYSQL_SERVER_ENCODING)
-            .getValue()));
+    writeStringWithNull(dataBuf, new String(result.authData1, CHARSET_UTF8));
 
     //capability_flag_1 (2) -- lower 2 bytes of the Protocol::CapabilityFlags (optional)
     writeInt2(dataBuf, CapabilityFlags.getDefaultCapabilityFlagsLower());
@@ -122,8 +141,7 @@ public final class CodecUtil {
     //string[10]     reserved (all [00])
     writeByteReserved(dataBuf, 10);
     //string[$len]   auth-plugin-data-part-2 ($len=MAX(13, length of auth-plugin-data - 8))
-    writeStringWithNull(dataBuf, new String(result.authData2, MySQLVariables.getVariable(MYSQL_SERVER_ENCODING)
-            .getValue()));
+    writeStringWithNull(dataBuf, new String(result.authData2, CHARSET_UTF8));
     writePacket(session, out, dataBuf);
   }
 
@@ -278,8 +296,9 @@ public final class CodecUtil {
 
   public static void writeColumns(Session session, ColumnExpr[] columns, CompositeByteBuf out) {
     SQLType colType;
+    ByteBuf columnBuffer;
     for (ColumnExpr column : columns) {
-      ByteBuf columnBuffer = out.alloc().buffer(128);
+      columnBuffer = out.alloc().buffer(128);
       colType = column.getResultType();
       //catalog (lenenc_str) -- catalog
       writeEncodeString(columnBuffer, column.getCatalog());
@@ -354,7 +373,7 @@ public final class CodecUtil {
           writeEncodeBytes(rowBuffer, ((BinaryValue) val).getValue());
           break;
         case DATE:
-          String dataEncode = ((DateValue) val).convertToString(column.getResultType().getType(), null);
+          String dataEncode = ((DateValue) val).convertToString(column.getResultType().getType());
           writeEncodeString(rowBuffer, dataEncode);
           break;
         case TIME:
@@ -470,7 +489,6 @@ public final class CodecUtil {
     int month = ts.getMonth() + 1;
     int day = ts.getDate();
 
-
     if (value.getDateType() == Basepb.DataType.Date) {
       buffer.writeByte(4);
       buffer.writeShortLE(year);
@@ -487,7 +505,6 @@ public final class CodecUtil {
     buffer.writeByte(ts.getMinutes());
     buffer.writeByte(ts.getSeconds());
     buffer.writeIntLE(ts.getSeconds() / 1000 / 1000);
-
   }
 
   private static void writeTime(ByteBuf buffer, TimeValue value) {
@@ -511,19 +528,22 @@ public final class CodecUtil {
     time -= minute * Types.MINUTE;
     long second = time / Types.SECOND;
     time -= second * Types.SECOND;
+
+    byte[] bytes = new byte[9];
     if (time == 0) {
-      buffer.writeByte(8);
+      bytes[0] = 8;
     } else {
-      buffer.writeByte(12);
+      bytes[0] = 12;
     }
-    buffer.writeByte(isNeg);
-    buffer.writeByte((byte) day);
-    buffer.writeByte(0);
-    buffer.writeByte(0);
-    buffer.writeByte(0);
-    buffer.writeByte((byte) hour);
-    buffer.writeByte((byte) minute);
-    buffer.writeByte((byte) second);
+    bytes[1] = isNeg;
+    bytes[2] = (byte) day;
+    bytes[3] = 0;
+    bytes[4] = 0;
+    bytes[5] = 0;
+    bytes[6] = (byte) hour;
+    bytes[7] = (byte) minute;
+    bytes[8] = (byte) second;
+    buffer.writeBytes(bytes);
     if (time > 0) {
       buffer.writeIntLE((int) (time / Types.MICROSECOND));
     }
@@ -553,7 +573,7 @@ public final class CodecUtil {
           throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
         }
 
-        int intVal = type.getUnsigned() ? readInt4(in) : in.readIntLE();
+        long intVal = type.getUnsigned() ? in.readUnsignedIntLE() : in.readIntLE();
         return LongValue.getInstance(intVal);
       case BigInt:
         if (in.readableBytes() < 8) {
@@ -596,7 +616,7 @@ public final class CodecUtil {
                     readInt1(in), readInt1(in), readInt1(in), readInt1(in), readInt1(in)), type.getType());
           case 11:
             return DateValue.getInstance(String.format("%04d-%02d-%02d %02d:%02d:%02d.%06d", readInt2(in),
-                    readInt1(in), readInt1(in), readInt1(in), readInt1(in), readInt1(in), ((long) in.readIntLE()) & 0xffffffff), type.getType());
+                    readInt1(in), readInt1(in), readInt1(in), readInt1(in), readInt1(in), in.readUnsignedIntLE()), type.getType());
           default:
             throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
         }
@@ -633,13 +653,18 @@ public final class CodecUtil {
         int yearVal = type.getUnsigned() ? readInt2(in) : in.readShortLE();
         return YearValue.getInstance(yearVal);
 
-      case Varchar:
-      case Char:
-      case Decimal:
       case TinyBlob:
       case Blob:
       case MediumBlob:
       case LongBlob:
+        if (in.readableBytes() < 1) {
+          throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_MALFORMED_PACKET);
+        }
+        byte[] bytes = readEncodeStringByBytes(in);
+        return BinaryValue.getInstance(bytes);
+      case Varchar:
+      case Char:
+      case Decimal:
       case Bit:
       case Enum:
       case Set:
@@ -671,10 +696,6 @@ public final class CodecUtil {
       flag |= MySQLColumnFlag.ZEROFILL_FLAG.getValue();
     }
     return flag;
-  }
-
-  public static void readHeader(ByteBuf byteBuf) {
-    byteBuf.markReaderIndex().readMediumLE();
   }
 
   public static int readInt1(ByteBuf byteBuf) {
@@ -722,7 +743,7 @@ public final class CodecUtil {
   }
 
   public static long readEncodeInt(ByteBuf byteBuf) {
-    int firstByte = readInt1(byteBuf);
+    int firstByte = byteBuf.readUnsignedByte();
     if (firstByte < 0xfb) {
       return firstByte;
     }
@@ -730,10 +751,10 @@ public final class CodecUtil {
       return 0;
     }
     if (0xfc == firstByte) {
-      return byteBuf.readShortLE();
+      return byteBuf.readUnsignedShortLE();
     }
     if (0xfd == firstByte) {
-      return byteBuf.readMediumLE();
+      return byteBuf.readUnsignedMediumLE();
     }
     return byteBuf.readLongLE();
   }
@@ -805,8 +826,7 @@ public final class CodecUtil {
     }
 
     try {
-      CharSequence sequence = byteBuf.readCharSequence(length,
-              Charset.forName(MySQLVariables.getVariable(MYSQL_SERVER_ENCODING).getValue()));
+      CharSequence sequence = byteBuf.readCharSequence(length, CHARSET_UTF8);
       return sequence == null ? null : sequence.toString();
     } catch (Exception e) {
       throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_RPC_REQUEST_CODEC, e);
@@ -820,8 +840,8 @@ public final class CodecUtil {
     }
 
     try {
-      writeEncodeInt(byteBuf, value.getBytes(MySQLVariables.getVariable(MYSQL_SERVER_ENCODING).getValue()).length);
-      byteBuf.writeBytes(value.getBytes(MySQLVariables.getVariable(MYSQL_SERVER_ENCODING).getValue()));
+      writeEncodeInt(byteBuf, value.getBytes(CHARSET_UTF8).length);
+      byteBuf.writeBytes(value.getBytes(CHARSET_UTF8));
     } catch (Exception e) {
       throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_RPC_REQUEST_CODEC, e);
     }
@@ -845,7 +865,7 @@ public final class CodecUtil {
 
   public static void writeString(ByteBuf byteBuf, String value) {
     try {
-      byte[] tt = value.getBytes(MySQLVariables.getVariable(MYSQL_SERVER_ENCODING).getValue());
+      byte[] tt = value.getBytes(CHARSET_UTF8);
       byteBuf.writeBytes(tt);
     } catch (Exception e) {
       throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_RPC_REQUEST_CODEC, e);
@@ -859,8 +879,7 @@ public final class CodecUtil {
   public static String readStringWithNull(ByteBuf byteBuf) {
     int length = byteBuf.bytesBefore((byte) 0);
     try {
-      CharSequence sequence = byteBuf.readCharSequence(length,
-              Charset.forName(MySQLVariables.getVariable(MYSQL_SERVER_ENCODING).getValue()));
+      CharSequence sequence = byteBuf.readCharSequence(length, CHARSET_UTF8);
       return sequence == null ? null : sequence.toString();
     } catch (Exception e) {
       throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_RPC_REQUEST_CODEC, e);
@@ -878,7 +897,7 @@ public final class CodecUtil {
 
   public static void writeStringWithNull(ByteBuf byteBuf, String value) {
     try {
-      byteBuf.writeBytes(value.getBytes(MySQLVariables.getVariable(MYSQL_SERVER_ENCODING).getValue()));
+      byteBuf.writeBytes(value.getBytes(CHARSET_UTF8));
     } catch (Exception e) {
       throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_RPC_REQUEST_CODEC, e);
     }
@@ -887,8 +906,7 @@ public final class CodecUtil {
 
   public static String readStringEof(ByteBuf byteBuf) {
     try {
-      CharSequence sequence = byteBuf.readCharSequence(byteBuf.readableBytes(),
-              Charset.forName(MySQLVariables.getVariable(MYSQL_SERVER_ENCODING).getValue()));
+      CharSequence sequence = byteBuf.readCharSequence(byteBuf.readableBytes(), CHARSET_UTF8);
       return sequence == null ? null : sequence.toString();
     } catch (Exception e) {
       throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_RPC_REQUEST_CODEC, e);
@@ -900,7 +918,7 @@ public final class CodecUtil {
       if (value == null) {
         value = StringUtil.EMPTY_STRING;
       }
-      byteBuf.writeBytes(value.getBytes(MySQLVariables.getVariable(MYSQL_SERVER_ENCODING).getValue()));
+      byteBuf.writeBytes(value.getBytes(CHARSET_UTF8));
     } catch (Exception e) {
       throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_RPC_REQUEST_CODEC, e);
     }
@@ -911,8 +929,6 @@ public final class CodecUtil {
   }
 
   public static void writeByteReserved(ByteBuf byteBuf, int length) {
-    for (int i = 0; i < length; i++) {
-      byteBuf.writeByte(0);
-    }
+    byteBuf.writeBytes(ZERO_BYTES[length]);
   }
 }

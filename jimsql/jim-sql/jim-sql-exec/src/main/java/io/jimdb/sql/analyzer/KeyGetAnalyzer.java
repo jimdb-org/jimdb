@@ -126,7 +126,7 @@ public final class KeyGetAnalyzer {
           continue;
         }
 
-        value = analyzeIndex(index, cond.getConditions());
+        value = analyzeIndex(session, index, cond.getConditions());
         if (value == null || value.length == 0) {
           continue;
         }
@@ -253,7 +253,7 @@ public final class KeyGetAnalyzer {
     return conds;
   }
 
-  protected static Value[] analyzeIndex(Index index, List<Tuple2<Column, Value>> conditions) {
+  protected static Value[] analyzeIndex(Session session, Index index, List<Tuple2<Column, Value>> conditions) {
     final Column[] idxColumns = index.getColumns();
     if (idxColumns.length != conditions.size()) {
       return null;
@@ -274,7 +274,7 @@ public final class KeyGetAnalyzer {
       if (val == null) {
         return null;
       }
-      result[i] = ValueConvertor.convertType(null, val, column.getType());
+      result[i] = ValueConvertor.convertType(session, val, column.getType());
     }
     return result;
   }

@@ -359,6 +359,8 @@ final class DDLAnalyzer {
         alterInfos.add(value);
         continue;
       }
+
+      throw DBException.get(ErrorModule.DDL, ErrorCode.ER_NOT_SUPPORTED_YET, "Alter Table Item");
     }
 
     return new DDL(OpType.AlterTable, alterInfos, false);

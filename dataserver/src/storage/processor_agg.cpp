@@ -20,7 +20,9 @@ namespace ds {
 namespace storage {
 
 Aggregation::Aggregation(const dspb::Aggregation &agg, std::unique_ptr<Processor> processor, bool gather_trace)
-    : processor_(std::move(processor)){
+    : processor_(std::move(processor)) ,
+    agg_(agg),
+    has_fetch_row_(false){
     gather_trace_ = gather_trace;
     agg_group_by_columns_.reserve(agg.group_by_size());
     for (auto &g : agg.group_by()) {
@@ -29,7 +31,13 @@ Aggregation::Aggregation(const dspb::Aggregation &agg, std::unique_ptr<Processor
         colInfo.asc = true;
         agg_group_by_columns_.push_back(std::move(colInfo));
     }
-    FetchRow(agg);
+
+    // no group by
+    if (agg_group_by_columns_.empty()) {
+        for (auto &f : agg.func()) {
+            plain_calculators_.push_back(AggreCalculator::New(f));
+        }
+    }
 }
 
 Aggregation::~Aggregation() {
@@ -55,7 +63,8 @@ Status Aggregation::check(const dspb::Aggregation &agg) {
     return Status::OK();
 }
 
-void Aggregation::FetchRow(const dspb::Aggregation &agg) {
+Status Aggregation::FetchRow(const dspb::Aggregation &agg) {
+
     std::chrono::system_clock::time_point time_begin;
     if (gather_trace_) {
         time_begin = std::chrono::system_clock::now();
@@ -70,30 +79,51 @@ void Aggregation::FetchRow(const dspb::Aggregation &agg) {
 
         if (!agg_group_by_columns_.empty()) {
             row.SetColumnInfos(agg_group_by_columns_);
-        }
-
-        if (unordered_map_res[row].empty()) {
-            for (auto &f : agg.func()) {
-                auto cal = AggreCalculator::New(f);
-                if (cal) {
-                    unordered_map_res[row].push_back(std::move(cal));
+            if (unordered_map_res[row].empty()) {
+                for (auto &f : agg.func()) {
+                    auto cal = AggreCalculator::New(f);
+                    if (cal) {
+                        unordered_map_res[row].push_back(std::move(cal));
+                    }
                 }
             }
-        }
-
-        for (auto &cal : unordered_map_res[row]) {
-            cal->Add(row.GetField(cal->GetColumnId()));
+            for (auto &cal : unordered_map_res[row]) {
+                cal->Add(row.GetField(cal->GetColumnId()));
+            }
+        } else {
+            for (auto &cal : plain_calculators_) {
+                cal->Add(row.GetField(cal->GetColumnId()));
+            }
         }
     } while (s.ok());
 
-    unordered_map_it_ = unordered_map_res.begin();
+    if (!plain_calculators_.empty()) {
+        unordered_map_res[RowResult()] = std::move(plain_calculators_);
+    }
 
     if (gather_trace_) {
         time_processed_ns_ += std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now() - time_begin).count();
     }
+    return s;
 }
 
 Status Aggregation::next(RowResult &row) {
+
+    Status s;
+
+    if (!has_fetch_row_) {
+
+        s = FetchRow(agg_);
+        if (s.code() == Status::kNoMoreData) {
+            s = Status::OK();
+        } else if (!s.ok()) {
+            return s;
+        }
+
+        has_fetch_row_ = true;
+        unordered_map_it_ = unordered_map_res.begin();
+    }
+
     if (unordered_map_it_ == unordered_map_res.end()) {
         return Status( Status::kNoMoreData, "group by is reached", "" );
     }
