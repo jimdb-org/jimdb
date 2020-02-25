@@ -1,26 +1,22 @@
-Change Data Capture 
-=========================
+# Change Data Capture Design
 
-overview
------------------
+## overview
 
 the feature change data capture (cdc for short) that capturing data change and performed to the third-party application. For user, cdc supported function of table subscribe, throw the table’s data to a system such as MQ, KAFKA, mysql-server, or search, analyce, backup, or any specified system.
 
-arch
------------------
- 
+## arch
+
 The main idea of data capturing is a pull model, the most benefit is simple to understand and easy to realize. Design consider point:
 * lone process: do not depend on any others components of jimdb, decrease risk for the whole system and reduce affected to data service core function.
 * no status: do not maintain cdc progress and meta, esay logic for starting, stopping, and deploying.
 
-design
------------------
+## design
+
 All cdc-server reserve theirs own subscribes pullers’subscribe info and progress in mysql-server tables. These meta is loaded by a cdc-server at server start, and is updated at subscribe/unsubscribe request is executed or by data capturing puller.
 
-subscribe table scheme:
-----------------------------------
-::
+## subscribe table scheme:
 
+```
     field               type             primary key     comment
     cluster_id          int              yes             point to a cluster
     db_name             varchar          yes             point to a db
@@ -32,12 +28,11 @@ subscribe table scheme:
     sink                varchar                          thirdpart app config info
     cancel              int                              subscribe cancel flag
     owner               varchar                          task belong to cdc-server
+```
 
+## progress table sheme:
 
-progress table sheme:
----------------------------------------------------
-::
-
+```
     field                                type        primary key    comment
     db_name                              varchar     yes            point to a db
     table_name                           varchar     yes            point to a table
@@ -48,16 +43,16 @@ progress table sheme:
     progress_current_snapshot_version    int                        in using checkpoint version
     progress_last_snapshot_key           varchar                    snapshot iterator last key
     progress_last_log_index              int                        incremental log last index
+```
 
 When a cdc-server is start, it loads itself subscribe task by condition owner in meta table subscribe. And then load table range progress in meta table progress, up to now, range pullers are recoverd, they will work by progress_stage transform continuously.
 
 Every range puller is running only in one thread at one time, that say there’s no concurrent problem neither capturing data nor transferring data out. The stage is a simple status machine, 
 which from ‘register’to ‘snapshot’to ‘incremental_log’, each puller run only go forward, it can retry at one stage but never fallback. At each stage, a puller send a correspond request:
 
-In register stage:
----------------------------------------------------
-::
+## In register stage:
 
+```
     message CdcRegisterRequest {
         uint64 range_id = 1;
         basepb.RangeEpoch range_epoch = 2; // current epoch for verification
@@ -110,7 +105,7 @@ In register stage:
         repeated CdcChangeData log_data = 2;
         uint64 current_log_index = 3;
     }
-
+```
 
 
 these request is dealed by data-server provided cdc handles: 

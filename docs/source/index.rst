@@ -37,21 +37,14 @@ Our motivation is to build a scalable and fast enough database system which make
    :maxdepth: 2
    :caption: Design Documentation
 
-   design/sqlProxy
-   design/redisProxy
-   design/transaction
-   design/schedule
-   design/cdc
-   design/raft
-   design/schema
-
+   design/README
 
 
 .. toctree::
    :maxdepth: 2
-   :caption: Evaluation
+   :caption: Perfomance
 
-   evaluation/perfomance
+   perfomance/perfomance
 
 
 .. toctree::
@@ -59,6 +52,13 @@ Our motivation is to build a scalable and fast enough database system which make
    :caption: FAQ
 
    faq/faq
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: 查看源码
+
+   github地址 <https://github.com/jimdb-org/jimdb>
 
 
 Indices and tables

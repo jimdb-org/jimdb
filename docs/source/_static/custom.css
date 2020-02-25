@@ -2,3 +2,8 @@
     max-width: initial;
     padding-right: 50px;
 }
+.rst-content img{
+	display: block;
+	width: 80%;
+	margin: 10px auto;
+}
