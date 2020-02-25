@@ -1,11 +1,11 @@
-# Redis Proxy
+# Redis Proxy Design
 
 ## Overall architecture
 
 AP is designed as a TCP server compatible with redis protocol, which is responsible for receiving commands from native redis clients, then calling the JIMDB SDK to interact with data server, write or read data, and convert data returned by data server into redis protocol and return to clients Complete redis command processing, the overall process as follows:
 
 
- ![Structure](../../images/redis-proxy-structure.png)
+ ![Structure](http://img11.360buyimg.com/da/s800x800_jfs/t1/87023/1/13092/37185/5e54d5c4E36cc4aa1/84d92cdacb6f7fd1.png)
 
  
 use redis's auth command to wrap up the relevant information of JIMDB (cluster_id, db_id, table_id) when establishing the link , complete the initialization of the JIMDB Sdk, and then read and write. All kinds of commands are compatible with redis semantics as far as possible

@@ -24,7 +24,7 @@ Raft是基于可复制的状态机来实现数据的一致性的。
 
 <br />
 
-![raft实现](../../images/raft-machine.png)
+![raft实现](http://img11.360buyimg.com/da/s800x800_jfs/t1/108279/30/7014/159040/5e54d5beEb424813d/3f65139e6d1fa93e.png)
 
 <br />
 
@@ -57,7 +57,7 @@ Leader处理请求，向Follower复制日志、定时发送心跳维护自己的
 
 <br />
 
-![raft-leader](../../images/raft-leader.png)
+![raft-leader](http://img11.360buyimg.com/da/s800x800_jfs/t1/96549/13/13371/136473/5e54d5b9E67811dc3/c727266bb4065a3a.png)
 
 <br />
 
@@ -91,7 +91,7 @@ Candidate在向其他节点发送投票请求时，会同时携带自己最新�
 
 <br />
 
-![raft-leader](../../images/raft-leader-vote.png)
+![raft-leader](http://img11.360buyimg.com/da/s800x800_jfs/t1/92439/38/13118/22121/5e54d5b3E5c1402cf/c08f53cea62aa04c.png)
 
 <br />
 
@@ -126,7 +126,7 @@ Leader发生复制请求时会携带前一条日志的index 和 term，如果Fol
 
 <br />
 
-![raft-leader](../../images/raft-copy-1.png)
+![raft-copy](http://img11.360buyimg.com/da/s800x800_jfs/t1/98669/11/13113/232981/5e54d5a6Ee0af322a/661c79a49ff878d6.png)
 
 <br />
 
@@ -148,7 +148,7 @@ Raft不提供exactly once语义，也就是说只有幂等的操作才是安全�
 
 <br />
 
-![raft-leader](../../images/raft-copy-2.png)
+![raft-copy](http://img11.360buyimg.com/da/s800x800_jfs/t1/88706/13/13193/244222/5e54d5aaE5cbcef14/2886b9a2f9854807.png)
 
 <br />
 
@@ -156,7 +156,7 @@ Raft不提供exactly once语义，也就是说只有幂等的操作才是安全�
 
 <br />
 
-![raft-leader](../../images/raft-copy-3.png)
+![raft-copy](http://img11.360buyimg.com/da/s800x800_jfs/t1/90705/26/13228/328468/5e54d5aeE6dd47eb6/40328e121a3a41c5.png)
 
 <br />
 
@@ -185,7 +185,7 @@ one-by-one<br/>
 
 <br />
 
-![raft-leader](../../images/raft-change.png)
+![raft-change](http://img11.360buyimg.com/da/s800x800_jfs/t1/87017/10/13166/62266/5e54d5a0Ecabd8880/3c373bb407b90837.png)
 
 <br />
 

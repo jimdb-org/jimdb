@@ -43,7 +43,7 @@ meta key的选择仍然按照原来的逻辑，从participant keys中选择一�
 
 <br />
 
-![事务元数据存储](../images/transaction-kv.png)
+![事务元数据存储](http://img11.360buyimg.com/da/s800x800_jfs/t1/105192/33/13131/68968/5e54d655Eb1eb56ee/c48417f4196aa9b5.png)
 
 ### 2.2 写入流程	
 
@@ -85,7 +85,7 @@ message PrepareResponse {
 
 <br />
 
-![流程示意图](../images/transaction-prepare.png)
+![流程示意图](http://img11.360buyimg.com/da/s800x800_jfs/t1/93460/34/13167/50383/5e54d65bE5559209d/144d574ff37db1aa.png)
 
 <br />
 
@@ -131,7 +131,7 @@ message DecideResponse {
 
 <br />
 
-![流程示意图](../images/transaction-decide.png)
+![流程示意图](http://img11.360buyimg.com/da/s800x800_jfs/t1/93011/38/13131/102418/5e54d64dEd2442ee1/22904c6d17221dde.png)
 
 <br />
 
@@ -150,7 +150,7 @@ DataServer在处理Select请求时，同时搜索txn（预先数据）和default
 
 <br />
 
-![流程示意图](../images/transaction-select.png)
+![流程示意图](http://img11.360buyimg.com/da/s800x800_jfs/t1/89091/24/13058/113771/5e54d662Eb12f8383/2637aa0a220ce286.png)
 
 <br />
  
@@ -174,7 +174,7 @@ DataServer在处理Select请求时，同时搜索txn（预先数据）和default
 
 <br />
 
-![流程示意图](../images/transaction-recover.png)
+![流程示意图](http://img11.360buyimg.com/da/s800x800_jfs/t1/103932/3/13191/82221/5e54d65eEe1e35d93/54496fbf2ca881f7.png)
 
 <br />
  
@@ -229,7 +229,7 @@ prepare请求状态未确定如网络超时不可重试prepare；<br/>
 
 <br />
 
-![流程示意图](../images/transaction-err.png)
+![流程示意图](http://img11.360buyimg.com/da/s800x800_jfs/t1/85052/30/13115/100439/5e54d651E3fff944d/73186bfc2ccc539b.png)
 
 <br />
 

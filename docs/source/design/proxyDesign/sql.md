@@ -1,5 +1,5 @@
 # SQL Proxy Design
-![SQL执行流程](../../images/sql-proxy-structure.jpg)
+![SQL执行流程](http://img11.360buyimg.com/da/s800x800_jfs/t1/100334/10/13221/640930/5e54d6f5Efe60a33e/9d3ab3fd76e27eba.jpg)
 上图是SQL引擎的整体架构：其中左边是协议层，主要负责管理用户连接，解析用户SQL，
 并将处理好的结果数据封装成MySQL协议形式返回给客户端。中间的Session Context主要负责处理session变量。SQL经过parser解析成AST，然后经过Optimize、SQL执行引擎、存储层协处理器得到计算结果。
 协处理器支持简单的表达式计算、data scan、聚合等，将大量操作下推到协处理器上可以极大减少data server与SQL引擎数据交互带来的网络开销，
@@ -92,11 +92,11 @@ DML操作，主要包括insert、update、delete和select语句操作。现基�
 * insert into test.student (id,name,age,class) values (1,”student1”,10,”one”);
 > proxy存储引擎将行数据按照编码规则映射为key-value对，<1_1, [”student1”,10,”one”]>，见上文所述。
 根据key值定位到应该写入的分片Range所在的data-server，发送insert操作。
-![insert流程](../../images/exec-engine-insert.jpg)
+![insert流程](http://img11.360buyimg.com/da/s800x800_jfs/t1/86856/12/13024/894251/5e54d43cEbb4d93ee/7484be4669eda58b.jpg)
 
 * select * from test.student where id = 1;
 > 根据id=1的点查询条件，可以构建出key=1_1；根据key值定位该查询所在分片Range及data-server地址；发送select操作。
-![select流程](../../images/exec-engine-select.jpg)
+![select流程](http://img11.360buyimg.com/da/s800x800_jfs/t1/102582/3/12551/867706/5e54d55aE488a0ff4/ba55ed672e169e9d.jpg)
 
 * update test.student set name = “student2”, age = 15 where id = 1;
 > 根据id=1的查询条件，可以构建出key=1_1；根据key值定位到该查询所在分片Range及data-server地址并读取key-value对；

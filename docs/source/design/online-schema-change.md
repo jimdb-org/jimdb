@@ -2,7 +2,7 @@
 
 参考spanner schema算法：利用多个递进状态执行，只要保证任意相邻两个状态是相互兼容的，整个过程就是可依赖的。只有table owner节点执行对应table DDL 
 
-![ddl架构图](../images/ddl-structure.png)
+![ddl架构图](http://img11.360buyimg.com/da/s800x800_jfs/t1/99025/4/13217/120910/5e54d42fEd665571c/0c3b40a171f9432e.png)
 
 
 #State enum

@@ -6,7 +6,7 @@ Schedule is the main part of JIMDB’s Master with scheduled job of Failover, Ba
 
 Schedule jobs run serially, a job can only start after its previous job finished successfully, the image below shows the detail order of pipeline.
 
- ![design-schedule](/images/design-schedule.png)
+![design-schedule](http://img11.360buyimg.com/da/s800x800_jfs/t1/101978/7/13215/39352/5e54d435Edf4487b5/c437711d16d857c8.png)
 
 
 ## 1.2 NodeStateJob
