@@ -19,7 +19,7 @@ import io.jimdb.core.config.JimConfig;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.plugin.store.Engine;
 
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public final class PluginFactory {
   private static MetaStore metaStore;
   private static RouterStore routerStore;
 
-  public static void init(JimConfig c) throws JimException {
+  public static void init(JimConfig c) throws BaseException {
     loadPlugins(c);
     if (LOG.isInfoEnabled()) {
       LOG.info("PluginManager loaded and initialized all plugins.");
@@ -86,7 +86,7 @@ public final class PluginFactory {
   /**
    * Load all plugins.
    */
-  private static void loadPlugins(JimConfig c) throws JimException {
+  private static void loadPlugins(JimConfig c) throws BaseException {
     try {
       Class<?> clazz = Class.forName(c.getMetaStoreClass());
       metaStore = (MetaStore) clazz.newInstance();

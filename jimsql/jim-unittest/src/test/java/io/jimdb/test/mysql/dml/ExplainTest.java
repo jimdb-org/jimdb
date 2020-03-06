@@ -200,7 +200,7 @@ public class ExplainTest extends SqlTestBase {
 
   @Test
   public void explainDistinctSelect() {
-    expected = "op=Aggregation;task=proxy;op=TableSource;task=proxy;op=Aggregation;task=ds;op=TableSource;task=ds;";
+    expected = "op=Aggregation;task=proxy;op=IndexSource;task=proxy;op=Aggregation;task=ds;op=IndexSource;task=ds;";
     List<String> result = execQuery("explain select distinct age from blue_explain_test");
     assertResult(expected, result);
   }

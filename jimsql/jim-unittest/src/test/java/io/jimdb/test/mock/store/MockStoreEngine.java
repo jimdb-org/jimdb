@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.config.JimConfig;
 import io.jimdb.core.expression.ValueRange;
@@ -47,33 +47,33 @@ public class MockStoreEngine implements Engine {
   }
 
   @Override
-  public Flux<Boolean> put(Table table, byte[] key, byte[] value, Instant timeout) throws JimException {
+  public Flux<Boolean> put(Table table, byte[] key, byte[] value, Instant timeout) throws BaseException {
     return Flux.just(Boolean.TRUE);
   }
 
   @Override
-  public Flux<byte[]> get(Table table, byte[] key, Instant timeout) throws JimException {
+  public Flux<byte[]> get(Table table, byte[] key, Instant timeout) throws BaseException {
     return Flux.just("a".getBytes());
   }
 
   @Override
-  public Flux<Boolean> delete(Table table, byte[] key, Instant timeout) throws JimException {
+  public Flux<Boolean> delete(Table table, byte[] key, Instant timeout) throws BaseException {
     return Flux.just(Boolean.TRUE);
   }
 
   @Override
-  public Set<RangeInfo> getRanges(Table table) throws JimException {
+  public Set<RangeInfo> getRanges(Table table) throws BaseException {
     return Collections.EMPTY_SET;
   }
 
   @Override
-  public Flux<List<Tuple2<Statspb.Histogram, Statspb.CMSketch>>> analyzeIndex(Table table, Index index, Instant timeout, List<ValueRange> ranges, Statspb.IndexStatsRequest.Builder reqBuilder) throws JimException {
+  public Flux<List<Tuple2<Statspb.Histogram, Statspb.CMSketch>>> analyzeIndex(Table table, Index index, Instant timeout, List<ValueRange> ranges, Statspb.IndexStatsRequest.Builder reqBuilder) throws BaseException {
     // TODO
     return null;
   }
 
   @Override
-  public Flux<List<Tuple2<Statspb.Histogram, List<Statspb.SampleCollector>>>> analyzeColumns(Table table, Column[] columns, Instant timeout, List<ValueRange> ranges, Statspb.ColumnsStatsRequest.Builder reqBuilder) throws JimException {
+  public Flux<List<Tuple2<Statspb.Histogram, List<Statspb.SampleCollector>>>> analyzeColumns(Table table, Column[] columns, Instant timeout, List<ValueRange> ranges, Statspb.ColumnsStatsRequest.Builder reqBuilder) throws BaseException {
     // TODO
     return null;
   }

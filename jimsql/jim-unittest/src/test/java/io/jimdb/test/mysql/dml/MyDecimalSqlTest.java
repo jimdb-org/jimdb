@@ -102,7 +102,7 @@ public class MyDecimalSqlTest extends SqlTestBase {
 
     // test all
     String expectedStr = "id=1; d1=5, id=2; d1=5, id=3; d1=5, id=4; d1=11111111, id=5; d1=-11111111, id=6; d1=0";
-    List<String>expected = Arrays.asList(expectedStr.split(","));
+    List<String>expected = Arrays.asList(expectedStr.split(", "));
     execQuery("select id, d1 from " + defaultTypeTable , expected);
     // test where const
     expectedStr = "id=3; d1=5.20";

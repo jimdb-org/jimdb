@@ -18,7 +18,7 @@ package io.jimdb.sql.operator;
 import java.util.Collections;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Schema;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.sql.optimizer.OperatorVisitor;
@@ -45,9 +45,9 @@ public abstract class Operator implements AutoCloseable {
    *
    * @param session
    * @return Flux
-   * @throws JimException
+   * @throws BaseException
    */
-  public abstract Flux<ExecResult> execute(Session session) throws JimException;
+  public abstract Flux<ExecResult> execute(Session session) throws BaseException;
 
   public Schema getSchema() {
     if (schema == null) {

@@ -33,6 +33,6 @@
         <module>jim-engine</module>
         <module>jim-metadata</module>
         <module>jim-proto</module>
-        <module>jim-sdk-service</module>
+        <module>jim-fail</module>
     </modules>
 </project>

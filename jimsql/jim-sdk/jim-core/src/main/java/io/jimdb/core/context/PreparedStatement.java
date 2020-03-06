@@ -15,7 +15,7 @@
  */
 package io.jimdb.core.context;
 
-import io.jimdb.common.utils.lang.Resetable;
+import io.jimdb.common.utils.lang.Resettable;
 import io.jimdb.core.values.Value;
 import io.jimdb.pb.Metapb.SQLType;
 
@@ -27,7 +27,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @version V1.0
  */
 @SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
-public final class PreparedStatement implements Resetable {
+public final class PreparedStatement implements Resettable {
   private final int id;
   private final int params;
   private final boolean cachePlan;

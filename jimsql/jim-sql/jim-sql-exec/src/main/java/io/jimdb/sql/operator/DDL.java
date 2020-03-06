@@ -21,7 +21,7 @@ import java.util.List;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.AckExecResult;
@@ -57,14 +57,14 @@ public final class DDL extends Operator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     Flux<Boolean> result;
     switch (type) {
       case CreateCatalog:
         result = DDLExecutor.createCatalog((CatalogInfo) stmt)
                 .onErrorReturn(err -> {
-                  if (err instanceof JimException) {
-                    return isNotExists && ((JimException) err).getCode() == ErrorCode.ER_DB_CREATE_EXISTS;
+                  if (err instanceof BaseException) {
+                    return isNotExists && ((BaseException) err).getCode() == ErrorCode.ER_DB_CREATE_EXISTS;
                   }
                   return false;
                 }, Boolean.TRUE);
@@ -72,8 +72,8 @@ public final class DDL extends Operator {
       case DropCatalog:
         result = DDLExecutor.dropCatalog((CatalogInfo) stmt)
                 .onErrorReturn(err -> {
-                  if (err instanceof JimException) {
-                    return isNotExists && ((JimException) err).getCode() == ErrorCode.ER_DB_DROP_EXISTS;
+                  if (err instanceof BaseException) {
+                    return isNotExists && ((BaseException) err).getCode() == ErrorCode.ER_DB_DROP_EXISTS;
                   }
                   return false;
                 }, Boolean.TRUE);
@@ -81,8 +81,8 @@ public final class DDL extends Operator {
       case CreateTable:
         result = DDLExecutor.createTable((TableInfo) stmt)
                 .onErrorReturn(err -> {
-                  if (err instanceof JimException) {
-                    return isNotExists && ((JimException) err).getCode() == ErrorCode.ER_TABLE_EXISTS_ERROR;
+                  if (err instanceof BaseException) {
+                    return isNotExists && ((BaseException) err).getCode() == ErrorCode.ER_TABLE_EXISTS_ERROR;
                   }
                   return false;
                 }, Boolean.TRUE);
@@ -91,14 +91,22 @@ public final class DDL extends Operator {
         final List<AlterTableInfo> dropTables = (List<AlterTableInfo>) stmt;
         result = Flux.create(sink -> {
           final Throwable[] errs = new Throwable[1];
+          final ErrorCode[] codes = new ErrorCode[]{ ErrorCode.ER_BAD_TABLE_ERROR };
           final List<String> notExists = new ArrayList<>(dropTables.size());
           Flux.just(dropTables.toArray(new AlterTableInfo[0]))
                   .flatMap(table -> DDLExecutor.alterTable(table)
                           .onErrorReturn(err -> {
-                            if (err instanceof JimException && (((JimException) err).getCode() == ErrorCode.ER_BAD_DB_ERROR
-                                    || ((JimException) err).getCode() == ErrorCode.ER_BAD_TABLE_ERROR)) {
-                              notExists.add(table.getTableName());
-                              return true;
+                            if (err instanceof BaseException) {
+                              ErrorCode errorCode = ((BaseException) err).getCode();
+                              if (errorCode == ErrorCode.ER_BAD_DB_ERROR) {
+                                codes[0] = errorCode;
+                                notExists.add(table.getDbName());
+                                return true;
+                              } else if (errorCode == ErrorCode.ER_BAD_TABLE_ERROR) {
+                                codes[0] = errorCode;
+                                notExists.add(table.getTableName());
+                                return true;
+                              }
                             }
 
                             errs[0] = err;
@@ -118,7 +126,7 @@ public final class DDL extends Operator {
                     @Override
                     protected void hookFinally(SignalType type) {
                       if (errs[0] == null && !isNotExists && notExists.size() > 0) {
-                        errs[0] = DBException.get(ErrorModule.DDL, ErrorCode.ER_BAD_TABLE_ERROR, notExists.toString());
+                        errs[0] = DBException.get(ErrorModule.DDL, codes[0], notExists.toString());
                       }
                       if (errs[0] != null) {
                         sink.error(errs[0]);

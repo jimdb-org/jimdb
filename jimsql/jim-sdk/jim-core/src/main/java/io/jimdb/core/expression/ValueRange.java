@@ -60,6 +60,11 @@ public class ValueRange {
     this.endInclusive = endInclusive;
   }
 
+  public ValueRange(List<Value> starts, List<Value> ends) {
+    this.starts = starts;
+    this.ends = ends;
+  }
+
   private static BinaryValue encodeValues(List<Value> values) {
     if (values.isEmpty()) {
       return BinaryValue.getInstance(new byte[0]);
@@ -130,7 +135,6 @@ public class ValueRange {
   /**
    * Consolidate the list of ranges into a single binary format range
    *
-   * @param session session used for comparison
    * @return tuple of the consolidated range
    */
   public Tuple2<BinaryValue, BinaryValue> consolidate() {
@@ -171,12 +175,6 @@ public class ValueRange {
   public boolean isNull() {
     return this.getStarts().size() == 1 && this.getEnds().size() == 1
                    && this.getStarts().get(0).isNull() && this.getEnds().get(0).isNull();
-  }
-  public boolean isFullRange() {
-    if (getFirstStart().isMin() && getFirstEnd().isMax()) {
-      return true;
-    }
-    return false;
   }
 
   @Override

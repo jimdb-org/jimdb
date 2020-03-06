@@ -131,7 +131,7 @@ class CommitSuccessTask extends TxnAsyncTask {
     List<Txn.TxnIntent> secIntents = config.getSecIntents();
     if (secIntents == null || secIntents.isEmpty()) {
       Flux.create(sink ->
-              sink.onRequest(r -> clearUp(sink))).subscribe(subscription);
+              sink.onRequest(r -> cleanup(sink))).subscribe(subscription);
     } else {
 
       Flux.create(sink ->
@@ -141,29 +141,29 @@ class CommitSuccessTask extends TxnAsyncTask {
 
   //decide secondary intents: cannot rollback, if execute failure
   public void decideSecondary(FluxSink sink) {
-    TxnHandler.decideSecondary(this.context, this.config.getTxnId(), this.config.getSecKeys(), Txn.TxnStatus.COMMITTED)
+    DecideHandler.decideSecondary(this.context, this.config.getTxnId(), this.config.getSecKeys(), Txn.TxnStatus.COMMITTED)
             .subscribe(
                     new TxnHandler.CommitSubscriber<>(flag -> {
                       if (!flag) {
                         sink.next(flag);
                       } else {
-                        clearUp(sink);
+                        cleanup(sink);
                       }
                     }, err -> sink.error(err)));
   }
 
-  public void clearUp(FluxSink sink) {
+  public void cleanup(FluxSink sink) {
     if (LOGGER.isInfoEnabled()) {
       LOGGER.info("start to clear txn {}", this.config.getTxnId());
     }
-    CleanUpFunc cleanUpFunc = (ctx, conf) -> cleanUp(ctx, conf);
+    CleanupHandler.CleanupFunc cleanUpFunc = (ctx, conf) -> cleanup(ctx, conf);
     cleanUpFunc.apply(this.context, this.config).onErrorResume(
-            TxnHandler.getErrHandler(this.context, cleanUpFunc, this.config)).subscribe(
+        CleanupHandler.getErrHandler(this.context, cleanUpFunc, this.config)).subscribe(
             new TxnHandler.CommitSubscriber<>(rs -> sink.next(rs), err -> sink.error(err)));
   }
 
-  private Flux<Txn.ClearupResponse> cleanUp(StoreCtx context, TxnConfig config) {
-    RequestContext reqCtx = TxnHandler.buildClearUpReqCtx(config, context);
-    return TxnHandler.clearUp(reqCtx, this.context.getSender());
+  private Flux<Txn.ClearupResponse> cleanup(StoreCtx context, TxnConfig config) {
+    RequestContext reqCtx = CleanupHandler.buildCleanupReqCtx(config, context);
+    return CleanupHandler.cleanup(reqCtx, this.context.getSender());
   }
 }

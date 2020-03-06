@@ -938,7 +938,7 @@ final class DDLAnalyzer {
         if (Types.isNumberType(sqlType) || Types.isYear(sqlType)) {
           reorgValue = LongValue.getInstance(0);
         } else if (Types.isDateType(sqlType)) {
-          reorgValue = DateValue.getInstance("0", sqlType.getType(), 0, null);
+          reorgValue = DateValue.getInstance("0", sqlType.getType(), 0);
         } else if (Types.isVarCharType(sqlType)) {
           reorgValue = StringValue.getInstance("");
         }

@@ -27,7 +27,7 @@ import java.util.function.Function;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.context.PreparedContext;
 import io.jimdb.core.context.StatementContext;
 import io.jimdb.core.expression.Assignment;
@@ -137,7 +137,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
     return false;
   }
 
-  protected Operator analyzeUpdate(RelOperator selectOp, List<SQLUpdateSetItem> items, SQLTableSource tableSource) throws JimException {
+  protected Operator analyzeUpdate(RelOperator selectOp, List<SQLUpdateSetItem> items, SQLTableSource tableSource) throws BaseException {
     this.clause = ClauseType.FIELDLIST;
     Table table = AnalyzerUtil.resolveTable(session, tableSource);
     session.getStmtContext().addPrivilegeInfo(table.getCatalog().getName(), table.getName(), PrivilegeType.UPDATE_PRIV);
@@ -164,7 +164,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
     return update;
   }
 
-  protected RelOperator analyzeSelect(final SQLSelectQueryBlock select, AnalyzerType analyzerType) throws JimException {
+  protected RelOperator analyzeSelect(final SQLSelectQueryBlock select, AnalyzerType analyzerType) throws BaseException {
     RelOperator result;
 
     if (select.getFrom() == null) {
@@ -215,7 +215,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
     return new DualTable(1);
   }
 
-  protected RelOperator analyzeTableSource(SQLTableSource tableSource, AnalyzerType analyzerType) throws JimException {
+  protected RelOperator analyzeTableSource(SQLTableSource tableSource, AnalyzerType analyzerType) throws BaseException {
     if (tableSource instanceof SQLExprTableSource) {
       if ("dual".equalsIgnoreCase(((SQLExprTableSource) tableSource).getName().getSimpleName())) {
         return this.createDualTable();
@@ -320,7 +320,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
     return indexHints;
   }
 
-  protected List<SQLSelectItem> expandStar(final RelOperator op, final List<SQLSelectItem> selectItems) throws JimException {
+  protected List<SQLSelectItem> expandStar(final RelOperator op, final List<SQLSelectItem> selectItems) throws BaseException {
     List<ColumnExpr> columnExps = op.getSchema().getColumns();
     List<SQLSelectItem> resultItems = new ArrayList<>(columnExps.size());
 
@@ -352,7 +352,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
   }
 
   protected RelOperator analyzeProjection(final RelOperator op, final List<SQLSelectItem> selectItems,
-                                          final Map<SQLAggregateExpr, Integer> aggMapper) throws JimException {
+                                          final Map<SQLAggregateExpr, Integer> aggMapper) throws BaseException {
 
     this.optimizationFlag |= OptimizeFlag.ELIMINATEPROJECTION;
     this.clause = ClauseType.FIELDLIST;
@@ -462,7 +462,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
     return sqlExpr;
   }
 
-  protected RelOperator analyzeFilter(final RelOperator op, final SQLExpr where, final Map<SQLAggregateExpr, Integer> havingMapper) throws JimException {
+  protected RelOperator analyzeFilter(final RelOperator op, final SQLExpr where, final Map<SQLAggregateExpr, Integer> havingMapper) throws BaseException {
     RelOperator operator = op;
     this.optimizationFlag |= OptimizeFlag.PREDICATEPUSHDOWN;
     if (this.clause != ClauseType.HAVING) {
@@ -563,7 +563,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
 
   protected RelOperator analyzeAggregate(RelOperator op, final List<SQLSelectItem> selectItems,
                                          final List<Expression> groupExprs, final Map<SQLAggregateExpr, Integer>
-                                                 aggMapper) throws JimException {
+                                                 aggMapper) throws BaseException {
 
     List<SQLAggregateExpr> orgAggFuncList = new ArrayList<>(selectItems.size());
     AggregateExprAnalyzer aggregateExprAnalyzer = new AggregateExprAnalyzer(orgAggFuncList, aggMapper);
@@ -634,7 +634,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
   }
 
   protected RelOperator analyzeDistinct(final List<SQLSelectItem> selectItems,
-                                        final RelOperator op) throws JimException {
+                                        final RelOperator op) throws BaseException {
     this.optimizationFlag = this.optimizationFlag | OptimizeFlag.BUILDKEYINFO | OptimizeFlag.PUSHDOWNAGG;
     List<ColumnExpr> columns = op.getSchema().clone().getColumns();
     int newLen = getNewLenFromSelectItems(selectItems);
@@ -663,7 +663,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
   }
 
   protected RelOperator analyzeOrder(final RelOperator op, final SQLOrderBy order, final Map<SQLAggregateExpr,
-          Integer> orderMapper) throws JimException {
+          Integer> orderMapper) throws BaseException {
     // todo union
     this.clause = ClauseType.ORDER;
     List<SQLSelectOrderByItem> orderByItems = order.getItems();
@@ -681,7 +681,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
     return new Order(orderExpressions.toArray(new Order.OrderExpression[0]), operator);
   }
 
-  protected RelOperator analyzeLimit(final RelOperator op, SQLLimit limit) throws JimException {
+  protected RelOperator analyzeLimit(final RelOperator op, SQLLimit limit) throws BaseException {
     this.optimizationFlag |= OptimizeFlag.PUSHDOWNTOPN;
     PreparedContext prepareContext = session.getPreparedContext();
 
@@ -727,7 +727,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
   }
 
   protected RelOperator analyzeGroupBy(final RelOperator op, final List<SQLSelectItem> selects,
-                                       final SQLSelectGroupByClause group, final List<Expression> outExprs) throws JimException {
+                                       final SQLSelectGroupByClause group, final List<Expression> outExprs) throws BaseException {
 
     this.clause = ClauseType.GROUP;
     RelOperator operator = op;
@@ -756,7 +756,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
 
   @SuppressFBWarnings({ "ACEM_ABSTRACT_CLASS_EMPTY_METHODS", "CE_CLASS_ENVY" })
   protected void analyzeHavingAndOrder(final RelOperator op, final SQLSelectQueryBlock select, List<SQLSelectItem> selectItems, final Map<SQLAggregateExpr, Integer> aggMapper,
-                                       final Map<SQLAggregateExpr, Integer> havingMapper) throws JimException {
+                                       final Map<SQLAggregateExpr, Integer> havingMapper) throws BaseException {
 
     OrderByAnalyzer orderByAnalyzer = new OrderByAnalyzer();
     orderByAnalyzer.setOperator(op);
@@ -842,7 +842,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
     return expressions;
   }
 
-  private List<TableAccessPath> getTableAccessPaths(List<IndexHint> hints, Table table, Schema newSchema, AnalyzerType analyzerType) throws JimException {
+  private List<TableAccessPath> getTableAccessPaths(List<IndexHint> hints, Table table, Schema newSchema, AnalyzerType analyzerType) throws BaseException {
     final Index[] tableIndexes;
     switch (analyzerType) {
       case WRITE:
@@ -935,7 +935,7 @@ public abstract class StatementAnalyzer extends ExpressionAnalyzer {
   protected Tuple2<Optional<Expression>, RelOperator> analyzeExpression(final RelOperator op, final SQLObject expr,
                                                                         final Map<SQLAggregateExpr, Integer> aggMapper,
                                                                         final boolean isScalar, final
-                                                                        Function<SQLObject, SQLObject> preFunc) throws JimException {
+                                                                        Function<SQLObject, SQLObject> preFunc) throws BaseException {
     final StatementContext stmtCtx = session.getStmtContext();
     try {
       final ExpressionAnalyzer exprAnalyzer = (ExpressionAnalyzer) stmtCtx.retainAnalyzer(this::buildExpressionAnalyzer);

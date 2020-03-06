@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version V1.0
+ * Base configuration setup
  */
 public abstract class BaseConfig {
   private static final Logger LOG = LoggerFactory.getLogger(BaseConfig.class);

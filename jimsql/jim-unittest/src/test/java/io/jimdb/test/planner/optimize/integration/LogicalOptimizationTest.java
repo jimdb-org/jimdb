@@ -18,7 +18,7 @@ package io.jimdb.test.planner.optimize.integration;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.sql.operator.RelOperator;
 import io.jimdb.test.planner.TestBase;
 
@@ -42,7 +42,7 @@ public class LogicalOptimizationTest extends TestBase {
         Assert.assertNotNull(relOperator);
 
         checker.doCheck(relOperator);
-      } catch (JimException e) {
+      } catch (BaseException e) {
         Assert.assertTrue(checker.isHasException());
         Assert.assertEquals(checker.getCheckPoints().get(CheckPoint.PlanTree), e.toString());
       }
@@ -64,7 +64,7 @@ public class LogicalOptimizationTest extends TestBase {
       RelOperator planTree = buildPlanAndLogicalOptimizeOnly(checker.getSql());
       Assert.assertNotNull(planTree);
       checker.doCheck(planTree);
-    } catch (JimException e) {
+    } catch (BaseException e) {
       Assert.assertTrue(checker.isHasException());
     }
   }
@@ -84,7 +84,7 @@ public class LogicalOptimizationTest extends TestBase {
       RelOperator planTree = buildPlanAndLogicalOptimizeOnly(checker.getSql());
       Assert.assertNotNull(planTree);
       checker.doCheck(planTree);
-    } catch (JimException e) {
+    } catch (BaseException e) {
       Assert.fail(e.getMessage());
     }
   }
@@ -105,7 +105,7 @@ public class LogicalOptimizationTest extends TestBase {
       RelOperator planTree = buildPlanAndLogicalOptimizeOnly(checker.getSql());
       Assert.assertNotNull(planTree);
       checker.doCheck(planTree);
-    } catch (JimException e) {
+    } catch (BaseException e) {
       Assert.fail(e.getMessage());
     }
   }
@@ -126,7 +126,7 @@ public class LogicalOptimizationTest extends TestBase {
       RelOperator planTree = buildPlanAndLogicalOptimizeOnly(checker.getSql());
       Assert.assertNotNull(planTree);
       checker.doCheck(planTree);
-    } catch (JimException e) {
+    } catch (BaseException e) {
       Assert.fail(e.getMessage());
     }
   }
@@ -164,7 +164,7 @@ public class LogicalOptimizationTest extends TestBase {
         Assert.assertNotNull(planTree);
         checker.doCheck(planTree);
       });
-    } catch (JimException e) {
+    } catch (BaseException e) {
       Assert.fail(e.getMessage());
     }
   }
@@ -180,7 +180,7 @@ public class LogicalOptimizationTest extends TestBase {
       RelOperator planTree = buildPlanAndLogicalOptimizeOnly(checker.getSql());
       Assert.assertNotNull(planTree);
       checker.doCheck(planTree);
-    } catch (JimException e) {
+    } catch (BaseException e) {
       Assert.fail(e.getMessage());
     }
   }

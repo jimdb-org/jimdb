@@ -17,7 +17,7 @@
 package io.jimdb.sql.executor;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.model.result.impl.QueryExecResult;
 
 import reactor.core.publisher.Flux;
@@ -30,5 +30,5 @@ import reactor.core.publisher.Flux;
  */
 public abstract class AnalyzeExecutor implements Executor {
 
-  public abstract Flux<QueryExecResult> execute(Session session) throws JimException;
+  public abstract Flux<QueryExecResult> execute(Session session) throws BaseException;
 }

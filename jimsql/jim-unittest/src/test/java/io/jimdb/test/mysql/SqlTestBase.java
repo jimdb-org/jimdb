@@ -86,17 +86,17 @@ public abstract class SqlTestBase {
   protected static void createCatalog(String name) {
     //deleteCatalog(name);
 
-    String sql = String.format("Create database IF NOT EXISTS %s", name);
+    String sql = String.format("CREATE DATABASE IF NOT EXISTS %s", name);
     execUpdate(sql, 0, true);
   }
 
   protected static void deleteCatalog(String name) {
-    String sql = String.format("Drop database IF EXISTS %s", name);
+    String sql = String.format("DROP DATABASE IF EXISTS %s", name);
     execUpdate(sql, 0, true);
   }
 
   protected static void useCatalog(String name) {
-    String sql = String.format("use %s", name);
+    String sql = String.format("USE %s", name);
     execUpdate(sql, 0, true);
   }
 
@@ -116,7 +116,7 @@ public abstract class SqlTestBase {
 
   }
 
-  protected void execUpdate(String sql, SQLException result, boolean autocommit) {
+  protected void execUpdate(String sql, SQLException expect, boolean autocommit) {
     Connection conn = null;
     Statement stmt = null;
     SQLException rs = null;
@@ -130,17 +130,19 @@ public abstract class SqlTestBase {
       }
     } catch (SQLException e) {
       rs = e;
+    } catch (Exception e) {
+      e.printStackTrace();
     } finally {
       closeQuit(conn, stmt, null);
     }
 
     Assert.assertNotNull(rs);
-    Assert.assertEquals(result.getErrorCode(), rs.getErrorCode());
-    Assert.assertEquals(result.getSQLState(), rs.getSQLState());
-    if (StringUtils.isBlank(result.getMessage())) {
+    Assert.assertEquals(expect.getErrorCode(), rs.getErrorCode());
+    Assert.assertEquals(expect.getSQLState(), rs.getSQLState());
+    if (StringUtils.isBlank(expect.getMessage())) {
       return;
     }
-    Assert.assertEquals(result.getMessage(), rs.getMessage());
+    Assert.assertEquals(expect.getMessage(), rs.getMessage());
   }
 
   protected static void execUpdate(String sql, boolean autocommit) {
@@ -334,15 +336,7 @@ public abstract class SqlTestBase {
     } catch (Exception e) {
       TestUtil.rethrow(e);
     } finally {
-      try {
-        if (stmt != null) {
-          stmt.close();
-        }
-        if (conn != null) {
-          conn.close();
-        }
-      } catch (SQLException ignored) {
-      }
+      closeQuit(conn, stmt, null);
     }
   }
 
@@ -350,50 +344,44 @@ public abstract class SqlTestBase {
     Connection conn = null;
     PreparedStatement stmt = null;
 
-    for (PrepareStruct prepare : prepares) {
-      ResultSet resultSet = null;
-      try {
-        if (conn == null) {
-          conn = dataSource.getConnection();
-          conn.setAutoCommit(true);
-        }
-        stmt = conn.prepareStatement(prepare.getSql());
-
-        setPrepareStmtArgs(stmt, prepare.getArgs());
-
-        if (isQuery) {
-          resultSet = stmt.executeQuery();
-          List<String> actual = collect(resultSet);
-
-          if (!checkSort) {
-            Collections.sort(actual);
-            Collections.sort(prepare.getQueryExpected());
-          }
-          Assert.assertEquals(prepare.sql, prepare.getQueryExpected(), actual);
-        } else {
-          int actual = stmt.executeUpdate();
-          Assert.assertEquals(prepare.sql, prepare.getUpdateExpected(), actual);
-        }
-      } catch (Exception e) {
-        TestUtil.rethrow(e);
-      } finally {
-        try {
-          if (resultSet != null) {
-            resultSet.close();
-          }
-        } catch (SQLException ignored) {
-        }
-      }
-    }
-
     try {
-      if (stmt != null) {
-        stmt.close();
+      for (PrepareStruct prepare : prepares) {
+        ResultSet resultSet = null;
+        try {
+          if (conn == null) {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(true);
+          }
+          stmt = conn.prepareStatement(prepare.getSql());
+
+          setPrepareStmtArgs(stmt, prepare.getArgs());
+
+          if (isQuery) {
+            resultSet = stmt.executeQuery();
+            List<String> actual = collect(resultSet);
+
+            if (!checkSort) {
+              Collections.sort(actual);
+              Collections.sort(prepare.getQueryExpected());
+            }
+            Assert.assertEquals(prepare.sql, prepare.getQueryExpected(), actual);
+          } else {
+            int actual = stmt.executeUpdate();
+            Assert.assertEquals(prepare.sql, prepare.getUpdateExpected(), actual);
+          }
+        } catch (Exception e) {
+          TestUtil.rethrow(e);
+        } finally {
+          try {
+            if (resultSet != null) {
+              resultSet.close();
+            }
+          } catch (SQLException ignored) {
+          }
+        }
       }
-      if (conn != null) {
-        conn.close();
-      }
-    } catch (SQLException ignored) {
+    } finally {
+      closeQuit(conn, stmt, null);
     }
   }
 

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
 import io.jimdb.core.expression.ValueAccessor;
@@ -63,7 +63,7 @@ public class Explain extends Operator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     ExplainInfo explainInfo = builderExplain(child, TASK_PROXY);
     List<RowValueAccessor> rows = new ArrayList<>();
     renderExplain(explainInfo, rows);

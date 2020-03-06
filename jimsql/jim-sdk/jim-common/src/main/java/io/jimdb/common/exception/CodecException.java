@@ -16,11 +16,11 @@
 package io.jimdb.common.exception;
 
 /**
- * @version V1.0
+ * Codec exception
  */
-public final class CodecException extends JimException {
+public final class CodecException extends BaseException {
   private CodecException(ErrorCode code, String message, Throwable cause) {
-    super(ErrorModule.NETRPC, code, message, cause);
+    super(ErrorModule.RPC, code, message, cause);
   }
 
   public static CodecException get(ErrorCode code, Throwable cause, String... params) {

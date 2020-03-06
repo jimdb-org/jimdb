@@ -16,7 +16,7 @@
 package io.jimdb.common.utils.event;
 
 /**
- * @version V1.0
+ * Event class TODO add explanations of this class
  */
 public interface Event {
   int getType();

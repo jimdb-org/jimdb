@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.KeyValueRange;
@@ -95,7 +95,7 @@ public class IndexSource extends RelOperator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     ready();
     int size = getSchema().getColumns().size();
     List<Integer> outputOffsets = new ArrayList<>(size);
@@ -105,30 +105,41 @@ public class IndexSource extends RelOperator {
 
     return session.getTxn().select(keyValueRange.getIndex(), processors,
             this.schema.getColumns().toArray(new ColumnExpr[size]), outputOffsets, keyValueRange.getValueRanges());
-//    return mockDatas;
+//    return mockdatas;
   }
 
-//  private static Flux<ExecResult> mockDatas;
+//  static Flux<ExecResult> mockdatas;
 //
 //  static {
-//    mockData();
+//    mockdatas = mockData();
 //  }
 //
 //  private static Flux<ExecResult> mockData() {
-//    int size = 10000;
+//    int size = 100000;
+//    int groupId = 0;
 //    int mod = 1000;
 //    RowValueAccessor[] rows = new RowValueAccessor[size];
 //    for (int i = 0; i < size; i++) {
-//      Value[] values = new Value[1];
-//      values[0] = LongValue.getInstance(i % mod);
+//      Value[] values = new Value[5];
+//      values[0] = LongValue.getInstance(1);
+//      values[1] = StringValue.getInstance(("topic-" + groupId));
+//      values[2] = StringValue.getInstance(("app-" + groupId));
+//      values[3] = StringValue.getInstance(("topic-" + groupId));
+//      values[4] = StringValue.getInstance(("app-" + groupId));
 //      rows[i] = new RowValueAccessor(values);
+//      if (i % mod == 0) {
+//        groupId++;
+//      }
 //    }
 //
-//    ColumnExpr[] columnExprs = new ColumnExpr[1];
+//    ColumnExpr[] columnExprs = new ColumnExpr[5];
 //    columnExprs[0] = new ColumnExpr(1L);
+//    columnExprs[1] = new ColumnExpr(2L);
+//    columnExprs[2] = new ColumnExpr(3L);
+//    columnExprs[3] = new ColumnExpr(4L);
+//    columnExprs[4] = new ColumnExpr(5L);
 //
-//    mockDatas = Flux.just(new QueryExecResult(columnExprs, rows));
-//    return mockDatas;
+//    return Flux.just(new QueryExecResult(columnExprs, rows));
 //  }
 
   @Override

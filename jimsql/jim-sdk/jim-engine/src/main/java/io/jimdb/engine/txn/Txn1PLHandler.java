@@ -15,6 +15,10 @@
  */
 package io.jimdb.engine.txn;
 
+import static io.jimdb.engine.txn.PrepareHandler.PREPARE_PRIMARY_FUNC;
+
+import java.util.function.Consumer;
+
 import io.jimdb.engine.StoreCtx;
 import io.jimdb.engine.txn.TxnHandler.CommitSubscriber;
 import io.jimdb.core.model.result.ExecResult;
@@ -28,12 +32,9 @@ import reactor.core.publisher.FluxSink;
 /**
  * 1PL: prepare
  *
- * @version V1.0
  */
 public final class Txn1PLHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(Txn1PLHandler.class);
-
-  private static final PreparePrimaryFunc PREPARE_PRI_FUNC = (ctx, conf) -> TxnHandler.txnPreparePri(ctx, conf);
 
   public static Flux<ExecResult> commit(TxnConfig config, StoreCtx context) {
     if (LOGGER.isInfoEnabled()) {
@@ -44,15 +45,15 @@ public final class Txn1PLHandler {
   }
 
   public static void prepare(FluxSink sink, TxnConfig config, StoreCtx context) {
-    PREPARE_PRI_FUNC.apply(context, config).onErrorResume(
-            TxnHandler.getErrHandler(context, PREPARE_PRI_FUNC, config)).subscribe(
-            new CommitSubscriber<>(rs -> sink.next(rs), err -> sink.error(err)));
+    PREPARE_PRIMARY_FUNC.apply(context, config).onErrorResume(
+            PrepareHandler.getErrHandler(context, PREPARE_PRIMARY_FUNC, config)).subscribe(
+            new CommitSubscriber<>((Consumer<ExecResult>) sink::next, sink::error));
   }
 
   public static Flux<ExecResult> rollback(TxnConfig config, StoreCtx context) {
     return Flux.create(sink ->
             sink.onRequest(r -> {
-              TxnHandler.recoverFromPrimary(sink, config, context);
+              RecoverHandler.recoverFromPrimary(sink, config, context);
             }));
   }
 }

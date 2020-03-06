@@ -25,20 +25,22 @@ import java.util.Vector;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.function.Supplier;
 
-import io.jimdb.common.exception.JimException;
-import io.jimdb.common.utils.lang.Resetable;
+import io.jimdb.common.exception.BaseException;
+import io.jimdb.common.utils.lang.Resettable;
 import io.jimdb.core.SQLAnalyzer;
 import io.jimdb.core.expression.Schema;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.model.privilege.PrivilegeInfo;
 import io.jimdb.core.model.privilege.PrivilegeType;
+import io.jimdb.core.values.DateValue;
+import io.jimdb.pb.Basepb;
 
 import com.google.common.collect.Maps;
 
 /**
  * @version V1.0
  */
-public final class StatementContext implements Resetable {
+public final class StatementContext implements Resettable {
   private static final AtomicIntegerFieldUpdater<StatementContext> ERRCOUNT_UPDATER =
           AtomicIntegerFieldUpdater.newUpdater(StatementContext.class, "errCnt");
 
@@ -55,6 +57,7 @@ public final class StatementContext implements Resetable {
   private final List<SQLAnalyzer> analyzers;
   private Map<Table, Schema> retrievedTablesAndSchemas; // used for updating table statistic
   private TimeZone localTimeZone = TimeZone.getDefault();
+  private DateValue nowCached = null;
 
   public StatementContext() {
     this.warnings = new Vector<>(8);
@@ -163,23 +166,30 @@ public final class StatementContext implements Resetable {
     this.localTimeZone = localTimeZone;
   }
 
-  public void addWarning(final JimException warn) {
+  public void addWarning(final BaseException warn) {
     if (this.warnings.size() < Short.MAX_VALUE) {
       this.warnings.add(new SQLWarn(SQLWarnLevel.Warning, warn));
     }
   }
 
-  public void addNote(final JimException note) {
+  public void addNote(final BaseException note) {
     if (this.warnings.size() < Short.MAX_VALUE) {
       this.warnings.add(new SQLWarn(SQLWarnLevel.Note, note));
     }
   }
 
-  public void addError(final JimException error) {
+  public void addError(final BaseException error) {
     if (this.warnings.size() < Short.MAX_VALUE) {
       this.warnings.add(new SQLWarn(SQLWarnLevel.Error, error));
       ERRCOUNT_UPDATER.incrementAndGet(this);
     }
+  }
+
+  public DateValue getNowCached(TimeZone timeZone) {
+    if (nowCached == null) {
+      nowCached = DateValue.getNow(Basepb.DataType.DateTime, 6, timeZone);
+    }
+    return nowCached;
   }
 
   /**
@@ -187,9 +197,9 @@ public final class StatementContext implements Resetable {
    */
   public static final class SQLWarn {
     private final SQLWarnLevel level;
-    private final JimException cause;
+    private final BaseException cause;
 
-    public SQLWarn(final SQLWarnLevel level, final JimException cause) {
+    public SQLWarn(final SQLWarnLevel level, final BaseException cause) {
       this.level = level;
       this.cause = cause;
     }
@@ -198,7 +208,7 @@ public final class StatementContext implements Resetable {
       return level;
     }
 
-    public JimException getCause() {
+    public BaseException getCause() {
       return cause;
     }
   }

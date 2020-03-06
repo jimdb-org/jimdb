@@ -21,17 +21,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * @version V1.0
+ *  IO related utils
  */
 public final class IOUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(IOUtil.class);
-
   private IOUtil() {
   }
 
@@ -41,7 +36,7 @@ public final class IOUtil {
 
     URL url = IOUtil.class.getClassLoader().getResource(file);
     if (url == null) {
-      throw new RuntimeException(String.format("not found resource file '%s'", file));
+      throw new RuntimeException(String.format("cannot find resource file '%s'", file));
     }
 
     try (InputStream resource = url.openStream();

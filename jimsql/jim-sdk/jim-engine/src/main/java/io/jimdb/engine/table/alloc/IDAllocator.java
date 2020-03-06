@@ -20,7 +20,7 @@ import java.util.List;
 import io.jimdb.core.values.UnsignedLongValue;
 
 /**
- * @version V1.0
+ * TODO
  */
 public interface IDAllocator {
   List<UnsignedLongValue> alloc(int dbId, int tableId, int size);

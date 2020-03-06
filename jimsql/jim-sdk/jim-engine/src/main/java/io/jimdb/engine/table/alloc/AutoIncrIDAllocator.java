@@ -38,7 +38,7 @@ import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 /**
- * @version V1.0
+ * TODO
  */
 public class AutoIncrIDAllocator implements IDAllocator {
   private static final Logger LOGGER = LoggerFactory.getLogger(AutoIncrIDAllocator.class);
@@ -86,7 +86,7 @@ public class AutoIncrIDAllocator implements IDAllocator {
   }
 
   /**
-   * @version V1.0
+   * TODO
    */
   public static class TableIDAllocator {
     private static final Logger LOGGER = LoggerFactory.getLogger(TableIDAllocator.class);

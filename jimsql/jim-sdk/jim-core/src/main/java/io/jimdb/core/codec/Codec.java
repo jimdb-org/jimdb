@@ -139,10 +139,7 @@ public final class Codec {
                                                ByteString pkValues, TimeZone zone) {
     boolean opt = !pkValues.isEmpty();
     int colLength = resultColumns.length;
-    int valueLength = colLength + 1;
-    if (opt) {
-      valueLength = colLength + 2;
-    }
+    int valueLength = opt ? colLength + 2 : colLength + 1;
     Value[] values = new Value[valueLength];
     ByteBuf buf = NettyByteString.asByteBuf(row.getFields());
     int i = 0;
@@ -203,6 +200,8 @@ public final class Codec {
       case Binary:
       case VarBinary:
       case MediumBlob:
+      case TinyBlob:
+      case LongBlob:
       case Blob:
         return ValueCodec.decodeBytesValue(buf);
       case Date:

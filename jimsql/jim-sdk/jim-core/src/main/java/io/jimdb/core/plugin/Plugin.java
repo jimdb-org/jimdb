@@ -22,7 +22,6 @@ import io.jimdb.core.config.JimConfig;
 /**
  * Base class of plugin interface.
  *
- * @version V1.0
  */
 public interface Plugin extends Closeable {
   void init(JimConfig c);

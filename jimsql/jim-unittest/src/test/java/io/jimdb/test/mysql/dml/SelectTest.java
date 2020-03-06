@@ -45,6 +45,9 @@ public class SelectTest extends SqlTestBase {
 
   @BeforeClass
   public static void tearUp() {
+    try {
+      Thread.sleep(1000);
+    } catch (Exception e) {}
     createDB();
     createTable();
     initTableData();
@@ -110,7 +113,8 @@ public class SelectTest extends SqlTestBase {
             "SUM(age)=31; id=4; name=Suzy",
             "SUM(age)=28; id=5; name=Kate"
     });
-    execQuery(String.format("select sum(age),id,name from %s.%s group by name having min(score) >= 20 ", DBNAME, TABLENAME), expected);
+    execQuery(String.format("select sum(age),id,name from %s.%s group by name having min(score) >= 20 ", DBNAME,
+            TABLENAME), expected);
   }
 
   /******************************************************************************
@@ -130,7 +134,8 @@ public class SelectTest extends SqlTestBase {
 
   @Test
   public void testSelect1() {
-    List<String> expected = expectedStr(new String[]{ "name=Tom", "name=Jack", "name=Mary", "name=Suzy", "name=Kate", "name=Luke" });
+    List<String> expected = expectedStr(new String[]{ "name=Tom", "name=Jack", "name=Mary", "name=Suzy", "name=Kate",
+            "name=Luke" });
     execQuery(String.format("select name from %s where 1=1 ", TABLENAME), expected, false);
   }
 
@@ -147,7 +152,8 @@ public class SelectTest extends SqlTestBase {
   @Test
   public void testLimitStart() {
     List<String> expected = expectedStr(new String[]{ "id=6; age=31" });
-    execQuery(String.format("select id, age from %s limit 5,5 order by id asc", TABLENAME), expected); //TODO ANSJ add order
+    execQuery(String.format("select id, age from %s limit 5,5 order by id asc", TABLENAME), expected); //TODO ANSJ
+    // add order
   }
 
   @Test
@@ -158,19 +164,22 @@ public class SelectTest extends SqlTestBase {
 
   @Test
   public void testOrder() {
-    List<String> expected = expectedStr(new String[]{ "name=Jack", "name=Kate", "name=Luke", "name=Mary", "name=Suzy", "name=Tom" });
+    List<String> expected = expectedStr(new String[]{ "name=Jack", "name=Kate", "name=Luke", "name=Mary", "name=Suzy"
+            , "name=Tom" });
     execQuery(String.format("select name from %s order by name", TABLENAME), expected);
   }
 
   @Test
   public void testOrderNum() {
-    List<String> expected = expectedStr(new String[]{ "name=Mary; age=27", "name=Kate; age=28", "name=Tom; age=28", "name=Luke; age=31", "name=Suzy; age=31", "name=Jack; age=32" });
+    List<String> expected = expectedStr(new String[]{ "name=Mary; age=27", "name=Kate; age=28", "name=Tom; age=28",
+            "name=Luke; age=31", "name=Suzy; age=31", "name=Jack; age=32" });
     execQuery(String.format("select name, age from %s order by 2,1", TABLENAME), expected);
   }
 
   @Test
   public void testOrderDesc() {
-    List<String> expected = expectedStr(new String[]{ "name=Tom", "name=Suzy", "name=Mary", "name=Luke", "name=Kate", "name=Jack" });
+    List<String> expected = expectedStr(new String[]{ "name=Tom", "name=Suzy", "name=Mary", "name=Luke", "name=Kate",
+            "name=Jack" });
     execQuery(String.format("select name from %s order by name desc", TABLENAME), expected);
   }
 
@@ -202,7 +211,8 @@ public class SelectTest extends SqlTestBase {
   public void testTopN() {
     List<String> expected = expectedStr(new String[]{
             "name=Kate; age=28; score=99", "name=Tom; age=28; score=85" });
-    execQuery(String.format("select name, age, score  from %s order by age, score desc limit 1,2", TABLENAME), expected);
+    execQuery(String.format("select name, age, score  from %s order by age, score desc limit 1,2", TABLENAME),
+            expected);
   }
 
   @Test
@@ -229,7 +239,7 @@ public class SelectTest extends SqlTestBase {
   @Test
   public void testSelectByID1() {
     List<String> expected = expectedStr(new String[]{
-            "COUNT(1)=0; name=; SUM(age)=0" });
+            "COUNT(1)=0; name=null; SUM(age)=0" });
     execQuery(String.format("select count(1) , name, sum(age) from %s where id = 123 ", TABLENAME), expected);
   }
 
@@ -261,7 +271,8 @@ public class SelectTest extends SqlTestBase {
 
   @Test
   public void testProjectionAddCol() {
-    List<String> expected = expectedStr(new String[]{ "id=1; name=Tom; age=28; class=one; score=85; t_date=2017-12-31; t_datetime=2017-12-31 01:00:15.0; 1=1" });
+    List<String> expected = expectedStr(new String[]{ "id=1; name=Tom; age=28; class=one; score=85; "
+            + "t_date=2017-12-31; t_datetime=2017-12-31 01:00:15.0; 1=1" });
     execQuery(String.format("select *,1 from %s limit 1", TABLENAME), expected);
   }
 
@@ -270,21 +281,39 @@ public class SelectTest extends SqlTestBase {
    ******************************************************************************/
 
   @Test
-  public void testAdd() {
+  public void testAdd01() {
     List<String> expected = expectedStr(new String[]{ "1 + 2=3" });
     execQuery("select 1+2", expected);
   }
 
   @Test
-  public void testSubtract() {
+  public void testAdd02() {
+    List<String> expected = expectedStr(new String[]{ "age + 1.0=29.0", "age + 1.0=32.0", "age + 1.0=28.0", "age + 1.0=32.0", "age + 1.0=29.0", "age + 1.0=33.0" });
+    execQuery(String.format("select age + 1.0 from %s order by name desc", TABLENAME), expected, false);
+  }
+
+  @Test
+  public void testSubtract01() {
     List<String> expected = expectedStr(new String[]{ "2 - 1=1" });
     execQuery("select 2-1", expected);
   }
 
   @Test
-  public void testMultiply() {
+  public void testSubtract02() {
+    List<String> expected = expectedStr(new String[]{ "age - 1.0=27.0", "age - 1.0=30.0", "age - 1.0=26.0", "age - 1.0=30.0", "age - 1.0=27.0", "age - 1.0=31.0" });
+    execQuery(String.format("select age - 1.0 from %s order by name desc", TABLENAME), expected, false);
+  }
+
+  @Test
+  public void testMultiply01() {
     List<String> expected = expectedStr(new String[]{ "2 * 3=6" });
     execQuery("select 2*3", expected);
+  }
+
+  @Test
+  public void testMultiply02() {
+    List<String> expected = expectedStr(new String[]{ "age * 1.0=28.0", "age * 1.0=31.0", "age * 1.0=27.0", "age * 1.0=31.0", "age * 1.0=28.0", "age * 1.0=32.0" });
+    execQuery(String.format("select age * 1.0 from %s order by name desc", TABLENAME), expected, false);
   }
 
   @Test
@@ -371,7 +400,8 @@ public class SelectTest extends SqlTestBase {
 
   @Test
   public void testUnequal() {
-    List<String> expected = expectedStr(new String[]{ "name=Jack; class=two", "name=Suzy; class=three", "name=Kate; class=two" });
+    List<String> expected = expectedStr(new String[]{ "name=Jack; class=two", "name=Suzy; class=three", "name=Kate; "
+            + "class=two" });
     execQuery(String.format("select name,class from %s where class != 'one'", TABLENAME), expected);
   }
 
@@ -388,7 +418,7 @@ public class SelectTest extends SqlTestBase {
     Date date = timeFormat.parse("2050-12-31 23:59:59");
     Timestamp timestamp = new Timestamp(date.getTime());
     execPrepareQuery(String.format("select id, t_datetime from %s where t_datetime = ?  ", TABLENAME),
-        expected, timestamp);
+            expected, timestamp);
   }
 
   @Test
@@ -404,7 +434,8 @@ public class SelectTest extends SqlTestBase {
   @Test
   public void testGtDate() {
     List<String> expected = expectedStr(new String[]{ "id=6; t_date=2050-12-31; t_datetime=2050-12-31 23:59:59.0" });
-    execQuery(String.format("select id, t_date, t_datetime from %s where t_date > '2050-01-01'  ", TABLENAME), expected);
+    execQuery(String.format("select id, t_date, t_datetime from %s where t_date > '2050-01-01'  ", TABLENAME),
+            expected);
   }
 
   /******************************************************************************
@@ -458,7 +489,8 @@ public class SelectTest extends SqlTestBase {
 
   @Test
   public void testOrIndex() {
-    List<String> expected = expectedStr(new String[]{ "name=Tom; age=28; score=85", "name=Mary; age=27; score=89", "name=Kate; age=28; score=99" });
+    List<String> expected = expectedStr(new String[]{ "name=Tom; age=28; score=85", "name=Mary; age=27; score=89",
+            "name=Kate; age=28; score=99" });
     execQuery(String.format("select name,age,score from %s where age <= 28 or score > 95 ", TABLENAME), expected);
   }
 
@@ -466,13 +498,16 @@ public class SelectTest extends SqlTestBase {
   //Abnormal
   public void testAndOrPar() {
     List<String> expected = expectedStr(new String[]{ "name=Suzy; age=31; score=92" });
-    execQuery(String.format("SELECT name,age,score FROM %s WHERE (age=31 OR score=89) AND NAME='Suzy'", TABLENAME), expected);
+    execQuery(String.format("SELECT name,age,score FROM %s WHERE (age=31 OR score=89) AND NAME='Suzy'", TABLENAME),
+            expected);
   }
 
   @Test
   public void testAndOr() {
-    List<String> expected = expectedStr(new String[]{ "name=Tom; age=28", "name=Jack; age=32", "name=Suzy; age=31", "name=Luke; age=31" });
-    execQuery(String.format("select name,age from %s where age>=31 and age <= 35 or name = 'Tom' ", TABLENAME), expected, false);
+    List<String> expected = expectedStr(new String[]{ "name=Tom; age=28", "name=Jack; age=32", "name=Suzy; age=31",
+            "name=Luke; age=31" });
+    execQuery(String.format("select name,age from %s where age>=31 and age <= 35 or name = 'Tom' ", TABLENAME),
+            expected, false);
   }
 
   @Test
@@ -599,7 +634,8 @@ public class SelectTest extends SqlTestBase {
 
   @Test
   public void testIndexAgeGeLeAnd() {
-    List<String> expected = expectedStr(new String[]{ "name=Tom; age=28", "name=Kate; age=28", "name=Suzy; age=31", "name=Luke; age=31" });
+    List<String> expected = expectedStr(new String[]{ "name=Tom; age=28", "name=Kate; age=28", "name=Suzy; age=31",
+            "name=Luke; age=31" });
     execQuery(String.format("select name,age from %s where age <= 31 and age >= 28 ", TABLENAME), expected, false);
   }
 
@@ -612,6 +648,55 @@ public class SelectTest extends SqlTestBase {
   @Test
   public void testOrNotExist() {
     execQuery(String.format("select id from %s where name='name10' or age=100 ", TABLENAME), new ArrayList<>(), false);
+  }
+
+  @Test
+  public void testSelectVarBinary() {
+    String TEST_TABLENAME = DBNAME + "." + "test01";
+
+    execUpdate(String.format("DROP TABLE IF EXISTS %s ", TEST_TABLENAME), 0, true);
+
+    String sql = "CREATE TABLE IF NOT EXISTS " + TEST_TABLENAME + " ("
+            + "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,"
+            + "t_varbinary varbinary(10) DEFAULT NULL"
+            + ")COMMENT 'REPLICA=1' ENGINE=memory AUTO_INCREMENT=0;";
+    execUpdate(sql, 0, true);
+    sql = String.format("INSERT INTO %s(%s) VALUES('%s'),('%s')", TEST_TABLENAME, "t_varbinary", "abc", "xyz");
+    execUpdate(sql, 2, true);
+
+    List<String> expected = expectedStr(new String[]{ "t_varbinary=abc" });
+    execQuery(String.format("select t_varbinary from %s where t_varbinary = 'abc' ", TEST_TABLENAME), expected, false);
+  }
+
+
+  @Test
+  public void testSelectDatetime() {
+    String TEST_TABLENAME = DBNAME + "." + "test01";
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    String dateStr = dateFormat.format(new Date());
+
+    execUpdate(String.format("DROP TABLE IF EXISTS %s ", TEST_TABLENAME), 0, true);
+
+    String sql = "CREATE TABLE IF NOT EXISTS " + TEST_TABLENAME + " ("
+            + "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,"
+            + "t_timestamp timestamp null ON UPDATE CURRENT_TIMESTAMP,"
+            + "t_datetime datetime DEFAULT NULL"
+            + ")COMMENT 'REPLICA=1' ENGINE=memory AUTO_INCREMENT=0;";
+    execUpdate(sql, 0, true);
+
+    // insert and assert datetime
+    sql = String.format("INSERT INTO %s(%s) VALUES('%s')", TEST_TABLENAME, "t_datetime", dateStr);
+    execUpdate(sql, 1, true);
+
+    List<String> expected = expectedStr(new String[]{ String.format("t_datetime=%s.0", dateStr) });
+    execPrepareQuery(String.format("select t_datetime from %s where t_datetime = ? ", TEST_TABLENAME), expected, dateStr);
+
+    // insert and assert timestamp
+    sql = String.format("INSERT INTO %s(%s) VALUES('%s')", TEST_TABLENAME, "t_timestamp", dateStr);
+    execUpdate(sql, 1, true);
+
+    expected = expectedStr(new String[]{ String.format("t_timestamp=%s.0", dateStr) });
+    execPrepareQuery(String.format("select t_timestamp from %s where t_timestamp = ? ", TEST_TABLENAME), expected, dateStr);
   }
 
   /******************************************************************************
@@ -670,7 +755,8 @@ public class SelectTest extends SqlTestBase {
   @Test
   @Ignore //Temporarily unsupported
   public void testNot() {
-    List<String> expected = expectedStr(new String[]{ "name=Tom; age=28", "name=Jack; age=32", "name=Suzy; age=31", "name=Luke; age=31" });
+    List<String> expected = expectedStr(new String[]{ "name=Tom; age=28", "name=Jack; age=32", "name=Suzy; age=31",
+            "name=Luke; age=31" });
     execQuery(String.format("select name,age from %s where not name='Tom' ", TABLENAME), expected);
   }
 
@@ -691,7 +777,8 @@ public class SelectTest extends SqlTestBase {
   @Test
   @Ignore //Temporarily unsupported
   public void testUnequal2() {
-    List<String> expected = expectedStr(new String[]{ "name=Jack; class=two", "name=Suzy; class=three", "name=Kate; class=two" });
+    List<String> expected = expectedStr(new String[]{ "name=Jack; class=two", "name=Suzy; class=three", "name=Kate; "
+            + "class=two" });
     execQuery(String.format("select name,class from %s where class <> 'one'", TABLENAME), expected);
   }
 
@@ -700,5 +787,30 @@ public class SelectTest extends SqlTestBase {
   public void testLimitEnd() {
     List<String> expected = expectedStr(new String[]{ "age=28", "age=31" });
     execQuery(String.format("select age from %s limit 4,-1", TABLENAME), expected);
+  }
+
+  @Test
+  @Ignore
+  // todo
+  public void testNow() {
+    execQuery(String.format("select now(), now(3), now(6) ;", TABLENAME));
+  }
+//
+//  @Test
+//  public void testNow2() {
+//    execQuery(String.format("select now()+1 ;", TABLENAME));
+//  }
+
+  @Test
+  public void testNowSuite() {
+    useCatalog(DBNAME);
+    String id = "888888999999";
+    List<String> expected = expectedStr(new String[]{ "id=" + id });
+    execUpdate(String.format("insert into %s (id,t_datetime ,t_date ) values ( %s , NOW(),NOW())",
+            TABLENAME, id), 1, true);
+    execQuery(String.format("select id from %s where t_datetime <= now() order by t_datetime desc limit 1 ;",
+            TABLENAME), expected);
+    execUpdate(String.format("update %s set t_datetime = now() where id = %s", TABLENAME, id), true);
+    execUpdate(String.format("delete from %s where id = %s", TABLENAME, id), true);
   }
 }

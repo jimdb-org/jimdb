@@ -15,13 +15,15 @@
  */
 package io.jimdb.sql.operator;
 
+import static java.util.Collections.EMPTY_LIST;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.KeyValueRange;
@@ -129,7 +131,7 @@ public final class TableSource extends RelOperator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     processors = createProcessors();
 
     List<Integer> outputOffsets = new ArrayList<>(getSchema().getColumns().size());
@@ -241,11 +243,6 @@ public final class TableSource extends RelOperator {
     List<ColumnExpr[]> result = new ArrayList<>();
     for (TableAccessPath path : tableAccessPaths) {
       List<ColumnExpr> idxColumns = path.getIndexColumns();
-      if (path.isTablePath()) {
-        result.add(new ColumnExpr[]{ idxColumns.get(0).clone() });
-        continue;
-      }
-
       if (idxColumns.isEmpty()) {
         continue;
       }
@@ -269,6 +266,15 @@ public final class TableSource extends RelOperator {
 
   public String getName() {
     return "TableSource";
+  }
+
+  public List<ColumnExpr> getPKColumnExprs() {
+    for (TableAccessPath path : this.tableAccessPaths) {
+      if (path.isTablePath()) {
+        return path.getIndexColumns();
+      }
+    }
+    return EMPTY_LIST;
   }
 
   @Override

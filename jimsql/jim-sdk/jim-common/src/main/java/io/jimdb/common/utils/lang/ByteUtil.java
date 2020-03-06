@@ -21,9 +21,8 @@ import com.google.common.primitives.UnsignedBytes;
 import com.google.protobuf.ByteString;
 
 /**
- * codec Util
+ * Codec related utils
  *
- * @version 1.0
  */
 public final class ByteUtil {
   public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
@@ -167,11 +166,11 @@ public final class ByteUtil {
   }
 
   /**
-   * convert bytes to specified radix str
-   * @param radix
-   * @param signum
-   * @param bytes
-   * @return
+   * Convert bytes to specified radix str
+   * @param radix TODO
+   * @param signum TODO
+   * @param bytes TODO
+   * @return TODO
    */
   public static String bytes2Str(int radix, int signum, byte... bytes) {
     BigInteger bigInteger = new BigInteger(signum, bytes);
@@ -179,9 +178,9 @@ public final class ByteUtil {
   }
 
   /**
-   * convert bytes to string with Filling Trailing 0
-   * @param bytes
-   * @return
+   * Convert bytes to string with Filling Trailing 0
+   * @param bytes TODO
+   * @return TODO
    */
   public static String bytes2StrWithFillTrailing0(byte... bytes) {
     StringBuilder builder = new StringBuilder();
@@ -193,22 +192,22 @@ public final class ByteUtil {
 
   /**
    * convert byte to string with Filling Trailing 0
-   * @param data
-   * @return
+   * @param data TODO
+   * @return TODO
    */
   public static String byte2StrWithFillTrailing0(byte data) {
     return Integer.toBinaryString((data & 0xFF) + 0x100).substring(1);
   }
 
   /**
-   * signum of the number (-1 for negative, 0 for zero, 1 for positive).
+   * Signum of the number (-1 for negative, 0 for zero, 1 for positive).
    */
   public static String bytes2hex01(byte... bytes) {
     return bytes2Str(16, 1, bytes);
   }
 
   /**
-   * signum of the number (-1 for negative, 0 for zero, 1 for positive).
+   * Signum of the number (-1 for negative, 0 for zero, 1 for positive).
    */
   public static String bytes2binaryStr(byte... bytes) {
     return bytes2Str(2, 1, bytes);

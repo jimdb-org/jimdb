@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.utils.lang.NamedThreadFactory;
 import io.jimdb.core.plugin.MetaStore;
 import io.jimdb.core.plugin.MetaStore.TaskType;
@@ -226,7 +226,7 @@ final class DDLWorker implements Closeable {
         if (task.getState() != TaskState.Rollingback) {
           task = task.toBuilder()
                   .setRetryNum(task.getRetryNum() + 1)
-                  .setErrorCode(ex instanceof JimException ? ((JimException) ex).getCode().name() : ErrorCode.ER_UNKNOWN_ERROR.name())
+                  .setErrorCode(ex instanceof BaseException ? ((BaseException) ex).getCode().name() : ErrorCode.ER_UNKNOWN_ERROR.name())
                   .setError(ex.getMessage())
                   .build();
           metaStore.storeTask(TaskType.SCHEMATASK, oldTask, task);
@@ -405,7 +405,7 @@ final class DDLWorker implements Closeable {
 
         default:
           errorCode = ErrorCode.ER_NOT_SUPPORTED_YET.name();
-          error = JimException.message(ErrorCode.ER_NOT_SUPPORTED_YET, task.getOp().name());
+          error = BaseException.message(ErrorCode.ER_NOT_SUPPORTED_YET, task.getOp().name());
           taskState = TaskState.Failed;
       }
     } catch (InvalidProtocolBufferException ex) {

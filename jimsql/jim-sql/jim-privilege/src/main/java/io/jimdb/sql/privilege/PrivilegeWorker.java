@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.pb.Ddlpb.OpType;
 import io.jimdb.pb.Ddlpb.PrivilegeOp;
 import io.jimdb.pb.Ddlpb.Task;
@@ -143,7 +143,7 @@ final class PrivilegeWorker implements Closeable {
       } catch (Exception ex) {
         task = task.toBuilder()
                 .setRetryNum(task.getRetryNum() + 1)
-                .setErrorCode(ex instanceof JimException ? ((JimException) ex).getCode().name() : ErrorCode.ER_UNKNOWN_ERROR.name())
+                .setErrorCode(ex instanceof BaseException ? ((BaseException) ex).getCode().name() : ErrorCode.ER_UNKNOWN_ERROR.name())
                 .setError(ex.getMessage())
                 .build();
         metaStore.storeTask(TaskType.PRITASK, oldTask, task);

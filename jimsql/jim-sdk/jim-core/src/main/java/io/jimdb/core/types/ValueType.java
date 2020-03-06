@@ -43,6 +43,6 @@ public enum ValueType {
   }
 
   public boolean isString() {
-    return this == STRING || this == DATE || this == TIME || this == YEAR || this == JSON;
+    return this == STRING || this == DATE || this == TIME || this == BINARY || this == YEAR || this == JSON;
   }
 }

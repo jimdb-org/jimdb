@@ -89,7 +89,7 @@ public class BestTaskFinder extends ParameterizedOperatorVisitor<PhysicalPropert
   @Override
   public Task visitOperator(Session session, TableSource tableSource, PhysicalProperty prop) {
     Task bestTask = ProxyTask.initProxyTask();
-    List<PathCandidate> candidates = pruneAccessPaths(tableSource);
+    List<PathCandidate> candidates = pruneAccessPaths(tableSource, prop);
 
     for (PathCandidate candidate : candidates) {
       TableAccessPath path = candidate.path;
@@ -131,7 +131,7 @@ public class BestTaskFinder extends ParameterizedOperatorVisitor<PhysicalPropert
     return firstCost < secondCost ? first : second;
   }
 
-  private List<PathCandidate> pruneAccessPaths(TableSource tableSource) {
+  private List<PathCandidate> pruneAccessPaths(TableSource tableSource, PhysicalProperty prop) {
     LinkedList<PathCandidate> candidates = Lists.newLinkedList();
     for (TableAccessPath path : tableSource.getTableAccessPaths()) {
       PathCandidate currentCandidate = new PathCandidate(path);
@@ -143,11 +143,12 @@ public class BestTaskFinder extends ParameterizedOperatorVisitor<PhysicalPropert
         // get table candidates
         path.setSingleScan(true);
         currentCandidate.columnIdSet = extractColumnIds(path.getAccessConditions());
-      } else if (path.getAccessConditions() != null && !path.getAccessConditions().isEmpty()) {
+      } else if ((path.getAccessConditions() != null && !path.getAccessConditions().isEmpty()) || !prop.isEmpty()) {
         // get index candidates
-        boolean isSingleScan = isSingleScan(tableSource.getSchema().getColumns(), path.getIndexColumns(),
+        boolean isSingleScan = isSingleScan(tableSource.getSchema().getColumns(), path.getIndex().getColumns(),
                 tableSource.getTable().getPrimary());
         path.setSingleScan(isSingleScan);
+        currentCandidate.isMatchProp = isMatchProperty(path, prop);
         currentCandidate.columnIdSet = extractColumnIds(path.getAccessConditions());
       } else {
         continue;
@@ -179,15 +180,42 @@ public class BestTaskFinder extends ParameterizedOperatorVisitor<PhysicalPropert
     return candidates;
   }
 
-  private boolean isSingleScan(List<ColumnExpr> columns, List<ColumnExpr> indexColumns, Column[] primaryKeys) {
+  private boolean isMatchProperty(TableAccessPath path, PhysicalProperty prop) {
+    boolean isMatchProp = false;
+    Column[] indexCols = path.getIndex().getColumns();
+    if (!prop.isEmpty() && prop.isOrderConsistent() && indexCols.length >= prop.entries.length) {
+      for (int i = 0; i < indexCols.length; i++) {
+        Column indexCol = indexCols[i];
+        if (indexCol.getId() == prop.entries[0].columnExpr.getId()) {
+          isMatchProp = matchIndicesProperty(indexCols, i, prop.entries);
+          break;
+        }
+      }
+    }
+    return isMatchProp;
+  }
+
+  private boolean matchIndicesProperty(Column[] indexCols, int index, PhysicalProperty.Entry[] items) {
+    if (items.length > (indexCols.length - index)) {
+      return false;
+    }
+    for (int i = 0; index < indexCols.length && i < items.length; index++, i++) {
+      if (indexCols[index].getId() != items[i].columnExpr.getId()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private boolean isSingleScan(List<ColumnExpr> columns, Column[] indexColumns, Column[] primaryKeys) {
     for (ColumnExpr columnExpr : columns) {
       if (isContainColId(primaryKeys, columnExpr.getId())) {
         continue;
       }
 
       boolean isIndexColumn = false;
-      for (ColumnExpr indexCol : indexColumns) {
-        if (columnExpr.getUid().equals(indexCol.getUid())) {
+      for (Column indexCol : indexColumns) {
+        if (columnExpr.getId().equals(indexCol.getId())) {
           isIndexColumn = true;
           break;
         }
@@ -215,6 +243,12 @@ public class BestTaskFinder extends ParameterizedOperatorVisitor<PhysicalPropert
     if (oldPath.path.isSingleScan() && !newPath.path.isSingleScan()) {
       cost--;
     } else if (!oldPath.path.isSingleScan() && newPath.path.isSingleScan()) {
+      cost++;
+    }
+
+    if (oldPath.isMatchProp && !newPath.isMatchProp) {
+      cost--;
+    } else if (!oldPath.isMatchProp && newPath.isMatchProp) {
       cost++;
     }
 
@@ -269,8 +303,10 @@ public class BestTaskFinder extends ParameterizedOperatorVisitor<PhysicalPropert
       return task;
     }
 
-    LOG.debug("Could not calculate cost for TableSourceTask whose CountOnAccess = {} and StatRowCount = {}",
-            accessPath.getCountOnAccess(), task.getStatRowCount());
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Could not calculate cost for TableSourceTask whose CountOnAccess = {} and StatRowCount = {}",
+              accessPath.getCountOnAccess(), task.getStatRowCount());
+    }
 
     if (range.isFullRange()) {
       task.cost = Cost.newFullRangeCost();
@@ -361,13 +397,21 @@ public class BestTaskFinder extends ParameterizedOperatorVisitor<PhysicalPropert
       return task;
     }
 
-    LOG.debug("Could not calculate cost for IndexSourceTask whose CountOnIndex = {}, CountOnAccess = {}, and "
-                    + "StatRowCount = {}",
-            accessPath.getCountOnIndex(), accessPath.getCountOnAccess(),
-            indexSource.getStatInfo().getEstimatedRowCount());
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Could not calculate cost for IndexSourceTask whose CountOnIndex = {}, CountOnAccess = {}, and "
+                      + "StatRowCount = {}",
+              accessPath.getCountOnIndex(), accessPath.getCountOnAccess(),
+              indexSource.getStatInfo().getEstimatedRowCount());
+    }
 
     if (range.isFullRange()) {
       task.cost = Cost.newFullRangeCost();
+
+      // compare the full range between IndexSource and TableSource,
+      // if IndexSource is singleScan , IndexSource is better.
+      if (accessPath.isSingleScan()) {
+        task.addCost(-1.0);
+      }
     } else {
       task.cost = Cost.newIndexPlanCost();
     }
@@ -415,6 +459,7 @@ public class BestTaskFinder extends ParameterizedOperatorVisitor<PhysicalPropert
    */
   private static class PathCandidate {
     TableAccessPath path;
+    boolean isMatchProp;
     Set<Long> columnIdSet = new HashSet<>();
 
     PathCandidate(TableAccessPath path) {

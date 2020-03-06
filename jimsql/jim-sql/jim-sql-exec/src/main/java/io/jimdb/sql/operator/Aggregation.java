@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ExpressionType;
@@ -89,7 +89,7 @@ public final class Aggregation extends RelOperator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     if (hasChildren()) {
       return children[0].execute(session).flatMap(execResult -> aggExecutor.execute(session, execResult));
     }

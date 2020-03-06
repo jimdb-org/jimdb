@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
 import io.jimdb.core.expression.ValueAccessor;
@@ -51,7 +51,7 @@ public final class ShowGrants extends RelOperator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     UserInfo userInfo = new UserInfo(user, host);
     List<String> values = priEngine.showGrant(userInfo, user, host);
     List<RowValueAccessor> rows = new ArrayList<>(values.size());

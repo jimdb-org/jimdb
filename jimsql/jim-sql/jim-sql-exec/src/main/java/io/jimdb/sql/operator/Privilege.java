@@ -19,7 +19,7 @@ import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.AckExecResult;
 import io.jimdb.pb.Ddlpb.OpType;
@@ -49,14 +49,14 @@ public final class Privilege extends Operator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     Flux<Boolean> result = null;
     switch (type) {
       case PriGrant:
         result = priEngine.grant(OpType.PriGrant, stmt)
                 .onErrorReturn(err -> {
-                  if (err instanceof JimException) {
-                    return ((JimException) err).getCode() == ErrorCode.ER_ILLEGAL_GRANT_FOR_TABLE;
+                  if (err instanceof BaseException) {
+                    return ((BaseException) err).getCode() == ErrorCode.ER_ILLEGAL_GRANT_FOR_TABLE;
                   }
                   return false;
                 }, Boolean.TRUE);
@@ -64,8 +64,8 @@ public final class Privilege extends Operator {
       case PriRevoke:
         result = priEngine.grant(OpType.PriRevoke, stmt)
                 .onErrorReturn(err -> {
-                  if (err instanceof JimException) {
-                    return ((JimException) err).getCode() == ErrorCode.ER_ILLEGAL_GRANT_FOR_TABLE;
+                  if (err instanceof BaseException) {
+                    return ((BaseException) err).getCode() == ErrorCode.ER_ILLEGAL_GRANT_FOR_TABLE;
                   }
                   return false;
                 }, Boolean.TRUE);
@@ -73,8 +73,8 @@ public final class Privilege extends Operator {
       case PriSetPassword:
         result = priEngine.grant(OpType.PriSetPassword, stmt)
                 .onErrorReturn(err -> {
-                  if (err instanceof JimException) {
-                    return ((JimException) err).getCode() == ErrorCode.ER_ILLEGAL_GRANT_FOR_TABLE;
+                  if (err instanceof BaseException) {
+                    return ((BaseException) err).getCode() == ErrorCode.ER_ILLEGAL_GRANT_FOR_TABLE;
                   }
                   return false;
                 }, Boolean.TRUE);
@@ -82,8 +82,8 @@ public final class Privilege extends Operator {
       case PriCreateUser:
         result = priEngine.grant(OpType.PriCreateUser, stmt)
                 .onErrorReturn(err -> {
-                  if (err instanceof JimException) {
-                    return ((JimException) err).getCode() == ErrorCode.ER_CANT_CREATE_USER_WITH_GRANT;
+                  if (err instanceof BaseException) {
+                    return ((BaseException) err).getCode() == ErrorCode.ER_CANT_CREATE_USER_WITH_GRANT;
                   }
                   return false;
                 }, Boolean.TRUE);
@@ -91,8 +91,8 @@ public final class Privilege extends Operator {
       case PriUpdateUser:
         result = priEngine.grant(OpType.PriUpdateUser, stmt)
                 .onErrorReturn(err -> {
-                  if (err instanceof JimException) {
-                    return ((JimException) err).getCode() == ErrorCode.ER_ACCESS_DENIED_CHANGE_USER_ERROR;
+                  if (err instanceof BaseException) {
+                    return ((BaseException) err).getCode() == ErrorCode.ER_ACCESS_DENIED_CHANGE_USER_ERROR;
                   }
                   return false;
                 }, Boolean.TRUE);
@@ -100,8 +100,8 @@ public final class Privilege extends Operator {
       case PriDropUser:
         result = priEngine.grant(OpType.PriDropUser, stmt)
                 .onErrorReturn(err -> {
-                  if (err instanceof JimException) {
-                    return ((JimException) err).getCode() == ErrorCode.ER_DROP_USER;
+                  if (err instanceof BaseException) {
+                    return ((BaseException) err).getCode() == ErrorCode.ER_DROP_USER;
                   }
                   return false;
                 }, Boolean.TRUE);

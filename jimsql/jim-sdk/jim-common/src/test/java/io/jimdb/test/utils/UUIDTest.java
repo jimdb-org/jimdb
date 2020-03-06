@@ -18,7 +18,7 @@ package io.jimdb.test.utils;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
-import io.jimdb.common.utils.generator.UUIDGenerator;
+import io.jimdb.common.utils.generator.UuidGenerator;
 
 import org.junit.Test;
 
@@ -39,7 +39,7 @@ public class UUIDTest {
         @Override
         public void run() {
           for (int j = 0; j < num; j++) {
-            String uid = UUIDGenerator.next();
+            String uid = UuidGenerator.next();
             uid = UUIDSMAP.putIfAbsent(uid, uid);
             if (uid != null) {
               System.out.println("UUID is not unique.");

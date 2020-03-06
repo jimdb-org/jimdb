@@ -118,45 +118,14 @@ public class ShowTest extends SqlTestBase {
 
     String sql = String.format("CREATE TABLE %s.test(id BIGINT PRIMARY KEY, user varchar(32) NOT NULL, "
             + "host varchar(32), UNIQUE INDEX user_idx (user), INDEX host_idx (host)) COMMENT 'REPLICA=1' ENGINE=MEMORY", DB_NAME);
-//    String sql = String.format("CREATE TABLE IF NOT EXISTS %s.test_index4 (\n"
-//            + "            `i1` int(11) NOT NULL,\n"
-//            + "            `i2` int(11) NOT NULL,\n"
-//            + "            `i3` int(11) NOT NULL,\n"
-//            + "            `b1` bigint NOT NULL,\n"
-//            + "            `b2` bigint DEFAULT NULL,\n"
-//            + "            `b3` bigint NOT NULL,\n"
-//            + "            `v1` varchar(100) NOT NULL,\n"
-//            + "            `v2` varchar(100) NOT NULL,\n"
-//            + "            `v3` varchar(100) NOT NULL,\n"
-//            + "            `ti1` tinyint NOT NULL,\n"
-//            + "            `ti2` tinyint NOT NULL,\n"
-//            + "            `ti3` tinyint NOT NULL,\n"
-//            + "            `si1` smallint NOT NULL,\n"
-//            + "            `si2` smallint NOT NULL,\n"
-//            + "            `si3` smallint NOT NULL,\n"
-//            + "            `mi1` mediumint NOT NULL,\n"
-//            + "            `mi2` mediumint NOT NULL,\n"
-//            + "            `mi3` mediumint NOT NULL,\n"
-//            + "            PRIMARY KEY (i1,i2,i3),\n"
-//            + "            INDEX bigint_idx (b1,b2,b3),\n"
-//            + "            INDEX varchar_idx (v1,v2,v3),\n"
-//            + "            INDEX smallint_idx (si1,si2,si3),\n"
-//            + "            INDEX mediumint_idx (mi1,mi2,mi3),\n"
-//            + "            INDEX tinyint_idx (ti1,ti2,ti3),\n"
-//            + "INDEX ibv_composite_uniq_idx (i3,b3,v3),\n"
-//            + "INDEX mst_normal_idx (mi1,si1,ti1),\n"
-//            + "INDEX ibv_normal_idx (i1,b1,v1),\n"
-//            + "UNIQUE INDEX mst_composite_uniq_idx (mi3,si3,ti3)\n"
-//            + "            ) COMMENT 'REPLICA=1' ENGINE=MEMORY AUTO_INCREMENT=0;", DB_NAME);
 
     execUpdate(sql, 0, true);
 
-//    sql = String.format("SHOW INDEXES FROM %s.test", DB_NAME);
-//    sql = String.format("SHOW INDEX FROM test FROM %s", DB_NAME);
     sql = String.format("SHOW INDEXES FROM test IN %s", DB_NAME);
     List<String> expected = expectedStr(new String[]{
-            "Table=test; Non_unique=0; Key_name=PRIMARY; Seq_in_index=1; Column_name=id; Collation=A; Cardinality=0; Sub_part=null; Packed=null; Null=; Index_type=BTREE; Comment=; Index_comment",
-            "Table=test; Non_unique=0; Key_name=user_2; Seq_in_index=1; Column_name=user; Collation=A; Cardinality=0; Sub_part=1; Packed=null; Null=; Index_type=BTREE; Comment=" });
+            "Table=test; Non_unique=0; Key_name=PRIMARY; Seq_in_index=1; Column_name=id; Collation=A; Cardinality=0; Sub_part=null; Packed=null; Null=; Index_type=BTREE; Comment=; Index_comment=",
+            "Table=test; Non_unique=0; Key_name=user_idx; Seq_in_index=1; Column_name=user; Collation=A; Cardinality=0; Sub_part=null; Packed=null; Null=YES; Index_type=BTREE; Comment=; Index_comment=",
+            "Table=test; Non_unique=1; Key_name=host_idx; Seq_in_index=1; Column_name=host; Collation=A; Cardinality=0; Sub_part=null; Packed=null; Null=YES; Index_type=BTREE; Comment=; Index_comment="});
     execQuery(sql, expected, false);
 
     deleteCatalog(DB_NAME);
@@ -212,18 +181,24 @@ public class ShowTest extends SqlTestBase {
     String DB_NAME = "show_test_db" + System.nanoTime();
     createCatalog(DB_NAME);
 
-    String sql = String.format("CREATE TABLE %s.test(id BIGINT PRIMARY KEY, user varchar(32) NOT NULL UNIQUE KEY, "
-            + "host varchar(32)) COMMENT 'REPLICA=1' ENGINE=MEMORY", DB_NAME);
+    String sql = String.format(
+            "CREATE TABLE %s.test("
+                    + "id BIGINT PRIMARY KEY, "
+                    + "user varchar(32) NOT NULL DEFAULT '007A' UNIQUE KEY, "
+                    + "host varchar(32) comment 'ip host', "
+                    + "area int DEFAULT 100 comment 'area addr') "
+                    + "COMMENT 'REPLICA=1' ENGINE=MEMORY PARTITION BY RANGE(id) PARTITIONS 40", DB_NAME);
     execUpdate(sql, 0, true);
 
     List<String> expected = expectedStr(new String[]{
             "Table=test; Create Table=CREATE TABLE `test`(\n" +
                     " `id` bigint(20) NOT NULL,\n" +
-                    " `user` varchar(32) NOT NULL,\n" +
-                    " `host` varchar(32),\n" +
+                    " `user` varchar(32) NOT NULL DEFAULT '007A',\n" +
+                    " `host` varchar(32) COMMENT 'ip host',\n" +
+                    " `area` int(11) DEFAULT 100 COMMENT 'area addr',\n" +
                     "  PRIMARY KEY (`id`),\n" +
                     "  UNIQUE KEY `user_2`(`user`)\n" +
-                    ") ENGINE=MEMORY COMMENT='REPLICA=1'"
+                    ") ENGINE=MEMORY COMMENT='REPLICA=1' PARTITION BY RANGE(id) PARTITIONS 40;"
     });
     execQuery(String.format("show create table %s.test", DB_NAME), expected);
 

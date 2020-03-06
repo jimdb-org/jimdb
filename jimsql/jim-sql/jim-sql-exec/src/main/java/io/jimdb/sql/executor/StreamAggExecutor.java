@@ -136,8 +136,9 @@ public class StreamAggExecutor extends AggExecutor {
     if (lastGroupValues[0] == null) {
       isEqual = false;
     }
-    for (int i = 0; i < groupByExprs.length; i++) {
-      Value value = groupByExprs[i].exec(row);
+    Value value;
+    for (int i = groupByExprs.length - 1; i >= 0; i--) {
+      value = groupByExprs[i].exec(row);
       if (isEqual) {
         isEqual = value.equals(lastGroupValues[i]);
       }

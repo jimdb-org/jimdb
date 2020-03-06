@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import io.jimdb.common.utils.os.SystemClock;
 import io.jimdb.common.utils.retry.RetryPolicy;
 import io.jimdb.core.model.meta.Table;
-import io.jimdb.engine.sender.DistSender;
+import io.jimdb.engine.sender.DispatcherImpl;
 import io.jimdb.meta.RouterManager;
 import io.jimdb.meta.route.RoutePolicy;
 
@@ -46,12 +46,12 @@ public class StoreCtx {
   private TimeZone timeZone = TimeZone.getDefault();
 
   private final RouterManager rpcManager;
-  private final DistSender sender;
+  private final DispatcherImpl sender;
 
   private RetryPolicy retryPolicy;
   private AtomicInteger retry = new AtomicInteger(0);
 
-  public StoreCtx(final Table table, final Instant timeout, RouterManager rpcManager, DistSender sender) {
+  public StoreCtx(final Table table, final Instant timeout, RouterManager rpcManager, DispatcherImpl sender) {
     this.cxtId = ID.incrementAndGet();
     this.table = table;
     this.rpcManager = rpcManager;
@@ -62,7 +62,7 @@ public class StoreCtx {
             .build();
   }
 
-  public static StoreCtx buildCtx(final Table table, final Instant timeout, RouterManager rpcManager, DistSender sender) {
+  public static StoreCtx buildCtx(final Table table, final Instant timeout, RouterManager rpcManager, DispatcherImpl sender) {
     if (timeout == null) {
       return new StoreCtx(table, SystemClock.currentTimeStamp().plusSeconds(20), rpcManager, sender);
     }
@@ -107,7 +107,7 @@ public class StoreCtx {
     return rpcManager;
   }
 
-  public DistSender getSender() {
+  public DispatcherImpl getSender() {
     return sender;
   }
 

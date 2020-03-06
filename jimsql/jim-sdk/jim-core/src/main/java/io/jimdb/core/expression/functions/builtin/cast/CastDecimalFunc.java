@@ -17,7 +17,7 @@ package io.jimdb.core.expression.functions.builtin.cast;
 
 import io.jimdb.core.expression.functions.Func;
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.pb.Exprpb;
@@ -58,12 +58,12 @@ final class CastDecimalFunc extends Func {
   }
 
   @Override
-  public DecimalValue execDecimal(ValueAccessor accessor) throws JimException {
+  public DecimalValue execDecimal(ValueAccessor accessor) throws BaseException {
     return args[0].execDecimal(session, accessor);
   }
 
   @Override
-  public DoubleValue execDouble(ValueAccessor accessor) throws JimException {
+  public DoubleValue execDouble(ValueAccessor accessor) throws BaseException {
     final Expression arg = args[0];
     final Value value = arg.execDecimal(session, accessor);
     if (value == null) {
@@ -74,7 +74,7 @@ final class CastDecimalFunc extends Func {
   }
 
   @Override
-  public StringValue execString(ValueAccessor accessor) throws JimException {
+  public StringValue execString(ValueAccessor accessor) throws BaseException {
     final Expression arg = args[0];
     final Value value = arg.execDecimal(session, accessor);
     if (value == null) {
@@ -84,7 +84,7 @@ final class CastDecimalFunc extends Func {
   }
 
   @Override
-  public LongValue execLong(ValueAccessor accessor) throws JimException {
+  public LongValue execLong(ValueAccessor accessor) throws BaseException {
     final Expression arg = args[0];
     final Value value = arg.execDecimal(session, accessor);
     if (value == null) {
@@ -94,7 +94,7 @@ final class CastDecimalFunc extends Func {
   }
 
   @Override
-  public UnsignedLongValue execUnsignedLong(ValueAccessor accessor) throws JimException {
+  public UnsignedLongValue execUnsignedLong(ValueAccessor accessor) throws BaseException {
     final Expression arg = args[0];
     final Value value = arg.execDecimal(session, accessor);
     if (value == null) {
@@ -104,7 +104,7 @@ final class CastDecimalFunc extends Func {
   }
 
   @Override
-  public DateValue execDate(ValueAccessor accessor) throws JimException {
+  public DateValue execDate(ValueAccessor accessor) throws BaseException {
     final Expression arg = args[0];
     final Value value = arg.execDecimal(session, accessor);
     if (value == null) {
@@ -114,7 +114,7 @@ final class CastDecimalFunc extends Func {
   }
 
   @Override
-  public TimeValue execTime(ValueAccessor accessor) throws JimException {
+  public TimeValue execTime(ValueAccessor accessor) throws BaseException {
     final Expression arg = args[0];
     final Value value = arg.execDecimal(session, accessor);
     if (value == null) {
@@ -124,7 +124,7 @@ final class CastDecimalFunc extends Func {
   }
 
   @Override
-  public YearValue execYear(ValueAccessor accessor) throws JimException {
+  public YearValue execYear(ValueAccessor accessor) throws BaseException {
     final Expression arg = args[0];
     final Value value = arg.execDecimal(session, accessor);
     if (value == null) {
@@ -134,7 +134,7 @@ final class CastDecimalFunc extends Func {
   }
 
   @Override
-  public JsonValue execJson(ValueAccessor accessor) throws JimException {
+  public JsonValue execJson(ValueAccessor accessor) throws BaseException {
     final Expression arg = args[0];
     final Value value = arg.execDecimal(session, accessor);
     if (value == null) {

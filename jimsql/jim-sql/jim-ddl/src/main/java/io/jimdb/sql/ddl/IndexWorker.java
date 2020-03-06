@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.jimdb.common.exception.ErrorCode;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.utils.lang.ByteUtil;
 import io.jimdb.common.utils.lang.NamedThreadFactory;
 import io.jimdb.core.Session;
@@ -140,7 +140,7 @@ final class IndexWorker implements Closeable {
   }
 
   /**
-   *
+   * TODO
    */
   static final class ReorgWorker implements Runnable {
     private final String key;
@@ -233,7 +233,7 @@ final class IndexWorker implements Closeable {
         return isSuccess;
       } catch (DDLException ex) {
         throw ex;
-      } catch (JimException ex) {
+      } catch (BaseException ex) {
         isSuccess = false;
         if (ex.getCode() != ErrorCode.ER_TXN_CONFLICT && ex.getCode() != ErrorCode.ER_TXN_VERSION_CONFLICT
                 && ex.getCode() != ErrorCode.ER_TXN_STATUS_CONFLICT) {

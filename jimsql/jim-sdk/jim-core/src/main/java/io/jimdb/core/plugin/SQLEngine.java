@@ -19,7 +19,7 @@ import java.util.Map;
 
 import io.jimdb.core.Session;
 import io.jimdb.core.model.result.ExecResult;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.variable.SysVariable;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.CompositeByteBuf;
@@ -92,7 +92,7 @@ public interface SQLEngine extends Plugin {
    * @param session
    * @param out
    * @param execResult
-   * @throws JimException
+   * @throws BaseException
    */
   void writeResult(Session session, CompositeByteBuf out, ExecResult execResult);
 
@@ -100,9 +100,9 @@ public interface SQLEngine extends Plugin {
    * @param session
    * @param out
    * @param exception
-   * @throws JimException
+   * @throws BaseException
    */
-  void writeError(Session session, CompositeByteBuf out, JimException exception);
+  void writeError(Session session, CompositeByteBuf out, BaseException exception);
 
   /**
    * Sql engine type.

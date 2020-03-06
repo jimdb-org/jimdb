@@ -30,7 +30,7 @@ import io.jimdb.common.exception.ConnectException;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.rpc.client.command.Command;
 import io.jimdb.rpc.client.command.CommandCallback;
 import io.jimdb.common.utils.event.EventBus;
@@ -95,9 +95,9 @@ public final class Connection {
     this.port = Integer.parseInt(parts[parts.length - 1]);
   }
 
-  public <T extends Command> void request(final T command, final CommandCallback<T> callback) throws JimException {
+  public <T extends Command> void request(final T command, final CommandCallback<T> callback) throws BaseException {
     if (command == null) {
-      throw DBException.get(ErrorModule.NETRPC, ErrorCode.ER_RPC_REQUEST_INVALID);
+      throw DBException.get(ErrorModule.RPC, ErrorCode.ER_RPC_REQUEST_INVALID);
     }
 
     long startTime = SystemClock.currentTimeMillis();
@@ -138,10 +138,10 @@ public final class Connection {
         buf.release();
       }
 
-      if (ex instanceof JimException) {
+      if (ex instanceof BaseException) {
         throw ex;
       }
-      throw DBException.get(ErrorModule.NETRPC, ErrorCode.ER_RPC_REQUEST_ERROR, ex, id, String.valueOf(reqID));
+      throw DBException.get(ErrorModule.RPC, ErrorCode.ER_RPC_REQUEST_ERROR, ex, id, String.valueOf(reqID));
     }
   }
 
@@ -223,9 +223,9 @@ public final class Connection {
 
         final ExecutorService workExecutor = config.getWorkExecutor();
         if (workExecutor == null) {
-          response(reqID, DBException.get(ErrorModule.NETRPC, ErrorCode.ER_RPC_REQUEST_TIMEOUT, id, String.valueOf(reqID)));
+          response(reqID, DBException.get(ErrorModule.RPC, ErrorCode.ER_RPC_REQUEST_TIMEOUT, id, String.valueOf(reqID)));
         } else {
-          workExecutor.execute(() -> response(reqID, DBException.get(ErrorModule.NETRPC, ErrorCode.ER_RPC_REQUEST_TIMEOUT, id, String.valueOf(reqID))));
+          workExecutor.execute(() -> response(reqID, DBException.get(ErrorModule.RPC, ErrorCode.ER_RPC_REQUEST_TIMEOUT, id, String.valueOf(reqID))));
         }
       }
     });
@@ -235,7 +235,7 @@ public final class Connection {
     this.lastTime = SystemClock.currentTimeMillis();
   }
 
-  void init() throws JimException {
+  void init() throws BaseException {
     lock.lock();
     try {
       if ((channel != null && channel.isActive()) || reconnect || closed) {
@@ -274,7 +274,7 @@ public final class Connection {
     }
   }
 
-  void connect() throws JimException {
+  void connect() throws BaseException {
     try {
       SocketAddress socketAddr = new InetSocketAddress(InetAddress.getByName(ip), port);
       ChannelFuture channelFuture = bootstrap.connect(socketAddr);

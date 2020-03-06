@@ -77,8 +77,8 @@ final class ArithmeticUtil {
     int scale = source.getScale();
     int precision = (int) source.getPrecision();
     SQLType.Builder resultType = source.toBuilder();
-    if (t1.getScale() > -1 && t2.getScale() > -1) {
-      scale = t1.getScale() + t2.getScale();
+    if (t1.getScale() > Types.UNDEFINE_WIDTH || t2.getScale() > Types.UNDEFINE_WIDTH) {
+      scale = t1.getScale() > Types.UNDEFINE_WIDTH ? t1.getScale() : 0 + t2.getScale() > Types.UNDEFINE_WIDTH ? t2.getScale() : 0;
       if (scale > Types.MAX_DEC_SCALE) {
         scale = Types.MAX_DEC_SCALE;
       }

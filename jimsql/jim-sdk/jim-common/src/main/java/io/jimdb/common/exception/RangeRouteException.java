@@ -18,9 +18,9 @@ package io.jimdb.common.exception;
 import io.jimdb.common.utils.lang.ByteUtil;
 
 /**
- * @version V1.0
+ * TODO
  */
-public class RangeRouteException extends JimException {
+public class RangeRouteException extends BaseException {
 
   public byte[] key;
 

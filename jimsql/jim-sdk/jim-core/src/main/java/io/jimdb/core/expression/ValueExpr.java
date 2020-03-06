@@ -21,7 +21,7 @@ import java.util.List;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.types.Types;
 import io.jimdb.core.values.DateValue;
@@ -156,12 +156,12 @@ public final class ValueExpr extends Expression {
   }
 
   @Override
-  public Expression resolveOffset(Schema schema, boolean isClone) throws JimException {
+  public Expression resolveOffset(Schema schema, boolean isClone) throws BaseException {
     return this;
   }
 
   @Override
-  public Value exec(ValueAccessor accessor) throws JimException {
+  public Value exec(ValueAccessor accessor) throws BaseException {
     if (lazyExpr != null && lazyExpr.getExprType() == ExpressionType.FUNC) {
       final FuncExpr funcExpr = (FuncExpr) lazyExpr;
       final Value v = funcExpr.exec(accessor);
@@ -175,7 +175,7 @@ public final class ValueExpr extends Expression {
   }
 
   @Override
-  public LongValue execLong(Session session, ValueAccessor accessor) throws JimException {
+  public LongValue execLong(Session session, ValueAccessor accessor) throws BaseException {
     if (lazyExpr != null) {
       Value v = lazyExpr.exec(accessor);
       if (v.isNull()) {
@@ -190,7 +190,7 @@ public final class ValueExpr extends Expression {
   }
 
   @Override
-  public UnsignedLongValue execUnsignedLong(Session session, ValueAccessor accessor) throws JimException {
+  public UnsignedLongValue execUnsignedLong(Session session, ValueAccessor accessor) throws BaseException {
     if (lazyExpr != null) {
       Value v = lazyExpr.exec(accessor);
       if (v.isNull()) {
@@ -205,7 +205,7 @@ public final class ValueExpr extends Expression {
   }
 
   @Override
-  public DoubleValue execDouble(Session session, ValueAccessor accessor) throws JimException {
+  public DoubleValue execDouble(Session session, ValueAccessor accessor) throws BaseException {
     if (lazyExpr != null) {
       Value v = lazyExpr.exec(accessor);
       if (v.isNull()) {
@@ -222,7 +222,7 @@ public final class ValueExpr extends Expression {
   }
 
   @Override
-  public DecimalValue execDecimal(Session session, ValueAccessor accessor) throws JimException {
+  public DecimalValue execDecimal(Session session, ValueAccessor accessor) throws BaseException {
     if (lazyExpr != null) {
       Value v = lazyExpr.exec(accessor);
       if (v.isNull()) {
@@ -239,7 +239,7 @@ public final class ValueExpr extends Expression {
   }
 
   @Override
-  public StringValue execString(Session session, ValueAccessor accessor) throws JimException {
+  public StringValue execString(Session session, ValueAccessor accessor) throws BaseException {
     if (lazyExpr != null) {
       Value v = lazyExpr.exec(accessor);
       if (v.isNull()) {
@@ -256,7 +256,7 @@ public final class ValueExpr extends Expression {
   }
 
   @Override
-  public DateValue execDate(Session session, ValueAccessor accessor) throws JimException {
+  public DateValue execDate(Session session, ValueAccessor accessor) throws BaseException {
     if (lazyExpr != null) {
       Value v = lazyExpr.exec(accessor);
       if (v.isNull()) {
@@ -273,7 +273,7 @@ public final class ValueExpr extends Expression {
   }
 
   @Override
-  public TimeValue execTime(Session session, ValueAccessor accessor) throws JimException {
+  public TimeValue execTime(Session session, ValueAccessor accessor) throws BaseException {
     if (lazyExpr != null) {
       Value v = lazyExpr.exec(accessor);
       if (v.isNull()) {
@@ -290,7 +290,7 @@ public final class ValueExpr extends Expression {
   }
 
   @Override
-  public YearValue execYear(Session session, ValueAccessor accessor) throws JimException {
+  public YearValue execYear(Session session, ValueAccessor accessor) throws BaseException {
     if (lazyExpr != null) {
       Value v = lazyExpr.exec(accessor);
       if (v.isNull()) {
@@ -307,7 +307,7 @@ public final class ValueExpr extends Expression {
   }
 
   @Override
-  public JsonValue execJson(Session session, ValueAccessor accessor) throws JimException {
+  public JsonValue execJson(Session session, ValueAccessor accessor) throws BaseException {
     throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_NOT_SUPPORTED_YET, "Json");
   }
 
@@ -316,7 +316,7 @@ public final class ValueExpr extends Expression {
     if (this.lazyExpr != null) {
       try {
         this.value = this.exec(ValueAccessor.EMPTY);
-      } catch (JimException ignored) {
+      } catch (BaseException ignored) {
       }
     }
     return this.value.getString();

@@ -22,7 +22,7 @@ import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
 import io.jimdb.core.expression.ValueAccessor;
@@ -59,7 +59,7 @@ public final class ShowIndex extends RelOperator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     if (StringUtil.isBlank(database) || StringUtil.isBlank(table)) {
       throw DBException.get(ErrorModule.EXECUTOR, ErrorCode.ER_NO_SUCH_TABLE, database, table);
     }

@@ -22,7 +22,7 @@ import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.functions.builtin.GetParamFunc;
 import io.jimdb.core.expression.functions.builtin.arithmetic.AddFunc;
@@ -40,6 +40,7 @@ import io.jimdb.core.expression.functions.builtin.logic.XorFunc;
 import io.jimdb.core.expression.functions.builtin.math.CeilFunc;
 import io.jimdb.core.expression.functions.builtin.math.FloorFunc;
 import io.jimdb.core.expression.functions.builtin.others.InFunc;
+import io.jimdb.core.expression.functions.builtin.time.NowFunc;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -78,8 +79,11 @@ public enum FuncType {
   ISNULL(new IsNullFunc.IsNullFuncBuilder("ISNULL"), FuncDialect.DEFAULT_DIALECT),
   VALUES(null, new FuncDialect(false, false)),
   Ceil(new CeilFunc.CeilFuncBuilder("Ceil"), FuncDialect.DEFAULT_DIALECT),
-  Floor(new FloorFunc.FloorFuncBuilder("Floor"), FuncDialect.DEFAULT_DIALECT);
+  Floor(new FloorFunc.FloorFuncBuilder("Floor"), FuncDialect.DEFAULT_DIALECT),
 //  Variable(null, new FuncDialect(false, false));
+
+  // time functions
+  NOW(new NowFunc.NowFuncBuilder("NOW"), FuncDialect.DEFAULT_DIALECT);
 
   private static final EnumMap<FuncType, FuncType> OPPOSITE_CMP;
 
@@ -107,7 +111,7 @@ public enum FuncType {
   }
 
   @SuppressFBWarnings("EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS")
-  public static FuncType forName(String name) throws JimException {
+  public static FuncType forName(String name) throws BaseException {
     try {
       return FuncType.valueOf(name);
     } catch (Exception ex) {

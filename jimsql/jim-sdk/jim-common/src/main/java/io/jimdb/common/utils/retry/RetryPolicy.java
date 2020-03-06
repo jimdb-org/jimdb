@@ -20,7 +20,7 @@ import java.time.Instant;
 import io.jimdb.common.utils.os.SystemClock;
 
 /**
- * @version V1.0
+ * Retry policy
  */
 public final class RetryPolicy {
   public static final int DEFAULT_RETRY_DELAY = 200;
@@ -62,13 +62,13 @@ public final class RetryPolicy {
    * Return retry delay time(ms).
    * IF return <0, then retry end.
    *
-   * @param startTime
-   * @param retryTimes
-   * @return
+   * @param startTime TODO
+   * @param retryTimes TODO
+   * @return TODO
    */
   public long getDelay(final long startTime, final int retryTimes) {
-    final int retrys = retryTimes < 1 ? 1 : retryTimes;
-    if (maxRetry > 0 && retrys > maxRetry) {
+    final int retries = retryTimes < 1 ? 1 : retryTimes;
+    if (maxRetry > 0 && retries > maxRetry) {
       return -1;
     }
 
@@ -76,7 +76,7 @@ public final class RetryPolicy {
     if (retryDelay > 0) {
       long delay = 0;
       if (useExponentialBackOff) {
-        int exponential = retrys - 1;
+        int exponential = retries - 1;
         if (backOffMultiplier == 1) {
           delay = retryDelay;
         } else if (maxRetryDelay > 0) {
@@ -137,7 +137,7 @@ public final class RetryPolicy {
   }
 
   /**
-   * RetryPolicy Builder.
+   * RetryPolicy Builder
    */
   public static final class Builder {
     // retry delay(ms)

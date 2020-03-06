@@ -23,7 +23,6 @@ import static io.jimdb.sql.optimizer.statistics.StatsUtils.MAX_NUM_BUCKETS;
 import static io.jimdb.sql.optimizer.statistics.StatsUtils.STATS_TABLE;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -81,7 +80,7 @@ public class AnalyzeIndexExecutor extends AnalyzeExecutor {
 //
 //    return Flux.just(new QueryExecResult(columnExprs, null));
 
-    List<ValueRange> ranges = Collections.singletonList(RangeBuilder.fullRange());
+    List<ValueRange> ranges = RangeBuilder.fullRangeList();
     // TODO
     // For single-column index, we do not load null rows from TiKV, so the built histogram would not include
     // null values, and its `NullCount` would be set by result of another distsql call to get null rows.

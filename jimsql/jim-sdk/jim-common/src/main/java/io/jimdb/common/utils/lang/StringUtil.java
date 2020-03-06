@@ -21,7 +21,7 @@ import java.util.Locale;
 import com.alibaba.druid.util.StringUtils;
 
 /**
- * @version V1.0
+ * String util
  */
 public final class StringUtil {
   private static final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
@@ -57,8 +57,8 @@ public final class StringUtil {
   /**
    * Return the collation name.
    *
-   * @param locale
-   * @return
+   * @param locale TODO
+   * @return TODO
    */
   public static String getCollationName(final Locale locale) {
     Locale english = Locale.ENGLISH;
@@ -70,9 +70,9 @@ public final class StringUtil {
   /**
    * Match name of the locale with the given name.
    *
-   * @param locale
-   * @param name
-   * @return
+   * @param locale TODO
+   * @param name TODO
+   * @return TODO
    */
   public static boolean matchCollationName(final Locale locale, final String name) {
     return name.equalsIgnoreCase(locale.toString()) || name.equalsIgnoreCase(getCollationName(locale));
@@ -81,8 +81,8 @@ public final class StringUtil {
   /**
    * Convert bytes to hex string.
    *
-   * @param value
-   * @return
+   * @param value TODO
+   * @return TODO
    */
   public static String toHex(final byte[] value) {
     return toHex(value, value.length);
@@ -91,9 +91,9 @@ public final class StringUtil {
   /**
    * Convert bytes to hex string.
    *
-   * @param value
-   * @param len
-   * @return
+   * @param value TODO
+   * @param len TODO
+   * @return TODO
    */
   public static String toHex(byte[] value, int len) {
     final char[] buf = new char[len + len];
@@ -108,8 +108,8 @@ public final class StringUtil {
   /**
    * set hexString to string
    *
-   * @param s
-   * @return
+   * @param s TODO
+   * @return TODO
    */
   public static String hexStringToString(String s) {
     byte[] bytes = new byte[s.length() / 2];
@@ -125,8 +125,8 @@ public final class StringUtil {
   /**
    * Matching character suffix, anyChar match all ，'_' match one
    *
-   * @param src
-   * @param target
+   * @param src TODO
+   * @param target TODO
    * @return match
    */
   public static int doMatchString(String src, String target, char anyChar) {
@@ -241,8 +241,8 @@ public final class StringUtil {
 
 
   /**
-   * @param cs
-   * @return
+   * @param cs TODO
+   * @return TODO
    */
   public static boolean isBlank(CharSequence cs) {
     int strLen;
@@ -258,8 +258,8 @@ public final class StringUtil {
   }
 
   /**
-   * @param cs
-   * @return
+   * @param cs TODO
+   * @return TODO
    */
   public static boolean isNotBlank(CharSequence cs) {
     return !isBlank(cs);

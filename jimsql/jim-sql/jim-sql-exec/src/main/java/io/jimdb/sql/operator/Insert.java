@@ -18,7 +18,7 @@ package io.jimdb.sql.operator;
 import java.util.List;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Assignment;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
@@ -115,7 +115,7 @@ public final class Insert extends RelOperator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     return session.getTxn().insert(table, columns, values, duplicate, hasRefColumn);
   }
 

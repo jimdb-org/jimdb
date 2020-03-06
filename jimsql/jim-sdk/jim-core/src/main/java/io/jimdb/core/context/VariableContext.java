@@ -24,7 +24,7 @@ import io.jimdb.core.plugin.SQLEngine;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.utils.lang.Resetable;
+import io.jimdb.common.utils.lang.Resettable;
 import io.jimdb.core.variable.DefaultGlobalSysVarManager;
 import io.jimdb.core.variable.GlobalSysVarManager;
 import io.jimdb.core.variable.SysVariable;
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @version V1.0
  */
-public final class VariableContext implements Resetable {
+public final class VariableContext implements Resettable {
   private static final Logger LOG = LoggerFactory.getLogger(VariableContext.class);
 
   public static final String VAR_TIME_ZONE = "time_zone";

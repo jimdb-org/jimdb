@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 import io.jimdb.core.model.meta.MetaData;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.plugin.SQLEngine;
-import io.jimdb.sql.Planner;
+import io.jimdb.sql.planner.Planner;
 import io.jimdb.sql.operator.RelOperator;
 import io.jimdb.sql.optimizer.physical.StatisticsVisitor;
 import io.jimdb.sql.optimizer.statistics.TableSourceStatsInfo;

@@ -22,7 +22,7 @@ import java.util.List;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.utils.generator.UUIDGenerator;
+import io.jimdb.common.utils.generator.UuidGenerator;
 import io.jimdb.common.utils.lang.ByteUtil;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.pb.Txn;
@@ -100,7 +100,7 @@ public class TxnConfig {
   }
 
   private String generateTxnId() {
-    return UUIDGenerator.next();
+    return UuidGenerator.next();
   }
 
   public void sortIntents() {

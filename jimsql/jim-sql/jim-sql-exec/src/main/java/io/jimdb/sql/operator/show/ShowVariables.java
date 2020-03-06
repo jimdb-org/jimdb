@@ -21,7 +21,7 @@ import java.util.Map;
 
 import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
 import io.jimdb.core.expression.ValueAccessor;
@@ -45,7 +45,7 @@ public final class ShowVariables extends RelOperator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     List<ValueAccessor> valueAccessors = new ArrayList<>();
     Map<String, SysVariable> variableMap = session.getVarContext().getAllVars();
     variableMap.forEach((k, v) -> {

@@ -109,8 +109,8 @@ public final class DecimalValue extends Value<DecimalValue> {
     }
 
     int prec = Math.max(value.precision(), v2.value.precision());
-    int scale = value.scale();
-    BigDecimal dec = value.divide(v2.value, scale + DIV_FRAC_INCR, BigDecimal.ROUND_HALF_EVEN);
+    int scale = value.scale() + DIV_FRAC_INCR;
+    BigDecimal dec = value.divide(v2.value, scale, BigDecimal.ROUND_HALF_EVEN);
     if (dec.signum() == 0) {
       dec = BigDecimal.ZERO;
     }

@@ -26,7 +26,7 @@ import java.sql.Timestamp;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.context.StatementContext;
 import io.jimdb.core.expression.ColumnExpr;
@@ -207,7 +207,6 @@ public final class CodecUtil {
       writeInt2(dataBuf, DEFAULT_VALUE_ZERO);
     }
     //other message
-    writeStringEof(dataBuf, StringUtil.EMPTY_STRING);
     writePacket(session, out, dataBuf);
   }
 
@@ -232,7 +231,6 @@ public final class CodecUtil {
     //warningCount
     writeInt2(dataBuf, DEFAULT_VALUE_ZERO);
     //other message
-    writeStringEof(dataBuf, StringUtil.EMPTY_STRING);
     writePacket(session, out, dataBuf);
   }
 
@@ -244,7 +242,7 @@ public final class CodecUtil {
    * @param ex
    * @see <a href="https://dev.mysql.com/doc/internals/en/packet-ERR_Packet.html">Error</a>
    */
-  public static void encode(Session session, CompositeByteBuf out, JimException ex) {
+  public static void encode(Session session, CompositeByteBuf out, BaseException ex) {
     ByteBuf dataBuf = out.alloc().buffer(32);
     MySQLErrorCode mySQLErrorCode = MySQLError.toMySQLErrorCode(ex.getCode());
     //[ff] header of the ERR packet
@@ -343,7 +341,6 @@ public final class CodecUtil {
   }
 
   public static void writePacket(Session session, CompositeByteBuf out, ByteBuf buffer) {
-    ByteBuf header = out.alloc().buffer(16);
     while (buffer.readableBytes() > MAX_PACKET_LENGTH) {
       ByteBuf b = out.alloc().buffer(4);
       b.writeByte(MAX_HEAD_VALUE);
@@ -353,6 +350,7 @@ public final class CodecUtil {
       out.addComponents(true, b, buffer.readBytes(MAX_PACKET_LENGTH));
     }
     if (buffer.readableBytes() > 0) {
+      ByteBuf header = out.alloc().buffer(4);
       header.writeMediumLE(buffer.readableBytes());
       header.writeByte(session.incrementAndGetSeqID());
       out.addComponents(true, header, buffer);
@@ -840,8 +838,9 @@ public final class CodecUtil {
     }
 
     try {
-      writeEncodeInt(byteBuf, value.getBytes(CHARSET_UTF8).length);
-      byteBuf.writeBytes(value.getBytes(CHARSET_UTF8));
+      byte[] valueBytes = value.getBytes(CHARSET_UTF8);
+      writeEncodeInt(byteBuf, valueBytes.length);
+      byteBuf.writeBytes(valueBytes);
     } catch (Exception e) {
       throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_RPC_REQUEST_CODEC, e);
     }
@@ -865,8 +864,7 @@ public final class CodecUtil {
 
   public static void writeString(ByteBuf byteBuf, String value) {
     try {
-      byte[] tt = value.getBytes(CHARSET_UTF8);
-      byteBuf.writeBytes(tt);
+      byteBuf.writeBytes(value.getBytes(CHARSET_UTF8));
     } catch (Exception e) {
       throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_RPC_REQUEST_CODEC, e);
     }

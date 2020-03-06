@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.utils.lang.NamedThreadFactory;
 import io.jimdb.common.utils.lang.StringUtil;
 import io.jimdb.common.utils.os.SystemClock;
@@ -84,7 +84,7 @@ public final class CacheablePrivilege implements PrivilegeEngine {
 
         PrivilegeStore.init(config.getPrivilegeStore(), config.getPrivilegeReplica());
         break;
-      } catch (JimException ex) {
+      } catch (BaseException ex) {
         if (errCount++ > 10) {
           throw ex;
         }

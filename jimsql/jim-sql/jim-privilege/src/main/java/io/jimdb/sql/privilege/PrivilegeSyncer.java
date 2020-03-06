@@ -23,7 +23,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.utils.lang.NamedThreadFactory;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.model.privilege.PrivilegeType;
@@ -62,7 +62,7 @@ final class PrivilegeSyncer implements Closeable {
       try {
         this.load();
         break;
-      } catch (JimException ex) {
+      } catch (BaseException ex) {
         if (i++ > 10) {
           throw ex;
         }

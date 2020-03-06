@@ -15,7 +15,7 @@
  */
 package io.jimdb.core.expression.functions.builtin;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.context.PreparedContext;
 import io.jimdb.core.expression.Expression;
@@ -70,43 +70,43 @@ public class GetParamFunc extends Func {
   }
 
   @Override
-  public StringValue execString(ValueAccessor accessor) throws JimException {
+  public StringValue execString(ValueAccessor accessor) throws BaseException {
     Value realValue = getValue();
     return StringValue.getInstance(realValue.getString());
   }
 
   @Override
-  public LongValue execLong(ValueAccessor accessor) throws JimException {
+  public LongValue execLong(ValueAccessor accessor) throws BaseException {
     Value realValue = getValue();
     return (LongValue) realValue;
   }
 
   @Override
-  public DecimalValue execDecimal(ValueAccessor accessor) throws JimException {
+  public DecimalValue execDecimal(ValueAccessor accessor) throws BaseException {
     Value realValue = getValue();
     return (DecimalValue) realValue;
   }
 
   @Override
-  public DateValue execDate(ValueAccessor accessor) throws JimException {
+  public DateValue execDate(ValueAccessor accessor) throws BaseException {
     Value realValue = getValue();
     return (DateValue) realValue;
   }
 
   @Override
-  public DoubleValue execDouble(ValueAccessor accessor) throws JimException {
+  public DoubleValue execDouble(ValueAccessor accessor) throws BaseException {
     Value realValue = getValue();
     return (DoubleValue) realValue;
   }
 
   @Override
-  public JsonValue execJson(ValueAccessor accessor) throws JimException {
+  public JsonValue execJson(ValueAccessor accessor) throws BaseException {
     Value realValue = getValue();
     return JsonValue.getInstance(realValue.getString());
   }
 
   @Override
-  public TimeValue execTime(ValueAccessor accessor) throws JimException {
+  public TimeValue execTime(ValueAccessor accessor) throws BaseException {
     Value realValue = getValue();
     return (TimeValue) realValue;
   }

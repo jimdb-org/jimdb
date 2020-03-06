@@ -28,7 +28,7 @@ import io.jimdb.common.config.NettyServerConfig;
 import io.jimdb.core.plugin.SQLEngine;
 import io.jimdb.core.plugin.store.Engine;
 import io.jimdb.common.utils.lang.NamedThreadFactory;
-import io.jimdb.common.utils.lang.NetUtil;
+import io.jimdb.common.utils.lang.NetworkUtil;
 import io.jimdb.common.utils.os.SystemClock;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
@@ -153,7 +153,7 @@ public final class SessionHandler extends ChannelDuplexHandler implements Closea
       }
     }
 
-    LOG.error(String.format("server connection channel %s exception", NetUtil.toIP(channel.remoteAddress())), cause);
+    LOG.error(String.format("server connection channel %s exception", NetworkUtil.toIP(channel.remoteAddress())), cause);
   }
 
   @Override

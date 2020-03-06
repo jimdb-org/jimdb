@@ -18,7 +18,8 @@ package io.jimdb.common.utils.lang;
 import java.security.SecureRandom;
 
 /**
- * @version V1.0
+ *  Random holder
+ *  TODO do we really need this class?
  */
 public final class RandomHolder {
   public static final SecureRandom INSTANCE = new SecureRandom();

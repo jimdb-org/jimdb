@@ -23,7 +23,7 @@ import java.util.Map;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.utils.lang.StringUtil;
 import io.jimdb.common.utils.os.SystemClock;
 import io.jimdb.core.Session;
@@ -194,9 +194,9 @@ public final class MySQLEngine implements SQLEngine {
           throw DBException.get(ErrorModule.PROTO, ErrorCode.ER_NOT_SUPPORTED_YET, "ResultType(" + result.getType().name() + ")");
       }
     } catch (Exception ex) {
-      JimException je;
-      if (ex instanceof JimException) {
-        je = (JimException) ex;
+      BaseException je;
+      if (ex instanceof BaseException) {
+        je = (BaseException) ex;
       } else {
         je = DBException.get(ErrorModule.PROTO, ErrorCode.ER_UNKNOWN_ERROR, ex);
       }
@@ -208,7 +208,7 @@ public final class MySQLEngine implements SQLEngine {
   }
 
   @Override
-  public void writeError(Session session, CompositeByteBuf out, JimException ex) {
+  public void writeError(Session session, CompositeByteBuf out, BaseException ex) {
     CodecUtil.encode(session, out, ex);
   }
 
@@ -273,7 +273,7 @@ public final class MySQLEngine implements SQLEngine {
         default:
           break;
       }
-    } catch (JimException ex) {
+    } catch (BaseException ex) {
       session.writeError(ex);
       return;
     } catch (Exception ex) {
@@ -304,10 +304,10 @@ public final class MySQLEngine implements SQLEngine {
         case MYSQL_COM_QUIT:
           break;
         case MYSQL_COM_STMT_PREPARE:
-          sqlExecutor.executePrepare(session, sql);
+          sqlExecutor.createPrepare(session, sql);
           break;
         case MYSQL_COM_STMT_EXECUTE:
-          sqlExecutor.execute(session, stmtID);
+          sqlExecutor.executePrepare(session, stmtID);
           break;
         case MYSQL_COM_STMT_RESET:
           PreparedStatement stmt = session.getPreparedContext().getStatement(stmtID);
@@ -329,7 +329,7 @@ public final class MySQLEngine implements SQLEngine {
           session.writeError(DBException.get(ErrorModule.PROTO, ErrorCode.ER_NOT_SUPPORTED_YET, "Command(" + cmdType.name() + ")"));
           break;
       }
-    } catch (JimException ex) {
+    } catch (BaseException ex) {
       session.writeError(ex);
     } catch (Exception ex) {
       session.writeError(DBException.get(ErrorModule.PROTO, ErrorCode.ER_UNKNOWN_ERROR, ex));

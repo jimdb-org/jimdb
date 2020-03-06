@@ -59,8 +59,7 @@ public class BestTaskFinderTest extends TestBase {
     List<TableAccessPath> paths = tableSource.getTableAccessPaths();
     for (TableAccessPath path : paths) {
       path.setCountOnAccess(10.0);
-      List<ValueRange> ranges = Collections.singletonList(RangeBuilder.fullRange());
-      path.setRanges(ranges);
+      path.setRanges(RangeBuilder.fullRangeList());
 
       if (!path.isTablePath()) {
         if (path.getIndex().getName().equals("idx_age")) {

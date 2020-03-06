@@ -23,7 +23,7 @@ import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
 import io.jimdb.core.expression.ValueAccessor;
@@ -48,7 +48,7 @@ public final class ShowTables extends RelOperator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     if (StringUtil.isBlank(database)) {
       throw DBException.get(ErrorModule.EXECUTOR, ErrorCode.ER_NO_DB_ERROR);
     }

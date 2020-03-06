@@ -119,7 +119,10 @@ public class SelectIndexTest extends SqlTestBase {
             + "`t_int` int(11) NOT NULL, "
             + "`t_varchar` varchar(100) NOT NULL, "
             + "`t_decimal` decimal(10,2) NOT NULL,"
-            + "PRIMARY KEY (`t_int`,`t_varchar`,`t_decimal`)"
+            + "`i1` int(11) NOT NULL DEFAULT 0,"
+            + "`v1` varchar(10) NOT NULL DEFAULT 0,"
+            + "PRIMARY KEY (`t_int`,`t_varchar`,`t_decimal`),"
+            + "INDEX t_idx (i1) "
             + ") COMMENT 'REPLICA=1' ENGINE=MEMORY ";
     dropAndCreateTable(COMPOSITE_PRIMARY_KEY_TABLENAME, sql);
   }
@@ -131,11 +134,13 @@ public class SelectIndexTest extends SqlTestBase {
 
       for (int n = 0; n < onesize; n++) {
         String sql = "INSERT INTO "+ COMPOSITE_PRIMARY_KEY_TABLENAME
-                + " (t_int,t_varchar,t_decimal) VALUES";
+                + " (t_int,t_varchar,t_decimal,i1,v1) VALUES";
         sql += "("
                 + (idx + 2000)
                 + ", 't_varchar-" + idx + "'"
-                + "," + reserveBitTwo(idx * 100000 * 0.01) + ")";// todo
+                + "," + reserveBitTwo(idx * 100000 * 0.01)
+                + "," + idx
+                + ", 'abc-" + batch + "'" + ")";
         idx++;
         execUpdate(sql, 1, true);
       }
@@ -990,8 +995,6 @@ public class SelectIndexTest extends SqlTestBase {
   }
   //region  composite  primary key test set
 
-
-
   @Test
   public void testCompositePrimaryKey01() {
     SelectCols select = new SelectCols(COMPOSITE_PRIMARY_KEY_TABLE_DATARESULT, new String[]{ "t_int",
@@ -1054,6 +1057,16 @@ public class SelectIndexTest extends SqlTestBase {
 
     execPrepareQueryCheckEmpty("select " + select.select + " from " + select.tableName + " where t_int = ? and t_varchar = ?"
             + "  ", expected, 2988, "t_varchar-988");
+  }
+
+  @Test
+  public void testCompositePrimaryKey06() {
+    SelectCols select = new SelectCols(COMPOSITE_PRIMARY_KEY_TABLE_DATARESULT, new String[]{ "v1", "i1" });
+    List<String> expected = this.filter(select,
+            row -> row.get("i1").equals(25) || row.get("i1").equals(26)|| row.get("i1").equals(27));
+
+    execPrepareQueryCheckEmpty("select " + select.select + " from " + select.tableName + " where i1 = ? or i1 = ? or i1 = ?"
+            , expected, 25, 26, 27);
   }
 
   @Test

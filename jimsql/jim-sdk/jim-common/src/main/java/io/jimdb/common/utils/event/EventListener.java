@@ -16,25 +16,25 @@
 package io.jimdb.common.utils.event;
 
 /**
- * @version V1.0
+ * Event listener
  */
 public interface EventListener {
 
   String getName();
 
   /**
-   * Check if the specified event is supported.
+   * Check if the specified event has been supported.
    *
-   * @param e
-   * @return
+   * @param e the given event to check
+   * @return true if the specified event has been supported
    */
   boolean isSupport(Event e);
 
   /**
-   * Handle Event.
-   * NOTE: This method don't throw exception.
+   * Handle and process the given event.
+   * NOTE: This method does not throw exception.
    *
-   * @param e
+   * @param e the event to be processed
    */
   void handleEvent(Event e);
 }

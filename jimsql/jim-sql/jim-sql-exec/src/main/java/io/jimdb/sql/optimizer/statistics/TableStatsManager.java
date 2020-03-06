@@ -31,7 +31,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.utils.lang.NamedThreadFactory;
 import io.jimdb.core.Session;
 import io.jimdb.core.config.JimConfig;
@@ -341,7 +341,7 @@ public class TableStatsManager {
     }
 
     @Override
-    public Flux<ExecResult> call() throws JimException {
+    public Flux<ExecResult> call() throws BaseException {
       List<Integer> outputOffsets = Arrays.stream(table.getReadableColumns()).map(Column::getOffset)
               .collect(Collectors.toList());
 

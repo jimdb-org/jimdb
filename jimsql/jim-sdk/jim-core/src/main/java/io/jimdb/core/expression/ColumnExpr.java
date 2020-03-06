@@ -15,15 +15,19 @@
  */
 package io.jimdb.core.expression;
 
+import static io.jimdb.core.expression.Points.MAX_POINT;
+import static io.jimdb.core.expression.Points.MIN_POINT;
+
 import java.util.List;
 
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Table;
+import io.jimdb.core.types.Types;
 import io.jimdb.core.values.DateValue;
 import io.jimdb.core.values.DecimalValue;
 import io.jimdb.core.values.DoubleValue;
@@ -49,6 +53,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 @SuppressFBWarnings({ "FCCD_FIND_CLASS_CIRCULAR_DEPENDENCY", "PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS" })
 public final class ColumnExpr extends Expression {
+  private static final List<Point> POINTS;
+
   private int offset = -1;
   private Integer id;
   private Long uid;
@@ -61,8 +67,16 @@ public final class ColumnExpr extends Expression {
   private ByteString reorgValue;
   private Value defaultValue;
 
+  static {
+    Point start1 = MIN_POINT;
+    Point end1 = new Point(LongValue.getInstance(0), false, false);
+    Point start2 = new Point(LongValue.getInstance(0), true, false);
+    Point end2 = MAX_POINT;
+    POINTS = Lists.newArrayList(start1, end1, start2, end2);
+  }
+
   public ColumnExpr(Long uid) {
-    this.id = Integer.valueOf(0);
+    this.id = 0;
     this.uid = uid;
   }
 
@@ -147,13 +161,7 @@ public final class ColumnExpr extends Expression {
   @Override
   public List<Point> convertToPoints(Session session) {
     //TODO value zero
-    Point start1 = new Point(Value.MAX_VALUE, true);
-    Point end1 = new Point(LongValue.getInstance(0), false, false);
-
-    Point start2 = new Point(LongValue.getInstance(0), true, false);
-    Point end2 = new Point(Value.MIN_VALUE, false);
-
-    return Lists.newArrayList(start1, end1, start2, end2);
+    return POINTS;
   }
 
   @Override
@@ -162,7 +170,7 @@ public final class ColumnExpr extends Expression {
   }
 
   @Override
-  public Expression resolveOffset(Schema schema, boolean isClone) throws JimException {
+  public Expression resolveOffset(Schema schema, boolean isClone) throws BaseException {
     ColumnExpr result = isClone ? this.clone() : this;
 
     result.offset = schema.getColumnIndex(result);
@@ -173,40 +181,43 @@ public final class ColumnExpr extends Expression {
   }
 
   @Override
-  public Value exec(ValueAccessor accessor) throws JimException {
+  public Value exec(ValueAccessor accessor) throws BaseException {
     Value v = accessor.get(offset);
     if (!v.isNull()) {
-      v = ValueConvertor.convertType(null, v, resultType);
+      if (resultValueType == null) {
+        resultValueType = Types.sqlToValueType(resultType);
+      }
+      v = ValueConvertor.convertType(null, v, resultValueType, resultType);
     }
     return v;
   }
 
   @Override
-  public LongValue execLong(Session session, ValueAccessor accessor) throws JimException {
+  public LongValue execLong(Session session, ValueAccessor accessor) throws BaseException {
     final Value v = accessor.get(offset);
     return v.isNull() ? null : ValueConvertor.convertToLong(session, v, resultType);
   }
 
   @Override
-  public UnsignedLongValue execUnsignedLong(Session session, ValueAccessor accessor) throws JimException {
+  public UnsignedLongValue execUnsignedLong(Session session, ValueAccessor accessor) throws BaseException {
     final Value v = accessor.get(offset);
-    return v.isNull() ? null : ValueConvertor.convertToUnsignedLong(session, v, null);
+    return v.isNull() ? null : ValueConvertor.convertToUnsignedLong(session, v, resultType);
   }
 
   @Override
-  public DoubleValue execDouble(Session session, ValueAccessor accessor) throws JimException {
+  public DoubleValue execDouble(Session session, ValueAccessor accessor) throws BaseException {
     final Value v = accessor.get(offset);
-    return v.isNull() ? null : ValueConvertor.convertToDouble(session, v, null);
+    return v.isNull() ? null : ValueConvertor.convertToDouble(session, v, resultType);
   }
 
   @Override
-  public DecimalValue execDecimal(Session session, ValueAccessor accessor) throws JimException {
+  public DecimalValue execDecimal(Session session, ValueAccessor accessor) throws BaseException {
     final Value v = accessor.get(offset);
-    return v.isNull() ? null : ValueConvertor.convertToDecimal(session, v, null);
+    return v.isNull() ? null : ValueConvertor.convertToDecimal(session, v, resultType);
   }
 
   @Override
-  public StringValue execString(Session session, ValueAccessor accessor) throws JimException {
+  public StringValue execString(Session session, ValueAccessor accessor) throws BaseException {
     final Value v = accessor.get(offset);
     if (v.isNull()) {
       return null;
@@ -219,29 +230,29 @@ public final class ColumnExpr extends Expression {
         return StringValue.getInstance(str);
       }
     }
-    return ValueConvertor.convertToString(session, v, null);
+    return ValueConvertor.convertToString(session, v, resultType);
   }
 
   @Override
-  public DateValue execDate(Session session, ValueAccessor accessor) throws JimException {
+  public DateValue execDate(Session session, ValueAccessor accessor) throws BaseException {
     final Value v = accessor.get(offset);
-    return v.isNull() ? null : ValueConvertor.convertToDate(session, v, null);
+    return v.isNull() ? null : ValueConvertor.convertToDate(session, v, resultType);
   }
 
   @Override
-  public TimeValue execTime(Session session, ValueAccessor accessor) throws JimException {
+  public TimeValue execTime(Session session, ValueAccessor accessor) throws BaseException {
     final Value v = accessor.get(offset);
-    return v.isNull() ? null : ValueConvertor.convertToTime(session, v, null);
+    return v.isNull() ? null : ValueConvertor.convertToTime(session, v, resultType);
   }
 
   @Override
-  public YearValue execYear(Session session, ValueAccessor accessor) throws JimException {
+  public YearValue execYear(Session session, ValueAccessor accessor) throws BaseException {
     final Value v = accessor.get(offset);
-    return v.isNull() ? null : ValueConvertor.convertToYear(session, v, null);
+    return v.isNull() ? null : ValueConvertor.convertToYear(session, v, resultType);
   }
 
   @Override
-  public JsonValue execJson(Session session, ValueAccessor accessor) throws JimException {
+  public JsonValue execJson(Session session, ValueAccessor accessor) throws BaseException {
     throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_NOT_SUPPORTED_YET, "Json");
   }
 

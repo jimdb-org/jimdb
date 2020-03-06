@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.utils.lang.NamedThreadFactory;
 import io.jimdb.common.utils.os.SystemClock;
 import io.jimdb.core.model.meta.MetaData;
@@ -70,7 +70,7 @@ final class DDLSyncer implements Closeable {
     while (updateTime == 0) {
       try {
         this.loadMeta();
-      } catch (JimException ex) {
+      } catch (BaseException ex) {
         if (i++ > 10) {
           throw ex;
         }
@@ -109,7 +109,7 @@ final class DDLSyncer implements Closeable {
         }
         Thread.sleep(100);
       }
-    } catch (JimException ex) {
+    } catch (BaseException ex) {
       throw ex;
     } catch (Exception ex) {
       throw DBException.get(ErrorModule.DDL, ErrorCode.ER_INTERNAL_ERROR, ex);

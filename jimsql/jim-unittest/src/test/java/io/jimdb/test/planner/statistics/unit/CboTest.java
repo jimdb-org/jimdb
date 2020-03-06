@@ -19,7 +19,7 @@ package io.jimdb.test.planner.statistics.unit;
 import java.util.Collections;
 import java.util.List;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.model.meta.MetaData;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.sql.operator.RelOperator;
@@ -47,7 +47,7 @@ public class CboTest extends TestBase {
       RelOperator relOperator = buildPlanAndOptimize(checker.getSql());
       Assert.assertNotNull(relOperator);
       checker.doCheck(relOperator);
-    } catch (JimException e) {
+    } catch (BaseException e) {
       e.printStackTrace();
       Assert.assertTrue(checker.isHasException());
     }

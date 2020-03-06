@@ -22,7 +22,7 @@ import java.util.Optional;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.utils.lang.StringUtil;
 import io.jimdb.core.Session;
 import io.jimdb.core.context.StatementContext;
@@ -61,7 +61,7 @@ public final class InsertAnalyzer {
   private InsertAnalyzer() {
   }
 
-  public static Operator analyzeInsert(StatementAnalyzer analyzer, SQLInsertStatement insert, List<SQLExpr> dupUpdates) throws JimException {
+  public static Operator analyzeInsert(StatementAnalyzer analyzer, SQLInsertStatement insert, List<SQLExpr> dupUpdates) throws BaseException {
     Session session = analyzer.session;
     String tblName = null;
     String dbName = session.getVarContext().getDefaultCatalog();
@@ -83,7 +83,7 @@ public final class InsertAnalyzer {
     Table table;
     try {
       table = session.getTxnContext().getMetaData().getTable(dbName, tblName);
-    } catch (JimException ex) {
+    } catch (BaseException ex) {
       if (ex.getCode() == ErrorCode.ER_BAD_TABLE_ERROR || ex.getCode() == ErrorCode.ER_BAD_DB_ERROR) {
         throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NO_SUCH_TABLE, ex, dbName, tblName);
       }

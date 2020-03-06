@@ -16,7 +16,7 @@
 package io.jimdb.sql.operator.show;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.sql.operator.Operator;
 import io.jimdb.sql.operator.RelOperator;
@@ -58,7 +58,7 @@ public final class Show extends Operator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     return showOperator.execute(session);
   }
 }

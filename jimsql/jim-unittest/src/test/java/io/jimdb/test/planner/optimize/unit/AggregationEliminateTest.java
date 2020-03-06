@@ -16,8 +16,8 @@
 package io.jimdb.test.planner.optimize.unit;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
-import io.jimdb.sql.Planner;
+import io.jimdb.common.exception.BaseException;
+import io.jimdb.sql.planner.Planner;
 import io.jimdb.sql.operator.RelOperator;
 import io.jimdb.test.planner.TestBase;
 
@@ -37,7 +37,7 @@ public class AggregationEliminateTest extends TestBase {
       RelOperator relOperator = buildPlanAndOptimize(checker.getSql());
       Assert.assertNotNull(relOperator);
       checker.doCheck(relOperator);
-    } catch (JimException e) {
+    } catch (BaseException e) {
       e.printStackTrace();
       Assert.assertTrue(checker.isHasException());
     }

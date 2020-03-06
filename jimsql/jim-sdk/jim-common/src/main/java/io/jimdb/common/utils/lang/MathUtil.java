@@ -16,7 +16,7 @@
 package io.jimdb.common.utils.lang;
 
 /**
- * @version V1.0
+ * Math related utils
  */
 public final class MathUtil {
   private MathUtil() {
@@ -25,8 +25,8 @@ public final class MathUtil {
   /**
    * Rounds up the value to the nearest power of two.
    *
-   * @param v
-   * @return
+   * @param v given value
+   * @return result of power of two
    */
   public static int powerTwo(int v) {
     if (v == 0 || v == 1) {

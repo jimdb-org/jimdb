@@ -29,7 +29,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Bootstraps;
 import io.jimdb.core.Session;
 import io.jimdb.core.config.JimConfig;
@@ -54,7 +54,7 @@ import io.jimdb.core.plugin.store.Engine;
 import io.jimdb.core.plugin.store.Transaction;
 import io.jimdb.core.values.Value;
 import io.jimdb.pb.Processorpb;
-import io.jimdb.sql.Planner;
+import io.jimdb.sql.planner.Planner;
 import io.jimdb.sql.operator.Delete;
 import io.jimdb.sql.operator.IndexLookup;
 import io.jimdb.sql.operator.IndexSource;
@@ -774,7 +774,7 @@ public class TestBase {
     }
 
     @Override
-    public void write(ExecResult rs, boolean isEof) throws JimException {
+    public void write(ExecResult rs, boolean isEof) throws BaseException {
       this.queryExecResult = null;
       if (rs != null) {
         if (rs instanceof DMLExecResult) {
@@ -803,7 +803,7 @@ public class TestBase {
     }
 
     @Override
-    public void writeError(JimException ex) throws JimException {
+    public void writeError(BaseException ex) throws BaseException {
       System.out.println("error:" + ex.getMessage());
       latch.countDown();
     }

@@ -17,10 +17,8 @@ package io.jimdb.test.planner.optimize.integration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.model.meta.MetaData;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.sql.operator.RelOperator;
@@ -31,7 +29,6 @@ import io.jimdb.test.planner.TestBase;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -73,7 +70,7 @@ public class PhysicalOptimizationTest extends TestBase {
       RelOperator relOperator = buildPlanAndOptimize(checker.getSql());
       Assert.assertNotNull(relOperator);
       checker.doCheck(relOperator);
-    } catch (JimException e) {
+    } catch (BaseException e) {
       e.printStackTrace();
       Assert.assertTrue(checker.isHasException());
     }

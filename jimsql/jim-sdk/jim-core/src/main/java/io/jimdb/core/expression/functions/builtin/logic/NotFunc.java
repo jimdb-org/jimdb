@@ -18,7 +18,7 @@ package io.jimdb.core.expression.functions.builtin.logic;
 import io.jimdb.core.expression.functions.Func;
 import io.jimdb.core.expression.functions.UnaryFuncBuilder;
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.pb.Exprpb;
@@ -53,7 +53,7 @@ public final class NotFunc extends Func {
   }
 
   @Override
-  public LongValue execLong(ValueAccessor accessor) throws JimException {
+  public LongValue execLong(ValueAccessor accessor) throws BaseException {
     LongValue v = args[0].execLong(session, accessor);
     if (v == null) {
       return null;

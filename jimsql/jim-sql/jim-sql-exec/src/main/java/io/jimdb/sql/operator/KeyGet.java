@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Schema;
 import io.jimdb.core.model.meta.Index;
@@ -62,7 +62,7 @@ public final class KeyGet extends RelOperator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     return session.getTxn().get(indices, values, schema.getColumns().toArray(new ColumnExpr[schema.getColumns().size()]));
   }
 

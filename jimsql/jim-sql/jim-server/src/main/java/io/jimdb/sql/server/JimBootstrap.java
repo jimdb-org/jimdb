@@ -16,8 +16,8 @@
 
 package io.jimdb.sql.server;
 
-import io.jimdb.core.config.JimConfig;
 import io.jimdb.core.Bootstraps;
+import io.jimdb.core.config.JimConfig;
 import io.jimdb.sql.server.netty.JimService;
 
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public final class JimBootstrap {
     return new JimService(config);
   }
 
-  public static void start(JimService jimService) throws Exception {
+  public static void start(JimService jimService) {
     if (!jimService.isStarted()) {
       if (LOG.isInfoEnabled()) {
         LOG.info("jimService will start...");

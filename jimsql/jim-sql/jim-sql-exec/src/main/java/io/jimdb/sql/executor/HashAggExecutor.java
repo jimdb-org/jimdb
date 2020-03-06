@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import io.jimdb.core.Session;
-import io.jimdb.core.config.SystemProperties;
+import io.jimdb.common.config.SystemProperties;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ExpressionType;

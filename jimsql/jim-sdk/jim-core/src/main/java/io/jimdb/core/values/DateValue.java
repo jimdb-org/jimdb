@@ -56,10 +56,8 @@ public final class DateValue extends Value<DateValue> {
           TimeUtil.MAX_FSP);
   public static final DateValue TIMESTAMP_MAX_VALUE = new DateValue(TimeUtil.TIMESTAMP_MAX, DataType.TimeStamp,
           TimeUtil.MAX_FSP);
-
   public static final DateValue DATE_MIN_VALUE = new DateValue(TimeUtil.TIMESTAMP_MIN, DataType.Date, TimeUtil.MAX_FSP);
   public static final DateValue DATE_MAX_VALUE = new DateValue(TimeUtil.TIMESTAMP_MAX, DataType.Date, TimeUtil.MAX_FSP);
-
   public static final DateValue DATETIME_MIN_VALUE = new DateValue(TimeUtil.TIMESTAMP_MIN, DataType.DateTime,
           TimeUtil.MAX_FSP);
   public static final DateValue DATETIME_MAX_VALUE = new DateValue(TimeUtil.TIMESTAMP_MAX, DataType.DateTime,
@@ -67,6 +65,8 @@ public final class DateValue extends Value<DateValue> {
 
   private static final String DATE_FORMAT = "yyyy-MM-dd";
   private static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+  private static final SimpleDateFormat DATE_FORMATER = new SimpleDateFormat(DATE_FORMAT);
+  private static final SimpleDateFormat DATETIME_FORMATER = new SimpleDateFormat(DATETIME_FORMAT);
 
   private int fsp;
   private final Timestamp value;
@@ -79,28 +79,37 @@ public final class DateValue extends Value<DateValue> {
     this.fsp = fsp;
   }
 
+  /**
+   * DATE: 1000-01-01 ~ 9999-12-31
+   * -30610253143 ~ 253402185600
+   * DATETIME:1000-01-01 00:00:00.000000 ~ 9999-12-31 23:59:59.999999
+   * TIMESTAMP:'1970-01-01 00:00:01.000000' UTC 到'2038-01-19 03:14:07.999999' UTC mysql
+   * TIMESTAMP:'1000-01-01 00:00:00.000000' UTC 到'9999-12-31 23:59:59.999999' UTC we
+   * @param valueS
+   * @param dateType
+   * @param fsp
+   * @param zone
+   */
   private DateValue(String valueS, DataType dateType, int fsp, TimeZone zone) {
-    switch (dateType) {
-      //DATE: 1000-01-01 ~ 9999-12-31
-      //-30610253143 ~ 253402185600
-      case Date: {
+    this.dateType = dateType;
+    this.valueString = valueS;
+    switch (this.dateType) {
+      case DateTime:
+        zone = null;
+        this.value = buildTimestampFromString(valueS, this.dateType, fsp, zone);
+        this.fsp = fsp;
+        break;
+      case TimeStamp:
+        this.value = buildTimestampFromString(valueS, this.dateType, fsp, zone);
+        this.valueString = DATETIME_FORMATER.format(this.value);
+        this.fsp = fsp;
+        break;
+      default: {   // Date
         this.value = buildDateFromString(valueS);
         this.fsp = 0;
         break;
       }
-      //DATETIME:1000-01-01 00:00:00.000000 ~ 9999-12-31 23:59:59.999999
-      //TIMESTAMP:'1970-01-01 00:00:01.000000' UTC 到'2038-01-19 03:14:07.999999' UTC mysql
-      //TIMESTAMP:'1000-01-01 00:00:00.000000' UTC 到'9999-12-31 23:59:59.999999' UTC we
-      default: {
-        if (DataType.DateTime == dateType) {
-          zone = null;
-        }
-        this.value = buildTimestampFromString(valueS, dateType, fsp, zone);
-        this.fsp = fsp;
-      }
     }
-    this.dateType = dateType;
-    this.valueString = valueS;
   }
 
   public static DateValue convertToDateValue(long number, DataType dateType, int fsp) {
@@ -179,12 +188,6 @@ public final class DateValue extends Value<DateValue> {
   }
 
   private Timestamp buildDateFromString(String valueS) {
-
-    DataType type = DataType.Date;
-    int year;
-    int month;
-    int day;
-
     valueS = valueS.trim();
 
     // truncate fractional part
@@ -198,25 +201,26 @@ public final class DateValue extends Value<DateValue> {
     } else {
       int length = valueS.length();
 
-      if (length < 10) {
-        if (length == 8) {
-          return buildValue(1970, 1, 1, 0, 0, 0, 0, type); // Return EPOCH for TIME
-        }
+      if (length == 8) {
+        return buildValue(1970, 1, 1, 0, 0, 0, 0, DataType.Date); // Return EPOCH for TIME
+      } else if (length < 10) {
         throw new IllegalArgumentException(String.format("date %s: no valid ", valueS));
       }
 
-      if (length != 18) {
-        year = Integer.parseInt(valueS.substring(0, 4));
-        month = Integer.parseInt(valueS.substring(5, 7));
-        day = Integer.parseInt(valueS.substring(8, 10));
-      } else {
+      int year;
+      int month;
+      int day;
+      if (length == 18) {
         StringTokenizer st = new StringTokenizer(valueS, "- ");
         year = Integer.parseInt(st.nextToken());
         month = Integer.parseInt(st.nextToken());
         day = Integer.parseInt(st.nextToken());
+      } else {
+        year = Integer.parseInt(valueS.substring(0, 4));
+        month = Integer.parseInt(valueS.substring(5, 7));
+        day = Integer.parseInt(valueS.substring(8, 10));
       }
-
-      return buildValue(year, month, day, 0, 0, 0, 0, type);
+      return buildValue(year, month, day, 0, 0, 0, 0, DataType.Date);
     }
   }
 
@@ -243,16 +247,11 @@ public final class DateValue extends Value<DateValue> {
       micros = TimeUtil.handleFractionalPart(fsp, valueS.substring(decimalIndex + 1));
       valueS = valueS.substring(0, decimalIndex);
     }
+
     int length = valueS.length();
 
-    if (length > 0 && "0".equals(valueS)) {
-      return TIMESTAMP_EMPTY;
-//      ERROR 1292 (22007): Incorrect datetime value: '0' for column 'current_now' at row 1
-//      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TRUNCATED_WRONG_DATETIME_VALUE, valueS);
-    }
-
-    if ((length > 0) && (valueS.charAt(0) == '0') && ("0000-00-00".equals(valueS) || "0000-00-00 00:00:00".equals(valueS)
-            || "00000000000000".equals(valueS))) {
+    if ((length > 0) && (valueS.charAt(0) == '0') && ("0".equals(valueS) || "0000-00-00".equals(valueS)
+            || "0000-00-00 00:00:00".equals(valueS) || "00000000000000".equals(valueS))) {
       return TIMESTAMP_EMPTY;
     }
 
@@ -265,7 +264,6 @@ public final class DateValue extends Value<DateValue> {
         hour = Integer.parseInt(valueS.substring(11, 13));
         minutes = Integer.parseInt(valueS.substring(14, 16));
         seconds = Integer.parseInt(valueS.substring(17, 19));
-
         break;
       }
       //YYYYMMDDhhmmss
@@ -276,7 +274,6 @@ public final class DateValue extends Value<DateValue> {
         hour = Integer.parseInt(valueS.substring(8, 10));
         minutes = Integer.parseInt(valueS.substring(10, 12));
         seconds = Integer.parseInt(valueS.substring(12, 14));
-
         break;
       }
       //YYMMDDhhmmss
@@ -287,7 +284,6 @@ public final class DateValue extends Value<DateValue> {
         hour = Integer.parseInt(valueS.substring(6, 8));
         minutes = Integer.parseInt(valueS.substring(8, 10));
         seconds = Integer.parseInt(valueS.substring(10, 12));
-
         break;
       }
       case 10: {
@@ -307,10 +303,8 @@ public final class DateValue extends Value<DateValue> {
           hour = Integer.parseInt(valueS.substring(6, 8));
           minutes = Integer.parseInt(valueS.substring(8, 10));
         }
-
         break;
       }
-
       case 8: {
         //hh:mm:ss
         if (valueS.indexOf(':') != -1) {
@@ -326,34 +320,27 @@ public final class DateValue extends Value<DateValue> {
         year = Integer.parseInt(valueS.substring(0, 4));
         month = Integer.parseInt(valueS.substring(4, 6));
         day = Integer.parseInt(valueS.substring(6, 8));
-
         break;
       }
-
       case 6: {
         //YYMMDD
         year = getYear(valueS.substring(0, 2));
         month = Integer.parseInt(valueS.substring(2, 4));
         day = Integer.parseInt(valueS.substring(4, 6));
-
         break;
       }
-
       case 4: {
         //YYMM
         year = getYear(valueS.substring(0, 2));
         month = Integer.parseInt(valueS.substring(2, 4));
         day = 1;
-
         break;
       }
-
       case 2: {
         //YY
         year = getYear(valueS.substring(0, 2));
         month = 1;
         day = 1;
-
         break;
       }
 
@@ -467,9 +454,7 @@ public final class DateValue extends Value<DateValue> {
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("DateValue: {}-{}-{} {}:{}:{}.{}", year, month, day, hour, minute, second, micros);
     }
-    Calendar dateCal = new GregorianCalendar();
-    dateCal.clear();
-    dateCal.set(year, month - 1, day, hour, minute, second);
+    Calendar dateCal = new GregorianCalendar(year, month - 1, day, hour, minute, second);
     Timestamp ts = new Timestamp(dateCal.getTimeInMillis());
     ts.setNanos(micros * 1000);
     if (zone != null) {
@@ -502,7 +487,7 @@ public final class DateValue extends Value<DateValue> {
       dataEncode = "0000-00-00 00:00:00";
       fspPart = "000000";
     } else {
-      dataEncode = new SimpleDateFormat(DATETIME_FORMAT).format(value);
+      dataEncode = DATETIME_FORMATER.format(value);
       fspPart = String.format("%06d", value.getNanos() / 1000);
     }
     if (this.fsp > 0) {
@@ -530,12 +515,30 @@ public final class DateValue extends Value<DateValue> {
     return new DateValue(now, dateType, fsp);
   }
 
+  public static DateValue convertToMysqlNow(DateValue dateValue, int fsp) {
+    if (dateValue.fsp == fsp) {
+      return dateValue;
+    }
+    Timestamp value = (Timestamp) dateValue.value.clone();
+    int micros = 0;
+    if (fsp > 0) {
+      String fractionalPartStr = String.format("%d", value.getNanos() / 1000);
+      micros = Integer.parseInt(fractionalPartStr.substring(0, fsp + 1));
+    }
+    value.setNanos(micros * 1000);
+    return new DateValue(value, DataType.DateTime, fsp);
+  }
+
   public static DateValue getInstance(String value, DataType dateType, int fsp, TimeZone zone) {
     return new DateValue(value, dateType, fsp, zone);
   }
 
+  public static DateValue getInstance(String value, DataType dateType, int fsp) {
+    return new DateValue(value, dateType, fsp, null);
+  }
+
   public static DateValue getInstance(String value, DataType dateType) {
-    return getInstance(value, dateType, TimeUtil.MAX_FSP, null);
+    return new DateValue(value, dateType, TimeUtil.MAX_FSP, null);
   }
 
   public static DateValue getInstance(long value, DataType dateType, int fsp) {
@@ -617,9 +620,9 @@ public final class DateValue extends Value<DateValue> {
       return valueString;
     }
     if (this.dateType == DataType.Date) {
-      return new SimpleDateFormat(DATE_FORMAT).format(this.value.getTime());
+      return DATE_FORMATER.format(this.value.getTime());
     } else {
-      return new SimpleDateFormat(DATETIME_FORMAT).format(this.value.getTime());
+      return DATETIME_FORMATER.format(this.value.getTime());
     }
   }
 

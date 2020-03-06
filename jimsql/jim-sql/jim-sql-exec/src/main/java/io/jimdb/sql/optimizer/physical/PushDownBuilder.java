@@ -271,26 +271,6 @@ public class PushDownBuilder {
               .build();
     }
 
-    private Exprpb.ExprType getExprType(ValueType valueType) {
-      switch (valueType) {
-        case UNSIGNEDLONG:
-          return Exprpb.ExprType.Const_UInt;
-        case STRING:
-        case BINARY:
-          return Exprpb.ExprType.Const_Bytes;
-        case DOUBLE:
-          return Exprpb.ExprType.Const_Double;
-        case DECIMAL:
-          return Exprpb.ExprType.Const_Decimal;
-        case TIME:
-          return Exprpb.ExprType.Const_Time;
-        case DATE:
-          return Exprpb.ExprType.Const_Date;
-        default:
-          return Exprpb.ExprType.Const_Int;
-      }
-    }
-
     private Exprpb.Expr columnToPBExpr(ColumnExpr columnExpr) {
       return Exprpb.Expr.newBuilder()
               .setExprType(Exprpb.ExprType.Column)

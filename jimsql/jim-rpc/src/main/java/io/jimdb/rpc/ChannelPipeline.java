@@ -17,7 +17,7 @@ package io.jimdb.rpc;
 
 import java.util.function.Supplier;
 
-import io.jimdb.common.utils.buffer.BufAllocatorFactory;
+import io.jimdb.common.utils.buffer.ByteBufAllocatorFactory;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
@@ -25,15 +25,15 @@ import io.netty.channel.ChannelInitializer;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * @version V1.0
+ * Channel pipeline
  */
 @SuppressFBWarnings("EI_EXPOSE_REP2")
 @ChannelHandler.Sharable
 public final class ChannelPipeline extends ChannelInitializer {
-  private final BufAllocatorFactory allocatorFactory;
+  private final ByteBufAllocatorFactory allocatorFactory;
   private final Supplier<ChannelHandler[]> handlerSupplier;
 
-  public ChannelPipeline(final BufAllocatorFactory allocatorFactory, final Supplier<ChannelHandler[]> handlerSupplier) {
+  public ChannelPipeline(final ByteBufAllocatorFactory allocatorFactory, final Supplier<ChannelHandler[]> handlerSupplier) {
     this.allocatorFactory = allocatorFactory;
     this.handlerSupplier = handlerSupplier;
   }
@@ -41,8 +41,8 @@ public final class ChannelPipeline extends ChannelInitializer {
   @Override
   protected void initChannel(final Channel channel) {
     channel.config()
-            .setAllocator(allocatorFactory.getBufAllocator())
-            .setRecvByteBufAllocator(allocatorFactory.getRecvBufAllocator());
+            .setAllocator(allocatorFactory.getByteBufAllocator())
+            .setRecvByteBufAllocator(allocatorFactory.getRecvByteBufAllocator());
 
     channel.pipeline().addLast(handlerSupplier.get());
   }

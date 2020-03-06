@@ -17,7 +17,7 @@ package io.jimdb.test.utils;
 
 import java.util.concurrent.TimeUnit;
 
-import io.jimdb.common.utils.generator.UUIDGenerator;
+import io.jimdb.common.utils.generator.UuidGenerator;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -46,7 +46,7 @@ public class UUIDBench {
 
   @Benchmark
   public void testMethod() {
-    UUIDGenerator.next();
+    UuidGenerator.next();
   }
 
   public static void main(String[] args) throws RunnerException {

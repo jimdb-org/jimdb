@@ -18,15 +18,15 @@ package io.jimdb.core;
 import java.util.Properties;
 
 import io.jimdb.core.config.JimConfig;
-import io.jimdb.core.config.SystemProperties;
+import io.jimdb.common.config.SystemProperties;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.plugin.PluginFactory;
 import io.jimdb.core.plugin.SQLEngine;
 import io.jimdb.common.utils.lang.IOUtil;
-import io.jimdb.common.utils.lang.JimUncaughtExceptionHandler;
+import io.jimdb.common.utils.lang.UncaughtExceptionHandlerImpl;
 import io.netty.util.ResourceLeakDetector;
 
 import org.slf4j.Logger;
@@ -62,7 +62,7 @@ public final class Bootstraps {
     }
 
     // init global variable
-    Thread.setDefaultUncaughtExceptionHandler(JimUncaughtExceptionHandler.getInstance());
+    Thread.setDefaultUncaughtExceptionHandler(UncaughtExceptionHandlerImpl.getInstance());
     ResourceLeakDetector.setLevel(SystemProperties.getLeakLevel());
     // init reactor
     if (SystemProperties.getReactorDebug()) {
@@ -72,7 +72,7 @@ public final class Bootstraps {
     Hooks.onErrorDropped(e -> LOG.error("Occur error event dropped.", e));
     Hooks.onOperatorError((e, o) -> {
       LOG.error(String.format("OperatorError : %s", o), e);
-      if (e instanceof JimException) {
+      if (e instanceof BaseException) {
         return e;
       }
 

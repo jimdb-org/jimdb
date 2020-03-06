@@ -16,7 +16,7 @@
 package io.jimdb.core.values;
 
 import io.jimdb.core.Session;
-import io.jimdb.core.config.SystemProperties;
+import io.jimdb.common.config.SystemProperties;
 import io.jimdb.core.types.ValueType;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;

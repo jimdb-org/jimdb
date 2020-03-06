@@ -15,6 +15,6 @@
  */
 
 /**
- * Configs.
+ * Config package
  */
 package io.jimdb.common.config;

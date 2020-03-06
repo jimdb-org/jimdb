@@ -59,7 +59,6 @@ public class SqlTestSuite {
     suite.addTest(new JUnit4TestAdapter(AutoCommitTest.class));
     suite.addTest(new JUnit4TestAdapter(CodecTest.class));
     suite.addTest(new JUnit4TestAdapter(InsertTest.class));
-    suite.addTest(new JUnit4TestAdapter(InsertTest.class));
     suite.addTest(new JUnit4TestAdapter(KeyUpdateTest.class));
     suite.addTest(new JUnit4TestAdapter(KeyGetTest.class));
     suite.addTest(new JUnit4TestAdapter(KeyDeleteTest.class));

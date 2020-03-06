@@ -19,7 +19,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.ResultType;
 import io.jimdb.core.plugin.SQLEngine;
@@ -42,7 +42,7 @@ public final class NettySession extends Session {
   }
 
   @Override
-  public void writeError(JimException ex) {
+  public void writeError(BaseException ex) {
     CompositeByteBuf out = channel.alloc().compositeBuffer();
     this.sqlEngine.writeError(this, out, ex);
 

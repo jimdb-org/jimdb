@@ -45,14 +45,6 @@ public class Point {
     return value;
   }
 
-  public void setValue(Value value) {
-    this.value = value;
-  }
-
-  public void setInclusive(boolean inclusive) {
-    this.inclusive = inclusive;
-  }
-
   public boolean isInclusive() {
     return inclusive;
   }

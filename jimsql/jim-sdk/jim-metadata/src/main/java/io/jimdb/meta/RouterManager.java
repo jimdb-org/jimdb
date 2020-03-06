@@ -121,7 +121,7 @@ public final class RouterManager {
           if (e instanceof MetaException) {
             MetaException error = (MetaException) e;
             if (error.getCode() == ErrorCode.ER_BAD_DB_ERROR || error.getCode() == ErrorCode.ER_BAD_TABLE_ERROR) {
-              callbackService.execute(() -> future.failed(e));
+              callbackService.execute(() -> future.fail(e));
               return true;
             }
           }
@@ -135,7 +135,7 @@ public final class RouterManager {
       public void onTerminate(boolean success) {
         callbackService.execute(() -> {
           if (!success) {
-            future.failed(DBException.get(ErrorModule.ENGINE, ErrorCode.ER_CONTEXT_TIMEOUT, "get route from remote"));
+            future.fail(DBException.get(ErrorModule.ENGINE, ErrorCode.ER_CONTEXT_TIMEOUT, "get route from remote"));
           }
         });
       }

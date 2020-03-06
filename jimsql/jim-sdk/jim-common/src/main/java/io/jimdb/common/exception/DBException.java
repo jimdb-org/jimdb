@@ -16,9 +16,9 @@
 package io.jimdb.common.exception;
 
 /**
- * @version V1.0
+ * General exception related to accessing data from DS
  */
-public final class DBException extends JimException {
+public final class DBException extends BaseException {
   private DBException(ErrorModule module, ErrorCode code, String message, Throwable cause) {
     super(module, code, message, cause);
   }

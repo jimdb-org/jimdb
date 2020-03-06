@@ -25,7 +25,7 @@ import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
 import io.jimdb.core.expression.ValueAccessor;
@@ -34,6 +34,11 @@ import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.QueryExecResult;
+import io.jimdb.core.values.DecimalValue;
+import io.jimdb.core.values.DoubleValue;
+import io.jimdb.core.values.LongValue;
+import io.jimdb.core.values.UnsignedLongValue;
+import io.jimdb.core.values.YearValue;
 import io.jimdb.pb.Basepb.DataType;
 import io.jimdb.pb.Basepb.StoreType;
 import io.jimdb.pb.Metapb.MetaState;
@@ -68,7 +73,7 @@ public class ShowCreateTable extends RelOperator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     if (StringUtil.isBlank(dbName)) {
       throw DBException.get(ErrorModule.EXECUTOR, ErrorCode.ER_NO_DB_ERROR, dbName);
     }
@@ -123,17 +128,19 @@ public class ShowCreateTable extends RelOperator {
           } else {
             String defaultValueStr = defaultValue.getString();
             if (column.getType().getType() == DataType.TimeStamp && !ZERO_DATETIME.equals(defaultValueStr)) {
-              if (column.getDefaultValue() instanceof TimeValue) {
-                TimeValue value = (TimeValue) column.getDefaultValue();
+              if (defaultValue instanceof TimeValue) {
+                TimeValue value = (TimeValue) defaultValue;
                 defaultValueStr = value.convertToString();
               }
             }
+            if (defaultValue instanceof LongValue || defaultValue instanceof UnsignedLongValue
+                    || defaultValue instanceof DecimalValue || defaultValue instanceof DoubleValue
+                    || defaultValue instanceof YearValue) {
+              builder.append(String.format(" DEFAULT %s", defaultValueStr));
+            } else {
+              builder.append(String.format(" DEFAULT '%s'", defaultValueStr));
+            }
 
-            //              if (column.getType().getType() == DataType.Bit) {
-//
-//              } else {
-            builder.append(String.format(" DEFAULT '%s'", defaultValueStr));
-//              }
           }
         }
         if (column.isOnUpdate()) {
@@ -142,7 +149,7 @@ public class ShowCreateTable extends RelOperator {
       }
 
       if (StringUtils.isNotBlank(column.getComment())) {
-        builder.append(String.format(" COMMENT '%s'", column.getComment()));
+        builder.append(String.format(" COMMENT %s", column.getComment()));
       }
       if (i != columns.length - 1) {
         builder.append(String.format(",%s", line));
@@ -204,7 +211,10 @@ public class ShowCreateTable extends RelOperator {
     if (StringUtils.isNotBlank(table.getComment())) {
       builder.append(String.format(" COMMENT=%s", table.getComment()));
     }
+
     // PARTITION BY
+    builder.append(String.format(" PARTITION BY RANGE(%s) PARTITIONS %d;", pkColumn.getName(), table.getPartitionNum()));
+
 
     Value[] values = new Value[]{
             StringValue.getInstance(table.getName()),

@@ -75,18 +75,21 @@
             </activation>
             <properties>
                 <buildEnv>dev</buildEnv>
+                <testExclude>**/*</testExclude>
             </properties>
         </profile>
         <profile>
             <id>test</id>
             <properties>
                 <buildEnv>test</buildEnv>
+                <testExclude></testExclude>
             </properties>
         </profile>
         <profile>
             <id>prod</id>
             <properties>
                 <buildEnv>prod</buildEnv>
+                <testExclude>**/*</testExclude>
             </properties>
         </profile>
     </profiles>

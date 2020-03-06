@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
@@ -38,7 +38,7 @@ import reactor.core.publisher.Flux;
  */
 public class ShowDatabases extends RelOperator {
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     Collection<Catalog> dbs = (Collection<Catalog>) session.getTxnContext().getMetaData().getAllCatalogs();
     dbs.stream().sorted();
     List<RowValueAccessor> rows = new ArrayList<>(dbs.size());

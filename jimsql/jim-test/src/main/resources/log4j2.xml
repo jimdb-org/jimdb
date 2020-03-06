@@ -17,7 +17,7 @@
 
 <Configuration status="OFF">
     <Properties>
-        <Property name="pattern">%d{yyyy-MM-dd HH:mm:ss} [%level] -- %msg%n</Property>
+        <Property name="pattern">%d{yyyy-MM-dd HH:mm:ss} - [%level] -- %msg%n</Property>
     </Properties>
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT">
@@ -25,26 +25,10 @@
                 <Pattern>${pattern}</Pattern>
             </PatternLayout>
         </Console>
-        <RollingRandomAccessFile name="ROLLFILE" immediateFlush="false" bufferSize="256"
-                                 fileName="/tmp/Logs/jim-server.log"
-                                 filePattern="/tmp/Logs/jim-server.log.%d{yyyy-MM-dd}.%i.gz">
-            <PatternLayout>
-                <Pattern>${pattern}</Pattern>
-            </PatternLayout>
-            <Policies>
-                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
-            </Policies>
-            <DefaultRolloverStrategy max="20">
-                <Delete basePath="/tmp/Logs" maxDepth="1">
-                    <IfFileName glob="*.gz"/>
-                    <IfLastModified age="3d"/>
-                </Delete>
-            </DefaultRolloverStrategy>
-        </RollingRandomAccessFile>
     </Appenders>
     <Loggers>
-        <AsyncRoot level="warn" includeLocation="false">
-            <AppenderRef ref="ROLLFILE"/>
+        <AsyncRoot level="error" includeLocation="false">
+            <AppenderRef ref="CONSOLE"/>
         </AsyncRoot>
     </Loggers>
 </Configuration>

@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.FuncExpr;
 import io.jimdb.core.expression.ValueExpr;
@@ -53,7 +53,7 @@ public class EvaluatorExpTest extends TestBase {
         Assert.assertNotNull(relOperator);
         LOG.debug("The original SQL is ({})", checker.getSql());
         checker.doCheck(relOperator);
-      } catch (JimException e) {
+      } catch (BaseException e) {
         LOG.error("cause error ,checker sql {}", checker.getSql(), e);
         Assert.assertTrue(checker.isHasException());
       }
@@ -73,7 +73,7 @@ public class EvaluatorExpTest extends TestBase {
         Assert.assertNotNull(relOperator);
         LOG.info("The original SQL is ({})", checker.getSql());
         checker.doCheck(relOperator);
-      } catch (JimException e) {
+      } catch (BaseException e) {
         LOG.error("cause error", e);
         Assert.assertTrue(checker.isHasException());
       }

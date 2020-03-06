@@ -26,7 +26,7 @@ import io.jimdb.core.values.DoubleValue;
 import io.jimdb.core.values.LongValue;
 import io.jimdb.core.values.UnsignedLongValue;
 import io.jimdb.core.values.ValueConvertor;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.pb.Exprpb;
 import io.jimdb.pb.Metapb.SQLType;
 
@@ -56,7 +56,7 @@ public class SubtractFunc extends Func {
   }
 
   @Override
-  public LongValue execLong(ValueAccessor accessor) throws JimException {
+  public LongValue execLong(ValueAccessor accessor) throws BaseException {
     LongValue v1 = args[0].execLong(session, accessor);
     if (v1 == null) {
       return null;
@@ -70,7 +70,7 @@ public class SubtractFunc extends Func {
   }
 
   @Override
-  public UnsignedLongValue execUnsignedLong(ValueAccessor accessor) throws JimException {
+  public UnsignedLongValue execUnsignedLong(ValueAccessor accessor) throws BaseException {
     UnsignedLongValue v1 = args[0].execUnsignedLong(session, accessor);
     if (v1 == null) {
       return null;
@@ -84,7 +84,7 @@ public class SubtractFunc extends Func {
   }
 
   @Override
-  public DoubleValue execDouble(ValueAccessor accessor) throws JimException {
+  public DoubleValue execDouble(ValueAccessor accessor) throws BaseException {
     DoubleValue v1 = args[0].execDouble(session, accessor);
     if (v1 == null) {
       return null;
@@ -97,7 +97,7 @@ public class SubtractFunc extends Func {
   }
 
   @Override
-  public DecimalValue execDecimal(ValueAccessor accessor) throws JimException {
+  public DecimalValue execDecimal(ValueAccessor accessor) throws BaseException {
     DecimalValue v1 = args[0].execDecimal(session, accessor);
     if (v1 == null) {
       return null;

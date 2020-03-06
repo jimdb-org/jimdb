@@ -15,26 +15,37 @@
  */
 package io.jimdb.core.plugin;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 import io.jimdb.core.Session;
 
 /**
  * Processor for the command.
  * The implementation of this interface must be guaranteed to be thread-safe.
- *
- * @version V1.0
- * @ThreadSafe
  */
+@ThreadSafe
 public interface SQLExecutor extends Plugin {
   /**
-   * Responsible for executing SQL statements and writing the result to the client.
+   * Process MySql MYSQL_COM_QUERY command - executing a SQL statement and writing the result to the client.
    * This method does not allow any exceptions to be thrown.
    *
-   * @param s
-   * @param sql
+   * @param s session
+   * @param sql sql statement to be executed
    */
   void executeQuery(Session s, String sql);
 
-  void executePrepare(Session s, String sql);
 
-  void execute(Session s, int stmtId);
+  /**
+   * Process MySql COM_STMT_PREPARE command
+   * @param s session
+   * @param sql sql statement to be prepared
+   */
+  void createPrepare(Session s, String sql);
+
+  /**
+   * Process MySql MYSQL_COM_STMT_EXECUTE command
+   * @param s session
+   * @param stmtId id of the statement to be executed
+   */
+  void executePrepare(Session s, int stmtId);
 }

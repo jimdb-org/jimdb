@@ -21,7 +21,7 @@ import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.pb.Exprpb.ExprType;
@@ -80,7 +80,7 @@ public final class InFunc extends Func {
   }
 
   @Override
-  public LongValue execLong(ValueAccessor accessor) throws JimException {
+  public LongValue execLong(ValueAccessor accessor) throws BaseException {
     Value arg0 = args[0].exec(accessor);
     if (arg0.isNull()) {
       return LongValue.getInstance(0);

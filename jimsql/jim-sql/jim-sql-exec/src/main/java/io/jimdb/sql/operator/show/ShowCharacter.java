@@ -16,7 +16,7 @@
 package io.jimdb.sql.operator.show;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
 import io.jimdb.core.expression.ValueAccessor;
@@ -34,7 +34,7 @@ import reactor.core.publisher.Flux;
  */
 public final class ShowCharacter extends RelOperator {
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     final StringValue value = StringValue.getInstance("utf8");
     ValueAccessor[] valueAccessors = new ValueAccessor[]{
             new RowValueAccessor(new Value[]{

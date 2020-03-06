@@ -28,7 +28,7 @@ import io.etcd.jetcd.ByteSequence;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.config.JimConfig;
 import io.jimdb.core.plugin.MetaStore;
 import io.jimdb.meta.client.EtcdClient;
@@ -139,7 +139,7 @@ public final class EtcdMetaStore implements MetaStore {
         etcdClient.putIfAbsent(TASK_PRI_HISTORY_ROOT, "");
         etcdClient.put(INIT_PATH, ByteString.copyFrom("Initialized", StandardCharsets.UTF_8), false);
         return;
-      } catch (JimException ex) {
+      } catch (BaseException ex) {
         if (errCount++ > 10) {
           throw ex;
         }

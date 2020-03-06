@@ -17,13 +17,13 @@ package io.jimdb.core.context;
 
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
-import io.jimdb.common.utils.lang.Resetable;
+import io.jimdb.common.utils.lang.Resettable;
 import io.jimdb.core.model.meta.MetaData;
 
 /**
  * @version V1.0
  */
-public final class TransactionContext implements Resetable {
+public final class TransactionContext implements Resettable {
   private static final AtomicIntegerFieldUpdater<TransactionContext> REFCNT_UPDATER = AtomicIntegerFieldUpdater.newUpdater(TransactionContext.class, "refCnt");
 
   private volatile int refCnt;

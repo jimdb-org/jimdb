@@ -17,12 +17,12 @@ package io.jimdb.meta.client;
 
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 
 /**
  * @version V1.0
  */
-public final class MetaException extends JimException {
+public final class MetaException extends BaseException {
   private MetaException(ErrorCode code, String message, Throwable cause) {
     super(ErrorModule.META, code, message, cause);
   }

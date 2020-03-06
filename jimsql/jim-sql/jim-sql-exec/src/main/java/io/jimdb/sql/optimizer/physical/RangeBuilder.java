@@ -15,6 +15,8 @@
  */
 package io.jimdb.sql.optimizer.physical;
 
+import static io.jimdb.core.expression.Points.MAX_POINT;
+import static io.jimdb.core.expression.Points.MIN_POINT;
 import static io.jimdb.core.values.Value.NULL_VALUE;
 
 import java.math.BigInteger;
@@ -57,6 +59,7 @@ public class RangeBuilder {
 
   public static final int UNSPECIFIED_LENGTH = -1;
   private static final ByteBufAllocator BYTE_BUF_ALLOCATOR = new UnpooledByteBufAllocator(false);
+  private static final List<ValueRange> FULL_RANGE_LIST = Collections.singletonList(new ValueRange(MIN_POINT, MAX_POINT));
 
   /**
    * Build ranges for non-primary key column
@@ -85,7 +88,7 @@ public class RangeBuilder {
   private static List<ValueRange> buildColumnRange(Session session, List<Expression> accessConditions, Metapb.SQLType type, boolean isPKRange, int colLen) {
 
     if (accessConditions == null || accessConditions.isEmpty()) {
-      return Collections.singletonList(fullRange());
+      return RangeBuilder.fullRangeList();
     }
 
     List<Point> rangePoints = Points.fullRangePoints();
@@ -147,8 +150,8 @@ public class RangeBuilder {
   // Build ranges for table scan from range points
   private static List<ValueRange> convertPointsToPKRanges(Session session, List<Point> rangePoints, Metapb.SQLType type) {
 
-    Metapb.SQLType newSqlType = ValueConvertor.convertToSafe(type);
     List<ValueRange> ranges = new ArrayList<>(rangePoints.size() / 2);
+    Metapb.SQLType newSqlType = ValueConvertor.convertToSafe(type);
 
     for (int i = 0; i < rangePoints.size(); i += 2) {
       Point startPoint = rangePoints.get(i).castType(session, newSqlType);
@@ -157,8 +160,7 @@ public class RangeBuilder {
       if (isInvalidInterval(session, startPoint, endPoint)) {
         continue;
       }
-      ValueRange range = new ValueRange(startPoint, endPoint);
-      ranges.add(range);
+      ranges.add(new ValueRange(startPoint, endPoint));
     }
     return ranges;
   }
@@ -176,8 +178,7 @@ public class RangeBuilder {
         continue;
       }
 
-      ValueRange range = new ValueRange(startPoint, endPoint);
-      ranges.add(range);
+      ranges.add(new ValueRange(startPoint, endPoint));
     }
     return ranges;
   }
@@ -260,20 +261,14 @@ public class RangeBuilder {
     return result;
   }
 
-  // A full range means (-infinity, +infinity)
-  public static ValueRange fullRange() {
-    Point startPoint = new Point(Value.MIN_VALUE, true);
-    Point endPoint = new Point(Value.MAX_VALUE, false);
-    return new ValueRange(startPoint, endPoint);
-  }
-
   // A null range is used to count the null values during stats push-down
   public static ValueRange nullRange() {
     return new ValueRange(NULL_VALUE, NULL_VALUE);
   }
 
-  static List<ValueRange> fullRangeList() {
-    return Lists.newArrayList(fullRange());
+  // A full range means (-infinity, +infinity)
+  public static List<ValueRange> fullRangeList() {
+    return FULL_RANGE_LIST;
   }
 
 

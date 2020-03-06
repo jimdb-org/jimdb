@@ -20,6 +20,7 @@ import java.util.List;
 import io.jimdb.core.Session;
 import io.jimdb.core.expression.functions.FuncType;
 import io.jimdb.core.types.Types;
+import io.jimdb.core.types.ValueType;
 import io.jimdb.core.values.DateValue;
 import io.jimdb.core.values.DecimalValue;
 import io.jimdb.core.values.DoubleValue;
@@ -30,7 +31,7 @@ import io.jimdb.core.values.TimeValue;
 import io.jimdb.core.values.UnsignedLongValue;
 import io.jimdb.core.values.Value;
 import io.jimdb.core.values.YearValue;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.pb.Basepb;
 import io.jimdb.pb.Metapb.SQLType;
 
@@ -42,27 +43,29 @@ import io.jimdb.pb.Metapb.SQLType;
 public abstract class Expression implements Cloneable {
   protected SQLType resultType;
 
-  public abstract Value exec(ValueAccessor accessor) throws JimException;
+  protected ValueType resultValueType;
 
-  public abstract LongValue execLong(Session session, ValueAccessor accessor) throws JimException;
+  public abstract Value exec(ValueAccessor accessor) throws BaseException;
 
-  public abstract UnsignedLongValue execUnsignedLong(Session session, ValueAccessor accessor) throws JimException;
+  public abstract LongValue execLong(Session session, ValueAccessor accessor) throws BaseException;
 
-  public abstract DoubleValue execDouble(Session session, ValueAccessor accessor) throws JimException;
+  public abstract UnsignedLongValue execUnsignedLong(Session session, ValueAccessor accessor) throws BaseException;
 
-  public abstract DecimalValue execDecimal(Session session, ValueAccessor accessor) throws JimException;
+  public abstract DoubleValue execDouble(Session session, ValueAccessor accessor) throws BaseException;
 
-  public abstract StringValue execString(Session session, ValueAccessor accessor) throws JimException;
+  public abstract DecimalValue execDecimal(Session session, ValueAccessor accessor) throws BaseException;
 
-  public abstract DateValue execDate(Session session, ValueAccessor accessor) throws JimException;
+  public abstract StringValue execString(Session session, ValueAccessor accessor) throws BaseException;
 
-  public abstract TimeValue execTime(Session session, ValueAccessor accessor) throws JimException;
+  public abstract DateValue execDate(Session session, ValueAccessor accessor) throws BaseException;
 
-  public abstract YearValue execYear(Session session, ValueAccessor accessor) throws JimException;
+  public abstract TimeValue execTime(Session session, ValueAccessor accessor) throws BaseException;
 
-  public abstract JsonValue execJson(Session session, ValueAccessor accessor) throws JimException;
+  public abstract YearValue execYear(Session session, ValueAccessor accessor) throws BaseException;
 
-  public abstract Expression resolveOffset(Schema schema, boolean isClone) throws JimException;
+  public abstract JsonValue execJson(Session session, ValueAccessor accessor) throws BaseException;
+
+  public abstract Expression resolveOffset(Schema schema, boolean isClone) throws BaseException;
 
   public abstract ExpressionType getExprType();
 
@@ -93,6 +96,7 @@ public abstract class Expression implements Cloneable {
 
   protected void clone(Expression expr) {
     expr.resultType = this.resultType;
+    expr.resultValueType = this.resultValueType;
   }
 
   public SQLType getResultType() {

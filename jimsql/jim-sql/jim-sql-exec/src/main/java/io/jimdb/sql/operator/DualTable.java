@@ -16,7 +16,7 @@
 package io.jimdb.sql.operator;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
 import io.jimdb.core.expression.ValueAccessor;
@@ -57,7 +57,7 @@ public final class DualTable extends RelOperator {
 
   @Override
   @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
-  public Flux<ExecResult> execute(final Session session) throws JimException {
+  public Flux<ExecResult> execute(final Session session) throws BaseException {
     final ValueAccessor[] rows = new ValueAccessor[rowCount];
     final int colNum = schema == null || schema.isEmpty() ? 0 : schema.size();
     Value[] columns;

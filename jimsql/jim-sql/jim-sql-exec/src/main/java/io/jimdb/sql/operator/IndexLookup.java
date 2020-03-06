@@ -19,13 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.KeyValueRange;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.expression.ValueRange;
-import io.jimdb.core.model.meta.Column;
-import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.QueryExecResult;
 import io.jimdb.pb.Processorpb;
@@ -86,22 +84,22 @@ public class IndexLookup extends RelOperator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
-    final Index pkIdx = tableSource.getTable().getPrimaryIndex();
-    Column pkCol = pkIdx.getColumns()[0];
-    ColumnExpr pkColumnExpr = indexSource.getSchema().getColumn(pkCol.getName());
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     return indexSource.execute(session).flatMap(execResult -> {
       if (execResult.size() == 0) {
         List<ColumnExpr> columnExprs = tableSource.getSchema().getColumns();
         return Flux.just(new QueryExecResult(columnExprs.toArray(new ColumnExpr[columnExprs.size()]), new ValueAccessor[0]));
       }
+      List<ColumnExpr> pkColumnExprs = tableSource.getPKColumnExprs();
       List<ValueRange> valueRangeList = new ArrayList<>(execResult.size());
       execResult.forEach(row -> {
-        Value pkVal = pkColumnExpr.exec(row);
-        ValueRange vRange = new ValueRange(pkVal, pkVal);
-        valueRangeList.add(vRange);
+        List<Value> pkVals = new ArrayList<>(pkColumnExprs.size());
+        for (ColumnExpr pkColumnExpr : pkColumnExprs) {
+          pkVals.add(pkColumnExpr.exec(row));
+        }
+        valueRangeList.add(new ValueRange(pkVals, pkVals, true, true));
       });
-      tableSource.setKeyValueRange(new KeyValueRange(pkIdx, pkColumnExpr, valueRangeList));
+      tableSource.setKeyValueRange(new KeyValueRange(tableSource.getTable().getPrimaryIndex(), pkColumnExprs, valueRangeList));
       return tableSource.execute(session);
     });
   }

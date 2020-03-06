@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import io.jimdb.common.utils.lang.NetUtil;
+import io.jimdb.common.utils.lang.NetworkUtil;
 import io.jimdb.common.utils.lang.RandomHolder;
 import io.jimdb.common.utils.os.SystemClock;
 
@@ -29,10 +29,9 @@ import io.jimdb.common.utils.os.SystemClock;
  * For more information about flake ids, check out
  * https://archive.fo/2015.07.08-082503/http://www.boundary.com/blog/2012/01/flake-a-decentralized-k-ordered-unique-id-generator-in-erlang/
  *
- * @version V1.0
  */
-public final class UUIDGenerator {
-  private static final byte[] ADDRESS = NetUtil.getMacAddress();
+public final class UuidGenerator {
+  private static final byte[] ADDRESS = NetworkUtil.getMacAddress();
 
   // Use bottom 3 bytes for the sequence number.
   private static final AtomicLong SEQ = new AtomicLong(RandomHolder.INSTANCE.nextInt());
@@ -41,7 +40,7 @@ public final class UUIDGenerator {
 
   private static long lastTimestamp;
 
-  private UUIDGenerator() {
+  private UuidGenerator() {
   }
 
   public static String next() {

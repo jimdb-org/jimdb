@@ -16,7 +16,7 @@
 package io.jimdb.sql.operator;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.QueryResult;
@@ -49,7 +49,7 @@ public final class Delete extends Operator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     if (this.select == null) {
       return session.getTxn().delete(table, null);
     }

@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * @version V1.0
+ * Named thread factory
  */
 public final class NamedThreadFactory implements ThreadFactory {
   private final String name;
@@ -28,7 +28,7 @@ public final class NamedThreadFactory implements ThreadFactory {
 
   public NamedThreadFactory(final String name, final boolean daemon) {
     if (name == null || name.isEmpty()) {
-      throw new IllegalArgumentException("name must be not empty");
+      throw new IllegalArgumentException("name cannot be empty");
     }
     this.name = name;
     this.daemon = daemon;

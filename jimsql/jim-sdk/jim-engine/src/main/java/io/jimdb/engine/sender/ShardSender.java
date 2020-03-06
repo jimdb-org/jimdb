@@ -32,7 +32,7 @@ import io.jimdb.common.exception.ConnectException;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.exception.RangeRouteException;
 import io.jimdb.meta.RouterManager;
 import io.jimdb.core.model.meta.RangeInfo;
@@ -62,9 +62,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import reactor.core.publisher.Flux;
 
 /**
- * Shard index and handle error、try
+ * ShardSender sends the wrapped request to RPC and handles any errors that may occur
  *
- * @version V1.0
  */
 @SuppressFBWarnings({"CE_CLASS_ENVY", "CC_CYCLOMATIC_COMPLEXITY"})
 public final class ShardSender implements Closeable {
@@ -149,7 +148,7 @@ public final class ShardSender implements Closeable {
           try {
             handleError(context, cause, this);
           } catch (Throwable e) {
-            if (!(e instanceof JimException)) {
+            if (!(e instanceof BaseException)) {
               LOG.warn("ctx {} send unknown error {}", context.getCtxId(), e);
               e = DBException.get(ErrorModule.ENGINE, ErrorCode.ER_UNKNOWN_ERROR, e);
             }
@@ -173,12 +172,12 @@ public final class ShardSender implements Closeable {
 
   // handle err
   private void handleError(RequestContext context, Throwable err, CommandCallback callback) throws Throwable {
-    if (!(err instanceof JimException)) {
+    if (!(err instanceof BaseException)) {
       LOG.warn("ctxId {} directly throw err{}", context.getCtxId(), err);
       throw err;
     }
 
-    ErrorCode code = ((JimException) err).getCode();
+    ErrorCode code = ((BaseException) err).getCode();
     switch (code) {
       case ER_CONTEXT_TIMEOUT:
       case ER_SHARD_NOT_EXIST:
@@ -277,7 +276,7 @@ public final class ShardSender implements Closeable {
     }
   }
 
-  public void sendCommand(final RequestContext context, final CommandCallback<JimCommand> callback) {
+  private void sendCommand(final RequestContext context, final CommandCallback<JimCommand> callback) {
     try {
       final RangeInfo rangeInfo = context.getRangeInfo();
       if (rangeInfo == null || StringUtils.isBlank(rangeInfo.getLeaderAddr())) {
@@ -317,7 +316,7 @@ public final class ShardSender implements Closeable {
     return headerBuilder;
   }
 
-  public static Message getMsgBody(RequestContext context, RangeInfo range, Message.Builder reqBuilder) {
+  private static Message getMsgBody(RequestContext context, RangeInfo range, Message.Builder reqBuilder) {
 
     Api.RangeRequest.Builder bodyBuilder = Api.RangeRequest.newBuilder()
             .setHeader(getMsgHeader(context.getClusterId(), range));
@@ -367,7 +366,7 @@ public final class ShardSender implements Closeable {
   }
 
   @SuppressFBWarnings("CE_CLASS_ENVY")
-  public static Message parseResponse(Api.RangeResponse rpcResponse, ReqCase cmdType) {
+  private static Message parseResponse(Api.RangeResponse rpcResponse, ReqCase cmdType) {
     Message message;
     switch (cmdType) {
       case KV_GET:

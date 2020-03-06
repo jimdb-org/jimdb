@@ -20,16 +20,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
 import io.jimdb.core.Session;
 import io.jimdb.core.expression.Expression;
-import io.jimdb.core.expression.KeyValueRange;
 import io.jimdb.core.expression.TableAccessPath;
 import io.jimdb.core.expression.ValueAccessor;
-import io.jimdb.core.expression.ValueRange;
 import io.jimdb.core.expression.aggregate.AggregateExpr;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.values.Value;
@@ -252,82 +249,5 @@ public final class OperatorUtil {
       }
     }
     return c;
-  }
-
-  public static String buildRange(Operator operator) {
-    //pk range
-    if (operator instanceof KeyGet) {
-      // don't check
-      return "";
-    }
-
-    KeyValueRange keyValueRange = null;
-
-    while (true) {
-      if (operator instanceof IndexSource) {
-        keyValueRange = ((IndexSource) operator).getKeyValueRange();
-        break;
-      }
-
-      if (operator instanceof TableSource) {
-        keyValueRange = ((TableSource) operator).getKeyValueRange();
-        break;
-      }
-
-      if (operator instanceof IndexLookup) {
-        operator = ((IndexLookup) operator).getIndexSource();
-        keyValueRange = ((IndexSource) operator).getKeyValueRange();
-        break;
-      }
-
-      if (operator instanceof Update) {
-        operator = ((Update) operator).getSelect();
-        continue;
-      }
-
-      if (operator instanceof Delete) {
-        operator = ((Delete) operator).getSelect();
-        continue;
-      }
-
-      if (operator instanceof Insert) {
-        operator = ((Insert) operator).getSelect();
-        continue;
-      }
-
-      if (operator instanceof RelOperator) {
-
-        if (!((RelOperator) operator).hasChildren()) {
-          return "";
-        }
-
-        operator = ((RelOperator) operator).getChildren()[0];
-      }
-
-    }
-    return getRange(keyValueRange);
-  }
-
-  private static String getRange(KeyValueRange keyValueRange) {
-    if (null == keyValueRange) {
-      return "null";
-    }
-    List<ValueRange> valueRanges = keyValueRange.getValueRanges();
-    return "[" + valueRanges.stream().map(valueRange -> {
-      List<Value> starts = valueRange.getStarts();
-      List<Value> ends = valueRange.getEnds();
-
-      //todo
-      StringBuilder sb = new StringBuilder("{[");
-      for (int i = 0; i < starts.size(); i++) {
-        String start = starts.get(i) == Value.MIN_VALUE ? "MIN_VALUE" : starts.get(i).getString();
-        String end = ends.get(i) == Value.MAX_VALUE ? "MAX_VALUE" : ends.get(i).getString();
-        sb.append("{start:").append(start).append(",end:").append(end).append("},");
-      }
-      sb.setLength(sb.length() - 1);
-      sb.append("',startInclusive:").append(valueRange.isStartInclusive())
-              .append(",endInclusive:").append(valueRange.isEndInclusive()).append('}');
-      return sb.toString();
-    }).collect(Collectors.joining(",")) + "]";
   }
 }

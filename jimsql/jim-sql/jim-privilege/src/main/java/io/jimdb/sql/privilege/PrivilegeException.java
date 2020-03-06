@@ -17,12 +17,12 @@ package io.jimdb.sql.privilege;
 
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 
 /**
  * @version V1.0
  */
-final class PrivilegeException extends JimException {
+final class PrivilegeException extends BaseException {
   private static final long serialVersionUID = 1342659585708709368L;
 
   PrivilegeException(ErrorCode code, String... params) {

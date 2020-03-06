@@ -230,23 +230,13 @@ public class PreparedStmtTest extends SqlTestBase {
             new Object[]{ "xiaohua", 19, 100 }));
 
 
-    prepares.add(new PrepareStruct("delete from test.student where name = ? ",
+    prepares.add(new PrepareStruct("delete from student where name = ? ",
             1,
             new Object[]{ "xiaoming"}));
-    prepares.add(new PrepareStruct("delete from test.student where name = ? and age = ?",
+    prepares.add(new PrepareStruct("delete from student where name = ? and age = ?",
             1,
             new Object[]{ "xiaohua", 19 }));
 
     execPrepareList(prepares, false, true);
   }
-
-  @Test
-  public void testPrepareMultStmt() {
-
-
-
-  }
-
-
-
 }

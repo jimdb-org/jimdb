@@ -26,7 +26,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.utils.os.SystemClock;
 import io.jimdb.core.Session;
 import io.jimdb.core.config.JimConfig;
@@ -46,6 +46,7 @@ import io.jimdb.sql.operator.Operator;
 import io.jimdb.sql.operator.Prepare;
 import io.jimdb.sql.optimizer.physical.RangeRebuildVisitor;
 import io.jimdb.sql.optimizer.statistics.TableStatsManager;
+import io.jimdb.sql.planner.Planner;
 
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
@@ -62,7 +63,6 @@ import reactor.core.publisher.SignalType;
 /**
  * Asynchronous Handler base on calcite.
  *
- * @version V1.0
  */
 @ThreadSafe
 public final class JimSQLExecutor implements SQLExecutor {
@@ -91,7 +91,7 @@ public final class JimSQLExecutor implements SQLExecutor {
 
   @Override
   public void executeQuery(Session s, String sql) {
-    JimException replyErr = null;
+    BaseException replyErr = null;
     try {
       s.initTxnContext();
       List<SQLStatement> stmts = this.planner.parse(sql);
@@ -136,7 +136,7 @@ public final class JimSQLExecutor implements SQLExecutor {
       }
 
       execFlux.subscribe(subscriber);
-    } catch (JimException e) {
+    } catch (BaseException e) {
       replyErr = e;
     } catch (Exception e) {
       replyErr = DBException.get(ErrorModule.EXECUTOR, ErrorCode.ER_UNKNOWN_ERROR, e);
@@ -148,7 +148,7 @@ public final class JimSQLExecutor implements SQLExecutor {
   }
 
   @Override
-  public void executePrepare(Session s, String sql) {
+  public void createPrepare(Session s, String sql) {
     s.initTxnContext();
     Prepare prepare = new Prepare(planner, sql);
 
@@ -157,8 +157,8 @@ public final class JimSQLExecutor implements SQLExecutor {
   }
 
   @Override
-  public void execute(Session session, int stmtId) {
-    JimException replyErr = null;
+  public void executePrepare(Session session, int stmtId) {
+    BaseException replyErr = null;
     PreparedContext prepareContext = session.getPreparedContext();
     PreparedStatement preparedStmt = prepareContext.getStatement(stmtId);
     try {
@@ -189,7 +189,7 @@ public final class JimSQLExecutor implements SQLExecutor {
 
       Flux<ExecResult> resultFlux = operator.execute(session);
       resultFlux.subscribe(new ExecResultSubscriber(session, preparedStmt.getSql(), operator));
-    } catch (JimException e) {
+    } catch (BaseException e) {
       replyErr = e;
     } catch (Exception e) {
       replyErr = DBException.get(ErrorModule.EXECUTOR, ErrorCode.ER_UNKNOWN_ERROR, e);
@@ -200,7 +200,7 @@ public final class JimSQLExecutor implements SQLExecutor {
     }
   }
 
-  private static void replyError(Session s, String sql, JimException e) {
+  private static void replyError(Session s, String sql, BaseException e) {
     LOG.error(String.format("Session replyError to %s, message: %s", sql, e), e);
 
     try {
@@ -336,7 +336,7 @@ public final class JimSQLExecutor implements SQLExecutor {
         } else {
           request(1);
         }
-      } catch (JimException ex) {
+      } catch (BaseException ex) {
         replyError(session, sql, ex);
         dispose();
       } catch (Exception ex) {
@@ -361,8 +361,8 @@ public final class JimSQLExecutor implements SQLExecutor {
         }
       }
 
-      if (throwable instanceof JimException) {
-        replyError(this.session, sql, (JimException) throwable);
+      if (throwable instanceof BaseException) {
+        replyError(this.session, sql, (BaseException) throwable);
       } else {
         if (throwable instanceof TimeoutException) {
           replyError(this.session, sql, DBException.get(ErrorModule.EXECUTOR, ErrorCode.ER_QUERY_TIMEOUT, throwable));

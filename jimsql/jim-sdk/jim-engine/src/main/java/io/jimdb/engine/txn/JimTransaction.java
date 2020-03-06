@@ -16,6 +16,10 @@
 package io.jimdb.engine.txn;
 
 import static java.util.Collections.EMPTY_LIST;
+import static io.jimdb.engine.txn.KeyGetHandler.KEY_GET_FUNC;
+import static io.jimdb.engine.txn.MultiKeySelectHandler.MULTI_KEY_SELECT_FUNC;
+import static io.jimdb.engine.txn.RangeSelectHandler.RANGE_SELECT_FUNC;
+import static io.jimdb.engine.txn.RangeSelectHandler.SINGLE_RANGE_SELECT_FUNC;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -27,7 +31,7 @@ import java.util.Map;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.utils.lang.ByteUtil;
 import io.jimdb.common.utils.lang.StringUtil;
 import io.jimdb.core.Session;
@@ -59,7 +63,7 @@ import io.jimdb.core.values.Value;
 import io.jimdb.core.values.ValueChecker;
 import io.jimdb.core.values.ValueConvertor;
 import io.jimdb.engine.StoreCtx;
-import io.jimdb.engine.sender.DistSender;
+import io.jimdb.engine.sender.DispatcherImpl;
 import io.jimdb.engine.table.alloc.IDAllocator;
 import io.jimdb.meta.RouterManager;
 import io.jimdb.pb.Basepb;
@@ -91,33 +95,28 @@ import com.google.protobuf.NettyByteString;
 import reactor.core.publisher.Flux;
 
 /**
- * Define implement for transaction.
+ * Implementation of defined transaction interfaces.
  *
- * @version V1.0
  */
 public final class JimTransaction implements Transaction {
   private static final Logger LOGGER = LoggerFactory.getLogger(JimTransaction.class);
 
   private static final ValueAccessor[][] ROW_VALUE_ACCESSORS_ARRAY_EMPTY = { QueryExecResult.EMPTY_ROW };
 
-  private static final SelectFunc SELECT_FUNC = TxnHandler::select;
-  private static final SelectFlowKeysFunc SELECT_KEYS_FLOW_FUNC = TxnHandler::selectFlowForKeys;
-  private static final SelectFlowRangeFunc SELECT_RANGE_FLOW_FUNC = TxnHandler::selectFlowForRange;
-  private static final SelectFlowFunc SELECT_FLOW_STREAM_FUNC = TxnHandler::selectFlowStream;
   private static final boolean GATHER_TRACE = false;
 
   private final Session session;
   private TxnConfig config;
   private RouterManager routerManager;
-  private DistSender distSender;
+  private DispatcherImpl requestDispatcher;
   private IDAllocator idAllocator;
 
   private volatile TxnStatus status = TxnStatus.TXN_INIT;
 
-  public JimTransaction(Session session, RouterManager routerManager, DistSender sender, IDAllocator allocator) {
+  public JimTransaction(Session session, RouterManager routerManager, DispatcherImpl sender, IDAllocator allocator) {
     this.session = session;
     this.routerManager = routerManager;
-    this.distSender = sender;
+    this.requestDispatcher = sender;
     this.idAllocator = allocator;
     int ttl = 0;
     if (session != null) {
@@ -128,7 +127,7 @@ public final class JimTransaction implements Transaction {
 
   @Override
   public Flux<ExecResult> insert(Table table, Column[] insertCols, List<Expression[]> rows,
-                                 Assignment[] duplicate, boolean hasRefColumn) throws JimException {
+                                 Assignment[] duplicate, boolean hasRefColumn) throws BaseException {
     if (rows == null || rows.isEmpty()) {
       return Flux.just(DMLExecResult.EMPTY);
     }
@@ -144,14 +143,14 @@ public final class JimTransaction implements Transaction {
     Index[] indexes = table.getWritableIndices();
     Column[] pkColumns = table.getPrimary();
 
-    long lastInsertId = batchFillAutoCol(table.getCatalog().getId(), table.getId(), pkColumns[0], rowValues);
+    long lastInsertId = backFillColumnIds(table.getCatalog().getId(), table.getId(), pkColumns[0], rowValues);
 
     rowValues.stream().forEach(newData -> this.insertRow(table, indexes, pkColumns, newData));
 
     return Flux.just(new DMLExecResult(rowSize, lastInsertId));
   }
 
-  private long batchFillAutoCol(int dbId, int tableId, Column pkColumn, List<Value[]> rowValues) {
+  private long backFillColumnIds(int dbId, int tableId, Column pkColumn, List<Value[]> rowValues) {
     if (!pkColumn.isAutoIncr()) {
       return DMLExecResult.EMPTY_INSERT_ID;
     }
@@ -222,7 +221,7 @@ public final class JimTransaction implements Transaction {
         result[offset] = colValue;
         hasVal[offset] = true;
       }
-    } catch (JimException ex) {
+    } catch (BaseException ex) {
       this.handleException(insertCols[i].getName(), colValue, rowIdx, ex);
     }
 
@@ -230,7 +229,7 @@ public final class JimTransaction implements Transaction {
     return result;
   }
 
-  public static Value convertValue(Session session, Column column, Value value) {
+  private Value convertValue(Session session, Column column, Value value) {
     Metapb.SQLType sqlType = column.getType();
     Value result = ValueConvertor.convertType(session, value, sqlType);
     if (result == null || result.isNull()) {
@@ -298,7 +297,7 @@ public final class JimTransaction implements Transaction {
     return value;
   }
 
-  private void handleException(String columnName, Value value, int rowIdx, JimException ex) {
+  private void handleException(String columnName, Value value, int rowIdx, BaseException ex) {
     if (ex.getCode() == ErrorCode.ER_SYSTEM_VALUE_TOO_LONG) {
       throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_DATA_TOO_LONG, ex, columnName, String.valueOf(rowIdx + 1));
     }
@@ -317,7 +316,7 @@ public final class JimTransaction implements Transaction {
   }
 
   @Override
-  public Flux<ExecResult> update(Table table, Assignment[] assignments, QueryResult rows) throws JimException {
+  public Flux<ExecResult> update(Table table, Assignment[] assignments, QueryResult rows) throws BaseException {
     if (rows == null || rows.size() == 0) {
       return Flux.just(DMLExecResult.EMPTY);
     }
@@ -343,7 +342,7 @@ public final class JimTransaction implements Transaction {
 
   private Flux<Long> updateRow(Table table, Index[] indexes, StoreCtx storeCtx, Flux<Long> versionFlux,
                                boolean[] assignFlag, LongValue recordVersion, Value[] oldData, Value[] newData) {
-    ScanVerFunc scanVerFunc = (ctx, key, idx) -> txnScanForVersion(ctx, key, idx);
+    ScanHandler.ScanVerFunc scanVerFunc = (ctx, key, idx) -> txnScanForVersion(ctx, key, idx);
     ByteString recordKey = Codec.encodeKey(table.getId(), table.getPrimary(), newData);
     for (Index index : indexes) {
       if (!index.isPrimary() && !checkChange(index, assignFlag)) {
@@ -362,7 +361,7 @@ public final class JimTransaction implements Transaction {
       KvPair oldIdxKvPair = Codec.encodeIndexKV(index, oldData, recordKey);
 
       Flux<Long> txnScanFlux = scanVerFunc.apply(storeCtx, oldIdxKvPair.getKey(), index)
-              .onErrorResume(TxnHandler.getErrHandler(storeCtx, scanVerFunc, oldIdxKvPair.getKey(), index)).map(v -> {
+              .onErrorResume(ScanHandler.getErrHandler(storeCtx, scanVerFunc, oldIdxKvPair.getKey(), index)).map(v -> {
                 //value must be equal, so compare with key
                 if (oldIdxKvPair.getKey().equals(newIdxKvPair.getKey())) {
                   this.config.addIntent(cvtKVtoIntent(oldIdxKvPair, OpType.INSERT, false, v), table);
@@ -387,7 +386,7 @@ public final class JimTransaction implements Transaction {
   }
 
   @Override
-  public Flux<ExecResult> delete(Table table, QueryResult rows) throws JimException {
+  public Flux<ExecResult> delete(Table table, QueryResult rows) throws BaseException {
     if (rows == null || rows.size() == 0) {
       return Flux.just(DMLExecResult.EMPTY);
     }
@@ -418,7 +417,7 @@ public final class JimTransaction implements Transaction {
   private Flux<Long> deleteRow(Table table, StoreCtx storeCtx, Index[] indexes, Flux<Long> versionFlux,
                                LongValue recordVersion, Value[] partOldValue) {
     ByteString recordKey = Codec.encodeKey(table.getId(), table.getPrimary(), partOldValue);
-    ScanVerFunc scanVerFunc = (ctx, key, idx) -> txnScanForVersion(ctx, key, idx);
+    ScanHandler.ScanVerFunc scanVerFunc = (ctx, key, idx) -> txnScanForVersion(ctx, key, idx);
 
     for (Index index : indexes) {
       ByteString oldIdxKey = Codec.encodeIndexKey(index, partOldValue, recordKey, true);
@@ -435,7 +434,7 @@ public final class JimTransaction implements Transaction {
 
       //scan version
       Flux<Long> txnScanFlux = scanVerFunc.apply(storeCtx, oldIdxKey, index)
-              .onErrorResume(TxnHandler.getErrHandler(storeCtx, scanVerFunc, oldIdxKey, index))
+              .onErrorResume(ScanHandler.getErrHandler(storeCtx, scanVerFunc, oldIdxKey, index))
               .map(v -> onErr(table, oldIdxKey, oldKvPair, v));
 
       if (versionFlux == null) {
@@ -473,7 +472,7 @@ public final class JimTransaction implements Transaction {
     }
 
     Instant timeout = this.session.getStmtContext().getTimeout();
-    ScanPKFunc scanPkFunc = this::txnScanForPk;
+    ScanHandler.ScanPKFunc scanPkFunc = this::txnScanForPk;
 
     Flux<ValueAccessor[]> result = null;
     for (int i = 0; i < indexes.size(); i++) {
@@ -481,13 +480,13 @@ public final class JimTransaction implements Transaction {
       Index index = indexes.get(i);
       Value[] indexVals = values.get(i);
       Table table = index.getTable();
-      StoreCtx storeCtx = StoreCtx.buildCtx(table, timeout, this.routerManager, this.distSender);
+      StoreCtx storeCtx = StoreCtx.buildCtx(table, timeout, this.routerManager, this.requestDispatcher);
       SelectRequest.Builder reqBuilder = SelectRequest.newBuilder()
               .addAllFieldList(getSelectFields(resultColumns));
       if (index.isPrimary()) {
         reqBuilder.setKey(Codec.encodeKey(table.getId(), index.getColumns(), indexVals));
-        subResult = SELECT_FUNC.apply(storeCtx, reqBuilder, resultColumns)
-                .onErrorResume(TxnHandler.getErrHandler(storeCtx, SELECT_FUNC, reqBuilder, resultColumns));
+        subResult = KEY_GET_FUNC.apply(storeCtx, reqBuilder, resultColumns)
+                .onErrorResume(KeyGetHandler.getErrHandler(storeCtx, KEY_GET_FUNC, reqBuilder, resultColumns));
       } else if (index.isUnique()) {
         //indexValue cannot exist null
         for (int j = 0; j < indexVals.length; j++) {
@@ -506,7 +505,7 @@ public final class JimTransaction implements Transaction {
                 .setEndKey(Codec.nextKey(idxKey))
                 .setOnlyOne(true);
         Flux<List<ByteString>> searchPkFlux = scanPkFunc.apply(storeCtx, request, index)
-                .onErrorResume(TxnHandler.getErrHandler(storeCtx, scanPkFunc, request, index));
+                .onErrorResume(ScanHandler.getErrHandler(storeCtx, scanPkFunc, request, index));
         subResult = searchPkFlux.flatMap(pks -> {
           if (pks == null || pks.isEmpty()) {
             return Flux.just(ROW_VALUE_ACCESSORS_ARRAY_EMPTY);
@@ -515,8 +514,8 @@ public final class JimTransaction implements Transaction {
             throw DBException.get(ErrorModule.ENGINE, ErrorCode.ER_DUP_UNKNOWN_IN_INDEX, index.getName());
           }
           reqBuilder.setKey(Codec.encodeTableKey(table.getId(), pks.get(0)));
-          return SELECT_FUNC.apply(storeCtx, reqBuilder, resultColumns)
-                  .onErrorResume(TxnHandler.getErrHandler(storeCtx, SELECT_FUNC, reqBuilder, resultColumns));
+          return KEY_GET_FUNC.apply(storeCtx, reqBuilder, resultColumns)
+                  .onErrorResume(KeyGetHandler.getErrHandler(storeCtx, KEY_GET_FUNC, reqBuilder, resultColumns));
         });
       } else {
         throw DBException.get(ErrorModule.ENGINE, ErrorCode.ER_NOT_SUPPORTED_YET, "NOT supported with non-unique condition index.");
@@ -545,23 +544,23 @@ public final class JimTransaction implements Transaction {
 
   @Override
   public Flux<ExecResult> select(Table table, List<Processor.Builder> processors, ColumnExpr[] resultColumns,
-                                 List<Integer> outputOffsetList) throws JimException {
+                                 List<Integer> outputOffsetList) throws BaseException {
     if (processors == null || processors.isEmpty()) {
-      return changeRowsToValueAccessor(resultColumns, null);
+      return convertToExecResult(resultColumns, null);
     }
 
     StoreCtx storeCtx = getStoreCtx(table);
     KvPair kvPair = Codec.encodeTableScope(table.getId());
-    Flux<ValueAccessor[]> valuesFlux = getSelectFluxForRange(processors, resultColumns, outputOffsetList, storeCtx,
+    Flux<ValueAccessor[]> valuesFlux = fetchRangeSelectFlux(processors, resultColumns, outputOffsetList, storeCtx,
             kvPair, true);
-    return changeRowsToValueAccessor(resultColumns, valuesFlux);
+    return convertToExecResult(resultColumns, valuesFlux);
   }
 
   @Override
   public Flux<ExecResult> select(Index index, List<Processor.Builder> processors, ColumnExpr[] resultColumns,
-                                 List<Integer> outputOffsetList, List<ValueRange> ranges) throws JimException {
+                                 List<Integer> outputOffsetList, List<ValueRange> ranges) throws BaseException {
     if (processors == null || processors.isEmpty()) {
-      return changeRowsToValueAccessor(resultColumns, null);
+      return convertToExecResult(resultColumns, null);
     }
 
     boolean isPrimary = index.isPrimary();
@@ -584,9 +583,11 @@ public final class JimTransaction implements Transaction {
     }
 
     StoreCtx storeCtx = getStoreCtx(index.getTable());
-    Flux<ValueAccessor[]> valuesFlux = getSelectFluxForKeys(processors, resultColumns, outputOffsetList, storeCtx, keys, isPrimary);
+
+    Flux<ValueAccessor[]> valuesFlux = fetchMultiKeySelectFlux(processors, resultColumns, outputOffsetList, storeCtx, keys, isPrimary);
+
     for (KvPair kvPair : rangePairs) {
-      Flux<ValueAccessor[]> valuesEachRangeFlux = getSelectFluxForRange(processors, resultColumns, outputOffsetList,
+      Flux<ValueAccessor[]> valuesEachRangeFlux = fetchRangeSelectFlux(processors, resultColumns, outputOffsetList,
               storeCtx, kvPair, isPrimary);
       if (valuesFlux == null) {
         valuesFlux = valuesEachRangeFlux;
@@ -594,7 +595,7 @@ public final class JimTransaction implements Transaction {
         valuesFlux = valuesFlux.zipWith(valuesEachRangeFlux, (f1, f2) -> getValueAccessors(f1, f2));
       }
     }
-    return changeRowsToValueAccessor(resultColumns, valuesFlux);
+    return convertToExecResult(resultColumns, valuesFlux);
   }
 
   private StoreCtx getStoreCtx(Table table) {
@@ -602,37 +603,22 @@ public final class JimTransaction implements Transaction {
     if (session != null) {
       timeout = this.session.getStmtContext().getTimeout();
     }
-    return StoreCtx.buildCtx(table, timeout, this.routerManager, this.distSender);
+    return StoreCtx.buildCtx(table, timeout, this.routerManager, this.requestDispatcher);
   }
 
-  private Flux<ValueAccessor[]> getSelectFluxForRange(List<Processor.Builder> processors,
-                                                      ColumnExpr[] resultColumns, List<Integer> outputOffsetList,
-                                                      StoreCtx storeCtx, KvPair kvPair, boolean isPrimary) {
-    SelectFlowRequest.Builder builder;
-    if (isPrimary) {
-      builder = getTableReaderForRange(processors, outputOffsetList, kvPair);
-    } else {
-      builder = getIndexReaderForRange(processors, outputOffsetList, kvPair);
-    }
+  private Flux<ValueAccessor[]> fetchRangeSelectFlux(List<Processor.Builder> processors,
+                                                     ColumnExpr[] resultColumns, List<Integer> outputOffsetList,
+                                                     StoreCtx storeCtx, KvPair kvPair, boolean isPrimary) {
 
-    return SELECT_RANGE_FLOW_FUNC.apply(storeCtx, builder, resultColumns, kvPair)
-            .onErrorResume(TxnHandler.getErrHandler(storeCtx, SELECT_RANGE_FLOW_FUNC, builder, resultColumns, kvPair));
+    SelectFlowRequest.Builder builder = isPrimary ? buildTableReaderReqForRange(processors, outputOffsetList, kvPair)
+                                            : buildIndexReaderReqForRange(processors, outputOffsetList, kvPair);
+
+    return RANGE_SELECT_FUNC.apply(storeCtx, builder, resultColumns, kvPair)
+            .onErrorResume(RangeSelectHandler.getErrHandler(storeCtx, RANGE_SELECT_FUNC, builder, resultColumns, kvPair));
   }
 
-  private Flux<ValueAccessor[]> getSelectFluxForKeys(List<Processor.Builder> processors, ColumnExpr[] resultColumns,
-                                                     List<Integer> outputOffsetList, StoreCtx storeCtx,
-                                                     List<ByteString> keys, boolean isPrimary) {
-    if (keys.isEmpty()) {
-      return null;
-    }
-    SelectFlowRequest.Builder builder = isPrimary ? getTableReaderReqForKeys(processors, outputOffsetList, keys)
-            : getIndexReaderReqForKeys(processors, outputOffsetList, keys);
-    return SELECT_KEYS_FLOW_FUNC.apply(storeCtx, builder, resultColumns, keys)
-            .onErrorResume(TxnHandler.getErrHandler(storeCtx, SELECT_KEYS_FLOW_FUNC, builder, resultColumns, keys));
-  }
-
-  private SelectFlowRequest.Builder getIndexReaderForRange(List<Processor.Builder> processors,
-                                                           List<Integer> outputOffsetList, KvPair kvPair) {
+  private SelectFlowRequest.Builder buildIndexReaderReqForRange(List<Processor.Builder> processors,
+                                                                List<Integer> outputOffsetList, KvPair kvPair) {
     SelectFlowRequest.Builder builder = SelectFlowRequest.newBuilder();
     for (Processor.Builder processor : processors) {
       if (processor.getType() == ProcessorType.INDEX_READ_TYPE) {
@@ -647,9 +633,9 @@ public final class JimTransaction implements Transaction {
     return builder;
   }
 
-  private SelectFlowRequest.Builder getTableReaderForRange(List<Processor.Builder> processors,
-                                                           List<Integer> outputOffsetList,
-                                                           KvPair kvPair) {
+  private SelectFlowRequest.Builder buildTableReaderReqForRange(List<Processor.Builder> processors,
+                                                                List<Integer> outputOffsetList,
+                                                                KvPair kvPair) {
     SelectFlowRequest.Builder builder = SelectFlowRequest.newBuilder();
     for (Processor.Builder processor : processors) {
       if (processor.getType() == ProcessorType.TABLE_READ_TYPE) {
@@ -664,8 +650,20 @@ public final class JimTransaction implements Transaction {
     return builder;
   }
 
-  private SelectFlowRequest.Builder getTableReaderReqForKeys(List<Processor.Builder> processors,
-                                                             List<Integer> outputOffsetList, List<ByteString> keys) {
+  private Flux<ValueAccessor[]> fetchMultiKeySelectFlux(List<Processor.Builder> processors, ColumnExpr[] resultColumns,
+                                                        List<Integer> outputOffsetList, StoreCtx storeCtx,
+                                                        List<ByteString> keys, boolean isPrimary) {
+    if (keys.isEmpty()) {
+      return null;
+    }
+    SelectFlowRequest.Builder builder = isPrimary ? buildTableReaderReqForKeys(processors, outputOffsetList, keys)
+                                            : buildIndexReaderReqForKeys(processors, outputOffsetList, keys);
+    return MULTI_KEY_SELECT_FUNC.apply(storeCtx, builder, resultColumns, keys)
+               .onErrorResume(MultiKeySelectHandler.getErrHandler(storeCtx, MULTI_KEY_SELECT_FUNC, builder, resultColumns, keys));
+  }
+
+  private SelectFlowRequest.Builder buildTableReaderReqForKeys(List<Processor.Builder> processors,
+                                                               List<Integer> outputOffsetList, List<ByteString> keys) {
     SelectFlowRequest.Builder builder = SelectFlowRequest.newBuilder();
     for (Processor.Builder processor : processors) {
       if (processor.getType() == ProcessorType.TABLE_READ_TYPE) {
@@ -680,8 +678,8 @@ public final class JimTransaction implements Transaction {
     return builder;
   }
 
-  private SelectFlowRequest.Builder getIndexReaderReqForKeys(List<Processor.Builder> processors,
-                                                             List<Integer> outputOffsetList, List<ByteString> keys) {
+  private SelectFlowRequest.Builder buildIndexReaderReqForKeys(List<Processor.Builder> processors,
+                                                               List<Integer> outputOffsetList, List<ByteString> keys) {
     SelectFlowRequest.Builder builder = SelectFlowRequest.newBuilder();
     for (Processor.Builder processor : processors) {
       if (processor.getType() == ProcessorType.INDEX_READ_TYPE) {
@@ -696,7 +694,7 @@ public final class JimTransaction implements Transaction {
     return builder;
   }
 
-  private Flux<ExecResult> changeRowsToValueAccessor(ColumnExpr[] resultColumns, Flux<ValueAccessor[]> valuesFlux) {
+  private Flux<ExecResult> convertToExecResult(ColumnExpr[] resultColumns, Flux<ValueAccessor[]> valuesFlux) {
     if (valuesFlux == null) {
       return Flux.create(sink -> sink.next(new QueryExecResult(resultColumns, TxnHandler.ROW_VALUE_ACCESSORS_EMPTY)));
     }
@@ -713,7 +711,7 @@ public final class JimTransaction implements Transaction {
     ColumnExpr[] columns = this.buildIndexColumns(index);
     ByteString lastKey = NettyByteString.wrap(endKey);
     SelectFlowRequest.Builder selectBuilder = this.buildIndexSelect(columns, NettyByteString.wrap(startKey), lastKey, limit);
-    ValueAccessor[] values = this.selectByStream(index.getTable(), selectBuilder, columns).blockFirst();
+    ValueAccessor[] values = this.singleRangeSelect(index.getTable(), selectBuilder, columns).blockFirst();
     if (values != null && values.length > 0) {
       this.doAddIndex(index, columns, values);
       lastKey = selectBuilder.getProcessors(0).getTableRead().getRange().getEndKey();
@@ -811,16 +809,16 @@ public final class JimTransaction implements Transaction {
     }
   }
 
-  private Flux<ValueAccessor[]> selectByStream(Table table, SelectFlowRequest.Builder builder, ColumnExpr[] resultColumns) throws JimException {
+  private Flux<ValueAccessor[]> singleRangeSelect(Table table, SelectFlowRequest.Builder builder, ColumnExpr[]resultColumns) throws BaseException {
     StoreCtx storeCtx = getStoreCtx(table);
     KeyRange keyRange = builder.getProcessors(0).getTableRead().getRange();
     KvPair kvPair = new KvPair(keyRange.getStartKey(), keyRange.getEndKey());
-    return SELECT_FLOW_STREAM_FUNC.apply(storeCtx, builder, resultColumns, kvPair)
-            .onErrorResume(TxnHandler.getErrHandler(storeCtx, SELECT_FLOW_STREAM_FUNC, builder, resultColumns, kvPair));
+    return SINGLE_RANGE_SELECT_FUNC.apply(storeCtx, builder, resultColumns, kvPair)
+            .onErrorResume(RangeSelectHandler.getErrHandler(storeCtx, SINGLE_RANGE_SELECT_FUNC, builder, resultColumns, kvPair));
   }
 
   @Override
-  public Flux<ExecResult> commit() throws JimException {
+  public Flux<ExecResult> commit() throws BaseException {
     if (!isPending()) {
       changeTxnStatus(TxnStatus.COMMITTED);
       close();
@@ -856,7 +854,7 @@ public final class JimTransaction implements Transaction {
   }
 
   @Override
-  public Flux<ExecResult> rollback() throws JimException {
+  public Flux<ExecResult> rollback() throws BaseException {
     if (!isPending()) {
       throw DBException.get(ErrorModule.ENGINE, ErrorCode.ER_ERROR_DURING_ROLLBACK, "transaction has no DML statement"
               + " or has been rolled back");
@@ -935,7 +933,7 @@ public final class JimTransaction implements Transaction {
         ValueChecker.checkValue(sqlType, newValue);
         newValues[columnExpr.getOffset()] = newValue;
         values.set(columnExpr.getOffset(), newValue);
-      } catch (JimException ex) {
+      } catch (BaseException ex) {
         this.handleException(columnExpr.getOriCol(), newValue, i, ex);
       }
     }
@@ -1007,7 +1005,7 @@ public final class JimTransaction implements Transaction {
     return builder;
   }
 
-  private void changeTxnStatus(TxnStatus newStatus) throws JimException {
+  private void changeTxnStatus(TxnStatus newStatus) throws BaseException {
     if (newStatus != TxnStatus.TXN_INIT
             && newStatus != TxnStatus.COMMITTED
             && newStatus != TxnStatus.ABORTED) {
@@ -1028,7 +1026,7 @@ public final class JimTransaction implements Transaction {
             .setEndKey(endKey)
             .setOnlyOne(true);
 
-    return TxnHandler.txnScan(storeCtx, request)
+    return ScanHandler.txnScan(storeCtx, request)
             .map(kvs -> {
               if (kvs.size() != 1) {
                 throw DBException.get(ErrorModule.ENGINE, ErrorCode.ER_SHARD_RESPONSE_VERSION_DUP, kvs.toString());
@@ -1055,7 +1053,7 @@ public final class JimTransaction implements Transaction {
             .setEndKey(endKey)
             .setOnlyOne(true);
 
-    return TxnHandler.txnScan(storeCtx, request)
+    return ScanHandler.txnScan(storeCtx, request)
             .map(kvs -> {
               if (kvs.isEmpty() || kvs.get(0) == null || kvs.get(0).getValue() == null) {
                 return Boolean.FALSE;
@@ -1079,7 +1077,7 @@ public final class JimTransaction implements Transaction {
 
   public Flux<List<ByteString>> txnScanForPk(StoreCtx storeCtx, ScanRequest.Builder request, Index index) {
     request.setMaxCount(10000);
-    return TxnHandler.txnScan(storeCtx, request).map(kvs -> {
+    return ScanHandler.txnScan(storeCtx, request).map(kvs -> {
       if (kvs.isEmpty()) {
         return EMPTY_LIST;
       }
@@ -1126,7 +1124,7 @@ public final class JimTransaction implements Transaction {
 
   private void sendTask(TxnAsyncTask runnable) {
     if (runnable != null) {
-      this.distSender.asyncTask(runnable);
+      this.requestDispatcher.asyncTask(runnable);
     }
   }
 }

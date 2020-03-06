@@ -15,7 +15,6 @@
  */
 package io.jimdb.core.expression;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.jimdb.core.model.meta.Index;
@@ -34,13 +33,6 @@ public class KeyValueRange {
   public KeyValueRange(Index index, List<ColumnExpr> indexColumns, List<ValueRange> valueRanges) {
     this.index = index;
     this.indexColumns = indexColumns;
-    this.valueRanges = valueRanges;
-  }
-
-  public KeyValueRange(Index index, ColumnExpr indexColumn, List<ValueRange> valueRanges) {
-    this.index = index;
-    this.indexColumns = new ArrayList<>();
-    this.indexColumns.add(indexColumn);
     this.valueRanges = valueRanges;
   }
 

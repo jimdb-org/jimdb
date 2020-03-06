@@ -87,7 +87,7 @@ public class AnalyzeColumnsExecutor extends AnalyzeExecutor {
     //return Flux.just(new QueryExecResult(columnExprs, null));
 
     // TODO is the primary key signed or unsigned ? see TiDB AnalyzeColumnsExec
-    List<ValueRange> ranges = Collections.singletonList(RangeBuilder.fullRange()); //RangeBuilder.buildFullIntegerRange(true);
+    List<ValueRange> ranges = RangeBuilder.fullRangeList(); //RangeBuilder.buildFullIntegerRange(true);
 
     final List<Integer> columnIds = Arrays.stream(columns).map(Column::getId).collect(Collectors.toList());
 

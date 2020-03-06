@@ -16,7 +16,7 @@
 package io.jimdb.sql.operator;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.plugin.SQLEngine;
 
@@ -43,7 +43,7 @@ public final class Commit extends Operator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     session.getVarContext().setStatus(SQLEngine.ServerStatus.INTRANS, false);
     return session.getTxn().commit();
   }

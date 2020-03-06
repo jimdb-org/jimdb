@@ -16,11 +16,8 @@
 package io.jimdb.common.exception;
 
 /**
- * Represents jimsql error code and message.
- * This code hat needs to be converted to other database systems.
- * NOTE: that uses mysql errorcode by default for better compatibility with mysql.
+ * Definition of error code that is compatible with MySQL 's error code definition
  *
- * @version V1.0
  */
 public enum ErrorCode {
   // Mysql errorcode
@@ -468,7 +465,7 @@ public enum ErrorCode {
   ER_NONEXISTING_PROC_GRANT(1403, "42000", "There is no such grant defined for user '%s' on host '%s' on routine '%s'"),
   ER_PROC_AUTO_GRANT_FAIL(1404, "HY000", "Failed to grant EXECUTE and ALTER ROUTINE privileges"),
   ER_PROC_AUTO_REVOKE_FAIL(1405, "HY000", "Failed to revoke all privileges to dropped routine"),
-  ER_DATA_TOO_LONG(1406, "22001", "Data too long for column '%s' at row %ld"),
+  ER_DATA_TOO_LONG(1406, "22001", "Data too long for column '%s' at row %s"),
   ER_SP_BAD_SQLSTATE(1407, "42000", "Bad SQLSTATE"),
   ER_STARTUP(1408, "HY000", "%s"),
   ER_LOAD_FROM_FIXED_SIZE_ROWS_TO_VAR(1409, "HY000", "Can't load value from file with fixed size rows to variable"),
@@ -1456,7 +1453,7 @@ public enum ErrorCode {
   ER_SYSTEM_REFCNT_ARGUMENT(5004, "SYSTEM_REFCNT_ARGUMENT", "refCnt %s argument '%s' is not positive"),
   ER_SYSTEM_REFCNT_STATE(5005, "SYSTEM_REFCNT_STATE", "refCnt state '%s' is not positive"),
   ER_SYSTEM_OUTOF_CAPACITY(5006, "SYSTEM_OUTOF_CAPACITY", "index '%s' out of bounds, expected: range(%s, %s)"),
-  ER_SYSTEM_SEQ_INVALID(5007, "SYSTEM_SEQ_INVALID", "invalid sequence id, expected: '%s', actual: %s'"),
+  ER_SYSTEM_SEQ_INVALID(5007, "SYSTEM_SEQ_INVALID", "invalid sequence id, expected: %s, actual: %s"),
   ER_SYSTEM_CANCELLED(5008, "SYSTEM_CANCELLED", "system cancelled"),
   ER_SYSTEM_PARSE_ERROR(5009, "SYSTEM_PARSE_ERROR", "sql parse error: %s"),
   ER_SYSTEM_COLLATION_INVALID(5010, "SYSTEM_COLLATION_INVALID", "invalid collation name '%s'"),

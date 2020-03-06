@@ -21,14 +21,14 @@ import java.util.List;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.context.PreparedContext;
 import io.jimdb.core.context.PreparedStatement;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.PrepareResult;
-import io.jimdb.sql.Planner;
+import io.jimdb.sql.planner.Planner;
 import io.jimdb.sql.analyzer.CacheableAnalyzer;
 import io.jimdb.sql.analyzer.PrepareAnalyzer;
 
@@ -55,7 +55,7 @@ public final class Prepare extends Operator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     List<SQLStatement> statements = planner.parse(sql);
     if (statements.size() != 1) {
       throw DBException.get(ErrorModule.PARSER, ErrorCode.ER_NOT_SUPPORTED_YET, "prepare multiple statements");

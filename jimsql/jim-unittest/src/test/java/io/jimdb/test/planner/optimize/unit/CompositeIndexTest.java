@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.sql.operator.Operator;
 import io.jimdb.sql.operator.OperatorUtil;
 import io.jimdb.sql.operator.RelOperator;
@@ -31,7 +31,6 @@ import io.jimdb.test.planner.TestBase;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -437,7 +436,7 @@ public class CompositeIndexTest extends TestBase {
         Assert.assertNotNull(relOperator);
         logger.error(OperatorUtil.printRelOperatorTreeAsc(relOperator, true));
         checker.doCheck(relOperator);
-      } catch (JimException e) {
+      } catch (BaseException e) {
         e.printStackTrace();
         Assert.assertTrue(checker.isHasException());
       }
@@ -452,7 +451,7 @@ public class CompositeIndexTest extends TestBase {
 //        logger.error(OperatorUtil.printRelOperatorTreeAsc(operator));
         operator.acceptVisitor(new RangeRebuildVisitor(session));
         ((RangeRebuildChecker)checker).checkRange(operator);
-      } catch (JimException e) {
+      } catch (BaseException e) {
         e.printStackTrace();
         Assert.assertTrue(checker.isHasException());
       }

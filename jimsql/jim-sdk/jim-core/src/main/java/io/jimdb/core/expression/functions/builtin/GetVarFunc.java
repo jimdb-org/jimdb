@@ -17,7 +17,7 @@ package io.jimdb.core.expression.functions.builtin;
 
 import io.jimdb.core.expression.functions.Func;
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.expression.functions.UnaryFuncBuilder;
@@ -44,7 +44,7 @@ public final class GetVarFunc extends Func {
   }
 
   @Override
-  public StringValue execString(ValueAccessor accessor) throws JimException {
+  public StringValue execString(ValueAccessor accessor) throws BaseException {
     StringValue stringValue = args[0].execString(session, accessor);
     String userVariable = session.getVarContext().getUserVariable(stringValue.getString());
     return StringValue.getInstance(userVariable);

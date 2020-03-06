@@ -394,17 +394,6 @@ public final class Types {
       return buildSQLType(dt);
     }
 
-    SQLType.Builder builder = buildPrecisionAndScale(sqlType.getArguments(), dt, typeName, colName);
-
-    String charset = DEFAULT_CHARSET.name();
-    String collate = DEFAULT_COLLATE;
-//    if (sqlType instanceof SQLCharacterDataType) {
-//      SQLCharacterDataType chaDataType = (SQLCharacterDataType) sqlType;
-//      charset = chaDataType.getCharSetName();
-//      collate = chaDataType.getCollate();
-//    }
-    builder.setCharset(charset).setCollate(collate);
-
     boolean unsigned = false;
     boolean zerofill = false;
     if (sqlType instanceof SQLDataTypeImpl) {
@@ -412,24 +401,41 @@ public final class Types {
       unsigned = sqlTypeImpl.isUnsigned();
       zerofill = sqlTypeImpl.isZerofill();
     }
-    switch (dt) {
-      case TinyInt:
-      case SmallInt:
-      case MediumInt:
-      case Int:
-      case BigInt:
-      case Bit:
-      case Decimal:
-      case Float:
-      case Double:
-        if (zerofill) {
+    if (zerofill) {
+      switch (dt) {
+        case TinyInt:
+        case SmallInt:
+        case MediumInt:
+        case Int:
+        case BigInt:
+        case Bit:
+        case Decimal:
+        case Float:
+        case Double:
           unsigned = true;
-        }
-        break;
-      default:
-        break;
+          break;
+        default:
+          break;
+      }
     }
-    return builder.setUnsigned(unsigned).setZerofill(zerofill).build();
+    SQLType.Builder builder = buildPrecisionAndScale(sqlType.getArguments(), dt, typeName, colName);
+    return builder.setCharset(DEFAULT_CHARSET_STR)
+            .setCollate(DEFAULT_COLLATE)
+            .setUnsigned(unsigned)
+            .setZerofill(zerofill)
+            .build();
+  }
+
+  private static void validPrecisionBound(long precision, long bound, ErrorCode errorCode, String... params) {
+    if (precision > bound) {
+      throw DBException.get(ErrorModule.EXPR, errorCode, params);
+    }
+  }
+
+  private static void validScaleBound(int scale, int bound, ErrorCode errorCode, String... params) {
+    if (scale > bound) {
+      throw DBException.get(ErrorModule.EXPR, errorCode, params);
+    }
   }
 
   private static SQLType.Builder buildPrecisionAndScale(List<SQLExpr> argList, DataType dt, String typeName, String colName) {
@@ -441,6 +447,11 @@ public final class Types {
                 .setPrecision(defaults[0])
                 .setScale((int) defaults[1]);
       }
+      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_PARSE_TYPE_ERROR, typeName + "(" + argList + ")");
+    }
+
+    if (argList.size() > 2) {
+      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_PARSE_TYPE_TWO_ERROR, typeName + "(" + argList + ")");
     }
 
     long precision = UNDEFINE_WIDTH;
@@ -452,72 +463,72 @@ public final class Types {
       case MediumInt:
       case Int:
       case BigInt:
-        precision = getArg1(argList, typeName);
+        precision = getArg0(argList, typeName);
         validArgNeg(typeName, precision, argList);
-        if (precision > 255) {
-          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_DISPLAYWIDTH, colName, "255");
-        }
+        validPrecisionBound(precision, 255, ErrorCode.ER_TOO_BIG_DISPLAYWIDTH, colName, "255");
         break;
       //bit(M), 1~64
       case Bit:
-        precision = getArg1(argList, typeName);
+        precision = getArg0(argList, typeName);
+        precision = precision == 0 ? 1 : precision;
         validArgNeg(typeName, precision, argList);
-        if (precision == 0) {
-          precision = 1;
-        }
-        if (precision > 64) {
-          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_DISPLAYWIDTH, colName, "64");
+        validPrecisionBound(precision, 64, ErrorCode.ER_TOO_BIG_DISPLAYWIDTH, colName, "64");
+        break;
+      //decimal(M,D), the default of decimal is (10,0);
+      case Decimal:
+        scale = 0;
+        precision = ((SQLIntegerExpr) argList.get(0)).getNumber().longValue();
+        validArgNeg(typeName, precision, argList);
+        validPrecisionBound(precision, 65, ErrorCode.ER_TOO_BIG_PRECISION, Long.toString(precision), colName, "65");
+
+        if (argList.size() == 2) {
+          scale = ((SQLIntegerExpr) argList.get(1)).getNumber().intValue();
+          validArgNeg(typeName, scale, argList);
+          validScaleBound(scale, 30, ErrorCode.ER_TOO_BIG_SCALE, Integer.toString(scale), colName, "30");
+          validScaleBound(scale, (int) precision, ErrorCode.ER_M_BIGGER_THAN_D, typeName);
         }
         break;
-      //decimal/float/double(M,D), the default of decimal is (10,0);
-      //don't check fount/double default
+      //float(M,D)
+      //don't check float default
       //float: If M and D are omitted, values are stored to the limits permitted by the hardware
-      case Decimal:
       case Float:
-      case Double:
-        if (argList.size() > 2) {
-          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_PARSE_TYPE_TWO_ERROR, typeName + "(" + argList + ")");
-        }
-
-        SQLExpr expr = argList.get(0);
-        precision = ((SQLIntegerExpr) expr).getNumber().longValue();
+        precision = ((SQLIntegerExpr) argList.get(0)).getNumber().longValue();
         validArgNeg(typeName, precision, argList);
 
         if (argList.size() == 2) {
-          expr = argList.get(1);
-          scale = ((SQLIntegerExpr) expr).getNumber().intValue();
+          scale = ((SQLIntegerExpr) argList.get(1)).getNumber().intValue();
           validArgNeg(typeName, scale, argList);
-        } else if (dt == DataType.Decimal) {
-          scale = 0;
-        }
-
-        if (dt == DataType.Decimal && precision > 65) {
-          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_PRECISION, precision + "", colName, "65");
-        }
-        if (argList.size() == 2) {
-          // float/double (M,D)
-          if ((dt == DataType.Float || dt == DataType.Double) && precision > 255) {
-            throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_DISPLAYWIDTH, colName, "255");
-          }
-          if (scale > 30) {
-            throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_SCALE, scale + "", colName, "30");
-          }
-          if (scale > precision) {
-            throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_M_BIGGER_THAN_D, typeName);
-          }
+          // float (M,D)
+          validPrecisionBound(precision, 255, ErrorCode.ER_TOO_BIG_DISPLAYWIDTH, colName, "255");
+          validScaleBound(scale, 30, ErrorCode.ER_TOO_BIG_SCALE, Integer.toString(scale), colName, "30");
+          validScaleBound(scale, (int) precision, ErrorCode.ER_M_BIGGER_THAN_D, typeName);
         } else {
-          // float/double (p)
-          if (dt == DataType.Float) {
-            if (precision < 24) {
-              dt = DataType.Float;
-            } else if (precision < 53) {
-              dt = DataType.Double;
-            } else {
-              throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_WRONG_FIELD_SPEC, colName);
-            }
-          } else if (dt == DataType.Double) {
-            throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_PARSE_TYPE_ERROR, typeName + "(" + argList + ")");
+          // float (p)
+          if (precision < 24) {
+            dt = DataType.Float;
+          } else if (precision < 53) {
+            dt = DataType.Double;
+          } else {
+            throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_WRONG_FIELD_SPEC, colName);
           }
+        }
+        break;
+      //double(M,D)
+      //don't check double default
+      case Double:
+        precision = ((SQLIntegerExpr) argList.get(0)).getNumber().longValue();
+        validArgNeg(typeName, precision, argList);
+
+        if (argList.size() == 2) {
+          scale = ((SQLIntegerExpr) argList.get(1)).getNumber().intValue();
+          validArgNeg(typeName, scale, argList);
+          // double (M,D)
+          validPrecisionBound(precision, 255, ErrorCode.ER_TOO_BIG_DISPLAYWIDTH, colName, "255");
+          validScaleBound(scale, 30, ErrorCode.ER_TOO_BIG_SCALE, Integer.toString(scale), colName, "30");
+          validScaleBound(scale, (int) precision, ErrorCode.ER_M_BIGGER_THAN_D, typeName);
+        } else {
+          // double (p)
+          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_PARSE_TYPE_ERROR, typeName + "(" + argList + ")");
         }
         break;
       //char[M], 0~255
@@ -526,45 +537,34 @@ public final class Types {
       case Binary:
       case TinyBlob:
       case TinyText:
-        precision = getArg1(argList, typeName);
+        precision = getArg0(argList, typeName);
         validArgNeg(typeName, precision, argList);
-        if (precision > MAX_CHAR_WIDTH) {
-          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_FIELDLENGTH, colName, Integer.toString(MAX_CHAR_WIDTH));
-        }
+        validPrecisionBound(precision, MAX_CHAR_WIDTH, ErrorCode.ER_TOO_BIG_FIELDLENGTH, colName, Integer.toString(MAX_CHAR_WIDTH));
         break;
       //varchar[M], 0~65,535
       case Varchar:
       case VarBinary:
       case Blob:
       case Text:
-        if (argList.isEmpty()) {
-          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_PARSE_TYPE_ERROR, typeName + "(" + argList + ")");
-        }
-        precision = getArg1(argList, typeName);
+        precision = getArg0(argList, typeName);
         validArgNeg(typeName, precision, argList);
-        if (precision > MAX_VARCHAR_WIDTH) {
-          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_FIELDLENGTH, colName, Integer.toString(MAX_VARCHAR_WIDTH));
-        }
+        validPrecisionBound(precision, MAX_VARCHAR_WIDTH, ErrorCode.ER_TOO_BIG_FIELDLENGTH, colName, Integer.toString(MAX_VARCHAR_WIDTH));
         break;
       case MediumBlob:
       case MediumText:
-        precision = getArg1(argList, typeName);
+        precision = getArg0(argList, typeName);
         validArgNeg(typeName, precision, argList);
-        if (precision > MAX_MEDIUM_TEXT_WIDTH) {
-          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_FIELDLENGTH, colName, Integer.toString(MAX_MEDIUM_TEXT_WIDTH));
-        }
+        validPrecisionBound(precision, MAX_MEDIUM_TEXT_WIDTH, ErrorCode.ER_TOO_BIG_FIELDLENGTH, colName, Integer.toString(MAX_MEDIUM_TEXT_WIDTH));
         break;
       case LongBlob:
       case LongText:
-        precision = getArg1(argList, typeName);
+        precision = getArg0(argList, typeName);
         validArgNeg(typeName, precision, argList);
-        if (precision > MAX_LONG_TEXT_WIDTH) {
-          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_FIELDLENGTH, colName, Long.toString(MAX_LONG_TEXT_WIDTH));
-        }
+        validPrecisionBound(precision, MAX_LONG_TEXT_WIDTH, ErrorCode.ER_TOO_BIG_FIELDLENGTH, colName, Long.toString(MAX_LONG_TEXT_WIDTH));
         break;
       //year[M], 2 or 4
       case Year:
-        precision = getArg1(argList, typeName);
+        precision = getArg0(argList, typeName);
         validArgNeg(typeName, precision, argList);
         if (precision != 2) {
           precision = MAX_YEAR_WIDTH;
@@ -574,12 +574,9 @@ public final class Types {
       case DateTime:
       case TimeStamp:
       case Time: {
-        scale = (int) getArg1(argList, typeName);
+        scale = (int) getArg0(argList, typeName);
         validArgNeg(typeName, scale, argList);
-        if (scale > MAX_TIME_SCALE) {
-          //? scale or precision
-          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_TOO_BIG_PRECISION, precision + "", colName, Integer.toString(MAX_TIME_SCALE));
-        }
+        validScaleBound(scale, MAX_TIME_SCALE, ErrorCode.ER_TOO_BIG_SCALE, Integer.toString(scale), colName, Integer.toString(MAX_TIME_SCALE));
         break;
       }
       default:
@@ -595,10 +592,7 @@ public final class Types {
     }
   }
 
-  private static long getArg1(List<SQLExpr> argList, String typeName) {
-    if (argList.isEmpty()) {
-      return 0;
-    }
+  private static long getArg0(List<SQLExpr> argList, String typeName) {
     if (argList.size() >= 2) {
       throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_PARSE_TYPE_ONE_ERROR, typeName + "(" + argList + ")");
     }
@@ -611,7 +605,17 @@ public final class Types {
     builder.setType(type)
             .setScale(UNDEFINE_WIDTH)
             .setPrecision(UNDEFINE_WIDTH)
-            .setCharset(DEFAULT_CHARSET.name())
+            .setCharset(DEFAULT_CHARSET_STR)
+            .setCollate(DEFAULT_COLLATE);
+    return builder.build();
+  }
+
+  public static SQLType buildSQLType(DataType type, int precision, int scale) {
+    SQLType.Builder builder = SQLType.newBuilder();
+    builder.setType(type)
+            .setScale(scale)
+            .setPrecision(precision)
+            .setCharset(DEFAULT_CHARSET_STR)
             .setCollate(DEFAULT_COLLATE);
     return builder.build();
   }
@@ -622,7 +626,7 @@ public final class Types {
             .setUnsigned(unsigned)
             .setScale(UNDEFINE_WIDTH)
             .setPrecision(UNDEFINE_WIDTH)
-            .setCharset(DEFAULT_CHARSET.name())
+            .setCharset(DEFAULT_CHARSET_STR)
             .setCollate(DEFAULT_COLLATE);
     return builder.build();
   }
@@ -711,12 +715,8 @@ public final class Types {
   }
 
   public static ValueType sqlToValueType(final SQLType type) {
-    final DataType dt = type.getType();
-    if (dt == DataType.Invalid) {
-      return ValueType.NULL;
-    }
-
-    switch (dt) {
+    switch (type.getType()) {
+      case Invalid:
       case Null:
         return ValueType.NULL;
       case Varchar:
@@ -783,10 +783,10 @@ public final class Types {
 
   public static long toLong(final double d) {
     if (d > Long.MAX_VALUE) {
-      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OVER_FLOW_UP, "long", String.valueOf(d));
+      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OVER_FLOW_UP, "long", Double.toString(d));
     }
     if (d < Long.MIN_VALUE) {
-      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OVER_FLOW_DOWN, "long", String.valueOf(d));
+      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OVER_FLOW_DOWN, "long", Double.toString(d));
     }
     return Math.round(d);
   }

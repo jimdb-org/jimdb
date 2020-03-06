@@ -29,7 +29,7 @@ import com.google.common.base.Preconditions;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * @version V1.0
+ * Event bus class TODO add explanations of this class
  */
 public final class EventBus implements Closeable {
   private static final Logger LOG = LoggerFactory.getLogger(EventBus.class);
@@ -41,7 +41,7 @@ public final class EventBus implements Closeable {
   private final ExecutorService eventExecutor;
 
   public EventBus(String name, ExecutorService eventExecutor) {
-    Preconditions.checkArgument(eventExecutor != null, "eventExecutor must not be null");
+    Preconditions.checkArgument(eventExecutor != null, "eventExecutor cannot be null");
     this.name = StringUtils.isBlank(name) ? "EventBus-" + COUNTER.incrementAndGet() : name;
     this.eventExecutor = eventExecutor;
     this.listeners = new CopyOnWriteArrayList<>();
@@ -57,7 +57,7 @@ public final class EventBus implements Closeable {
     }
 
     if (LOG.isInfoEnabled()) {
-      LOG.info("EventBus publish event {}", e.toString());
+      LOG.info("EventBus publishes event {}", e.toString());
     }
 
     for (EventListener listener : listeners) {
@@ -70,7 +70,7 @@ public final class EventBus implements Closeable {
   public boolean addListener(final EventListener listener) {
     if (listener != null) {
       if (LOG.isInfoEnabled()) {
-        LOG.info("EventBus add listener {}", listener.getName());
+        LOG.info("EventBus adds listener {}", listener.getName());
       }
       return listeners.addIfAbsent(listener);
     }
@@ -80,7 +80,7 @@ public final class EventBus implements Closeable {
   public boolean removeListener(final EventListener listener) {
     if (listener != null) {
       if (LOG.isInfoEnabled()) {
-        LOG.info("EventBus remove listener {}", listener.getName());
+        LOG.info("EventBus removes listener {}", listener.getName());
       }
       return listeners.remove(listener);
     }
@@ -91,7 +91,7 @@ public final class EventBus implements Closeable {
   public void close() {
     listeners.clear();
     if (LOG.isInfoEnabled()) {
-      LOG.info("EventBus {} stopped", name);
+      LOG.info("EventBus {} has been stopped", name);
     }
   }
 }

@@ -25,7 +25,7 @@ import java.util.TimeZone;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.utils.lang.ByteUtil;
 import io.jimdb.core.Session;
 import io.jimdb.core.types.Types;
@@ -46,48 +46,48 @@ public final class ValueConvertor {
   private ValueConvertor() {
   }
 
-  public static Value convertType(final Session session, final Value value, final SQLType type) throws JimException {
+  public static Value convertType(final Session session, final Value value, final SQLType type) throws BaseException {
     return convertType(session, value, Types.sqlToValueType(type), type);
   }
 
-  public static Value convertType(final Session session, final Value value, final ValueType type,
-                                  final SQLType sqlType) throws JimException {
-    if (type == null || (value.getType() == type && ValueType.DECIMAL != value.getType())) {
-      return value;
+  public static Value convertType(final Session session, final Value srcValue, final ValueType dstValueType,
+                                  final SQLType dstSqlType) throws BaseException {
+    if (dstValueType == null || (srcValue.getType() == dstValueType && ValueType.DECIMAL != srcValue.getType())) {
+      return srcValue;
     }
 
     try {
-      switch (type) {
+      switch (dstValueType) {
         case NULL:
           return NullValue.getInstance();
         case STRING:
-          return convertToString(session, value, sqlType);
+          return convertToString(session, srcValue, dstSqlType);
         case LONG:
-          return convertToLong(session, value, sqlType);
+          return convertToLong(session, srcValue, dstSqlType);
         case UNSIGNEDLONG:
-          return convertToUnsignedLong(session, value, sqlType);
+          return convertToUnsignedLong(session, srcValue, dstSqlType);
         case DOUBLE:
-          return convertToDouble(session, value, sqlType);
+          return convertToDouble(session, srcValue, dstSqlType);
         case DECIMAL:
-          return convertToDecimal(session, value, sqlType);
+          return convertToDecimal(session, srcValue, dstSqlType);
         case DATE:
-          return convertToDate(session, value, sqlType);
+          return convertToDate(session, srcValue, dstSqlType);
         case TIME:
-          return convertToTime(session, value, sqlType);
+          return convertToTime(session, srcValue, dstSqlType);
         case YEAR:
-          return convertToYear(session, value, sqlType);
+          return convertToYear(session, srcValue, dstSqlType);
         case BINARY:
-          return convertToBinary(session, value, sqlType);
+          return convertToBinary(session, srcValue, dstSqlType);
         case JSON:
-          return convertToJson(session, value, sqlType);
+          return convertToJson(session, srcValue, dstSqlType);
         default:
-          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_NOT_SUPPORTED_YET, "ValueType(" + type.name() + ")");
+          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_NOT_SUPPORTED_YET, "ValueType(" + dstValueType.name() + ")");
       }
-    } catch (JimException ex) {
+    } catch (BaseException ex) {
       throw ex;
     } catch (Exception ex) {
-      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_CONVERT_ERROR, ex, value.getType().name(),
-              type.name(), value.getString());
+      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_CONVERT_ERROR, ex, srcValue.getType().name(),
+              dstValueType.name(), srcValue.getString());
     }
   }
 

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.codec.Codec;
 import io.jimdb.core.codec.KvPair;
@@ -34,7 +34,7 @@ import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.plugin.PluginFactory;
 import io.jimdb.core.plugin.store.Engine;
 import io.jimdb.core.plugin.store.Transaction;
-import io.jimdb.engine.sender.DistSender;
+import io.jimdb.engine.sender.DispatcherImpl;
 import io.jimdb.engine.table.alloc.AutoIncrIDAllocator;
 import io.jimdb.engine.table.alloc.IDAllocator;
 import io.jimdb.engine.txn.JimTransaction;
@@ -62,7 +62,7 @@ public final class JimStoreEngine implements Engine {
   //route
   private RouterManager routerManager;
 
-  private DistSender distSender;
+  private DispatcherImpl requestDispatcher;
 
   private IDAllocator idAllocator;
 
@@ -70,9 +70,9 @@ public final class JimStoreEngine implements Engine {
   public void init(JimConfig c) {
     this.idAllocator = new AutoIncrIDAllocator(PluginFactory.getMetaStore(), c.getRowIdStep());
     this.routerManager = new RouterManager(PluginFactory.getRouterStore(), c);
-    this.distSender = new DistSender(c, this.routerManager);
+    this.requestDispatcher = new DispatcherImpl(c, this.routerManager);
     try {
-      this.distSender.start();
+      this.requestDispatcher.start();
     } catch (Exception e) {
       LOGGER.error("distSender start rpc error:{}", e.getMessage());
     }
@@ -80,27 +80,27 @@ public final class JimStoreEngine implements Engine {
 
   @Override
   public Transaction beginTxn(Session session) {
-    return new JimTransaction(session, routerManager, distSender, idAllocator);
+    return new JimTransaction(session, routerManager, requestDispatcher, idAllocator);
   }
 
   @Override
-  public Flux<Boolean> put(Table table, byte[] key, byte[] value, Instant timeout) throws JimException {
+  public Flux<Boolean> put(Table table, byte[] key, byte[] value, Instant timeout) throws BaseException {
     KvPair keyValue = new KvPair(NettyByteString.wrap(key), NettyByteString.wrap(value));
-    return this.distSender.rawPut(StoreCtx.buildCtx(table, timeout, routerManager, distSender), keyValue);
+    return this.requestDispatcher.rawPut(StoreCtx.buildCtx(table, timeout, routerManager, requestDispatcher), keyValue);
   }
 
   @Override
-  public Flux<byte[]> get(Table table, byte[] key, Instant timeout) throws JimException {
-    return this.distSender.rawGet(StoreCtx.buildCtx(table, timeout, routerManager, distSender), key);
+  public Flux<byte[]> get(Table table, byte[] key, Instant timeout) throws BaseException {
+    return this.requestDispatcher.rawGet(StoreCtx.buildCtx(table, timeout, routerManager, requestDispatcher), key);
   }
 
   @Override
-  public Flux<Boolean> delete(Table table, byte[] key, Instant timeout) throws JimException {
-    return this.distSender.rawDel(StoreCtx.buildCtx(table, timeout, routerManager, distSender), key);
+  public Flux<Boolean> delete(Table table, byte[] key, Instant timeout) throws BaseException {
+    return this.requestDispatcher.rawDel(StoreCtx.buildCtx(table, timeout, routerManager, requestDispatcher), key);
   }
 
   @Override
-  public Set<RangeInfo> getRanges(Table table) throws JimException {
+  public Set<RangeInfo> getRanges(Table table) throws BaseException {
     final int tableId = table.getId();
     final int dbId = table.getCatalog().getId();
     KvPair tableScope = Codec.encodeTableScope(tableId);
@@ -113,7 +113,7 @@ public final class JimStoreEngine implements Engine {
 
   @Override
   public void close() {
-    this.distSender.close();
+    this.requestDispatcher.close();
   }
 
   @Override
@@ -130,7 +130,7 @@ public final class JimStoreEngine implements Engine {
               index.getId(), Arrays.stream(index.getColumns()).map(Column::getId).collect(Collectors.toList()));
     }
 
-    return this.distSender.analyzeIndex(StoreCtx.buildCtx(table, timeout, routerManager, distSender), reqBuilder);
+    return this.requestDispatcher.analyzeIndex(StoreCtx.buildCtx(table, timeout, routerManager, requestDispatcher), reqBuilder);
   }
 
   @Override
@@ -145,6 +145,6 @@ public final class JimStoreEngine implements Engine {
       LOGGER.debug("sending request for analyzing columns {}", Arrays.stream(columns).map(Column::getId).collect(Collectors.toList()));
     }
 
-    return this.distSender.analyzeColumns(StoreCtx.buildCtx(table, timeout, routerManager, distSender), reqBuilder);
+    return this.requestDispatcher.analyzeColumns(StoreCtx.buildCtx(table, timeout, routerManager, requestDispatcher), reqBuilder);
   }
 }

@@ -16,7 +16,7 @@
 package io.jimdb.core.expression.functions;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.values.StringValue;
@@ -36,7 +36,7 @@ public final class DatabaseFunc extends Func {
   }
 
   @Override
-  public StringValue execString(ValueAccessor accessor) throws JimException {
+  public StringValue execString(ValueAccessor accessor) throws BaseException {
     return StringValue.getInstance(this.session.getVarContext().getDefaultCatalog());
   }
 

@@ -181,6 +181,10 @@ public final class Table {
     return tableInfo.getComment();
   }
 
+  public int getPartitionNum() {
+    return tableInfo.getSplitNum();
+  }
+
   public Column[] getPrimary() {
     return primarys;
   }

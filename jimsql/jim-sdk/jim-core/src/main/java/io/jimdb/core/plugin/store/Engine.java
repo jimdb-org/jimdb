@@ -19,7 +19,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.expression.ValueRange;
 import io.jimdb.core.model.meta.Column;
@@ -38,17 +38,17 @@ import reactor.util.function.Tuple2;
 public interface Engine extends Plugin {
   Transaction beginTxn(Session session);
 
-  Flux<Boolean> put(Table table, byte[] key, byte[] value, Instant timeout) throws JimException;
+  Flux<Boolean> put(Table table, byte[] key, byte[] value, Instant timeout) throws BaseException;
 
-  Flux<byte[]> get(Table table, byte[] key, Instant timeout) throws JimException;
+  Flux<byte[]> get(Table table, byte[] key, Instant timeout) throws BaseException;
 
-  Flux<Boolean> delete(Table table, byte[] key, Instant timeout) throws JimException;
+  Flux<Boolean> delete(Table table, byte[] key, Instant timeout) throws BaseException;
 
-  Set<RangeInfo> getRanges(Table table) throws JimException;
+  Set<RangeInfo> getRanges(Table table) throws BaseException;
 
   Flux<List<Tuple2<Statspb.Histogram, Statspb.CMSketch>>> analyzeIndex(Table table, Index index, Instant timeout, List<ValueRange> ranges,
-                                                                       Statspb.IndexStatsRequest.Builder reqBuilder) throws JimException;
+                                                                       Statspb.IndexStatsRequest.Builder reqBuilder) throws BaseException;
 
   Flux<List<Tuple2<Statspb.Histogram, List<Statspb.SampleCollector>>>> analyzeColumns(Table table, Column[] columns, Instant timeout, List<ValueRange> ranges,
-                                                                                      Statspb.ColumnsStatsRequest.Builder reqBuilder) throws JimException;
+                                                                                      Statspb.ColumnsStatsRequest.Builder reqBuilder) throws BaseException;
 }

@@ -16,7 +16,7 @@
 package io.jimdb.sql.operator;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Assignment;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Schema;
@@ -66,7 +66,7 @@ public final class Update extends Operator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     if (this.select == null) {
       return session.getTxn().update(table, assignments, null);
     }

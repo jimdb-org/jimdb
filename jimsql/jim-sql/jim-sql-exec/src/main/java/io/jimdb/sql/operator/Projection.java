@@ -18,7 +18,7 @@ package io.jimdb.sql.operator;
 import java.util.Arrays;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.RowValueAccessor;
@@ -69,7 +69,7 @@ public final class Projection extends RelOperator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     int colsSize = schema.getColumns().size();
     if (hasChildren()) {
       return children[0].execute(session).map(r -> {

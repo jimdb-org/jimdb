@@ -32,9 +32,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @SuppressFBWarnings({ "CLI_CONSTANT_LIST_INDEX", "UP_UNUSED_PARAMETER", "PDP_POORLY_DEFINED_PARAMETER", "CE_CLASS_ENVY" })
 public class Points {
 
+  public static final Point MIN_POINT = new Point(Value.MIN_VALUE, true);
+  public static final Point MAX_POINT = new Point(Value.MAX_VALUE, false);
+  private static final List<Point> FULL_RANGE_POINTS = Lists.newArrayList(MIN_POINT, MAX_POINT);
+
   public static List<Point> fullRangePoints() {
-    return Lists.newArrayList(new Point(Value.MIN_VALUE, true), new Point(Value.MAX_VALUE, false));
-    //return Collections.singletonList(new Point(Value.MAX_VALUE, true));
+    return FULL_RANGE_POINTS;
   }
 
   /**

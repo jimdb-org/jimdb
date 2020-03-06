@@ -17,7 +17,7 @@ package io.jimdb.core.expression.functions.builtin.cast;
 
 import io.jimdb.core.expression.functions.Func;
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.values.TimeValue;
@@ -45,17 +45,17 @@ final class CastTimeFunc extends Func {
   }
 
   @Override
-  public LongValue execLong(ValueAccessor accessor) throws JimException {
+  public LongValue execLong(ValueAccessor accessor) throws BaseException {
     return args[0].execLong(session, accessor);
   }
 
   @Override
-  public StringValue execString(ValueAccessor accessor) throws JimException {
+  public StringValue execString(ValueAccessor accessor) throws BaseException {
     return args[0].execString(session, accessor);
   }
 
   @Override
-  public TimeValue execTime(ValueAccessor accessor) throws JimException {
+  public TimeValue execTime(ValueAccessor accessor) throws BaseException {
     final Expression arg = args[0];
     final Value value = arg.execTime(session, accessor);
     if (value == null) {

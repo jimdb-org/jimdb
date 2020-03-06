@@ -88,8 +88,8 @@ public class BaseTest {
             .option(ChannelOption.SO_LINGER, config.getSoLinger())
             .option(ChannelOption.SO_RCVBUF, config.getSocketBufferSize())
             .option(ChannelOption.SO_SNDBUF, config.getSocketBufferSize())
-            .option(ChannelOption.ALLOCATOR, config.getAllocatorFactory().getBufAllocator())
-            .option(ChannelOption.RCVBUF_ALLOCATOR, config.getAllocatorFactory().getRecvBufAllocator())
+            .option(ChannelOption.ALLOCATOR, config.getAllocatorFactory().getByteBufAllocator())
+            .option(ChannelOption.RCVBUF_ALLOCATOR, config.getAllocatorFactory().getRecvByteBufAllocator())
             .handler(new ChannelPipeline(config.getAllocatorFactory(), config.getHandlerSupplier()));
 
     return bootstrap;

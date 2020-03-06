@@ -16,7 +16,7 @@
 package io.jimdb.sql.operator.show;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.sql.operator.RelOperator;
 
@@ -27,7 +27,7 @@ import reactor.core.publisher.Flux;
  */
 public class ShowStatus extends RelOperator {
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     return null;
   }
 }

@@ -17,6 +17,7 @@ package io.jimdb.sql.analyzer;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -24,7 +25,7 @@ import java.util.function.Function;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.SQLAnalyzer;
 import io.jimdb.core.Session;
 import io.jimdb.core.context.PreparedContext;
@@ -256,7 +257,7 @@ public abstract class ExpressionAnalyzer implements SQLAnalyzer {
     this.stack.clear();
   }
 
-  public Tuple2<Optional<Expression>, RelOperator> doAnalyze() throws JimException {
+  public Tuple2<Optional<Expression>, RelOperator> doAnalyze() throws BaseException {
     expr.accept(this);
     if (!isScalar && stack.isEmpty()) {
       return Tuples.of(Optional.ofNullable(null), currentOp);
@@ -445,6 +446,16 @@ public abstract class ExpressionAnalyzer implements SQLAnalyzer {
         return;
       }
       if (funcType == FuncType.VALUES) {
+        return;
+      }
+
+      if (funcType == FuncType.NOW) {
+        List<SQLExpr> params = ((SQLMethodInvokeExpr) visitNode).getParameters();
+        Expression[] args = new Expression[params.size()];
+        if (!params.isEmpty()) {
+          args[0] = stack.pollFirst();
+        }
+        stack.addFirst(this.buildFuncExpr(FuncType.NOW, Types.UNDEFINE_TYPE, args));
         return;
       }
     }

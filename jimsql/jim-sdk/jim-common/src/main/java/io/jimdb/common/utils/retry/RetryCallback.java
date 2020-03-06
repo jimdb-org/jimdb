@@ -16,16 +16,15 @@
 package io.jimdb.common.utils.retry;
 
 /**
- * @version V1.0
+ * Defined interface of retry callback
  */
 public interface RetryCallback {
 
   /**
-   * Execute the retry function.
-   * IF return true, then terminate retry.
+   * Execute the retry function and stop the retry if success
    *
-   * @return
-   * @throws Exception
+   * @return if the retry succeeds
+   * @throws Exception any exception happened during retry
    */
   boolean execute() throws Exception;
 

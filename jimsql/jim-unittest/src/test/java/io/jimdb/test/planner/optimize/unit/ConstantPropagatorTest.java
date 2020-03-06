@@ -18,7 +18,7 @@ package io.jimdb.test.planner.optimize.unit;
 
 import java.util.List;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.sql.operator.RelOperator;
 import io.jimdb.sql.operator.Selection;
@@ -42,7 +42,7 @@ public class ConstantPropagatorTest extends TestBase {
       List<Expression> result = constantPropagator.propagateConstants();
       String resultStr = predicates2str(result, "");
       Assert.assertEquals("=[FUNC-EqualInt(score,10),FUNC-EqualInt(age,10)]", resultStr);
-    } catch (JimException e) {
+    } catch (BaseException e) {
       Assert.fail(e.getMessage());
     }
   }

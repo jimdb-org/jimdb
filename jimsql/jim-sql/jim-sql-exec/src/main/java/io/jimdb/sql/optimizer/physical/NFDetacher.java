@@ -231,7 +231,7 @@ public class NFDetacher {
 
     Expression[] mergedAccessConditions = new Expression[columns.size()];
     List<Expression> newConditions = Lists.newArrayListWithCapacity(conditions.size());
-    List<List<Point>> points = Lists.newArrayListWithCapacity(columns.size());
+    List<Point>[] points = new List[columns.size()];
 
     for (Expression condition : conditions) {
       int colOffset = getEqOrInColOffset(condition, columns);
@@ -249,10 +249,10 @@ public class NFDetacher {
       if (mergedAccessConditions[colOffset] == null) {
         final Expression accessCondition = accessConditions[colOffset];
         mergedAccessConditions[colOffset] = accessCondition;
-        points.set(colOffset, accessCondition.convertToPoints(session));
+        points[colOffset] = accessCondition.convertToPoints(session);
       }
-      points.set(colOffset, Points.intersect(session, points.get(colOffset), condition.convertToPoints(session)));
-      if (points.get(colOffset).isEmpty()) {
+      points[colOffset] = Points.intersect(session, points[colOffset], condition.convertToPoints(session));
+      if (points[colOffset].isEmpty()) {
         // True indicate whether there's nil range when merging eq and in conditions.
         return Tuples.of(Collections.emptyList(), Collections.emptyList(), Boolean.TRUE);
       }
@@ -268,7 +268,7 @@ public class NFDetacher {
       }
 
       // TODO fill convertPointsToEqualCondition
-      accessConditions[i] = Points.convertPointsToEqualCondition(session, points.get(i), mergedAccessCondition);
+      accessConditions[i] = Points.convertPointsToEqualCondition(session, points[i], mergedAccessCondition);
       newConditions.add(accessConditions[i]);
     }
 
@@ -362,29 +362,29 @@ public class NFDetacher {
    *
    * @param session        the session of the given query
    * @param conditions     conditions to be analyzed
-   * @param columnExprList list of expressions used for range analysis
+   * @param indexCols list of expressions used for range analysis
    * @return detached ranges and access conditions
    */
   public static Tuple4<List<ValueRange>, List<Expression>, List<Expression>, Boolean> detachConditionsAndBuildRangeForIndex(
-      Session session, List<Expression> conditions, List<ColumnExpr> columnExprList) {
+      Session session, List<Expression> conditions, List<ColumnExpr> indexCols) {
 
     if (conditions == null || conditions.isEmpty()) {
       return DetacherResult.empty().unwrap();
     }
 
-    List<Metapb.SQLType> returnTypes = columnExprList.stream().map(ColumnExpr::getResultType).collect(Collectors.toList());
+    List<Metapb.SQLType> returnTypes = indexCols.stream().map(ColumnExpr::getResultType).collect(Collectors.toList());
 
     // TODO add prefix length
     // currently we do not support prefix indexing therefore the prefix length of a column is always UNSPECIFIED_LENGTH
-    int[] prefixLengths = new int[columnExprList.size()];
+    int[] prefixLengths = new int[indexCols.size()];
     Arrays.fill(prefixLengths, UNSPECIFIED_LENGTH);
 
     if (conditions.size() == 1 && conditions.get(0).isFuncExpr(FuncType.BooleanOr)) {
-      DetacherResult detacherResult = detachDNFConditionsAndBuildRangeForIndex(session, (FuncExpr) conditions.get(0), columnExprList, prefixLengths, returnTypes);
+      DetacherResult detacherResult = detachDNFConditionsAndBuildRangeForIndex(session, (FuncExpr) conditions.get(0), indexCols, prefixLengths, returnTypes);
       return detacherResult.unwrap();
     }
 
-    DetacherResult detacherResult = detachCNFConditionsAndBuildRangeForIndex(session, conditions, columnExprList, prefixLengths, returnTypes);
+    DetacherResult detacherResult = detachCNFConditionsAndBuildRangeForIndex(session, conditions, indexCols, prefixLengths, returnTypes);
     return detacherResult.unwrap();
   }
 
@@ -439,7 +439,8 @@ public class NFDetacher {
         List<Expression> cnfItems = ((FuncExpr) expression).flattenCNFCondition();
         DetacherResult detacherResult = detachCNFConditionsAndBuildRangeForIndex(session, cnfItems, columns, prefixLength, returnTypes);
         if (detacherResult.accessConditions.isEmpty()) {
-          return new DetacherResult(Collections.singletonList(RangeBuilder.fullRange()), Collections.emptyList(), remainingConditions, true);
+          remainingConditions = Collections.singletonList(condition);
+          return new DetacherResult(RangeBuilder.fullRangeList(), Collections.emptyList(), remainingConditions, true);
         }
 
         if (detacherResult.remainingConditions.size() > 0) {
@@ -457,18 +458,21 @@ public class NFDetacher {
         accessConditions.add(expression);
       } else {
         remainingConditions = Collections.singletonList(condition);
-        return new DetacherResult(Collections.singletonList(RangeBuilder.fullRange()), Collections.emptyList(), remainingConditions, true);
+        return new DetacherResult(RangeBuilder.fullRangeList(), Collections.emptyList(), remainingConditions, true);
       }
     }
 
+    Expression accessCondition = rebuildDNFCondition(session, accessConditions);
+    accessConditions.clear();
+    accessConditions.add(accessCondition);
     return new DetacherResult(RangeBuilder.unionRanges(session, ranges), accessConditions, remainingConditions, true);
   }
 
   public static List<ValueRange> buildRangeFromDetachedIndexConditions(Session session, List<Expression> conditions,
-                                                                       List<ColumnExpr> columnExprList) {
+                                                                       List<ColumnExpr> idxCols) {
 
     Tuple4<List<ValueRange>, List<Expression>, List<Expression>, Boolean> tuple4 =
-        detachConditionsAndBuildRangeForIndex(session, conditions, columnExprList);
+        detachConditionsAndBuildRangeForIndex(session, conditions, idxCols);
 
     return tuple4.getT1();
   }
@@ -483,7 +487,7 @@ public class NFDetacher {
 
     List<Expression> remainingConditions; // other filter conditions
 
-    int equalConditionCount; // number of equal conditions that have been extracted
+    //int equalConditionCount; // number of equal conditions that have been extracted
 
     //int equalOrInCount; // number of equal/in conditions that have been extracted
 
@@ -500,7 +504,7 @@ public class NFDetacher {
     }
 
     static DetacherResult empty() {
-      return new DetacherResult(Collections.singletonList(RangeBuilder.fullRange()), Collections.emptyList(), Collections.emptyList(), false);
+      return new DetacherResult(RangeBuilder.fullRangeList(), Collections.emptyList(), Collections.emptyList(), false);
     }
 
     Tuple4<List<ValueRange>, List<Expression>, List<Expression>, Boolean> unwrap() {

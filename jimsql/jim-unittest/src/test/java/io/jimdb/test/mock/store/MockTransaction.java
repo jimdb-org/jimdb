@@ -18,7 +18,7 @@ package io.jimdb.test.mock.store;
 import java.util.List;
 import java.util.Map;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Assignment;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
@@ -48,7 +48,7 @@ public class MockTransaction implements Transaction {
 
   @Override
   public Flux<ExecResult> insert(Table table, Column[] insertCols, List<Expression[]> rows, Assignment[] duplicate,
-                                 boolean hasRefColumn) throws JimException {
+                                 boolean hasRefColumn) throws BaseException {
     if (rows == null || rows.isEmpty()) {
       return Flux.create(sink -> sink.next(DMLExecResult.EMPTY));
     }
@@ -58,7 +58,7 @@ public class MockTransaction implements Transaction {
   }
 
   @Override
-  public Flux<ExecResult> update(Table table, Assignment[] assignments, QueryResult rows) throws JimException {
+  public Flux<ExecResult> update(Table table, Assignment[] assignments, QueryResult rows) throws BaseException {
     if (rows == null || rows.size() == 0) {
       return Flux.just(DMLExecResult.EMPTY);
     }
@@ -69,7 +69,7 @@ public class MockTransaction implements Transaction {
   }
 
   @Override
-  public Flux<ExecResult> delete(Table table, QueryResult rows) throws JimException {
+  public Flux<ExecResult> delete(Table table, QueryResult rows) throws BaseException {
     if (rows == null || rows.size() == 0) {
       return Flux.just(DMLExecResult.EMPTY);
     }
@@ -104,14 +104,14 @@ public class MockTransaction implements Transaction {
   @Override
   public Flux<ExecResult> select(Table table, List<Processorpb.Processor.Builder> processors,
                                  ColumnExpr[] resultColumns,
-                                 List<Integer> outputOffsetList) throws JimException {
+                                 List<Integer> outputOffsetList) throws BaseException {
     return getTableData(table, resultColumns, null);
   }
 
   @Override
   public Flux<ExecResult> select(Index index, List<Processorpb.Processor.Builder> processors,
                                  ColumnExpr[] resultColumns,
-                                 List<Integer> outputOffsetList, List<ValueRange> ranges) throws JimException {
+                                 List<Integer> outputOffsetList, List<ValueRange> ranges) throws BaseException {
     return getTableData(index.getTable(), resultColumns, null);
   }
 
@@ -121,12 +121,12 @@ public class MockTransaction implements Transaction {
   }
 
   @Override
-  public Flux<ExecResult> commit() throws JimException {
+  public Flux<ExecResult> commit() throws BaseException {
     return Flux.just(AckExecResult.getInstance());
   }
 
   @Override
-  public Flux<ExecResult> rollback() throws JimException {
+  public Flux<ExecResult> rollback() throws BaseException {
     return Flux.just(AckExecResult.getInstance());
   }
 

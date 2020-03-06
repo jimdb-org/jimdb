@@ -25,9 +25,10 @@ import java.util.concurrent.ForkJoinPool;
 import io.jimdb.common.config.BaseConfig;
 import io.jimdb.common.config.NettyClientConfig;
 import io.jimdb.common.config.NettyServerConfig;
-import io.jimdb.common.utils.lang.JimUncaughtExceptionHandler;
-import io.jimdb.common.utils.lang.NetUtil;
-import io.jimdb.common.utils.os.Systems;
+import io.jimdb.common.config.SystemProperties;
+import io.jimdb.common.utils.lang.UncaughtExceptionHandlerImpl;
+import io.jimdb.common.utils.lang.NetworkUtil;
+import io.jimdb.common.utils.os.OperatingSystemInfo;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import reactor.core.scheduler.ExecutorSchedulerFactory;
@@ -121,7 +122,7 @@ public final class JimConfig extends BaseConfig implements Closeable {
     }
 
     String startTime = new SimpleDateFormat("yyyy.MM.dd HH.mm.ss.S").format(new Date());
-    this.serverID = String.format("%s_%s_%s", NetUtil.getIP(), Systems.getPid(), startTime);
+    this.serverID = String.format("%s_%s_%s", NetworkUtil.getIP(), OperatingSystemInfo.getPid(), startTime);
   }
 
   private void loadProps() {
@@ -148,17 +149,17 @@ public final class JimConfig extends BaseConfig implements Closeable {
     int inThreads = this.getInt(EXECUTOR_INBOUND_THREADS, -1);
     if (outThreads >= 0) {
       this.outboundExecutor = new ForkJoinPool(outThreads == 0 ? Runtime.getRuntime().availableProcessors() : outThreads,
-              ForkJoinPool.defaultForkJoinWorkerThreadFactory, JimUncaughtExceptionHandler.getInstance(), true);
+              ForkJoinPool.defaultForkJoinWorkerThreadFactory, UncaughtExceptionHandlerImpl.getInstance(), true);
     }
     if (inThreads >= 0) {
       this.inboundExecutor = new ForkJoinPool(inThreads == 0 ? Runtime.getRuntime().availableProcessors() : inThreads,
-              ForkJoinPool.defaultForkJoinWorkerThreadFactory, JimUncaughtExceptionHandler.getInstance(), true);
+              ForkJoinPool.defaultForkJoinWorkerThreadFactory, UncaughtExceptionHandlerImpl.getInstance(), true);
       this.outboundExecutor = this.outboundExecutor == null ? this.inboundExecutor : this.outboundExecutor;
     } else if (this.outboundExecutor != null) {
       this.inboundExecutor = this.outboundExecutor;
     } else {
       this.inboundExecutor = this.outboundExecutor = new ForkJoinPool(Runtime.getRuntime().availableProcessors(),
-              ForkJoinPool.defaultForkJoinWorkerThreadFactory, JimUncaughtExceptionHandler.getInstance(), true);
+              ForkJoinPool.defaultForkJoinWorkerThreadFactory, UncaughtExceptionHandlerImpl.getInstance(), true);
     }
   }
 

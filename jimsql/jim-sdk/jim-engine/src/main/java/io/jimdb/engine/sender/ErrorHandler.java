@@ -21,7 +21,7 @@ import io.jimdb.engine.client.RequestContext;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.model.meta.RangeInfo;
 import io.jimdb.meta.route.RoutePolicy;
 import io.jimdb.pb.Errorpb.Error;
@@ -69,9 +69,9 @@ public class ErrorHandler {
    *
    * @param err
    * @param context
-   * @throws JimException
+   * @throws BaseException
    */
-  public static void handleRangeErr(Error err, RequestContext context, long msgId) throws JimException {
+  public static void handleRangeErr(Error err, RequestContext context, long msgId) throws BaseException {
     RangeInfo oldRangeInfo = context.getRangeInfo();
     byte[] key = NettyByteString.asByteArray(context.getKey());
     RoutePolicy routePolicy = context.getRoutePolicy();

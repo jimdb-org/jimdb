@@ -16,7 +16,7 @@
 package io.jimdb.sql.operator.show;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
 import io.jimdb.core.expression.ValueAccessor;
@@ -35,7 +35,7 @@ import reactor.core.publisher.Flux;
 public final class ShowCollation extends RelOperator {
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     Value charset = StringValue.getInstance("utf8");
     Value len = LongValue.getInstance(1L);
     Value value = StringValue.getInstance("Yes");

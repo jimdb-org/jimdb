@@ -26,7 +26,7 @@ import java.util.function.Function;
 
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.exception.RangeRouteException;
 import io.jimdb.core.model.meta.RangeInfo;
 import io.jimdb.pb.Basepb;
@@ -125,7 +125,7 @@ public final class RoutePolicy {
     return this.clusterId;
   }
 
-  public <T> Map<RangeInfo, List<T>> regroupByRoute(List<T> elements, Function<T, byte[]> keyFunction) throws JimException {
+  public <T> Map<RangeInfo, List<T>> regroupByRoute(List<T> elements, Function<T, byte[]> keyFunction) throws BaseException {
     Map<RangeInfo, List<T>> groupMap = new HashMap<>();
     RangeInfo range = null;
     for (T element : elements) {

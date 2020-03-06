@@ -63,8 +63,8 @@ public final class NettyServer {
             .option(ChannelOption.SO_RCVBUF, config.getSocketBufferSize())
             .option(ChannelOption.SO_SNDBUF, config.getSocketBufferSize())
             .option(ChannelOption.SO_BACKLOG, config.getBacklog())
-            .option(ChannelOption.ALLOCATOR, config.getAllocatorFactory().getBufAllocator())
-            .option(ChannelOption.RCVBUF_ALLOCATOR, config.getAllocatorFactory().getRecvBufAllocator());
+            .option(ChannelOption.ALLOCATOR, config.getAllocatorFactory().getByteBufAllocator())
+            .option(ChannelOption.RCVBUF_ALLOCATOR, config.getAllocatorFactory().getRecvByteBufAllocator());
 
     if (StringUtils.isBlank(config.getHost())) {
       bootStrap.localAddress(config.getPort());

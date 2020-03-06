@@ -31,34 +31,39 @@ import io.jimdb.pb.Metapb.SQLType;
  */
 public class ValueChecker {
 
-  private static final EnumMap<Basepb.DataType, Long> LONG_LOWERBOUND;
-  private static final EnumMap<Basepb.DataType, Long> LONG_UPPERBOUND;
-  private static final EnumMap<Basepb.DataType, BigInteger> UNSIGNEDLONG_UPPERBOUND;
+  private static final EnumMap<Basepb.DataType, Long> SIGNED_LONG_LOWER_BOUND;
+  private static final EnumMap<Basepb.DataType, Long> SIGNED_LONG_UPPER_BOUND;
+  private static final EnumMap<Basepb.DataType, BigInteger> UNSIGNED_LONG_UPPER_BOUND;
 
   static {
-    LONG_LOWERBOUND = new EnumMap<>(Basepb.DataType.class);
-    LONG_LOWERBOUND.put(Basepb.DataType.TinyInt, Long.valueOf(Byte.MIN_VALUE));
-    LONG_LOWERBOUND.put(Basepb.DataType.SmallInt, Long.valueOf(Short.MIN_VALUE));
-    LONG_LOWERBOUND.put(Basepb.DataType.MediumInt, Long.valueOf(~((1 << 23) - 1)));
-    LONG_LOWERBOUND.put(Basepb.DataType.Int, Long.valueOf(Integer.MIN_VALUE));
-    LONG_LOWERBOUND.put(Basepb.DataType.BigInt, Long.MIN_VALUE);
+    SIGNED_LONG_LOWER_BOUND = new EnumMap<>(Basepb.DataType.class);
+    SIGNED_LONG_LOWER_BOUND.put(Basepb.DataType.TinyInt, Long.valueOf(Byte.MIN_VALUE));
+    SIGNED_LONG_LOWER_BOUND.put(Basepb.DataType.SmallInt, Long.valueOf(Short.MIN_VALUE));
+    SIGNED_LONG_LOWER_BOUND.put(Basepb.DataType.MediumInt, Long.valueOf(~((1 << 23) - 1))); //-8388608
+    SIGNED_LONG_LOWER_BOUND.put(Basepb.DataType.Int, Long.valueOf(Integer.MIN_VALUE));
+    SIGNED_LONG_LOWER_BOUND.put(Basepb.DataType.BigInt, Long.MIN_VALUE); // - 2^63
 
-    LONG_UPPERBOUND = new EnumMap<>(Basepb.DataType.class);
-    LONG_UPPERBOUND.put(Basepb.DataType.TinyInt, Long.valueOf(Byte.MAX_VALUE));
-    LONG_UPPERBOUND.put(Basepb.DataType.SmallInt, Long.valueOf(Short.MAX_VALUE));
-    LONG_UPPERBOUND.put(Basepb.DataType.MediumInt, Long.valueOf((1 << 23) - 1));
-    LONG_UPPERBOUND.put(Basepb.DataType.Int, Long.valueOf(Integer.MAX_VALUE));
-    LONG_UPPERBOUND.put(Basepb.DataType.BigInt, Long.MAX_VALUE);
+    SIGNED_LONG_UPPER_BOUND = new EnumMap<>(Basepb.DataType.class);
+    SIGNED_LONG_UPPER_BOUND.put(Basepb.DataType.TinyInt, Long.valueOf(Byte.MAX_VALUE));
+    SIGNED_LONG_UPPER_BOUND.put(Basepb.DataType.SmallInt, Long.valueOf(Short.MAX_VALUE));
+    SIGNED_LONG_UPPER_BOUND.put(Basepb.DataType.MediumInt, Long.valueOf((1 << 23) - 1)); //8388607
+    SIGNED_LONG_UPPER_BOUND.put(Basepb.DataType.Int, Long.valueOf(Integer.MAX_VALUE));
+    SIGNED_LONG_UPPER_BOUND.put(Basepb.DataType.BigInt, Long.MAX_VALUE); //2^63 - 1
 
-    UNSIGNEDLONG_UPPERBOUND = new EnumMap<>(Basepb.DataType.class);
-    UNSIGNEDLONG_UPPERBOUND.put(Basepb.DataType.TinyInt, BigInteger.valueOf((1 << 8) - 1));
-    UNSIGNEDLONG_UPPERBOUND.put(Basepb.DataType.SmallInt, BigInteger.valueOf((1 << 16) - 1));
-    UNSIGNEDLONG_UPPERBOUND.put(Basepb.DataType.MediumInt, BigInteger.valueOf((1 << 24) - 1));
-    UNSIGNEDLONG_UPPERBOUND.put(Basepb.DataType.Int, BigInteger.valueOf((1L << 32) - 1));
-    UNSIGNEDLONG_UPPERBOUND.put(Basepb.DataType.BigInt, new BigInteger("18446744073709551615"));
+    UNSIGNED_LONG_UPPER_BOUND = new EnumMap<>(Basepb.DataType.class);
+    UNSIGNED_LONG_UPPER_BOUND.put(Basepb.DataType.TinyInt, BigInteger.valueOf((1 << 8) - 1));
+    UNSIGNED_LONG_UPPER_BOUND.put(Basepb.DataType.SmallInt, BigInteger.valueOf((1 << 16) - 1));
+    UNSIGNED_LONG_UPPER_BOUND.put(Basepb.DataType.MediumInt, BigInteger.valueOf((1 << 24) - 1));
+    UNSIGNED_LONG_UPPER_BOUND.put(Basepb.DataType.Int, BigInteger.valueOf((1L << 32) - 1));
+    UNSIGNED_LONG_UPPER_BOUND.put(Basepb.DataType.BigInt, new BigInteger("18446744073709551615")); // 2^64 - 1
+    // A type of BIT(M) enables storage of M-bit values. M can range from 1 to 64
+    UNSIGNED_LONG_UPPER_BOUND.put(Basepb.DataType.Bit, new BigInteger("18446744073709551615"));
   }
 
   public static void checkValue(SQLType sqlType, Value value) {
+    if (sqlType == null) {
+      return;
+    }
     switch (value.getType()) {
       case LONG:
         checkLongBound(sqlType, (LongValue) value);
@@ -66,19 +71,88 @@ public class ValueChecker {
       case UNSIGNEDLONG:
         checkUnsignedLongBound(sqlType, (UnsignedLongValue) value);
         return;
+      case STRING:
+        checkStringBound(sqlType, (StringValue) value);
+        return;
+      case BINARY:
+        checkBinaryBound(sqlType, (BinaryValue) value);
+        return;
       default:
         break;
     }
   }
 
-  static void checkLongBound(SQLType sqlType, LongValue value) {
-    if (sqlType == null) {
-      return;
+
+  private static void checkBinaryBound(SQLType sqlType, BinaryValue value) {
+    int length = value.getValue().length;
+    // check the length of value
+    if (sqlType.getPrecision() < length) {
+      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_TOO_LONG,
+              String.valueOf(sqlType.getPrecision()),
+              String.valueOf(length));
     }
+    checkCharBound(sqlType, value, length);
+  }
+
+  private static void checkStringBound(SQLType sqlType, StringValue value) {
+    int length = value.getLength();
+    // check the length of value
+    if (sqlType.getPrecision() < length) {
+      throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_TOO_LONG,
+              String.valueOf(sqlType.getPrecision()),
+              String.valueOf(length));
+    }
+    checkCharBound(sqlType, value, length);
+  }
+
+  private static void checkCharBound(SQLType sqlType, Value value, int length) {
+    Basepb.DataType dataType = sqlType.getType();
+    switch (dataType) {
+      case Char:
+      case Binary:
+      case TinyBlob:
+      case TinyText:
+        if (length > 255) {
+          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OVER_FLOW_UP,
+                  sqlType.getType().name(), value.getString());
+        }
+        return;
+      case Varchar:
+      case VarBinary:
+      case Blob:
+      case Text:
+        if (length > 65535) {
+          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OVER_FLOW_UP,
+                  sqlType.getType().name(), value.getString());
+        }
+        return;
+      case MediumBlob:
+      case MediumText:
+        if (length > 16777215) {
+          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OVER_FLOW_UP,
+                  sqlType.getType().name(), value.getString());
+        }
+        return;
+      case LongBlob:
+      case LongText:
+        // The length of LONGBLOB actually is 4G(4294967296),
+        // but the length is only less than 2G because of the range of int.
+        if (length > (Integer.MAX_VALUE - 1)) {
+          throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OVER_FLOW_UP,
+                  sqlType.getType().name(), value.getString());
+        }
+        return;
+      default:
+        return;
+
+    }
+  }
+
+  private static void checkLongBound(SQLType sqlType, LongValue value) {
     long result = value.getValue();
     if (sqlType.getUnsigned()) {
       long lower = 0;
-      BigInteger upper = UNSIGNEDLONG_UPPERBOUND.get(sqlType.getType());
+      BigInteger upper = UNSIGNED_LONG_UPPER_BOUND.get(sqlType.getType());
       if (result < lower) {
         throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OVER_FLOW_DOWN, sqlType.getType().name(),
                 Long.toString(result));
@@ -88,8 +162,8 @@ public class ValueChecker {
                 Long.toString(result));
       }
     } else {
-      long lower = LONG_LOWERBOUND.get(sqlType.getType());
-      long upper = LONG_UPPERBOUND.get(sqlType.getType());
+      long lower = SIGNED_LONG_LOWER_BOUND.get(sqlType.getType());
+      long upper = SIGNED_LONG_UPPER_BOUND.get(sqlType.getType());
       if (result < lower) {
         throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OVER_FLOW_DOWN, sqlType.getType().name(),
                 Long.toString(result));
@@ -102,13 +176,10 @@ public class ValueChecker {
   }
 
   static void checkUnsignedLongBound(SQLType sqlType, UnsignedLongValue value) {
-    if (sqlType == null) {
-      return;
-    }
     BigInteger result = value.getValue();
     if (sqlType.getUnsigned()) {
       BigInteger lower = BigInteger.valueOf(0);
-      BigInteger upper = UNSIGNEDLONG_UPPERBOUND.get(sqlType.getType());
+      BigInteger upper = UNSIGNED_LONG_UPPER_BOUND.get(sqlType.getType());
       if (result.compareTo(lower) < 0) {
         throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OVER_FLOW_DOWN, sqlType.getType().name(),
                 result.toString());
@@ -118,8 +189,8 @@ public class ValueChecker {
                 result.toString());
       }
     } else {
-      long lower = LONG_LOWERBOUND.get(sqlType.getType());
-      long upper = LONG_UPPERBOUND.get(sqlType.getType());
+      long lower = SIGNED_LONG_LOWER_BOUND.get(sqlType.getType());
+      long upper = SIGNED_LONG_UPPER_BOUND.get(sqlType.getType());
       if (result.compareTo(BigInteger.valueOf(lower)) < 0) {
         throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_VALUE_OVER_FLOW_DOWN, sqlType.getType().name(),
                 result.toString());
@@ -134,9 +205,9 @@ public class ValueChecker {
   public static BigInteger computeUpperBound(boolean unsigned, Basepb.DataType dataType) {
     BigInteger bigInteger;
     if (unsigned) {
-      bigInteger = UNSIGNEDLONG_UPPERBOUND.get(dataType);
+      bigInteger = UNSIGNED_LONG_UPPER_BOUND.get(dataType);
     } else {
-      long longValue = LONG_UPPERBOUND.get(dataType);
+      long longValue = SIGNED_LONG_UPPER_BOUND.get(dataType);
       bigInteger = BigInteger.valueOf(longValue);
     }
     return bigInteger;

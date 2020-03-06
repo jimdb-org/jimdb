@@ -21,7 +21,7 @@ import java.util.List;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.sql.operator.OperatorUtil;
 import io.jimdb.sql.operator.RelOperator;
 import io.jimdb.test.planner.TestBase;
@@ -49,7 +49,7 @@ public class LogicalPlanTest extends TestBase {
         LOG.debug("The original SQL is ({})", checker.getSql());
         LOG.debug("The logical tree is ({})", tree);
         checker.doCheck(relOperator);
-      } catch (JimException e) {
+      } catch (BaseException e) {
         LOG.error("cause error, checker sql {}", checker.getSql(), e);
         Assert.assertTrue(checker.isHasException());
         Assert.assertEquals(checker.getCheckPoints().get(CheckPoint.PlanTree), e.toString());

@@ -25,7 +25,6 @@ import java.util.List;
 import io.jimdb.core.Session;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
-import io.jimdb.core.expression.ExpressionUtil;
 import io.jimdb.core.expression.TableAccessPath;
 import io.jimdb.core.expression.ValueRange;
 import io.jimdb.core.model.meta.Column;
@@ -45,7 +44,7 @@ import reactor.util.function.Tuples;
 /**
  * Class to update the access paths before building stats
  */
-@SuppressFBWarnings("UP_UNUSED_PARAMETER")
+@SuppressFBWarnings("CE_CLASS_ENVY")
 public class AccessPathDecorator {
 
   public static void decorateAccessPath(Session session, RelOperator operator) {
@@ -93,19 +92,14 @@ public class AccessPathDecorator {
     final double rowCount = operatorStatsInfo.getEstimatedRowCount();
     path.setCountOnAccess(rowCount);
 
-    final List<ColumnExpr> primaryKeyColumnExprs =
-            ExpressionUtil.indexToColumnExprs(tableSource.getTable().getPrimaryIndex(),
-                    tableSource.getSchema().getColumns());
-
-
-    if (pushedDownConditions == null || pushedDownConditions.isEmpty() || primaryKeyColumnExprs.isEmpty()) {
-      path.setRanges(Collections.singletonList(RangeBuilder.fullRange()));
+    if (pushedDownConditions == null || pushedDownConditions.isEmpty() || path.getIndexColumns().isEmpty()) {
+      path.setRanges(RangeBuilder.fullRangeList());
       path.setTableConditions(pushedDownConditions);
       return false;
     }
 
     Tuple4<List<ValueRange>, List<Expression>, List<Expression>, Boolean> cnfResult =
-            NFDetacher.detachConditionsAndBuildRangeForIndex(session, pushedDownConditions, primaryKeyColumnExprs);
+            NFDetacher.detachConditionsAndBuildRangeForIndex(session, pushedDownConditions, path.getIndexColumns());
     path.setAccessConditions(cnfResult.getT2());
     path.setTableConditions(cnfResult.getT3());
     path.setRanges(cnfResult.getT1());
@@ -143,14 +137,9 @@ public class AccessPathDecorator {
     final double rowCount = operatorStatsInfo.getEstimatedRowCount();
     path.setCountOnAccess(rowCount);
 
-    path.setRanges(Collections.singletonList(RangeBuilder.fullRange()));
-    final List<ColumnExpr> columnExprs = ExpressionUtil.indexToColumnExprs(path.getIndex(),
-            tableSource.getSchema().getColumns());
-    path.setIndexColumns(columnExprs);
-
-    if (columnExprs.size() > 0) {
+    if (path.getIndexColumns().size() > 0) {
       Tuple4<List<ValueRange>, List<Expression>, List<Expression>, Boolean> tuple4 =
-              NFDetacher.detachConditionsAndBuildRangeForIndex(session, pushedDownConditions, columnExprs);
+              NFDetacher.detachConditionsAndBuildRangeForIndex(session, pushedDownConditions, path.getIndexColumns());
 
       List<ValueRange> ranges = tuple4.getT1();
       path.setRanges(ranges);
@@ -165,6 +154,7 @@ public class AccessPathDecorator {
       path.setCountOnAccess(countOnAccess);
     } else {
       path.setTableConditions(pushedDownConditions);
+      path.setRanges(RangeBuilder.fullRangeList());
     }
 
     // update table and index conditions

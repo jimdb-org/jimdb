@@ -132,4 +132,5 @@ public final class InsertTest extends SqlTestBase {
     expected.add("id=11111; name=testInsertPartial; age=18");
     execQuery(String.format("select * from %s where id=11111", TABLENAME), expected);
   }
+
 }

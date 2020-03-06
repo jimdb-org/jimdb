@@ -17,11 +17,11 @@
 package io.jimdb.common.utils.callback;
 
 /**
- * @version V1.0
+ * Interface of call back functions
  */
 public interface Callback {
 
   void success(boolean value);
 
-  void failed(Throwable throwable);
+  void fail(Throwable throwable);
 }

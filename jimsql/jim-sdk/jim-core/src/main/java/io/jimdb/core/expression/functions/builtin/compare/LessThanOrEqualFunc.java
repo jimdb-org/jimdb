@@ -23,7 +23,7 @@ import io.jimdb.core.Session;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.expression.functions.builtin.compare.comparators.ComparatorFacade;
@@ -78,7 +78,7 @@ public final class LessThanOrEqualFunc extends Func {
   }
 
   @Override
-  public LongValue execLong(ValueAccessor accessor) throws JimException {
+  public LongValue execLong(ValueAccessor accessor) throws BaseException {
     LongValue cmp = comparator.compare(session, args[0], accessor, args[1], accessor, false);
     if (cmp == null) {
       return null;

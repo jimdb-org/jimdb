@@ -18,7 +18,7 @@ package io.jimdb.core.expression.functions;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ExpressionType;
@@ -208,39 +208,39 @@ public abstract class Func implements Cloneable {
     return session;
   }
 
-  public LongValue execLong(ValueAccessor accessor) throws JimException {
+  public LongValue execLong(ValueAccessor accessor) throws BaseException {
     throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_FUNC_OPERATION_ERROR, name, "execLong");
   }
 
-  public UnsignedLongValue execUnsignedLong(ValueAccessor accessor) throws JimException {
+  public UnsignedLongValue execUnsignedLong(ValueAccessor accessor) throws BaseException {
     throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_FUNC_OPERATION_ERROR, name, "execUnsignedLong");
   }
 
-  public DoubleValue execDouble(ValueAccessor accessor) throws JimException {
+  public DoubleValue execDouble(ValueAccessor accessor) throws BaseException {
     throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_FUNC_OPERATION_ERROR, name, "execDouble");
   }
 
-  public DecimalValue execDecimal(ValueAccessor accessor) throws JimException {
+  public DecimalValue execDecimal(ValueAccessor accessor) throws BaseException {
     throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_FUNC_OPERATION_ERROR, name, "execDecimal");
   }
 
-  public StringValue execString(ValueAccessor accessor) throws JimException {
+  public StringValue execString(ValueAccessor accessor) throws BaseException {
     throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_FUNC_OPERATION_ERROR, name, "execString");
   }
 
-  public DateValue execDate(ValueAccessor accessor) throws JimException {
+  public DateValue execDate(ValueAccessor accessor) throws BaseException {
     throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_FUNC_OPERATION_ERROR, name, "execDate");
   }
 
-  public TimeValue execTime(ValueAccessor accessor) throws JimException {
+  public TimeValue execTime(ValueAccessor accessor) throws BaseException {
     throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_FUNC_OPERATION_ERROR, name, "execTime");
   }
 
-  public YearValue execYear(ValueAccessor accessor) throws JimException {
+  public YearValue execYear(ValueAccessor accessor) throws BaseException {
     throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_FUNC_OPERATION_ERROR, name, "execYear");
   }
 
-  public JsonValue execJson(ValueAccessor accessor) throws JimException {
+  public JsonValue execJson(ValueAccessor accessor) throws BaseException {
     throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_SYSTEM_FUNC_OPERATION_ERROR, name, "execJson");
   }
 

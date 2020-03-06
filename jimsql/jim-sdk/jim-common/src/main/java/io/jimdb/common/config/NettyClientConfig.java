@@ -15,8 +15,8 @@
  */
 package io.jimdb.common.config;
 
-import io.jimdb.common.utils.buffer.BufAllocatorFactory;
-import io.jimdb.common.utils.buffer.DefaultBufAllocatorFactory;
+import io.jimdb.common.utils.buffer.ByteBufAllocatorFactory;
+import io.jimdb.common.utils.buffer.DefaultByteBufAllocatorFactory;
 import io.jimdb.common.utils.lang.NamedThreadFactory;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Client Config.
+ * Netty client configuration
  */
 @SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2", "EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" })
 public final class NettyClientConfig extends NettyConfig {
@@ -87,12 +87,12 @@ public final class NettyClientConfig extends NettyConfig {
     if (StringUtils.isNotBlank(allocatorFactory)) {
       try {
         Class allocatorClass = Class.forName(allocatorFactory);
-        this.setAllocatorFactory((BufAllocatorFactory) allocatorClass.newInstance());
+        this.setAllocatorFactory((ByteBufAllocatorFactory) allocatorClass.newInstance());
       } catch (Exception ex) {
         throw new IllegalArgumentException("load allocatorFactory error", ex);
       }
     } else {
-      this.setAllocatorFactory(new DefaultBufAllocatorFactory());
+      this.setAllocatorFactory(new DefaultByteBufAllocatorFactory());
     }
   }
 

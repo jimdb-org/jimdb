@@ -16,7 +16,7 @@
 package io.jimdb.common.exception;
 
 /**
- * @version V1.0
+ * Defined error modules
  */
 public enum ErrorModule {
   SYSTEM("System"),
@@ -28,7 +28,7 @@ public enum ErrorModule {
   PLANNER("Planner"),
   EXECUTOR("Executor"),
   ENGINE("Engine"),
-  NETRPC("NetRpc"),
+  RPC("Rpc"),
   MEMORY("memory"),
   EXPR("expression");
 

@@ -49,6 +49,9 @@ public class TimeUtil {
   //838:59:59.000000, TIME_MAX_HOUR*10000 + TIME_MAX_MINUTE*100 + TIME_MAX_SECOND + 0 micro second
   protected static final int TIME_MAX_VALUE = 843959;
 
+//  protected static final Timestamp TIMESTAMP_MAX = Timestamp.valueOf("2038-01-19 03:14:07.000000");
+//  protected static final Timestamp TIMESTAMP_MIN = Timestamp.valueOf("1970-01-01 00:00:00.000000");
+
   protected static final Timestamp TIMESTAMP_MAX = Timestamp.valueOf("9999-12-31 23:59:59.999999");
   protected static final Timestamp TIMESTAMP_MIN = Timestamp.valueOf("1000-01-01 00:00:00.000000");
 

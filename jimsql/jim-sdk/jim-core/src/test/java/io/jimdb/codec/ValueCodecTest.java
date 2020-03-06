@@ -97,7 +97,7 @@ public class ValueCodecTest {
   public void testDateEncodeForDate() throws Exception {
     String[] strs = new String[]{ "2019-10-19", "2015-07-21 12:12:12.1212", "2015-07-22 12:12:12.1212" };
     for (String str : strs) {
-      DateValue value = DateValue.getInstance(str, Basepb.DataType.Date, 0, null);
+      DateValue value = DateValue.getInstance(str, Basepb.DataType.Date, 0);
       System.out.println(value.getString());
       long num = TimeUtil.encodeTimestampToUint64(value.getValue());
       System.out.println(num);
@@ -120,7 +120,7 @@ public class ValueCodecTest {
     String[] strs = new String[]{ "2019-10-29", "2015-07-21 12:12:12.1212", "2015-07-21 13:12:12.1212" };
     long colId = 2;
     for (String str : strs) {
-      DateValue value = DateValue.getInstance(str, Basepb.DataType.DateTime, 6, null);
+      DateValue value = DateValue.getInstance(str, Basepb.DataType.DateTime, 6);
       System.out.println("old time :" + value.getString());
       long num = TimeUtil.encodeTimestampToUint64(value.getValue());
       System.out.println(num);
@@ -151,7 +151,7 @@ public class ValueCodecTest {
   public void testDateEncodeForTimestamp() throws Exception {
     String[] strs = new String[]{ "2015-07-21 12:12:12.1212", "2015-07-21 13:12:12.1212" };
     for (String str : strs) {
-      DateValue value = DateValue.getInstance(str, Basepb.DataType.TimeStamp, 6, null);
+      DateValue value = DateValue.getInstance(str, Basepb.DataType.TimeStamp, 6);
       long num = TimeUtil.encodeTimestampToUint64(value.getValue());
       System.out.println(num);
       //1843848852151589232

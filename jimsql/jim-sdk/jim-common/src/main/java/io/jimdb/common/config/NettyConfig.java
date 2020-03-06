@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.function.Supplier;
 
-import io.jimdb.common.utils.buffer.BufAllocatorFactory;
+import io.jimdb.common.utils.buffer.ByteBufAllocatorFactory;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
@@ -29,7 +29,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * @version V1.0
+ * Abstract netty related configurations
  */
 @SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public abstract class NettyConfig implements Closeable {
@@ -66,7 +66,7 @@ public abstract class NettyConfig implements Closeable {
   // Channel handlers
   private Supplier<ChannelHandler[]> handlerSupplier;
   // Allocator Factory
-  protected BufAllocatorFactory allocatorFactory;
+  protected ByteBufAllocatorFactory allocatorFactory;
 
   public NettyConfig() {
   }
@@ -213,11 +213,11 @@ public abstract class NettyConfig implements Closeable {
     this.handlerSupplier = handlerSupplier;
   }
 
-  public BufAllocatorFactory getAllocatorFactory() {
+  public ByteBufAllocatorFactory getAllocatorFactory() {
     return allocatorFactory;
   }
 
-  public void setAllocatorFactory(BufAllocatorFactory allocatorFactory) {
+  public void setAllocatorFactory(ByteBufAllocatorFactory allocatorFactory) {
     this.allocatorFactory = allocatorFactory;
   }
 

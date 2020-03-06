@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.utils.lang.ByteUtil;
 import io.jimdb.common.utils.lang.IOUtil;
 import io.jimdb.core.config.JimConfig;
@@ -364,7 +364,7 @@ public final class TableTest extends SqlTestBase {
   @Test
   public void testDropNameError() {
     String sql = "Drop TABLE nul999.test";
-    SQLException result = new SQLException("Unknown database 'nul999'", "42000", 1049);
+    SQLException result = new SQLException("Unknown database '[nul999]'", "42000", 1049);
     execUpdate(sql, result, true);
 
     sql = "Drop TABLE 'test@'";
@@ -438,7 +438,7 @@ public final class TableTest extends SqlTestBase {
     for (Metapb.TableInfo table : dropTables) {
       try {
         routerStore.getRoute(table.getDbId(), table.getId(), null, 3);
-      } catch (JimException ex) {
+      } catch (BaseException ex) {
         Assert.assertEquals(1051, ex.getCode().getCode());
         Assert.assertEquals(String.format("Unknown table '%s'", table.getId()), ex.getMessage());
       }
@@ -456,7 +456,7 @@ public final class TableTest extends SqlTestBase {
     for (Metapb.TableInfo table : dropTables) {
       try {
         routerStore.getRoute(table.getDbId(), table.getId(), null, 3);
-      } catch (JimException ex) {
+      } catch (BaseException ex) {
         Assert.assertEquals(1049, ex.getCode().getCode());
         Assert.assertEquals(String.format("Unknown database '%s'", table.getDbId()), ex.getMessage());
       }

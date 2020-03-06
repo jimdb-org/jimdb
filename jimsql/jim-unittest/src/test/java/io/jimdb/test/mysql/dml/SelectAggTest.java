@@ -182,9 +182,9 @@ public class SelectAggTest extends SqlTestBase {
   @Test
   public void testSelectTinyintGroupby() {
     List<String> expected = expectedStr(new String[]{
-            "sum=0; avg=0; cnt=25; max=0; min=0; country=china; gender=0; company=baidu",
-            "sum=0; avg=0; cnt=25; max=0; min=0; country=china; gender=0; company=facebook",
-            "sum=0; avg=0; cnt=25; max=0; min=0; country=china; gender=0; company=jingdong"
+            "sum=0; avg=0.0000; cnt=25; max=0; min=0; country=china; gender=0; company=baidu",
+            "sum=0; avg=0.0000; cnt=25; max=0; min=0; country=china; gender=0; company=facebook",
+            "sum=0; avg=0.0000; cnt=25; max=0; min=0; country=china; gender=0; company=jingdong"
     });
     execQuery("select sum(gender) as sum, avg(gender) as avg, count(1) as cnt, max(gender) as max, min(gender) as min, "
             + "country, gender, company "
@@ -382,12 +382,12 @@ public class SelectAggTest extends SqlTestBase {
   @Test
   public void testSelectIndexHaving() {
     List<String> expected = expectedStr(new String[]{
-            "id=88; age=35",
-            "id=69; age=40",
-            "id=68; age=35"
+            "id=98; age=57",
+            "id=97; age=56",
+            "id=96; age=55"
     });
     execQuery("select id, age  "
-            + "from baker_agg where (age > 30 and age <= 40) having id < 100 and id > 50 "
+            + "from baker_agg where (age > 50 and age <= 60) having id < 100 and id > 50 "
             + " order by id desc  limit 1, 3 ", expected);
   }
 
@@ -460,7 +460,7 @@ public class SelectAggTest extends SqlTestBase {
 
       System.out.println("execute by cloum : " + metaName);
 
-      if (metaName.equals("crt_year")) { //TODO: FIX ME , the year value is  2038-01-01
+      if (metaName.equals("crt_year") || metaName.equals("id")) { //TODO: FIX ME , the year value is  2038-01-01
         continue;
       }
 
@@ -851,7 +851,10 @@ public class SelectAggTest extends SqlTestBase {
 
   @Test
   public void testStreamAgg() {
-    execQuery("select sum(age) from baker_agg group by age");
+    List<String> expected = expectedStr(new String[]{
+            "SUM(age)=0", "SUM(age)=10"
+    });
+    execQuery("select sum(age) from baker_agg group by age limit 2", expected);
   }
 
   //  @Test
@@ -878,4 +881,46 @@ public class SelectAggTest extends SqlTestBase {
     }
   }
 
+  @Test
+  public void testMessageRetry() {
+
+    String TEST_TABLENAME = DBNAME + "." + "message_retry";
+
+    execUpdate(String.format("DROP TABLE IF EXISTS %s ", TEST_TABLENAME), 0, true);
+
+    String sql = "CREATE TABLE IF NOT EXISTS " + TEST_TABLENAME + " ("
+            + " `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',"
+            + " `topic` varchar(100) NOT NULL COMMENT '主题',"
+            + " `app` varchar(100) NOT NULL COMMENT '应用',"
+            + " `retry_time` datetime NOT NULL COMMENT '重试时间',"
+            + " `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态,0:成功,1:失败,-2:过期',"
+            + " PRIMARY KEY (`id`),"
+            + " KEY `idx_topic_app` (`topic`, `app`, `status`, `retry_time`)"
+            + ")COMMENT 'REPLICA=1' ENGINE=memory AUTO_INCREMENT=0 PARTITION BY RANGE(id) PARTITIONS 1 ";
+    execUpdate(sql, 0, true);
+
+    sql = String.format("INSERT INTO %s(topic, app, retry_time, status) VALUES('topic-1','app-1','2010-02-10 12:21:01',1)", TEST_TABLENAME);
+    execUpdate(sql, 1, true);
+    execQuery(String.format("select count(1),  topic from %s where status=1 group by topic ", TEST_TABLENAME));
+
+//    int size = 1000000;
+//    CountDownLatch latch = new CountDownLatch(size);
+//    ExecutorService service = Executors.newFixedThreadPool(3);
+//
+//    for (int i = 0; i < size; i++) {
+//      service.execute(() -> {
+//        try {
+//          execQuery(String.format("select count(1),  topic, app from %s where status=1 group by topic,app ", TEST_TABLENAME));
+//        } finally {
+//          latch.countDown();
+//        }
+//      });
+//    }
+//
+//    try {
+//      latch.await();
+//    } catch (InterruptedException e) {
+//      e.printStackTrace();
+//    }
+  }
 }

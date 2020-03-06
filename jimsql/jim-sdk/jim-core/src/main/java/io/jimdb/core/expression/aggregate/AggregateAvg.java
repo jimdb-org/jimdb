@@ -116,7 +116,9 @@ public class AggregateAvg extends AggregateFunc {
       if (count.getType() != sum.getType()) {
         count = ValueConvertor.convertType(session, count, sum.getType(), getSqlType());
       }
-      finalRow.set(index, sum.divide(session, count));
+      Value result = sum.divide(session, count);
+      result = ValueConvertor.convertType(session, result, sum.getType(), getSqlType());
+      finalRow.set(index, result);
     } else {
       finalRow.set(index, cell.getSum());
     }

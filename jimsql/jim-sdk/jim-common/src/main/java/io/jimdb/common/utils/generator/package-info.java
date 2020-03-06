@@ -15,6 +15,6 @@
  */
 
 /**
- * Generator tools.
+ * Generator
  */
 package io.jimdb.common.utils.generator;

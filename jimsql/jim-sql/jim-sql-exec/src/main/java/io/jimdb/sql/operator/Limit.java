@@ -18,7 +18,7 @@ package io.jimdb.sql.operator;
 import java.util.Arrays;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.model.result.ExecResult;
@@ -73,7 +73,7 @@ public final class Limit extends RelOperator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     if (hasChildren()) {
       return children[0].execute(session).flatMap(execResult -> {
         execResult.truncate((int) offset, (int) count);

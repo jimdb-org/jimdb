@@ -18,7 +18,7 @@ package io.jimdb.sql.operator;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.AckExecResult;
@@ -43,7 +43,7 @@ public final class Use extends Operator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     if (null == session.getTxnContext().getMetaData().getCatalog(DDLUtils.trimName(databases))) {
       throw DBException.get(ErrorModule.EXECUTOR, ErrorCode.ER_BAD_DB_ERROR, databases);
     } else {

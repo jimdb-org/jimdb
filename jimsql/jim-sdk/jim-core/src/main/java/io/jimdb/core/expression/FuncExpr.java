@@ -15,16 +15,18 @@
  */
 package io.jimdb.core.expression;
 
+import static io.jimdb.core.expression.Points.MAX_POINT;
+import static io.jimdb.core.expression.Points.MIN_POINT;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.expression.functions.Func;
 import io.jimdb.core.expression.functions.FuncType;
 import io.jimdb.core.expression.functions.builtin.cast.CastFuncBuilder;
 import io.jimdb.core.types.Types;
-import io.jimdb.core.types.ValueType;
 import io.jimdb.core.values.DateValue;
 import io.jimdb.core.values.DecimalValue;
 import io.jimdb.core.values.DoubleValue;
@@ -122,13 +124,11 @@ public final class FuncExpr extends Expression {
     FuncType funcType = this.funcType;
     // a = 1
     if (args[0].getExprType() == ExpressionType.COLUMN) {
-      ValueExpr valueExpr = (ValueExpr) args[1];
-      value = valueExpr.getValue();
+      value = ((ValueExpr) args[1]).getValue();
     } else if (args[1].getExprType() == ExpressionType.COLUMN) {
       // 1 = a
-      ValueExpr valueExpr = (ValueExpr) args[0];
 
-      value = valueExpr.getValue();
+      value = ((ValueExpr) args[0]).getValue();
       switch (funcType) {
         // 1 >= a  --> a <= 1
         case GreaterThanOrEqual:
@@ -159,37 +159,37 @@ public final class FuncExpr extends Expression {
         points.add(endPointEq);
         break;
       case NotEqual:
-        Point startPointNe1 = new Point(Value.MIN_VALUE, true);
+        Point startPointNe1 = MIN_POINT;
         Point endPointNe1 = new Point(value, false, false);
 
         Point startPointNe2 = new Point(value, true, false);
-        Point endPointNe2 = new Point(Value.MAX_VALUE, false);
+        Point endPointNe2 = MAX_POINT;
         points.add(startPointNe1);
         points.add(endPointNe1);
         points.add(startPointNe2);
         points.add(endPointNe2);
         break;
       case LessThan:
-        Point startPointLt = new Point(Value.MIN_VALUE, true);
+        Point startPointLt = MIN_POINT;
         Point endPointLt = new Point(value, false, false);
         points.add(startPointLt);
         points.add(endPointLt);
         break;
       case LessThanOrEqual:
-        Point startPointLe = new Point(Value.MIN_VALUE, true);
+        Point startPointLe = MIN_POINT;
         Point endPointLe = new Point(value, false);
         points.add(startPointLe);
         points.add(endPointLe);
         break;
       case GreaterThan:
         Point startPointGt = new Point(value, true, false);
-        Point endPointGt = new Point(Value.MAX_VALUE, false);
+        Point endPointGt = MAX_POINT;
         points.add(startPointGt);
         points.add(endPointGt);
         break;
       case GreaterThanOrEqual:
         Point startPointGe = new Point(value, true);
-        Point endPointGe = new Point(Value.MAX_VALUE, false);
+        Point endPointGe = MAX_POINT;
         points.add(startPointGe);
         points.add(endPointGe);
         break;
@@ -202,28 +202,15 @@ public final class FuncExpr extends Expression {
 
   @Override
   public boolean check(ConditionChecker conditionChecker) {
-    if (funcType == FuncType.BooleanAnd
-                || funcType == FuncType.BooleanOr) {
-      if (func.getArgs().length == 2) {
-        boolean flag = true;
-        for (int i = 0; i < func.getArgs().length; i++) {
-          flag = flag & func.getArgs()[i].check(conditionChecker);
-        }
-        return flag;
+    if (func.getArgs().length == 2 && (funcType == FuncType.BooleanAnd || funcType == FuncType.BooleanOr
+            || funcType == FuncType.Equality || funcType == FuncType.NotEqual
+            || funcType == FuncType.GreaterThanOrEqual || funcType == FuncType.GreaterThan
+            || funcType == FuncType.LessThanOrEqual || funcType == FuncType.LessThan)) {
+      boolean flag = true;
+      for (int i = 0; i < func.getArgs().length; i++) {
+        flag = flag & func.getArgs()[i].check(conditionChecker);
       }
-    } else if (funcType == FuncType.Equality
-                       || funcType == FuncType.NotEqual
-                       || funcType == FuncType.GreaterThanOrEqual
-                       || funcType == FuncType.GreaterThan
-                       || funcType == FuncType.LessThanOrEqual
-                       || funcType == FuncType.LessThan) {
-      if (func.getArgs().length == 2) {
-        boolean flag = true;
-        for (int i = 0; i < func.getArgs().length; i++) {
-          flag = flag & func.getArgs()[i].check(conditionChecker);
-        }
-        return flag;
-      }
+      return flag;
     }
     return false;
   }
@@ -241,8 +228,7 @@ public final class FuncExpr extends Expression {
 
     for (Expression expression: func.getArgs()) {
       if (expression.isFuncExpr(funcType)) {
-        FuncExpr funcExpr = (FuncExpr) expression;
-        expressions.addAll(funcExpr.extractExpressions(funcType));
+        expressions.addAll(((FuncExpr) expression).extractExpressions(funcType));
       } else {
         expressions.add(expression);
       }
@@ -289,7 +275,7 @@ public final class FuncExpr extends Expression {
   }
 
   @Override
-  public Expression resolveOffset(Schema schema, boolean isClone) throws JimException {
+  public Expression resolveOffset(Schema schema, boolean isClone) throws BaseException {
     FuncExpr result = isClone ? this.clone() : this;
 
     for (Expression arg : result.func.getArgs()) {
@@ -299,10 +285,11 @@ public final class FuncExpr extends Expression {
   }
 
   @Override
-  public Value exec(ValueAccessor accessor) throws JimException {
-    final ValueType vt = Types.sqlToValueType(resultType);
-
-    switch (vt) {
+  public Value exec(ValueAccessor accessor) throws BaseException {
+    if (resultValueType == null) {
+      resultValueType = Types.sqlToValueType(resultType);
+    }
+    switch (resultValueType) {
       case NULL:
         return null;
       case LONG:
@@ -329,7 +316,7 @@ public final class FuncExpr extends Expression {
   }
 
   @Override
-  public LongValue execLong(Session session, ValueAccessor accessor) throws JimException {
+  public LongValue execLong(Session session, ValueAccessor accessor) throws BaseException {
     final LongValue result = func.execLong(accessor);
     if (result == null || result.isNull()) {
       return null;
@@ -338,7 +325,7 @@ public final class FuncExpr extends Expression {
   }
 
   @Override
-  public UnsignedLongValue execUnsignedLong(Session session, ValueAccessor accessor) throws JimException {
+  public UnsignedLongValue execUnsignedLong(Session session, ValueAccessor accessor) throws BaseException {
     final UnsignedLongValue result = func.execUnsignedLong(accessor);
     if (result == null || result.isNull()) {
       return null;
@@ -347,7 +334,7 @@ public final class FuncExpr extends Expression {
   }
 
   @Override
-  public DoubleValue execDouble(Session session, ValueAccessor accessor) throws JimException {
+  public DoubleValue execDouble(Session session, ValueAccessor accessor) throws BaseException {
     final DoubleValue result = func.execDouble(accessor);
     if (result == null || result.isNull()) {
       return null;
@@ -356,7 +343,7 @@ public final class FuncExpr extends Expression {
   }
 
   @Override
-  public DecimalValue execDecimal(Session session, ValueAccessor accessor) throws JimException {
+  public DecimalValue execDecimal(Session session, ValueAccessor accessor) throws BaseException {
     final DecimalValue result = func.execDecimal(accessor);
     if (result == null || result.isNull()) {
       return null;
@@ -365,7 +352,7 @@ public final class FuncExpr extends Expression {
   }
 
   @Override
-  public StringValue execString(Session session, ValueAccessor accessor) throws JimException {
+  public StringValue execString(Session session, ValueAccessor accessor) throws BaseException {
     final StringValue result = func.execString(accessor);
     if (result == null || result.isNull()) {
       return null;
@@ -374,7 +361,7 @@ public final class FuncExpr extends Expression {
   }
 
   @Override
-  public DateValue execDate(Session session, ValueAccessor accessor) throws JimException {
+  public DateValue execDate(Session session, ValueAccessor accessor) throws BaseException {
     final DateValue result = func.execDate(accessor);
     if (result == null || result.isNull()) {
       return null;
@@ -383,7 +370,7 @@ public final class FuncExpr extends Expression {
   }
 
   @Override
-  public TimeValue execTime(Session session, ValueAccessor accessor) throws JimException {
+  public TimeValue execTime(Session session, ValueAccessor accessor) throws BaseException {
     final TimeValue result = func.execTime(accessor);
     if (result == null || result.isNull()) {
       return null;
@@ -392,7 +379,7 @@ public final class FuncExpr extends Expression {
   }
 
   @Override
-  public YearValue execYear(Session session, ValueAccessor accessor) throws JimException {
+  public YearValue execYear(Session session, ValueAccessor accessor) throws BaseException {
     final YearValue result = func.execYear(accessor);
     if (result == null || result.isNull()) {
       return null;
@@ -401,7 +388,7 @@ public final class FuncExpr extends Expression {
   }
 
   @Override
-  public JsonValue execJson(Session session, ValueAccessor accessor) throws JimException {
+  public JsonValue execJson(Session session, ValueAccessor accessor) throws BaseException {
     final JsonValue result = func.execJson(accessor);
     if (result == null || result.isNull()) {
       return null;

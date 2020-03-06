@@ -23,7 +23,7 @@ import java.util.concurrent.CountDownLatch;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.plugin.SQLEngine;
 import io.jimdb.core.plugin.SQLExecutor;
@@ -56,7 +56,7 @@ public final class ExecutorHelper {
    */
   public static final class SyncSession extends Session {
     private List<ExecResult> results;
-    private JimException error;
+    private BaseException error;
     private final CountDownLatch latch;
 
     SyncSession(SQLEngine sqlEngine, Engine storeEngine, int num) {
@@ -87,7 +87,7 @@ public final class ExecutorHelper {
     }
 
     @Override
-    public void writeError(JimException ex) {
+    public void writeError(BaseException ex) {
       error = ex;
       final long size = latch.getCount();
       for (long i = 0; i < size; i++) {

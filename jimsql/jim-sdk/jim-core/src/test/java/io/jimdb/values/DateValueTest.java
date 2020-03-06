@@ -93,7 +93,7 @@ public class DateValueTest {
             "2015-07-21",
             "20150721" };
     for (String s : sValues) {
-      DateValue value = DateValue.getInstance(s, DataType.DateTime, 6, null);
+      DateValue value = DateValue.getInstance(s, DataType.DateTime, 6);
       System.out.println("datetime: " + value.getValue());
     }
     //2015-07-21 12:12:12.1212
@@ -102,7 +102,7 @@ public class DateValueTest {
     //2015-07-21 00:00:00.0
 
     for (String s : sValues) {
-      DateValue value = DateValue.getInstance(s, DataType.TimeStamp, 6, null);
+      DateValue value = DateValue.getInstance(s, DataType.TimeStamp, 6);
       System.out.println("timestamp: " + value.getValue());
     }
     //2015-07-21 12:12:12.1212
@@ -111,7 +111,7 @@ public class DateValueTest {
     //2015-07-21 00:00:00.0
 
     for (String s : sValues) {
-      DateValue value = DateValue.getInstance(s, DataType.Date, 0, null);
+      DateValue value = DateValue.getInstance(s, DataType.Date, 0);
       System.out.println("date: " + value.getValue());
     }
     //2015-07-21 00:00:00.0

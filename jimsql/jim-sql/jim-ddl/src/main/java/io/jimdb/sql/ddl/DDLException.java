@@ -17,12 +17,12 @@ package io.jimdb.sql.ddl;
 
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 
 /**
  * @version V1.0
  */
-final class DDLException extends JimException {
+final class DDLException extends BaseException {
   private static final long serialVersionUID = -2943328982200719266L;
 
   final ErrorType type;

@@ -20,7 +20,7 @@ import io.jimdb.core.context.VariableContext;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.AckExecResult;
@@ -49,7 +49,7 @@ public final class Set extends Operator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
     Variable var;
     VariableContext varContext = session.getVarContext();
     for (VariableAssign assign : assigns) {
@@ -73,7 +73,7 @@ public final class Set extends Operator {
     return Flux.just(AckExecResult.getInstance());
   }
 
-  private void setSysVariable(Session session, VariableAssign assign) throws JimException {
+  private void setSysVariable(Session session, VariableAssign assign) throws BaseException {
     final Variable var = assign.getVariable();
     final String name = var.getName();
     final VariableContext varContext = session.getVarContext();

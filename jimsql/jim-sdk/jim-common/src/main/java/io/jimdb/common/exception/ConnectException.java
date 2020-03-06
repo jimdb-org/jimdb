@@ -18,11 +18,10 @@ package io.jimdb.common.exception;
 /**
  * Connection Exception
  *
- * @version V1.0
  */
-public final class ConnectException extends JimException {
+public final class ConnectException extends BaseException {
   private ConnectException(ErrorCode code, String message, Throwable cause) {
-    super(ErrorModule.NETRPC, code, message, cause);
+    super(ErrorModule.RPC, code, message, cause);
   }
 
   public static ConnectException get(ErrorCode code, String... params) {

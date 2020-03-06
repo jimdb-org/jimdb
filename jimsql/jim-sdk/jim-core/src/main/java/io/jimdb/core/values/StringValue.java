@@ -69,6 +69,10 @@ public final class StringValue extends Value<StringValue> {
     return value;
   }
 
+  public int getLength() {
+    return value == null ? 0 : value.length();
+  }
+
   @Override
   public ValueType getType() {
     return ValueType.STRING;

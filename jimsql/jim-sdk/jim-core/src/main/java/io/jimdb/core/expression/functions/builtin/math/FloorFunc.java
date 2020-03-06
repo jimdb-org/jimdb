@@ -18,7 +18,7 @@ package io.jimdb.core.expression.functions.builtin.math;
 import io.jimdb.core.expression.functions.Func;
 import io.jimdb.core.expression.functions.UnaryFuncBuilder;
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.pb.Exprpb;
@@ -51,7 +51,7 @@ public class FloorFunc extends Func {
   }
 
   @Override
-  public LongValue execLong(ValueAccessor accessor) throws JimException {
+  public LongValue execLong(ValueAccessor accessor) throws BaseException {
     DoubleValue doubleValue = args[0].execDouble(session, accessor);
     Double floor = Math.floor(doubleValue.getValue());
     return LongValue.getInstance(floor.intValue());

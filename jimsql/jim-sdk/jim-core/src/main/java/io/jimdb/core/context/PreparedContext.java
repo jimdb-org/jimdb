@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.jimdb.common.utils.lang.Resetable;
+import io.jimdb.common.utils.lang.Resettable;
 import io.jimdb.core.values.Value;
 import io.jimdb.pb.Metapb.SQLType;
 
@@ -34,7 +34,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @version V1.0
  */
 @SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
-public final class PreparedContext implements Resetable {
+public final class PreparedContext implements Resettable {
   private volatile int stmtSeq;
   private volatile SQLType[] paramTypes;
   private volatile Value[] paramValues;

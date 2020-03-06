@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
 import io.jimdb.core.Session;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.RowValueAccessor;
 import io.jimdb.core.expression.Schema;
@@ -80,7 +80,7 @@ public class Analyze extends Operator {
   }
 
   @Override
-  public Flux<ExecResult> execute(Session session) throws JimException {
+  public Flux<ExecResult> execute(Session session) throws BaseException {
 
     if (TableStatsManager.isStatsPushDownEnabled()) {
       LOGGER.debug("Executing stats push-down...");
@@ -104,7 +104,7 @@ public class Analyze extends Operator {
     });
   }
 
-  private Flux<ExecResult> executeStatsPushDown(Session session) throws JimException {
+  private Flux<ExecResult> executeStatsPushDown(Session session) throws BaseException {
     final TableSource tableSource = tableSourceList.get(0);
     final Table table = tableSource.getTable();
     final Engine storeEngine = session.getStoreEngine();

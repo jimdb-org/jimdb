@@ -49,5 +49,12 @@
             <directory>lib</directory>
             <outputDirectory>lib</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>../../jim-test/src/main/scripts</directory>
+            <excludes>
+                <exclude>${testExclude}</exclude>
+            </excludes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
     </fileSets>
 </assembly>

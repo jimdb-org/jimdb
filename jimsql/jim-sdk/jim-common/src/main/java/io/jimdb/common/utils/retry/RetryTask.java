@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 /**
- * @version V1.0
+ * Retry task
  */
 public final class RetryTask implements Runnable {
   private static final Logger LOG = LoggerFactory.getLogger(RetryTask.class);
@@ -36,7 +36,7 @@ public final class RetryTask implements Runnable {
   private static final AtomicLong COUNTER = new AtomicLong();
 
   @sun.misc.Contended
-  private volatile long retrys = 1;
+  private volatile long retries = 1;
 
   private final long startTime;
   private final String name;
@@ -45,9 +45,9 @@ public final class RetryTask implements Runnable {
   private final RetryPolicy policy;
 
   public RetryTask(final String name, final RetryPolicy policy, final ScheduledExecutorService retryExecutor, final RetryCallback callback) {
-    Preconditions.checkArgument(callback != null, "callback must not be null");
-    Preconditions.checkArgument(policy != null, "policy must not be null");
-    Preconditions.checkArgument(retryExecutor != null, "retryExecutor must not be null");
+    Preconditions.checkArgument(callback != null, "callback cannot be null");
+    Preconditions.checkArgument(policy != null, "policy cannot be null");
+    Preconditions.checkArgument(retryExecutor != null, "retryExecutor cannot be null");
     this.name = StringUtils.isBlank(name) ? "RetryTask-" + COUNTER.incrementAndGet() : name;
     this.callback = callback;
     this.policy = policy;
@@ -58,7 +58,7 @@ public final class RetryTask implements Runnable {
   @Override
   public void run() {
     if (LOG.isInfoEnabled()) {
-      LOG.info("RetryTask {} start at {}ms and retrying {} call", name, startTime, retrys);
+      LOG.info("RetryTask {} started at {}ms and retried {} times", name, startTime, retries);
     }
 
     boolean ok = false;
@@ -66,25 +66,25 @@ public final class RetryTask implements Runnable {
       ok = callback.execute();
     } catch (Exception ex) {
       if (LOG.isInfoEnabled()) {
-        LOG.info(String.format("RetryTask %s start at %dms and retry %d execute call error", name, startTime, retrys), ex);
+        LOG.info(String.format("RetryTask %s started at %dms and retried %d times with exception", name, startTime, retries), ex);
       }
     }
 
     if (ok) {
       if (LOG.isInfoEnabled()) {
-        LOG.info("RetryTask {} start at {}ms and retry {} execute call successful return", name, startTime, retrys);
+        LOG.info("RetryTask {} started at {}ms and retried {} times with success", name, startTime, retries);
       }
 
       callback.onTerminate(true);
       return;
     }
 
-    int retry = (int) retrys++;
+    int retry = (int) retries++;
     retry = retry < 0 ? Integer.MAX_VALUE : retry;
     long delay = policy.getDelay(startTime, retry);
     if (delay < 0) {
       if (LOG.isInfoEnabled()) {
-        LOG.info("RetryTask {} start at {}ms and retry {} execute call exceed return", name, startTime, retrys);
+        LOG.info("RetryTask {} started at {}ms and retried {} times", name, startTime, retries);
       }
 
       callback.onTerminate(false);

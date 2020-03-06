@@ -20,9 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import io.jimdb.common.exception.JimException;
-import io.jimdb.common.utils.generator.ConnIDGenerator;
-import io.jimdb.common.utils.lang.Resetable;
+import io.jimdb.common.exception.BaseException;
+import io.jimdb.common.utils.generator.ConnectionIdGenerator;
+import io.jimdb.common.utils.lang.Resettable;
 import io.jimdb.common.utils.os.SystemClock;
 import io.jimdb.core.context.PreparedContext;
 import io.jimdb.core.context.StatementContext;
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * @version V1.0
  * @ThreadSafe
  */
-public class Session implements Resetable {
+public class Session implements Resettable {
   private static final Logger LOG = LoggerFactory.getLogger(Session.class);
 
   private static final AtomicLong SEQ_GEN = new AtomicLong();
@@ -70,7 +70,7 @@ public class Session implements Resetable {
 
   public Session(final SQLEngine sqlEngine, final Engine storeEngine) {
     this.storeEngine = storeEngine;
-    this.connID = ConnIDGenerator.next();
+    this.connID = ConnectionIdGenerator.next();
     this.sessionID = SEQ_GEN.incrementAndGet();
     this.lastTime = SystemClock.currentTimeMillis();
     this.context = new ConcurrentHashMap<>(8);
@@ -228,7 +228,7 @@ public class Session implements Resetable {
    * @param ex
    * @throws Exception
    */
-  public void writeError(JimException ex) {
+  public void writeError(BaseException ex) {
     throw new UnsupportedOperationException("unsupported write error");
   }
 

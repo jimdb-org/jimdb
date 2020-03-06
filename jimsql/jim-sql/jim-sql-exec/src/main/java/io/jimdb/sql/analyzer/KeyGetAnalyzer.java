@@ -22,7 +22,7 @@ import java.util.List;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.context.PreparedContext;
 import io.jimdb.core.expression.ColumnExpr;
@@ -59,7 +59,7 @@ import reactor.util.function.Tuples;
  * @version V1.0
  */
 public final class KeyGetAnalyzer {
-  public static KeyGet analyze(Session session, SQLSelectQueryBlock queryBlock, AnalyzerType analyzerType) throws JimException {
+  public static KeyGet analyze(Session session, SQLSelectQueryBlock queryBlock, AnalyzerType analyzerType) throws BaseException {
     if (queryBlock.isForUpdate() || (queryBlock.getGroupBy() != null && queryBlock.getGroupBy().getHaving() != null)) {
       return null;
     }

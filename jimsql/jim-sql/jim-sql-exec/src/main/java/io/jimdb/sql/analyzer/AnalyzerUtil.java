@@ -26,7 +26,7 @@ import java.util.List;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.JimException;
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.Session;
 import io.jimdb.core.expression.ValueExpr;
 import io.jimdb.core.model.meta.Table;
@@ -75,7 +75,7 @@ public final class AnalyzerUtil {
   private AnalyzerUtil() {
   }
 
-  public static Table resolveTable(Session session, SQLTableSource tableSource) throws JimException {
+  public static Table resolveTable(Session session, SQLTableSource tableSource) throws BaseException {
     if (tableSource instanceof SQLExprTableSource) {
       SQLExprTableSource exprTable = (SQLExprTableSource) tableSource;
       String tblName = exprTable.getName().getSimpleName();
@@ -188,8 +188,8 @@ public final class AnalyzerUtil {
       BigInteger bigInteger = (BigInteger) number;
       // convert over maxUnsignedLong or less minLong to bigDecimal
       if (bigInteger.compareTo(MAX_UNSIGNEDLONG) > 0 || bigInteger.compareTo(MIN_DEC_SIGNEDLONG.toBigInteger()) < 0) {
-        BigDecimal dec = new BigDecimal(bigInteger, 4);
-        value = DecimalValue.getInstance(dec, dec.precision(), dec.scale());
+        BigDecimal dec = new BigDecimal(bigInteger);
+        value = DecimalValue.getInstance(dec, dec.precision(), 4);
         resultType = Types.buildSQLType(DataType.Decimal);
       } else if (bigInteger.compareTo(MAX_SIGNEDLONG) > 0) {
         value = UnsignedLongValue.getInstance(bigInteger);
@@ -201,7 +201,7 @@ public final class AnalyzerUtil {
     } else if (number instanceof BigDecimal) {
       BigDecimal dec = (BigDecimal) number;
       value = DecimalValue.getInstance(dec, dec.precision(), dec.scale());
-      resultType = Types.buildSQLType(DataType.Decimal);
+      resultType = Types.buildSQLType(DataType.Decimal, dec.precision(), dec.scale());
     } else {
       value = LongValue.getInstance(number.longValue());
       resultType = Types.buildSQLType(DataType.BigInt);
