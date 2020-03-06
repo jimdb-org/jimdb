@@ -18,125 +18,127 @@ enum RedisCmdType {
     SCAN                = 11;
     DUMP                = 12;
     RESTORE             = 13;
+    OBJECT              = 14;
     //string
-    APPEND              = 14;
-    BITCOUNT            = 15;
-    BITOP               = 16;
-    BITPOS              = 17;
-    DECR                = 18;
-    DECRBY              = 19;
-    GET                 = 20;
-    GETBIT              = 21;
-    GETRANGE            = 22;
-    SUBSTR              = 23;
-    GETSET              = 24;
-    INCR                = 25;
-    INCRBY              = 26;
-    INCRBYFLOAT         = 27;
-    MGET                = 28;
-    MSET                = 29;
-    MSETNX              = 30;
-    PSETEX              = 31;
-    SET                 = 32;
-    SETBIT              = 33;
-    SETEX               = 34;
-    SETNX               = 35;
-    SETRANGE            = 36;
-    STRLEN              = 37;
+    APPEND              = 15;
+    BITCOUNT            = 16;
+    BITOP               = 17;
+    BITPOS              = 18;
+    DECR                = 19;
+    DECRBY              = 20;
+    GET                 = 21;
+    GETBIT              = 22;
+    GETRANGE            = 23;
+    SUBSTR              = 24;
+    GETSET              = 25;
+    INCR                = 26;
+    INCRBY              = 27;
+    INCRBYFLOAT         = 28;
+    MGET                = 29;
+    MSET                = 30;
+    MSETNX              = 31;
+    PSETEX              = 32;
+    SET                 = 33;
+    SETBIT              = 34;
+    SETEX               = 35;
+    SETNX               = 36;
+    SETRANGE            = 37;
+    STRLEN              = 38;
     //hash
-    HDEL                = 38;
-    HEXISTS             = 39;
-    HGET                = 40;
-    HGETALL             = 41;
-    HINCRBY             = 42;
-    HINCRBYFLOAT        = 43;
-    HKEYS               = 44;
-    HLEN                = 45;
-    HMGET               = 46;
-    HMSET               = 47;
-    HSET                = 48;
-    HSETNX              = 49;
-    HVALS               = 50;
-    HSCAN               = 51;
+    HDEL                = 39;
+    HEXISTS             = 40;
+    HGET                = 41;
+    HGETALL             = 42;
+    HINCRBY             = 43;
+    HINCRBYFLOAT        = 44;
+    HKEYS               = 45;
+    HLEN                = 46;
+    HSTRLEN             = 47;
+    HMGET               = 48;
+    HMSET               = 49;
+    HSET                = 50;
+    HSETNX              = 51;
+    HVALS               = 52;
+    HSCAN               = 53;
     //list
-    BLPOP               = 52;
-    BRPOP               = 53;
-    BRPOPLPUSH          = 54;
-    LINDEX              = 55;
-    LINSERT             = 56;
-    LLEN                = 57;
-    LPOP                = 58;
-    LPUSH               = 59;
-    LPUSHX              = 60;
-    LRANGE              = 61;
-    LREM                = 62;
-    LSET                = 63;
-    LTRIM               = 64;
-    RPOP                = 65;
-    RPOPLPUSH           = 66;
-    RPUSH               = 67;
-    RPUSHX              = 68;
-    SADD                = 69;
-    SCARD               = 70;
-    SDIFF               = 71;
-    SDIFFSTORE          = 72;
-    SINTER              = 73;
-    SINTERSTORE         = 74;
-    SISMEMBER           = 75;
-    SMEMBERS            = 76;
-    SMOVE               = 77;
-    SPOP                = 78;
-    SRANDMEMBER         = 79;
-    SREM                = 80;
-    SUNION              = 81;
-    SUNIONSTORE         = 82;
-    SSCAN               = 83;
-    ZADD                = 84;
-    ZCARD               = 85;
-    ZCOUNT              = 86;
-    ZINCRBY             = 87;
-    ZRANGE              = 88;
-    ZRANGEBYSCORE       = 89;
-    ZRANK               = 90;
-    ZREM                = 91;
-    ZREMRANGEBYRANK     = 92;
-    ZREMRANGEBYSCORE    = 93;
-    ZREVRANGE           = 94;
-    ZREVRANGEBYSCORE    = 95;
-    ZREVRANK            = 96;
-    ZSCORE              = 97;
-    ZUNIONSTORE         = 98;
-    ZINTERSTORE         = 99;
-    ZSCAN               = 100;
-    ZRANGEBYLEX         = 101;
-    ZLEXCOUNT           = 102;
-    ZREMRANGEBYLEX      = 103;
-    ZREVRANGEBYLEX      = 104;
-    PFADD               = 105;
-    PFCOUNT             = 106;
-    PFMERGE             = 107;
-    PFSELFTEST          = 108;
-    PFDEBUG             = 109;
-    DISCARD             = 110;
-    EXEC                = 111;
-    MULTI               = 112;
-    UNWATCH             = 113;
-    WATCH               = 114;
-    EVAL                = 115;
-    EVALSHA             = 116;
-    SCRIPT              = 117;
-    AUTH                = 118;
-    PING                = 119;
-    CLIENT              = 120;
-    CONFIG              = 121;
-    DBSIZE              = 122;
-    DEBUG               = 123;
-    FLUSHALL            = 124;
-    INFO                = 125;
-    SLOWLOG             = 126;
-    TIME                = 127;
-    CLEAREXPIRED        = 128;
-
+    BLPOP               = 54;
+    BRPOP               = 55;
+    BRPOPLPUSH          = 56;
+    LINDEX              = 57;
+    LINSERT             = 58;
+    LLEN                = 59;
+    LPOP                = 60;
+    LPUSH               = 61;
+    LPUSHX              = 62;
+    LRANGE              = 63;
+    LREM                = 64;
+    LSET                = 65;
+    LTRIM               = 66;
+    RPOP                = 67;
+    RPOPLPUSH           = 68;
+    RPUSH               = 69;
+    RPUSHX              = 70;
+    //set
+    SADD                = 71;
+    SCARD               = 72;
+    SDIFF               = 73;
+    SDIFFSTORE          = 74;
+    SINTER              = 75;
+    SINTERSTORE         = 76;
+    SISMEMBER           = 77;
+    SMEMBERS            = 78;
+    SMOVE               = 79;
+    SPOP                = 80;
+    SRANDMEMBER         = 81;
+    SREM                = 82;
+    SUNION              = 83;
+    SUNIONSTORE         = 84;
+    SSCAN               = 85;
+    //zset
+    ZADD                = 86;
+    ZCARD               = 87;
+    ZCOUNT              = 88;
+    ZINCRBY             = 89;
+    ZRANGE              = 90;
+    ZRANGEBYSCORE       = 91;
+    ZRANK               = 92;
+    ZREM                = 93;
+    ZREMRANGEBYRANK     = 94;
+    ZREMRANGEBYSCORE    = 95;
+    ZREVRANGE           = 96;
+    ZREVRANGEBYSCORE    = 97;
+    ZREVRANK            = 98;
+    ZSCORE              = 99;
+    ZUNIONSTORE         = 100;
+    ZINTERSTORE         = 101;
+    ZSCAN               = 102;
+    ZRANGEBYLEX         = 103;
+    ZLEXCOUNT           = 104;
+    ZREMRANGEBYLEX      = 105;
+    PFADD               = 106;
+    PFCOUNT             = 107;
+    PFMERGE             = 108;
+    PFSELFTEST          = 109;
+    PFDEBUG             = 110;
+    DISCARD             = 111;
+    EXEC                = 112;
+    MULTI               = 113;
+    UNWATCH             = 114;
+    WATCH               = 115;
+    EVAL                = 116;
+    EVALSHA             = 117;
+    SCRIPT              = 118;
+    AUTH                = 119;
+    PING                = 120;
+    CLIENT              = 121;
+    CONFIG              = 122;
+    DBSIZE              = 123;
+    DEBUG               = 124;
+    FLUSHALL            = 125;
+    INFO                = 126;
+    SLOWLOG             = 127;
+    TIME                = 128;
+    CLEAREXPIRED        = 129;
 }
 
 enum RedisReplyType {
@@ -156,12 +158,34 @@ enum RedisType {
     THASH                = 4;
 }
 
+enum CFType {
+    CF_DEFAULT = 0;
+    CF_TXN = 1;
+    CF_EXPIRED = 2;
+}
+
+message KvValue {
+    bytes key               = 1;
+    bytes value             = 2;
+}
+
+message KeyRange {
+    bytes start_key = 1;
+    bytes end_key   = 2;
+}
+
 message RedisMeta {
     RedisType   type        = 1;
     uint64      expire      = 2;
     uint64      access_time = 3;
     uint64      size        = 4;
-    bytes       str         = 5;
+    uint64      next_seq    = 5; //next element sequence of list
+    uint64      first_seq   = 6; //first element sequence of list
+    uint64      last_seq    = 7; //last element sequence of list
+    oneof       value {
+    int64       integer     = 8;
+    bytes       str         = 9;
+    }
 }
 
 message RedisRequest {
@@ -169,11 +193,34 @@ message RedisRequest {
     repeated bytes args = 2;
 }
 
+message RedisObject {
+    uint64 prev_seq = 1;
+    uint64 next_seq = 2;
+    oneof value {
+        int64 integer = 3;
+        bytes string  = 4;
+    }
+}
+
+
 message RedisResponse {
     RedisReplyType type = 1;
     bytes str = 2;
     int32 integer = 3;
     repeated RedisResponse elements = 4;
+}
+
+
+message RedisMutation {
+    message Item {
+        CFType cf = 1;
+        oneof mut {
+            KvValue put_kv = 2;
+            bytes del_key = 3;
+            KeyRange del_range = 4;
+        }
+    };
+    repeated Item muts = 1;
 }
 
 // KvGet
@@ -192,11 +239,6 @@ message KvGetResponse {
 message KvScanRequest {
     bytes start_key         = 1;
     bytes end_key           = 2;
-}
-
-message KvValue {
-    bytes key               = 1;
-    bytes value             = 2;
 }
 
 message KvScanReponse {

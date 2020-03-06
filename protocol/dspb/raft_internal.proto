@@ -56,6 +56,7 @@ enum CmdType {
     KvScan        = 23;
     KvDelRange    = 24;
     KvRedis       = 25;
+    KvRedisMutation = 26;
 
     IdxStatsGet   = 30;
     ColsStatsGet  = 31;
@@ -82,6 +83,7 @@ message Command {
     KvScanRequest kv_scan_req             = 23;
     KvDelRangeRequest kv_del_range_req    = 24;
     RedisRequest redis_req                = 25;
+    RedisMutation redis_mut               = 26;
 
     IndexStatsRequest idx_stats_req       = 30;
     ColumnsStatsRequest cols_stats_req    = 31;
@@ -97,15 +99,11 @@ message PeerTask {
     basepb.Peer        peer           = 2;
 }
 
-enum CFType {
-    CF_DEFAULT = 0;
-    CF_TXN = 1;
-}
-
 message SnapshotKVPair {
     bytes key   = 1;
     bytes value = 2;
     CFType cf_type = 3;
+    int32 mut_type = 4; // mutation type
 }
 
 message SnapshotContext {

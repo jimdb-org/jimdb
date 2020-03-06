@@ -3,6 +3,7 @@ package dspb;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "dspb/expr.proto";
+import "dspb/kv.proto";
 
 option (gogoproto.marshaler_all) = true;
 option (gogoproto.sizer_all) = true;
@@ -46,11 +47,6 @@ enum KeyType {
     DEFAULT_RANGE_TYPE  = 0;
     PRIMARY_KEY_TYPE    = 1;
     KEYS_RANGE_TYPE     = 2;
-}
-
-message KeyRange {
-    bytes start_key = 1;
-    bytes end_key   = 2;
 }
 
 message IndexRead {

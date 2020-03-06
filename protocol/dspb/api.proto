@@ -36,7 +36,6 @@ message RangeRequest {
         KvScanRequest kv_scan = 23;
         KvDelRangeRequest kv_del_range = 24;
         RedisRequest redis = 25;
-
         // statistics api
         IndexStatsRequest index_stats = 30;
         ColumnsStatsRequest columns_stats = 31;
