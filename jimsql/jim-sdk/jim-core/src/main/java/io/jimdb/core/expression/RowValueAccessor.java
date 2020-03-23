@@ -16,7 +16,10 @@
 package io.jimdb.core.expression;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
+import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.values.NullValue;
 import io.jimdb.core.values.Value;
 
@@ -74,5 +77,28 @@ public final class RowValueAccessor implements ValueAccessor {
   @Override
   public int hashCode() {
     return Arrays.hashCode(values);
+  }
+
+  @Override
+  public Value[] extractValues(Column[] columns, ColumnExpr[] columnExprs) {
+    Map<Integer, Integer> mapping = new HashMap<>(columnExprs.length);
+    for (int i = 0; i < columnExprs.length; i++) {
+      ColumnExpr expr = columnExprs[i];
+      mapping.put(expr.getId(), i);
+    }
+
+    int colLength = columns.length;
+    Value[] values = new Value[colLength];
+    for (int i = 0; i < colLength; i++) {
+      Column column = columns[i];
+      Integer location = mapping.get(column.getId());
+      if (location == null) {
+        continue;
+      }
+      Value value = get(location);
+      values[column.getOffset()] = value;
+    }
+    return values;
+
   }
 }

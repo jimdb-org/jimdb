@@ -40,7 +40,7 @@ public class MyDecimalSqlTest extends SqlTestBase {
 
   @BeforeClass
   public static void createDecimal() {
-//    createDB();
+    createDB();
     useCatalog(DBNAME);
     createTable(normalTable);
     createTableWithIndex(indexTable);

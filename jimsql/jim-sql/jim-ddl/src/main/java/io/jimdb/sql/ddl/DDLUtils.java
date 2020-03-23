@@ -58,7 +58,7 @@ import reactor.util.function.Tuples;
 public final class DDLUtils {
   protected static final int MAXLEN_PREFIX = 3072;
   protected static final int DEFAULT_REPLICA_NUM = 3;
-  protected static final int DEFAULT_SEQ_REGION = 5;
+  protected static final int DEFAULT_SEQ_REGION = 200;
 
   private static final Map<Basepb.DataType, Integer> DEFAULT_LENGTH_TYPE = new HashMap() {
     {
@@ -286,7 +286,7 @@ public final class DDLUtils {
     if (tableInfo.getPrimarysList().size() == 1 && Types.isIntegerType(type)) {
       Column[] columns = new Column[]{ new Column(null, splitColumn, 0) };
       Value[] values;
-      BigInteger maxValue = ValueChecker.computeUpperBound(type.getUnsigned(), type.getType());
+      BigInteger maxValue = ValueChecker.getUpperBound(type.getUnsigned(), type.getType());
       long docNum = maxValue.divide(BigInteger.valueOf(tableInfo.getSplitNum())).longValue();
       for (int j = 1; j < tableInfo.getSplitNum(); j++) {
         values = new Value[]{ UnsignedLongValue.getInstance(new BigInteger(Long.toUnsignedString(docNum * j))) };
@@ -409,7 +409,7 @@ public final class DDLUtils {
 
     for (Basepb.DataType dataType : dataTypes) {
       for (Boolean unsigned : unsignedList) {
-        BigInteger upperValue = ValueChecker.computeUpperBound(unsigned, dataType);
+        BigInteger upperValue = ValueChecker.getUpperBound(unsigned, dataType);
         System.out.println(dataType + ", unsigned:" + unsigned + ",upper:" + upperValue);
         getScope(unsigned, dataType);
         System.out.println("==============");
@@ -418,7 +418,7 @@ public final class DDLUtils {
   }
 
   private static void getScope(boolean unsigned, Basepb.DataType dataType) {
-    BigInteger maxValue = ValueChecker.computeUpperBound(unsigned, dataType);
+    BigInteger maxValue = ValueChecker.getUpperBound(unsigned, dataType);
     long docNum = maxValue.divide(BigInteger.valueOf(5)).longValue();
     System.out.println("step:" + docNum);
     Value[] values = new Value[1];

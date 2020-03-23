@@ -68,7 +68,7 @@ public final class CommandFuture {
       } else if (response != null) {
         callback.onSuccess(request, response);
       } else {
-        LOG.error("request callback bug: {} success and error are not assignment", reqID);
+        LOG.error("request callback bug: {} success and error are not assigned", reqID);
       }
     } catch (Exception ex) {
       LOG.error("request callback error " + reqID, ex);

@@ -68,6 +68,14 @@ public final class RaftInternal {
      */
     KvDelRange(24),
     /**
+     * <code>KvRedis = 25;</code>
+     */
+    KvRedis(25),
+    /**
+     * <code>KvRedisMutation = 26;</code>
+     */
+    KvRedisMutation(26),
+    /**
      * <code>IdxStatsGet = 30;</code>
      */
     IdxStatsGet(30),
@@ -135,6 +143,14 @@ public final class RaftInternal {
      */
     public static final int KvDelRange_VALUE = 24;
     /**
+     * <code>KvRedis = 25;</code>
+     */
+    public static final int KvRedis_VALUE = 25;
+    /**
+     * <code>KvRedisMutation = 26;</code>
+     */
+    public static final int KvRedisMutation_VALUE = 26;
+    /**
      * <code>IdxStatsGet = 30;</code>
      */
     public static final int IdxStatsGet_VALUE = 30;
@@ -182,6 +198,8 @@ public final class RaftInternal {
         case 22: return KvDelete;
         case 23: return KvScan;
         case 24: return KvDelRange;
+        case 25: return KvRedis;
+        case 26: return KvRedisMutation;
         case 30: return IdxStatsGet;
         case 31: return ColsStatsGet;
         case 100: return AdminSplit;
@@ -236,104 +254,6 @@ public final class RaftInternal {
     }
 
     // @@protoc_insertion_point(enum_scope:dspb.CmdType)
-  }
-
-  /**
-   * Protobuf enum {@code dspb.CFType}
-   */
-  public enum CFType
-      implements com.google.protobuf.ProtocolMessageEnum {
-    /**
-     * <code>CF_DEFAULT = 0;</code>
-     */
-    CF_DEFAULT(0),
-    /**
-     * <code>CF_TXN = 1;</code>
-     */
-    CF_TXN(1),
-    UNRECOGNIZED(-1),
-    ;
-
-    /**
-     * <code>CF_DEFAULT = 0;</code>
-     */
-    public static final int CF_DEFAULT_VALUE = 0;
-    /**
-     * <code>CF_TXN = 1;</code>
-     */
-    public static final int CF_TXN_VALUE = 1;
-
-
-    public final int getNumber() {
-      if (this == UNRECOGNIZED) {
-        throw new java.lang.IllegalArgumentException(
-            "Can't get the number of an unknown enum value.");
-      }
-      return value;
-    }
-
-    /**
-     * @deprecated Use {@link #forNumber(int)} instead.
-     */
-    @java.lang.Deprecated
-    public static CFType valueOf(int value) {
-      return forNumber(value);
-    }
-
-    public static CFType forNumber(int value) {
-      switch (value) {
-        case 0: return CF_DEFAULT;
-        case 1: return CF_TXN;
-        default: return null;
-      }
-    }
-
-    public static com.google.protobuf.Internal.EnumLiteMap<CFType>
-        internalGetValueMap() {
-      return internalValueMap;
-    }
-    private static final com.google.protobuf.Internal.EnumLiteMap<
-        CFType> internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<CFType>() {
-            public CFType findValueByNumber(int number) {
-              return CFType.forNumber(number);
-            }
-          };
-
-    public final com.google.protobuf.Descriptors.EnumValueDescriptor
-        getValueDescriptor() {
-      return getDescriptor().getValues().get(ordinal());
-    }
-    public final com.google.protobuf.Descriptors.EnumDescriptor
-        getDescriptorForType() {
-      return getDescriptor();
-    }
-    public static final com.google.protobuf.Descriptors.EnumDescriptor
-        getDescriptor() {
-      return io.jimdb.pb.RaftInternal.getDescriptor().getEnumTypes().get(1);
-    }
-
-    private static final CFType[] VALUES = values();
-
-    public static CFType valueOf(
-        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-      if (desc.getType() != getDescriptor()) {
-        throw new java.lang.IllegalArgumentException(
-          "EnumValueDescriptor is not for this type.");
-      }
-      if (desc.getIndex() == -1) {
-        return UNRECOGNIZED;
-      }
-      return VALUES[desc.getIndex()];
-    }
-
-    private final int value;
-
-    private CFType(int value) {
-      this.value = value;
-    }
-
-    // @@protoc_insertion_point(enum_scope:dspb.CFType)
   }
 
   public interface SplitCommandOrBuilder extends
@@ -3408,6 +3328,19 @@ public final class RaftInternal {
     io.jimdb.pb.Kv.RedisRequestOrBuilder getRedisReqOrBuilder();
 
     /**
+     * <code>.dspb.RedisMutation redis_mut = 26;</code>
+     */
+    boolean hasRedisMut();
+    /**
+     * <code>.dspb.RedisMutation redis_mut = 26;</code>
+     */
+    io.jimdb.pb.Kv.RedisMutation getRedisMut();
+    /**
+     * <code>.dspb.RedisMutation redis_mut = 26;</code>
+     */
+    io.jimdb.pb.Kv.RedisMutationOrBuilder getRedisMutOrBuilder();
+
+    /**
      * <code>.dspb.IndexStatsRequest idx_stats_req = 30;</code>
      */
     boolean hasIdxStatsReq();
@@ -3689,6 +3622,19 @@ public final class RaftInternal {
               if (subBuilder != null) {
                 subBuilder.mergeFrom(redisReq_);
                 redisReq_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 210: {
+              io.jimdb.pb.Kv.RedisMutation.Builder subBuilder = null;
+              if (redisMut_ != null) {
+                subBuilder = redisMut_.toBuilder();
+              }
+              redisMut_ = input.readMessage(io.jimdb.pb.Kv.RedisMutation.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(redisMut_);
+                redisMut_ = subBuilder.buildPartial();
               }
 
               break;
@@ -4093,6 +4039,27 @@ public final class RaftInternal {
       return getRedisReq();
     }
 
+    public static final int REDIS_MUT_FIELD_NUMBER = 26;
+    private io.jimdb.pb.Kv.RedisMutation redisMut_;
+    /**
+     * <code>.dspb.RedisMutation redis_mut = 26;</code>
+     */
+    public boolean hasRedisMut() {
+      return redisMut_ != null;
+    }
+    /**
+     * <code>.dspb.RedisMutation redis_mut = 26;</code>
+     */
+    public io.jimdb.pb.Kv.RedisMutation getRedisMut() {
+      return redisMut_ == null ? io.jimdb.pb.Kv.RedisMutation.getDefaultInstance() : redisMut_;
+    }
+    /**
+     * <code>.dspb.RedisMutation redis_mut = 26;</code>
+     */
+    public io.jimdb.pb.Kv.RedisMutationOrBuilder getRedisMutOrBuilder() {
+      return getRedisMut();
+    }
+
     public static final int IDX_STATS_REQ_FIELD_NUMBER = 30;
     private io.jimdb.pb.Statspb.IndexStatsRequest idxStatsReq_;
     /**
@@ -4245,6 +4212,9 @@ public final class RaftInternal {
       if (redisReq_ != null) {
         output.writeMessage(25, getRedisReq());
       }
+      if (redisMut_ != null) {
+        output.writeMessage(26, getRedisMut());
+      }
       if (idxStatsReq_ != null) {
         output.writeMessage(30, getIdxStatsReq());
       }
@@ -4328,6 +4298,10 @@ public final class RaftInternal {
       if (redisReq_ != null) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(25, getRedisReq());
+      }
+      if (redisMut_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(26, getRedisMut());
       }
       if (idxStatsReq_ != null) {
         size += com.google.protobuf.CodedOutputStream
@@ -4436,6 +4410,11 @@ public final class RaftInternal {
         result = result && getRedisReq()
             .equals(other.getRedisReq());
       }
+      result = result && (hasRedisMut() == other.hasRedisMut());
+      if (hasRedisMut()) {
+        result = result && getRedisMut()
+            .equals(other.getRedisMut());
+      }
       result = result && (hasIdxStatsReq() == other.hasIdxStatsReq());
       if (hasIdxStatsReq()) {
         result = result && getIdxStatsReq()
@@ -4526,6 +4505,10 @@ public final class RaftInternal {
       if (hasRedisReq()) {
         hash = (37 * hash) + REDIS_REQ_FIELD_NUMBER;
         hash = (53 * hash) + getRedisReq().hashCode();
+      }
+      if (hasRedisMut()) {
+        hash = (37 * hash) + REDIS_MUT_FIELD_NUMBER;
+        hash = (53 * hash) + getRedisMut().hashCode();
       }
       if (hasIdxStatsReq()) {
         hash = (37 * hash) + IDX_STATS_REQ_FIELD_NUMBER;
@@ -4764,6 +4747,12 @@ public final class RaftInternal {
           redisReq_ = null;
           redisReqBuilder_ = null;
         }
+        if (redisMutBuilder_ == null) {
+          redisMut_ = null;
+        } else {
+          redisMut_ = null;
+          redisMutBuilder_ = null;
+        }
         if (idxStatsReqBuilder_ == null) {
           idxStatsReq_ = null;
         } else {
@@ -4887,6 +4876,11 @@ public final class RaftInternal {
         } else {
           result.redisReq_ = redisReqBuilder_.build();
         }
+        if (redisMutBuilder_ == null) {
+          result.redisMut_ = redisMut_;
+        } else {
+          result.redisMut_ = redisMutBuilder_.build();
+        }
         if (idxStatsReqBuilder_ == null) {
           result.idxStatsReq_ = idxStatsReq_;
         } else {
@@ -5000,6 +4994,9 @@ public final class RaftInternal {
         }
         if (other.hasRedisReq()) {
           mergeRedisReq(other.getRedisReq());
+        }
+        if (other.hasRedisMut()) {
+          mergeRedisMut(other.getRedisMut());
         }
         if (other.hasIdxStatsReq()) {
           mergeIdxStatsReq(other.getIdxStatsReq());
@@ -6728,6 +6725,123 @@ public final class RaftInternal {
         return redisReqBuilder_;
       }
 
+      private io.jimdb.pb.Kv.RedisMutation redisMut_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Kv.RedisMutation, io.jimdb.pb.Kv.RedisMutation.Builder, io.jimdb.pb.Kv.RedisMutationOrBuilder> redisMutBuilder_;
+      /**
+       * <code>.dspb.RedisMutation redis_mut = 26;</code>
+       */
+      public boolean hasRedisMut() {
+        return redisMutBuilder_ != null || redisMut_ != null;
+      }
+      /**
+       * <code>.dspb.RedisMutation redis_mut = 26;</code>
+       */
+      public io.jimdb.pb.Kv.RedisMutation getRedisMut() {
+        if (redisMutBuilder_ == null) {
+          return redisMut_ == null ? io.jimdb.pb.Kv.RedisMutation.getDefaultInstance() : redisMut_;
+        } else {
+          return redisMutBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.dspb.RedisMutation redis_mut = 26;</code>
+       */
+      public Builder setRedisMut(io.jimdb.pb.Kv.RedisMutation value) {
+        if (redisMutBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          redisMut_ = value;
+          onChanged();
+        } else {
+          redisMutBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.dspb.RedisMutation redis_mut = 26;</code>
+       */
+      public Builder setRedisMut(
+          io.jimdb.pb.Kv.RedisMutation.Builder builderForValue) {
+        if (redisMutBuilder_ == null) {
+          redisMut_ = builderForValue.build();
+          onChanged();
+        } else {
+          redisMutBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.dspb.RedisMutation redis_mut = 26;</code>
+       */
+      public Builder mergeRedisMut(io.jimdb.pb.Kv.RedisMutation value) {
+        if (redisMutBuilder_ == null) {
+          if (redisMut_ != null) {
+            redisMut_ =
+              io.jimdb.pb.Kv.RedisMutation.newBuilder(redisMut_).mergeFrom(value).buildPartial();
+          } else {
+            redisMut_ = value;
+          }
+          onChanged();
+        } else {
+          redisMutBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.dspb.RedisMutation redis_mut = 26;</code>
+       */
+      public Builder clearRedisMut() {
+        if (redisMutBuilder_ == null) {
+          redisMut_ = null;
+          onChanged();
+        } else {
+          redisMut_ = null;
+          redisMutBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.dspb.RedisMutation redis_mut = 26;</code>
+       */
+      public io.jimdb.pb.Kv.RedisMutation.Builder getRedisMutBuilder() {
+        
+        onChanged();
+        return getRedisMutFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.dspb.RedisMutation redis_mut = 26;</code>
+       */
+      public io.jimdb.pb.Kv.RedisMutationOrBuilder getRedisMutOrBuilder() {
+        if (redisMutBuilder_ != null) {
+          return redisMutBuilder_.getMessageOrBuilder();
+        } else {
+          return redisMut_ == null ?
+              io.jimdb.pb.Kv.RedisMutation.getDefaultInstance() : redisMut_;
+        }
+      }
+      /**
+       * <code>.dspb.RedisMutation redis_mut = 26;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Kv.RedisMutation, io.jimdb.pb.Kv.RedisMutation.Builder, io.jimdb.pb.Kv.RedisMutationOrBuilder> 
+          getRedisMutFieldBuilder() {
+        if (redisMutBuilder_ == null) {
+          redisMutBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Kv.RedisMutation, io.jimdb.pb.Kv.RedisMutation.Builder, io.jimdb.pb.Kv.RedisMutationOrBuilder>(
+                  getRedisMut(),
+                  getParentForChildren(),
+                  isClean());
+          redisMut_ = null;
+        }
+        return redisMutBuilder_;
+      }
+
       private io.jimdb.pb.Statspb.IndexStatsRequest idxStatsReq_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
           io.jimdb.pb.Statspb.IndexStatsRequest, io.jimdb.pb.Statspb.IndexStatsRequest.Builder, io.jimdb.pb.Statspb.IndexStatsRequestOrBuilder> idxStatsReqBuilder_;
@@ -8096,7 +8210,16 @@ public final class RaftInternal {
     /**
      * <code>.dspb.CFType cf_type = 3;</code>
      */
-    io.jimdb.pb.RaftInternal.CFType getCfType();
+    io.jimdb.pb.Kv.CFType getCfType();
+
+    /**
+     * <pre>
+     * mutation type
+     * </pre>
+     *
+     * <code>int32 mut_type = 4;</code>
+     */
+    int getMutType();
   }
   /**
    * Protobuf type {@code dspb.SnapshotKVPair}
@@ -8114,6 +8237,7 @@ public final class RaftInternal {
       key_ = com.google.protobuf.ByteString.EMPTY;
       value_ = com.google.protobuf.ByteString.EMPTY;
       cfType_ = 0;
+      mutType_ = 0;
     }
 
     @java.lang.Override
@@ -8154,6 +8278,11 @@ public final class RaftInternal {
               int rawValue = input.readEnum();
 
               cfType_ = rawValue;
+              break;
+            }
+            case 32: {
+
+              mutType_ = input.readInt32();
               break;
             }
             default: {
@@ -8217,10 +8346,23 @@ public final class RaftInternal {
     /**
      * <code>.dspb.CFType cf_type = 3;</code>
      */
-    public io.jimdb.pb.RaftInternal.CFType getCfType() {
+    public io.jimdb.pb.Kv.CFType getCfType() {
       @SuppressWarnings("deprecation")
-      io.jimdb.pb.RaftInternal.CFType result = io.jimdb.pb.RaftInternal.CFType.valueOf(cfType_);
-      return result == null ? io.jimdb.pb.RaftInternal.CFType.UNRECOGNIZED : result;
+      io.jimdb.pb.Kv.CFType result = io.jimdb.pb.Kv.CFType.valueOf(cfType_);
+      return result == null ? io.jimdb.pb.Kv.CFType.UNRECOGNIZED : result;
+    }
+
+    public static final int MUT_TYPE_FIELD_NUMBER = 4;
+    private int mutType_;
+    /**
+     * <pre>
+     * mutation type
+     * </pre>
+     *
+     * <code>int32 mut_type = 4;</code>
+     */
+    public int getMutType() {
+      return mutType_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -8243,8 +8385,11 @@ public final class RaftInternal {
       if (!value_.isEmpty()) {
         output.writeBytes(2, value_);
       }
-      if (cfType_ != io.jimdb.pb.RaftInternal.CFType.CF_DEFAULT.getNumber()) {
+      if (cfType_ != io.jimdb.pb.Kv.CFType.CF_DEFAULT.getNumber()) {
         output.writeEnum(3, cfType_);
+      }
+      if (mutType_ != 0) {
+        output.writeInt32(4, mutType_);
       }
       unknownFields.writeTo(output);
     }
@@ -8263,9 +8408,13 @@ public final class RaftInternal {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(2, value_);
       }
-      if (cfType_ != io.jimdb.pb.RaftInternal.CFType.CF_DEFAULT.getNumber()) {
+      if (cfType_ != io.jimdb.pb.Kv.CFType.CF_DEFAULT.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, cfType_);
+      }
+      if (mutType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(4, mutType_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -8288,6 +8437,8 @@ public final class RaftInternal {
       result = result && getValue()
           .equals(other.getValue());
       result = result && cfType_ == other.cfType_;
+      result = result && (getMutType()
+          == other.getMutType());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -8305,6 +8456,8 @@ public final class RaftInternal {
       hash = (53 * hash) + getValue().hashCode();
       hash = (37 * hash) + CF_TYPE_FIELD_NUMBER;
       hash = (53 * hash) + cfType_;
+      hash = (37 * hash) + MUT_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getMutType();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -8444,6 +8597,8 @@ public final class RaftInternal {
 
         cfType_ = 0;
 
+        mutType_ = 0;
+
         return this;
       }
 
@@ -8473,6 +8628,7 @@ public final class RaftInternal {
         result.key_ = key_;
         result.value_ = value_;
         result.cfType_ = cfType_;
+        result.mutType_ = mutType_;
         onBuilt();
         return result;
       }
@@ -8529,6 +8685,9 @@ public final class RaftInternal {
         }
         if (other.cfType_ != 0) {
           setCfTypeValue(other.getCfTypeValue());
+        }
+        if (other.getMutType() != 0) {
+          setMutType(other.getMutType());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -8635,15 +8794,15 @@ public final class RaftInternal {
       /**
        * <code>.dspb.CFType cf_type = 3;</code>
        */
-      public io.jimdb.pb.RaftInternal.CFType getCfType() {
+      public io.jimdb.pb.Kv.CFType getCfType() {
         @SuppressWarnings("deprecation")
-        io.jimdb.pb.RaftInternal.CFType result = io.jimdb.pb.RaftInternal.CFType.valueOf(cfType_);
-        return result == null ? io.jimdb.pb.RaftInternal.CFType.UNRECOGNIZED : result;
+        io.jimdb.pb.Kv.CFType result = io.jimdb.pb.Kv.CFType.valueOf(cfType_);
+        return result == null ? io.jimdb.pb.Kv.CFType.UNRECOGNIZED : result;
       }
       /**
        * <code>.dspb.CFType cf_type = 3;</code>
        */
-      public Builder setCfType(io.jimdb.pb.RaftInternal.CFType value) {
+      public Builder setCfType(io.jimdb.pb.Kv.CFType value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -8658,6 +8817,44 @@ public final class RaftInternal {
       public Builder clearCfType() {
         
         cfType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int mutType_ ;
+      /**
+       * <pre>
+       * mutation type
+       * </pre>
+       *
+       * <code>int32 mut_type = 4;</code>
+       */
+      public int getMutType() {
+        return mutType_;
+      }
+      /**
+       * <pre>
+       * mutation type
+       * </pre>
+       *
+       * <code>int32 mut_type = 4;</code>
+       */
+      public Builder setMutType(int value) {
+        
+        mutType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * mutation type
+       * </pre>
+       *
+       * <code>int32 mut_type = 4;</code>
+       */
+      public Builder clearMutType() {
+        
+        mutType_ = 0;
         onChanged();
         return this;
       }
@@ -9381,7 +9578,7 @@ public final class RaftInternal {
       "\004\022\021\n\tleft_size\030\003 \001(\004\022\022\n\nright_size\030\004 \001(\004" +
       "\"9\n\022UpdateStatsCommand\022\021\n\treal_size\030\001 \001(" +
       "\004\022\020\n\010kv_count\030\002 \001(\004\"%\n\005CmdID\022\017\n\007node_id\030" +
-      "\001 \001(\004\022\013\n\003seq\030\002 \001(\004\"\334\006\n\007Command\022\033\n\006cmd_id" +
+      "\001 \001(\004\022\013\n\003seq\030\002 \001(\004\"\204\007\n\007Command\022\033\n\006cmd_id" +
       "\030\001 \001(\0132\013.dspb.CmdID\022\037\n\010cmd_type\030\002 \001(\0162\r." +
       "dspb.CmdType\022(\n\014verify_epoch\030\003 \001(\0132\022.bas" +
       "epb.RangeEpoch\022-\n\017txn_prepare_req\030\004 \001(\0132" +
@@ -9397,7 +9594,8 @@ public final class RaftInternal {
       "spb.KvDeleteRequest\022(\n\013kv_scan_req\030\027 \001(\013" +
       "2\023.dspb.KvScanRequest\0221\n\020kv_del_range_re" +
       "q\030\030 \001(\0132\027.dspb.KvDelRangeRequest\022%\n\tredi" +
-      "s_req\030\031 \001(\0132\022.dspb.RedisRequest\022.\n\ridx_s" +
+      "s_req\030\031 \001(\0132\022.dspb.RedisRequest\022&\n\tredis" +
+      "_mut\030\032 \001(\0132\023.dspb.RedisMutation\022.\n\ridx_s" +
       "tats_req\030\036 \001(\0132\027.dspb.IndexStatsRequest\022" +
       "1\n\016cols_stats_req\030\037 \001(\0132\031.dspb.ColumnsSt" +
       "atsRequest\022%\n\tsplit_cmd\030d \001(\0132\022.dspb.Spl" +
@@ -9405,18 +9603,18 @@ public final class RaftInternal {
       "pb.UpdateStatsCommand\022\022\n\tcmd_flags\030\351\007 \001(" +
       "\r\"P\n\010PeerTask\022(\n\014verify_epoch\030\001 \001(\0132\022.ba" +
       "sepb.RangeEpoch\022\032\n\004peer\030\002 \001(\0132\014.basepb.P" +
-      "eer\"K\n\016SnapshotKVPair\022\013\n\003key\030\001 \001(\014\022\r\n\005va" +
+      "eer\"]\n\016SnapshotKVPair\022\013\n\003key\030\001 \001(\014\022\r\n\005va" +
       "lue\030\002 \001(\014\022\035\n\007cf_type\030\003 \001(\0162\014.dspb.CFType" +
-      "\".\n\017SnapshotContext\022\033\n\004meta\030\001 \001(\0132\r.base" +
-      "pb.Range*\374\001\n\007CmdType\022\017\n\013Invalid_Cmd\020\000\022\016\n" +
-      "\nTxnPrepare\020\001\022\r\n\tTxnDecide\020\002\022\016\n\nTxnClear" +
-      "up\020\003\022\r\n\tTxnSelect\020\004\022\013\n\007TxnScan\020\005\022\021\n\rTxnS" +
-      "electFlow\020\006\022\t\n\005KvGet\020\024\022\t\n\005KvPut\020\025\022\014\n\010KvD" +
-      "elete\020\026\022\n\n\006KvScan\020\027\022\016\n\nKvDelRange\020\030\022\017\n\013I" +
-      "dxStatsGet\020\036\022\020\n\014ColsStatsGet\020\037\022\016\n\nAdminS" +
-      "plit\020d\022\017\n\013UpdateStats\020e*$\n\006CFType\022\016\n\nCF_" +
-      "DEFAULT\020\000\022\n\n\006CF_TXN\020\001B\r\n\013io.jimdb.pbb\006pr" +
-      "oto3"
+      "\022\020\n\010mut_type\030\004 \001(\005\".\n\017SnapshotContext\022\033\n" +
+      "\004meta\030\001 \001(\0132\r.basepb.Range*\236\002\n\007CmdType\022\017" +
+      "\n\013Invalid_Cmd\020\000\022\016\n\nTxnPrepare\020\001\022\r\n\tTxnDe" +
+      "cide\020\002\022\016\n\nTxnClearup\020\003\022\r\n\tTxnSelect\020\004\022\013\n" +
+      "\007TxnScan\020\005\022\021\n\rTxnSelectFlow\020\006\022\t\n\005KvGet\020\024" +
+      "\022\t\n\005KvPut\020\025\022\014\n\010KvDelete\020\026\022\n\n\006KvScan\020\027\022\016\n" +
+      "\nKvDelRange\020\030\022\013\n\007KvRedis\020\031\022\023\n\017KvRedisMut" +
+      "ation\020\032\022\017\n\013IdxStatsGet\020\036\022\020\n\014ColsStatsGet" +
+      "\020\037\022\016\n\nAdminSplit\020d\022\017\n\013UpdateStats\020eB\r\n\013i" +
+      "o.jimdb.pbb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -9463,7 +9661,7 @@ public final class RaftInternal {
     internal_static_dspb_Command_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_Command_descriptor,
-        new java.lang.String[] { "CmdId", "CmdType", "VerifyEpoch", "TxnPrepareReq", "TxnDecideReq", "TxnClearupReq", "TxnSelectReq", "TxnScanReq", "TxnSelectFlowReq", "KvGetReq", "KvPutReq", "KvDeleteReq", "KvScanReq", "KvDelRangeReq", "RedisReq", "IdxStatsReq", "ColsStatsReq", "SplitCmd", "UpdateStatsCmd", "CmdFlags", });
+        new java.lang.String[] { "CmdId", "CmdType", "VerifyEpoch", "TxnPrepareReq", "TxnDecideReq", "TxnClearupReq", "TxnSelectReq", "TxnScanReq", "TxnSelectFlowReq", "KvGetReq", "KvPutReq", "KvDeleteReq", "KvScanReq", "KvDelRangeReq", "RedisReq", "RedisMut", "IdxStatsReq", "ColsStatsReq", "SplitCmd", "UpdateStatsCmd", "CmdFlags", });
     internal_static_dspb_PeerTask_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_dspb_PeerTask_fieldAccessorTable = new
@@ -9475,7 +9673,7 @@ public final class RaftInternal {
     internal_static_dspb_SnapshotKVPair_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_SnapshotKVPair_descriptor,
-        new java.lang.String[] { "Key", "Value", "CfType", });
+        new java.lang.String[] { "Key", "Value", "CfType", "MutType", });
     internal_static_dspb_SnapshotContext_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_dspb_SnapshotContext_fieldAccessorTable = new

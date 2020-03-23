@@ -65,20 +65,28 @@ import io.jimdb.sql.operator.show.ShowCollation;
 import io.jimdb.sql.operator.show.ShowColumns;
 import io.jimdb.sql.operator.show.ShowCreateTable;
 import io.jimdb.sql.operator.show.ShowDatabases;
+import io.jimdb.sql.operator.show.ShowDatabasesInfo;
 import io.jimdb.sql.operator.show.ShowIndex;
 import io.jimdb.sql.operator.show.ShowStatus;
 import io.jimdb.sql.operator.show.ShowTables;
+import io.jimdb.sql.operator.show.ShowTablesInfo;
 import io.jimdb.sql.operator.show.ShowVariables;
 import io.jimdb.sql.optimizer.OptimizeFlag;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.alibaba.druid.sql.ast.SQLAdhocTableSource;
+import com.alibaba.druid.sql.ast.SQLCurrentTimeExpr;
+import com.alibaba.druid.sql.ast.SQLCurrentUserExpr;
+import com.alibaba.druid.sql.ast.SQLDataTypeRefExpr;
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLName;
 import com.alibaba.druid.sql.ast.expr.SQLAllColumnExpr;
+import com.alibaba.druid.sql.ast.expr.SQLDecimalExpr;
 import com.alibaba.druid.sql.ast.expr.SQLDefaultExpr;
 import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
+import com.alibaba.druid.sql.ast.expr.SQLSizeExpr;
 import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
 import com.alibaba.druid.sql.ast.statement.SQLAlterTableStatement;
 import com.alibaba.druid.sql.ast.statement.SQLAssignItem;
@@ -97,9 +105,13 @@ import com.alibaba.druid.sql.ast.statement.SQLRollbackStatement;
 import com.alibaba.druid.sql.ast.statement.SQLSelectItem;
 import com.alibaba.druid.sql.ast.statement.SQLSelectQueryBlock;
 import com.alibaba.druid.sql.ast.statement.SQLSetStatement;
+import com.alibaba.druid.sql.ast.statement.SQLShowTablesInfoStatement;
 import com.alibaba.druid.sql.ast.statement.SQLShowTablesStatement;
+import com.alibaba.druid.sql.ast.statement.SQLTableSampling;
 import com.alibaba.druid.sql.ast.statement.SQLTableSource;
+import com.alibaba.druid.sql.ast.statement.SQLUnnestTableSource;
 import com.alibaba.druid.sql.ast.statement.SQLUseStatement;
+import com.alibaba.druid.sql.ast.statement.SQLValuesQuery;
 import com.alibaba.druid.sql.dialect.mysql.ast.expr.MySqlCharExpr;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlAlterUserStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlAnalyzeStatement;
@@ -115,6 +127,7 @@ import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowCharacterSetSt
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowCollationStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowColumnsStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowCreateTableStatement;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowDatabasesInfoStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowDatabasesStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowGrantsStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowIndexesStatement;
@@ -128,7 +141,7 @@ import reactor.util.function.Tuple2;
 /**
  * @version V1.0
  */
-@SuppressFBWarnings("PL_PARALLEL_LISTS")
+@SuppressFBWarnings({ "PL_PARALLEL_LISTS", "CLI_CONSTANT_LIST_INDEX" })
 public final class MySQLAnalyzer extends MySqlVisitorAdapter {
   private static final String VARS_COLLATION = "collation_connection";
   private static final String[] VARS_CHARSET = { "character_set_client", "character_set_results", "character_set_connection" };
@@ -140,8 +153,12 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
   private static final String[] SHOW_DATABASE_COLUMNS = { "Database" };
   private static final String[] SHOW_DATABASE_ORC_COLUMNS = { "SCHEMA_NAME" };
   private static final DataType[] SHOW_DATABASE_TYPES = { DataType.Varchar };
+  private static final String[] SHOW_DATABASE_INFO_COLUMNS = { "Id", "Database" };
+  private static final DataType[] SHOW_DATABASE_INFO_TYPES = { DataType.BigInt, DataType.Varchar };
   private static final String[] SHOW_TABLE_COLUMNS = { "Tables_in_" };
   private static final DataType[] SHOW_TABLE_TYPES = { DataType.Varchar };
+  private static final String[] SHOW_TABLE_INFO_COLUMNS = { "DbId", "Id", "Tables_in_" };
+  private static final DataType[] SHOW_TABLE_INFO_TYPES = { DataType.BigInt, DataType.BigInt, DataType.Varchar };
   private static final String[] SHOW_STATUS_COLUMNS = {};
   private static final DataType[] SHOW_STATUS_TYPES = {};
   private static final String[] EXPLAIN_COLUMNS = { "op", "count", "task", "operator_info" };
@@ -565,6 +582,12 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
   }
 
   @Override
+  public boolean visit(MySqlShowDatabasesInfoStatement x) {
+    analyzeShow(new ShowDatabasesInfo(), SHOW_DATABASE_INFO_COLUMNS, null, SHOW_DATABASE_INFO_TYPES, x.getLike(), x.getWhere());
+    return false;
+  }
+
+  @Override
   public boolean visit(MySqlShowStatusStatement x) {
     analyzeShow(new ShowStatus(), SHOW_STATUS_COLUMNS, null, SHOW_STATUS_TYPES, null, null);
     return false;
@@ -581,6 +604,20 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
       dbName = session.getVarContext().getDefaultCatalog();
     }
     analyzeShow(new ShowTables(dbName), new String[]{ SHOW_TABLE_COLUMNS[0] + dbName }, null, SHOW_TABLE_TYPES, null, null);
+    return false;
+  }
+
+  @Override
+  public boolean visit(SQLShowTablesInfoStatement stmt) {
+    String dbName = null;
+    if (stmt.getDatabase() != null) {
+      dbName = stmt.getDatabase().getSimpleName();
+    }
+
+    if (StringUtil.isBlank(dbName)) {
+      dbName = session.getVarContext().getDefaultCatalog();
+    }
+    analyzeShow(new ShowTablesInfo(dbName), new String[]{ SHOW_TABLE_INFO_COLUMNS[0], SHOW_TABLE_INFO_COLUMNS[1], SHOW_TABLE_INFO_COLUMNS[2] + dbName }, null, SHOW_TABLE_INFO_TYPES, null, null);
     return false;
   }
 
@@ -798,8 +835,100 @@ public final class MySQLAnalyzer extends MySqlVisitorAdapter {
   }
 
   @Override
+  public boolean visit(SQLValuesQuery x) {
+    return false;
+  }
+
+  @Override
+  public void endVisit(SQLValuesQuery x) {
+
+  }
+
+  @Override
+  public boolean visit(SQLDataTypeRefExpr x) {
+    return false;
+  }
+
+  @Override
+  public void endVisit(SQLDataTypeRefExpr x) {
+
+  }
+
+  @Override
+  public boolean visit(SQLTableSampling x) {
+    return false;
+  }
+
+  @Override
+  public void endVisit(SQLTableSampling x) {
+
+  }
+
+  @Override
+  public boolean visit(SQLSizeExpr x) {
+    return false;
+  }
+
+  @Override
+  public void endVisit(SQLSizeExpr x) {
+
+  }
+
+  @Override
+  public boolean visit(SQLUnnestTableSource x) {
+    return false;
+  }
+
+  @Override
+  public void endVisit(SQLUnnestTableSource x) {
+
+  }
+
+  @Override
+  public boolean visit(SQLAdhocTableSource x) {
+    return false;
+  }
+
+  @Override
+  public void endVisit(SQLAdhocTableSource x) {
+
+  }
+
+  @Override
+  public boolean visit(SQLCurrentTimeExpr x) {
+    return false;
+  }
+
+  @Override
+  public void endVisit(SQLCurrentTimeExpr x) {
+
+  }
+
+  @Override
+  public boolean visit(SQLDecimalExpr x) {
+    return false;
+  }
+
+  @Override
+  public void endVisit(SQLDecimalExpr x) {
+
+  }
+
+  @Override
+  public boolean visit(SQLCurrentUserExpr x) {
+    return false;
+  }
+
+  @Override
+  public void endVisit(SQLCurrentUserExpr x) {
+
+  }
+
+  @Override
   public boolean visit(SQLRollbackStatement x) {
     this.resultOperator = Rollback.getInstance();
     return true;
   }
+
+
 }

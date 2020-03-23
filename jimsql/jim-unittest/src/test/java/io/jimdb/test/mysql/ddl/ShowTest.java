@@ -51,7 +51,7 @@ public class ShowTest extends SqlTestBase {
     createCatalog(dbs.get(2));
 
     List<String> results = new ArrayList<>();
-    execQuery("SHOW DATABASES", rs -> {
+    execQuery("SHOW DATABASES like meta", rs -> {
       try {
         while (rs.next()) {
           results.add(rs.getString("Database"));
@@ -71,6 +71,12 @@ public class ShowTest extends SqlTestBase {
     deleteCatalog(dbs.get(0));
     deleteCatalog(dbs.get(1));
     deleteCatalog(dbs.get(2));
+  }
+
+  @Test
+  public void testShowDatabasesInfo() {
+    List<String> expected = expectedStr(new String[]{ "Collation=utf8; Charset=utf8; Id=1; Default=Yes; Compiled=Yes; Sortlen=1" });
+    execQuery("show dbinfos", expected);
   }
 
   @Test
@@ -109,6 +115,14 @@ public class ShowTest extends SqlTestBase {
     Assert.assertEquals(tables.size(), found);
 
     deleteCatalog(DB_NAME);
+  }
+
+  @Test
+  public void testShowTablesInfo() {
+    String sql = String.format("use %s", "show_test_db6972173830339");
+    execUpdate(sql, 0, true);
+    List<String> expected = expectedStr(new String[]{ "Collation=utf8; Charset=utf8; Id=1; Default=Yes; Compiled=Yes; Sortlen=1" });
+    execQuery("show tableinfos", expected);
   }
 
   @Test

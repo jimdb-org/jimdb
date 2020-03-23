@@ -48,26 +48,7 @@ public final class BinaryValue extends Value<BinaryValue> {
     if (value.length == 0) {
       return EMPTY;
     }
-
-    BinaryValue result = null;
-    if (VALUE_CACHE_SIZE > 0 && value.length <= BYTE_CACHE_THRESHOLD) {
-      BinaryValue[] cache;
-      if ((cache = binaryCache.get()) == null) {
-        cache = new BinaryValue[VALUE_CACHE_SIZE];
-        binaryCache = new SoftReference<>(cache);
-      }
-
-      final int index = ByteUtil.getByteHash(value) & VALUE_CACHE_MASK;
-      result = cache[index];
-      if (result != null && Arrays.equals(value, result.value)) {
-        return result;
-      }
-
-      result = new BinaryValue(value);
-      cache[index] = result;
-    }
-
-    return result == null ? new BinaryValue(value) : result;
+    return new BinaryValue(value);
   }
 
   @Override

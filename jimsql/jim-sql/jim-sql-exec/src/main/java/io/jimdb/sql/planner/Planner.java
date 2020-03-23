@@ -18,10 +18,10 @@ package io.jimdb.sql.planner;
 import java.util.List;
 import java.util.function.Supplier;
 
+import io.jimdb.common.exception.BaseException;
 import io.jimdb.common.exception.DBException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.common.exception.ErrorModule;
-import io.jimdb.common.exception.BaseException;
 import io.jimdb.core.SQLAnalyzer;
 import io.jimdb.core.Session;
 import io.jimdb.core.context.StatementContext;
@@ -56,7 +56,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @SuppressFBWarnings
 public final class Planner {
   private static final SQLParserFeature[] SQL_FEATURES = new SQLParserFeature[]{
-          SQLParserFeature.UseInsertColumnsCache,
+//          SQLParserFeature.UseInsertColumnsCache,
           SQLParserFeature.SkipComments };
 
   private final SQLEngine.DBType dbType;

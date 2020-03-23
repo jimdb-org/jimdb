@@ -124,6 +124,7 @@ public class StatsUtils {
                                          .setId(i + 1)
                                          .setOffset(i)
                                          .setSqlType(Metapb.SQLType.newBuilder().setType(entry.getValue()).build())
+                                         .setState(Metapb.MetaState.Public)
                                          .build();
       columnInfoList.add(columnInfo);
     }

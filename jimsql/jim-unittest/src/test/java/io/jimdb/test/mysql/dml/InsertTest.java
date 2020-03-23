@@ -15,8 +15,14 @@
  */
 package io.jimdb.test.mysql.dml;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import io.jimdb.test.mysql.SqlTestBase;
 
@@ -133,4 +139,65 @@ public final class InsertTest extends SqlTestBase {
     execQuery(String.format("select * from %s where id=11111", TABLENAME), expected);
   }
 
+//  @Test
+  public void testSelectBatch() {
+    String TEST_TABLENAME = DBNAME + "." + "test007";
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    String dateStr = dateFormat.format(new Date());
+
+    execUpdate(String.format("DROP TABLE IF EXISTS %s ", TEST_TABLENAME), 0, true);
+
+    String sql = "CREATE TABLE IF NOT EXISTS " + TEST_TABLENAME + " ("
+            + "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,"
+            + "t_varchar varchar(12) null,"
+            + "t_timestamp timestamp null ON UPDATE CURRENT_TIMESTAMP,"
+            + "t_datetime datetime DEFAULT NULL"
+            + ")COMMENT 'REPLICA=1' ENGINE=memory AUTO_INCREMENT=0;";
+    execUpdate(sql, 0, true);
+
+    // insert and assert datetime
+    for (int i = 0; i < 10000000; i++) {
+      sql = String.format("INSERT INTO %s(%s) VALUES('%s','%s')", TEST_TABLENAME, "t_varchar,t_datetime", "123123", dateStr);
+      execUpdate(sql, 1, true);
+    }
+
+  }
+
+
+//  @Test
+  public void testInsertMutiThread() {
+    String TEST_TABLENAME = DBNAME + "." + "test007";
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    String dateStr = dateFormat.format(new Date());
+
+    execUpdate(String.format("DROP TABLE IF EXISTS %s ", TEST_TABLENAME), 0, true);
+
+    String sql = "CREATE TABLE IF NOT EXISTS " + TEST_TABLENAME + " ("
+            + "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,"
+            + "t_varchar varchar(12) null,"
+            + "t_timestamp timestamp null ON UPDATE CURRENT_TIMESTAMP,"
+            + "t_datetime datetime DEFAULT NULL"
+            + ")COMMENT 'REPLICA=1' ENGINE=memory AUTO_INCREMENT=0;";
+    execUpdate(sql, 0, true);
+    int size = 1000000;
+    CountDownLatch latch = new CountDownLatch(size);
+    ExecutorService service = Executors.newFixedThreadPool(10);
+
+    for (int i = 0; i < size; i++) {
+      service.execute(() -> {
+        try {
+          String sql1 = String.format("INSERT INTO %s(%s) VALUES('%s','%s')", TEST_TABLENAME, "t_varchar,t_datetime", "123123", dateStr);
+          execUpdate(sql1, 1, true);
+        } finally {
+          latch.countDown();
+        }
+      });
+    }
+
+    try {
+      latch.await();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
 }

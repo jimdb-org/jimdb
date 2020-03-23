@@ -1,0 +1,26 @@
+drop table if exists t1,t2;
+create table t1 (name char(20) not null, primary key (name)) COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+create table t2 (name char(20) binary not null, primary key (name))COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+insert into t1 values ("w");
+insert into t1 values ("h");
+insert into t1 values ("l");
+select * from t1 order by name;
+name
+h
+l
+w
+select * from t2 order by name;
+name
+select name from t1 where name between 'w' and 'l';
+name
+select name from t2 where name between 'w' and 'l';
+name
+select name from t2 where name between 'w' and 'l';
+name
+drop table t1,t2;
+create table t1 (a char(10) not null , b char(10) binary not null,primary key (a), key(b))COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+insert into t1 values ("hello ","hello "),("hello2 ","hello2 ");
+drop table t1;
+create table t1 (a char(3) binary primary key, b binary(3))COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+insert into t1 values ('aaa','bbb'),('AAA','BBB');
+drop table t1;

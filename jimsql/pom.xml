@@ -28,7 +28,7 @@
         <jdk.version>1.8</jdk.version>
         <build.encoding>UTF-8</build.encoding>
 
-        <druid.version>1.1.20</druid.version>
+        <druid.version>1.1.21</druid.version>
         <netty.version>4.1.43.Final</netty.version>
         <reactor.version>Dysprosium-RELEASE</reactor.version>
         <arrow.version>0.13.0</arrow.version>

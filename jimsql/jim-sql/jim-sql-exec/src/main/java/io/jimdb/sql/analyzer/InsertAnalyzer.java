@@ -37,6 +37,7 @@ import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.values.NullValue;
+import io.jimdb.sql.ddl.DDLUtils;
 import io.jimdb.sql.operator.DualTable;
 import io.jimdb.sql.operator.Insert;
 import io.jimdb.sql.operator.Operator;
@@ -82,6 +83,7 @@ public final class InsertAnalyzer {
     }
     Table table;
     try {
+      tblName = DDLUtils.trimName(tblName);
       table = session.getTxnContext().getMetaData().getTable(dbName, tblName);
     } catch (BaseException ex) {
       if (ex.getCode() == ErrorCode.ER_BAD_TABLE_ERROR || ex.getCode() == ErrorCode.ER_BAD_DB_ERROR) {
@@ -153,7 +155,8 @@ public final class InsertAnalyzer {
     int numRows = rowValues.size();
     int numColumns = insertColumns.length;
     List<SQLExpr> colValues;
-    List<Expression[]> result = new ArrayList<>(numRows);
+//    List<Expression[]> result = new ArrayList<>(numRows);
+    Expression[][] result = new Expression[numRows][];
     for (int i = 0; i < numRows; i++) {
       colValues = rowValues.get(i).getValues();
       if (colValues == null || colValues.size() != numColumns) {
@@ -172,7 +175,7 @@ public final class InsertAnalyzer {
                 null, true, sqlObj -> checkRefColumn(insertop, sqlObj));
         colExprs[j] = rewriteValue.getT1().orElseGet(() -> new ValueExpr(NullValue.getInstance(), insertColumn.getType()));
       }
-      result.add(colExprs);
+      result[i] = colExprs;
     }
 
     insertop.setColumns(insertColumns);
@@ -202,6 +205,7 @@ public final class InsertAnalyzer {
     Column[] result = new Column[size];
     for (int i = 0; i < size; i++) {
       colName = ((SQLName) insertCols.get(i)).getSimpleName();
+      colName = DDLUtils.trimName(colName);
       result[i] = table.getWritableColumn(colName);
     }
     return result;

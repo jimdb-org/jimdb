@@ -40,537 +40,529 @@ public final class Kv {
      */
     EXPIREAT(3),
     /**
-     * <code>KEYS = 4;</code>
+     * <code>PERSIST = 4;</code>
      */
-    KEYS(4),
+    PERSIST(4),
     /**
-     * <code>OBJECT = 5;</code>
+     * <code>PEXPIRE = 5;</code>
      */
-    OBJECT(5),
+    PEXPIRE(5),
     /**
-     * <code>PERSIST = 6;</code>
+     * <code>PEXPIREAT = 6;</code>
      */
-    PERSIST(6),
+    PEXPIREAT(6),
     /**
-     * <code>PEXPIRE = 7;</code>
+     * <code>PTTL = 7;</code>
      */
-    PEXPIRE(7),
+    PTTL(7),
     /**
-     * <code>PEXPIREAT = 8;</code>
+     * <code>SORT = 8;</code>
      */
-    PEXPIREAT(8),
+    SORT(8),
     /**
-     * <code>PTTL = 9;</code>
+     * <code>TTL = 9;</code>
      */
-    PTTL(9),
+    TTL(9),
     /**
-     * <code>RANDOMKEY = 10;</code>
+     * <code>TYPE = 10;</code>
      */
-    RANDOMKEY(10),
+    TYPE(10),
     /**
-     * <code>RENAME = 11;</code>
+     * <code>SCAN = 11;</code>
      */
-    RENAME(11),
+    SCAN(11),
     /**
-     * <code>RENAMENX = 12;</code>
+     * <code>DUMP = 12;</code>
      */
-    RENAMENX(12),
+    DUMP(12),
     /**
-     * <code>SORT = 13;</code>
+     * <code>RESTORE = 13;</code>
      */
-    SORT(13),
+    RESTORE(13),
     /**
-     * <code>TTL = 14;</code>
+     * <code>OBJECT = 14;</code>
      */
-    TTL(14),
-    /**
-     * <code>TYPE = 15;</code>
-     */
-    TYPE(15),
-    /**
-     * <code>SCAN = 16;</code>
-     */
-    SCAN(16),
+    OBJECT(14),
     /**
      * <pre>
      *string
      * </pre>
      *
-     * <code>APPEND = 17;</code>
+     * <code>APPEND = 15;</code>
      */
-    APPEND(17),
+    APPEND(15),
     /**
-     * <code>BITCOUNT = 18;</code>
+     * <code>BITCOUNT = 16;</code>
      */
-    BITCOUNT(18),
+    BITCOUNT(16),
     /**
-     * <code>BITOP = 19;</code>
+     * <code>BITOP = 17;</code>
      */
-    BITOP(19),
+    BITOP(17),
     /**
-     * <code>BITPOS = 20;</code>
+     * <code>BITPOS = 18;</code>
      */
-    BITPOS(20),
+    BITPOS(18),
     /**
-     * <code>DECR = 21;</code>
+     * <code>DECR = 19;</code>
      */
-    DECR(21),
+    DECR(19),
     /**
-     * <code>DECRBY = 22;</code>
+     * <code>DECRBY = 20;</code>
      */
-    DECRBY(22),
+    DECRBY(20),
     /**
-     * <code>GET = 23;</code>
+     * <code>GET = 21;</code>
      */
-    GET(23),
+    GET(21),
     /**
-     * <code>GETBIT = 24;</code>
+     * <code>GETBIT = 22;</code>
      */
-    GETBIT(24),
+    GETBIT(22),
     /**
-     * <code>GETRANGE = 25;</code>
+     * <code>GETRANGE = 23;</code>
      */
-    GETRANGE(25),
+    GETRANGE(23),
     /**
-     * <code>SUBSTR = 26;</code>
+     * <code>SUBSTR = 24;</code>
      */
-    SUBSTR(26),
+    SUBSTR(24),
     /**
-     * <code>GETSET = 27;</code>
+     * <code>GETSET = 25;</code>
      */
-    GETSET(27),
+    GETSET(25),
     /**
-     * <code>INCR = 28;</code>
+     * <code>INCR = 26;</code>
      */
-    INCR(28),
+    INCR(26),
     /**
-     * <code>INCRBY = 29;</code>
+     * <code>INCRBY = 27;</code>
      */
-    INCRBY(29),
+    INCRBY(27),
     /**
-     * <code>INCRBYFLOAT = 30;</code>
+     * <code>INCRBYFLOAT = 28;</code>
      */
-    INCRBYFLOAT(30),
+    INCRBYFLOAT(28),
     /**
-     * <code>MGET = 31;</code>
+     * <code>MGET = 29;</code>
      */
-    MGET(31),
+    MGET(29),
     /**
-     * <code>MSET = 32;</code>
+     * <code>MSET = 30;</code>
      */
-    MSET(32),
+    MSET(30),
     /**
-     * <code>MSETNX = 33;</code>
+     * <code>MSETNX = 31;</code>
      */
-    MSETNX(33),
+    MSETNX(31),
     /**
-     * <code>PSETEX = 34;</code>
+     * <code>PSETEX = 32;</code>
      */
-    PSETEX(34),
+    PSETEX(32),
     /**
-     * <code>SET = 35;</code>
+     * <code>SET = 33;</code>
      */
-    SET(35),
+    SET(33),
     /**
-     * <code>SETBIT = 36;</code>
+     * <code>SETBIT = 34;</code>
      */
-    SETBIT(36),
+    SETBIT(34),
     /**
-     * <code>SETEX = 37;</code>
+     * <code>SETEX = 35;</code>
      */
-    SETEX(37),
+    SETEX(35),
     /**
-     * <code>SETNX = 38;</code>
+     * <code>SETNX = 36;</code>
      */
-    SETNX(38),
+    SETNX(36),
     /**
-     * <code>SETRANGE = 39;</code>
+     * <code>SETRANGE = 37;</code>
      */
-    SETRANGE(39),
+    SETRANGE(37),
     /**
-     * <code>STRLEN = 40;</code>
+     * <code>STRLEN = 38;</code>
      */
-    STRLEN(40),
+    STRLEN(38),
     /**
      * <pre>
      *hash
      * </pre>
      *
-     * <code>HDEL = 41;</code>
+     * <code>HDEL = 39;</code>
      */
-    HDEL(41),
+    HDEL(39),
     /**
-     * <code>HEXISTS = 42;</code>
+     * <code>HEXISTS = 40;</code>
      */
-    HEXISTS(42),
+    HEXISTS(40),
     /**
-     * <code>HGET = 43;</code>
+     * <code>HGET = 41;</code>
      */
-    HGET(43),
+    HGET(41),
     /**
-     * <code>HGETALL = 44;</code>
+     * <code>HGETALL = 42;</code>
      */
-    HGETALL(44),
+    HGETALL(42),
     /**
-     * <code>HINCRBY = 45;</code>
+     * <code>HINCRBY = 43;</code>
      */
-    HINCRBY(45),
+    HINCRBY(43),
     /**
-     * <code>HINCRBYFLOAT = 46;</code>
+     * <code>HINCRBYFLOAT = 44;</code>
      */
-    HINCRBYFLOAT(46),
+    HINCRBYFLOAT(44),
     /**
-     * <code>HKEYS = 47;</code>
+     * <code>HKEYS = 45;</code>
      */
-    HKEYS(47),
+    HKEYS(45),
     /**
-     * <code>HLEN = 48;</code>
+     * <code>HLEN = 46;</code>
      */
-    HLEN(48),
+    HLEN(46),
     /**
-     * <code>HMGET = 49;</code>
+     * <code>HSTRLEN = 47;</code>
      */
-    HMGET(49),
+    HSTRLEN(47),
     /**
-     * <code>HMSET = 50;</code>
+     * <code>HMGET = 48;</code>
      */
-    HMSET(50),
+    HMGET(48),
     /**
-     * <code>HSET = 51;</code>
+     * <code>HMSET = 49;</code>
      */
-    HSET(51),
+    HMSET(49),
     /**
-     * <code>HSETNX = 52;</code>
+     * <code>HSET = 50;</code>
      */
-    HSETNX(52),
+    HSET(50),
     /**
-     * <code>HVALS = 53;</code>
+     * <code>HSETNX = 51;</code>
      */
-    HVALS(53),
+    HSETNX(51),
     /**
-     * <code>HSCAN = 54;</code>
+     * <code>HVALS = 52;</code>
      */
-    HSCAN(54),
+    HVALS(52),
+    /**
+     * <code>HSCAN = 53;</code>
+     */
+    HSCAN(53),
     /**
      * <pre>
      *list
      * </pre>
      *
-     * <code>BLPOP = 55;</code>
+     * <code>BLPOP = 54;</code>
      */
-    BLPOP(55),
+    BLPOP(54),
     /**
-     * <code>BRPOP = 56;</code>
+     * <code>BRPOP = 55;</code>
      */
-    BRPOP(56),
+    BRPOP(55),
     /**
-     * <code>BRPOPLPUSH = 57;</code>
+     * <code>BRPOPLPUSH = 56;</code>
      */
-    BRPOPLPUSH(57),
+    BRPOPLPUSH(56),
     /**
-     * <code>LINDEX = 58;</code>
+     * <code>LINDEX = 57;</code>
      */
-    LINDEX(58),
+    LINDEX(57),
     /**
-     * <code>LINSERT = 59;</code>
+     * <code>LINSERT = 58;</code>
      */
-    LINSERT(59),
+    LINSERT(58),
     /**
-     * <code>LLEN = 60;</code>
+     * <code>LLEN = 59;</code>
      */
-    LLEN(60),
+    LLEN(59),
     /**
-     * <code>LPOP = 61;</code>
+     * <code>LPOP = 60;</code>
      */
-    LPOP(61),
+    LPOP(60),
     /**
-     * <code>LPUSH = 62;</code>
+     * <code>LPUSH = 61;</code>
      */
-    LPUSH(62),
+    LPUSH(61),
     /**
-     * <code>LPUSHX = 63;</code>
+     * <code>LPUSHX = 62;</code>
      */
-    LPUSHX(63),
+    LPUSHX(62),
     /**
-     * <code>LRANGE = 64;</code>
+     * <code>LRANGE = 63;</code>
      */
-    LRANGE(64),
+    LRANGE(63),
     /**
-     * <code>LREM = 65;</code>
+     * <code>LREM = 64;</code>
      */
-    LREM(65),
+    LREM(64),
     /**
-     * <code>LSET = 66;</code>
+     * <code>LSET = 65;</code>
      */
-    LSET(66),
+    LSET(65),
     /**
-     * <code>LTRIM = 67;</code>
+     * <code>LTRIM = 66;</code>
      */
-    LTRIM(67),
+    LTRIM(66),
     /**
-     * <code>RPOP = 68;</code>
+     * <code>RPOP = 67;</code>
      */
-    RPOP(68),
+    RPOP(67),
     /**
-     * <code>RPOPLPUSH = 69;</code>
+     * <code>RPOPLPUSH = 68;</code>
      */
-    RPOPLPUSH(69),
+    RPOPLPUSH(68),
     /**
-     * <code>RPUSH = 70;</code>
+     * <code>RPUSH = 69;</code>
      */
-    RPUSH(70),
+    RPUSH(69),
     /**
-     * <code>RPUSHX = 71;</code>
+     * <code>RPUSHX = 70;</code>
      */
-    RPUSHX(71),
+    RPUSHX(70),
     /**
-     * <code>SADD = 72;</code>
+     * <pre>
+     *set
+     * </pre>
+     *
+     * <code>SADD = 71;</code>
      */
-    SADD(72),
+    SADD(71),
     /**
-     * <code>SCARD = 73;</code>
+     * <code>SCARD = 72;</code>
      */
-    SCARD(73),
+    SCARD(72),
     /**
-     * <code>SDIFF = 74;</code>
+     * <code>SDIFF = 73;</code>
      */
-    SDIFF(74),
+    SDIFF(73),
     /**
-     * <code>SDIFFSTORE = 75;</code>
+     * <code>SDIFFSTORE = 74;</code>
      */
-    SDIFFSTORE(75),
+    SDIFFSTORE(74),
     /**
-     * <code>SINTER = 76;</code>
+     * <code>SINTER = 75;</code>
      */
-    SINTER(76),
+    SINTER(75),
     /**
-     * <code>SINTERSTORE = 77;</code>
+     * <code>SINTERSTORE = 76;</code>
      */
-    SINTERSTORE(77),
+    SINTERSTORE(76),
     /**
-     * <code>SISMEMBER = 78;</code>
+     * <code>SISMEMBER = 77;</code>
      */
-    SISMEMBER(78),
+    SISMEMBER(77),
     /**
-     * <code>SMEMBERS = 79;</code>
+     * <code>SMEMBERS = 78;</code>
      */
-    SMEMBERS(79),
+    SMEMBERS(78),
     /**
-     * <code>SMOVE = 80;</code>
+     * <code>SMOVE = 79;</code>
      */
-    SMOVE(80),
+    SMOVE(79),
     /**
-     * <code>SPOP = 81;</code>
+     * <code>SPOP = 80;</code>
      */
-    SPOP(81),
+    SPOP(80),
     /**
-     * <code>SRANDMEMBER = 82;</code>
+     * <code>SRANDMEMBER = 81;</code>
      */
-    SRANDMEMBER(82),
+    SRANDMEMBER(81),
     /**
-     * <code>SREM = 83;</code>
+     * <code>SREM = 82;</code>
      */
-    SREM(83),
+    SREM(82),
     /**
-     * <code>SUNION = 84;</code>
+     * <code>SUNION = 83;</code>
      */
-    SUNION(84),
+    SUNION(83),
     /**
-     * <code>SUNIONSTORE = 85;</code>
+     * <code>SUNIONSTORE = 84;</code>
      */
-    SUNIONSTORE(85),
+    SUNIONSTORE(84),
     /**
-     * <code>SSCAN = 86;</code>
+     * <code>SSCAN = 85;</code>
      */
-    SSCAN(86),
+    SSCAN(85),
     /**
-     * <code>ZADD = 87;</code>
+     * <pre>
+     *zset
+     * </pre>
+     *
+     * <code>ZADD = 86;</code>
      */
-    ZADD(87),
+    ZADD(86),
     /**
-     * <code>ZCARD = 88;</code>
+     * <code>ZCARD = 87;</code>
      */
-    ZCARD(88),
+    ZCARD(87),
     /**
-     * <code>ZCOUNT = 89;</code>
+     * <code>ZCOUNT = 88;</code>
      */
-    ZCOUNT(89),
+    ZCOUNT(88),
     /**
-     * <code>ZINCRBY = 90;</code>
+     * <code>ZINCRBY = 89;</code>
      */
-    ZINCRBY(90),
+    ZINCRBY(89),
     /**
-     * <code>ZRANGE = 91;</code>
+     * <code>ZRANGE = 90;</code>
      */
-    ZRANGE(91),
+    ZRANGE(90),
     /**
-     * <code>ZRANGEBYSCORE = 92;</code>
+     * <code>ZRANGEBYSCORE = 91;</code>
      */
-    ZRANGEBYSCORE(92),
+    ZRANGEBYSCORE(91),
     /**
-     * <code>ZRANK = 93;</code>
+     * <code>ZRANK = 92;</code>
      */
-    ZRANK(93),
+    ZRANK(92),
     /**
-     * <code>ZREM = 94;</code>
+     * <code>ZREM = 93;</code>
      */
-    ZREM(94),
+    ZREM(93),
     /**
-     * <code>ZREMRANGEBYRANK = 95;</code>
+     * <code>ZREMRANGEBYRANK = 94;</code>
      */
-    ZREMRANGEBYRANK(95),
+    ZREMRANGEBYRANK(94),
     /**
-     * <code>ZREMRANGEBYSCORE = 96;</code>
+     * <code>ZREMRANGEBYSCORE = 95;</code>
      */
-    ZREMRANGEBYSCORE(96),
+    ZREMRANGEBYSCORE(95),
     /**
-     * <code>ZREVRANGE = 97;</code>
+     * <code>ZREVRANGE = 96;</code>
      */
-    ZREVRANGE(97),
+    ZREVRANGE(96),
     /**
-     * <code>ZREVRANGEBYSCORE = 98;</code>
+     * <code>ZREVRANGEBYSCORE = 97;</code>
      */
-    ZREVRANGEBYSCORE(98),
+    ZREVRANGEBYSCORE(97),
     /**
-     * <code>ZREVRANK = 99;</code>
+     * <code>ZREVRANK = 98;</code>
      */
-    ZREVRANK(99),
+    ZREVRANK(98),
     /**
-     * <code>ZSCORE = 100;</code>
+     * <code>ZSCORE = 99;</code>
      */
-    ZSCORE(100),
+    ZSCORE(99),
     /**
-     * <code>ZUNIONSTORE = 101;</code>
+     * <code>ZUNIONSTORE = 100;</code>
      */
-    ZUNIONSTORE(101),
+    ZUNIONSTORE(100),
     /**
-     * <code>ZINTERSTORE = 102;</code>
+     * <code>ZINTERSTORE = 101;</code>
      */
-    ZINTERSTORE(102),
+    ZINTERSTORE(101),
     /**
-     * <code>ZSCAN = 103;</code>
+     * <code>ZSCAN = 102;</code>
      */
-    ZSCAN(103),
+    ZSCAN(102),
     /**
-     * <code>ZRANGEBYLEX = 104;</code>
+     * <code>ZRANGEBYLEX = 103;</code>
      */
-    ZRANGEBYLEX(104),
+    ZRANGEBYLEX(103),
     /**
-     * <code>ZLEXCOUNT = 105;</code>
+     * <code>ZLEXCOUNT = 104;</code>
      */
-    ZLEXCOUNT(105),
+    ZLEXCOUNT(104),
     /**
-     * <code>ZREMRANGEBYLEX = 106;</code>
+     * <code>ZREMRANGEBYLEX = 105;</code>
      */
-    ZREMRANGEBYLEX(106),
+    ZREMRANGEBYLEX(105),
     /**
-     * <code>ZREVRANGEBYLEX = 107;</code>
+     * <code>PFADD = 106;</code>
      */
-    ZREVRANGEBYLEX(107),
+    PFADD(106),
     /**
-     * <code>PFADD = 108;</code>
+     * <code>PFCOUNT = 107;</code>
      */
-    PFADD(108),
+    PFCOUNT(107),
     /**
-     * <code>PFCOUNT = 109;</code>
+     * <code>PFMERGE = 108;</code>
      */
-    PFCOUNT(109),
+    PFMERGE(108),
     /**
-     * <code>PFMERGE = 110;</code>
+     * <code>PFSELFTEST = 109;</code>
      */
-    PFMERGE(110),
+    PFSELFTEST(109),
     /**
-     * <code>PFSELFTEST = 111;</code>
+     * <code>PFDEBUG = 110;</code>
      */
-    PFSELFTEST(111),
+    PFDEBUG(110),
     /**
-     * <code>PFDEBUG = 112;</code>
+     * <code>DISCARD = 111;</code>
      */
-    PFDEBUG(112),
+    DISCARD(111),
     /**
-     * <code>DISCARD = 113;</code>
+     * <code>EXEC = 112;</code>
      */
-    DISCARD(113),
+    EXEC(112),
     /**
-     * <code>EXEC = 115;</code>
+     * <code>MULTI = 113;</code>
      */
-    EXEC(115),
+    MULTI(113),
     /**
-     * <code>MULTI = 116;</code>
+     * <code>UNWATCH = 114;</code>
      */
-    MULTI(116),
+    UNWATCH(114),
     /**
-     * <code>UNWATCH = 117;</code>
+     * <code>WATCH = 115;</code>
      */
-    UNWATCH(117),
+    WATCH(115),
     /**
-     * <code>WATCH = 118;</code>
+     * <code>EVAL = 116;</code>
      */
-    WATCH(118),
+    EVAL(116),
     /**
-     * <code>EVAL = 119;</code>
+     * <code>EVALSHA = 117;</code>
      */
-    EVAL(119),
+    EVALSHA(117),
     /**
-     * <code>EVALSHA = 120;</code>
+     * <code>SCRIPT = 118;</code>
      */
-    EVALSHA(120),
+    SCRIPT(118),
     /**
-     * <code>SCRIPT = 121;</code>
+     * <code>AUTH = 119;</code>
      */
-    SCRIPT(121),
+    AUTH(119),
     /**
-     * <code>AUTH = 122;</code>
+     * <code>PING = 120;</code>
      */
-    AUTH(122),
+    PING(120),
     /**
-     * <code>PING = 123;</code>
+     * <code>CLIENT = 121;</code>
      */
-    PING(123),
+    CLIENT(121),
     /**
-     * <code>CLIENT = 124;</code>
+     * <code>CONFIG = 122;</code>
      */
-    CLIENT(124),
+    CONFIG(122),
     /**
-     * <code>CONFIG = 125;</code>
+     * <code>DBSIZE = 123;</code>
      */
-    CONFIG(125),
+    DBSIZE(123),
     /**
-     * <code>DBSIZE = 126;</code>
+     * <code>DEBUG = 124;</code>
      */
-    DBSIZE(126),
+    DEBUG(124),
     /**
-     * <code>DEBUG = 127;</code>
+     * <code>FLUSHALL = 125;</code>
      */
-    DEBUG(127),
+    FLUSHALL(125),
     /**
-     * <code>FLUSHDB = 128;</code>
+     * <code>INFO = 126;</code>
      */
-    FLUSHDB(128),
+    INFO(126),
     /**
-     * <code>FLUSHALL = 129;</code>
+     * <code>SLOWLOG = 127;</code>
      */
-    FLUSHALL(129),
+    SLOWLOG(127),
     /**
-     * <code>INFO = 130;</code>
+     * <code>TIME = 128;</code>
      */
-    INFO(130),
+    TIME(128),
     /**
-     * <code>PSYNC = 131;</code>
+     * <code>CLEAREXPIRED = 129;</code>
      */
-    PSYNC(131),
-    /**
-     * <code>SLOWLOG = 132;</code>
-     */
-    SLOWLOG(132),
-    /**
-     * <code>SYNC = 133;</code>
-     */
-    SYNC(133),
-    /**
-     * <code>TIME = 134;</code>
-     */
-    TIME(134),
+    CLEAREXPIRED(129),
     UNRECOGNIZED(-1),
     ;
 
@@ -595,537 +587,529 @@ public final class Kv {
      */
     public static final int EXPIREAT_VALUE = 3;
     /**
-     * <code>KEYS = 4;</code>
+     * <code>PERSIST = 4;</code>
      */
-    public static final int KEYS_VALUE = 4;
+    public static final int PERSIST_VALUE = 4;
     /**
-     * <code>OBJECT = 5;</code>
+     * <code>PEXPIRE = 5;</code>
      */
-    public static final int OBJECT_VALUE = 5;
+    public static final int PEXPIRE_VALUE = 5;
     /**
-     * <code>PERSIST = 6;</code>
+     * <code>PEXPIREAT = 6;</code>
      */
-    public static final int PERSIST_VALUE = 6;
+    public static final int PEXPIREAT_VALUE = 6;
     /**
-     * <code>PEXPIRE = 7;</code>
+     * <code>PTTL = 7;</code>
      */
-    public static final int PEXPIRE_VALUE = 7;
+    public static final int PTTL_VALUE = 7;
     /**
-     * <code>PEXPIREAT = 8;</code>
+     * <code>SORT = 8;</code>
      */
-    public static final int PEXPIREAT_VALUE = 8;
+    public static final int SORT_VALUE = 8;
     /**
-     * <code>PTTL = 9;</code>
+     * <code>TTL = 9;</code>
      */
-    public static final int PTTL_VALUE = 9;
+    public static final int TTL_VALUE = 9;
     /**
-     * <code>RANDOMKEY = 10;</code>
+     * <code>TYPE = 10;</code>
      */
-    public static final int RANDOMKEY_VALUE = 10;
+    public static final int TYPE_VALUE = 10;
     /**
-     * <code>RENAME = 11;</code>
+     * <code>SCAN = 11;</code>
      */
-    public static final int RENAME_VALUE = 11;
+    public static final int SCAN_VALUE = 11;
     /**
-     * <code>RENAMENX = 12;</code>
+     * <code>DUMP = 12;</code>
      */
-    public static final int RENAMENX_VALUE = 12;
+    public static final int DUMP_VALUE = 12;
     /**
-     * <code>SORT = 13;</code>
+     * <code>RESTORE = 13;</code>
      */
-    public static final int SORT_VALUE = 13;
+    public static final int RESTORE_VALUE = 13;
     /**
-     * <code>TTL = 14;</code>
+     * <code>OBJECT = 14;</code>
      */
-    public static final int TTL_VALUE = 14;
-    /**
-     * <code>TYPE = 15;</code>
-     */
-    public static final int TYPE_VALUE = 15;
-    /**
-     * <code>SCAN = 16;</code>
-     */
-    public static final int SCAN_VALUE = 16;
+    public static final int OBJECT_VALUE = 14;
     /**
      * <pre>
      *string
      * </pre>
      *
-     * <code>APPEND = 17;</code>
+     * <code>APPEND = 15;</code>
      */
-    public static final int APPEND_VALUE = 17;
+    public static final int APPEND_VALUE = 15;
     /**
-     * <code>BITCOUNT = 18;</code>
+     * <code>BITCOUNT = 16;</code>
      */
-    public static final int BITCOUNT_VALUE = 18;
+    public static final int BITCOUNT_VALUE = 16;
     /**
-     * <code>BITOP = 19;</code>
+     * <code>BITOP = 17;</code>
      */
-    public static final int BITOP_VALUE = 19;
+    public static final int BITOP_VALUE = 17;
     /**
-     * <code>BITPOS = 20;</code>
+     * <code>BITPOS = 18;</code>
      */
-    public static final int BITPOS_VALUE = 20;
+    public static final int BITPOS_VALUE = 18;
     /**
-     * <code>DECR = 21;</code>
+     * <code>DECR = 19;</code>
      */
-    public static final int DECR_VALUE = 21;
+    public static final int DECR_VALUE = 19;
     /**
-     * <code>DECRBY = 22;</code>
+     * <code>DECRBY = 20;</code>
      */
-    public static final int DECRBY_VALUE = 22;
+    public static final int DECRBY_VALUE = 20;
     /**
-     * <code>GET = 23;</code>
+     * <code>GET = 21;</code>
      */
-    public static final int GET_VALUE = 23;
+    public static final int GET_VALUE = 21;
     /**
-     * <code>GETBIT = 24;</code>
+     * <code>GETBIT = 22;</code>
      */
-    public static final int GETBIT_VALUE = 24;
+    public static final int GETBIT_VALUE = 22;
     /**
-     * <code>GETRANGE = 25;</code>
+     * <code>GETRANGE = 23;</code>
      */
-    public static final int GETRANGE_VALUE = 25;
+    public static final int GETRANGE_VALUE = 23;
     /**
-     * <code>SUBSTR = 26;</code>
+     * <code>SUBSTR = 24;</code>
      */
-    public static final int SUBSTR_VALUE = 26;
+    public static final int SUBSTR_VALUE = 24;
     /**
-     * <code>GETSET = 27;</code>
+     * <code>GETSET = 25;</code>
      */
-    public static final int GETSET_VALUE = 27;
+    public static final int GETSET_VALUE = 25;
     /**
-     * <code>INCR = 28;</code>
+     * <code>INCR = 26;</code>
      */
-    public static final int INCR_VALUE = 28;
+    public static final int INCR_VALUE = 26;
     /**
-     * <code>INCRBY = 29;</code>
+     * <code>INCRBY = 27;</code>
      */
-    public static final int INCRBY_VALUE = 29;
+    public static final int INCRBY_VALUE = 27;
     /**
-     * <code>INCRBYFLOAT = 30;</code>
+     * <code>INCRBYFLOAT = 28;</code>
      */
-    public static final int INCRBYFLOAT_VALUE = 30;
+    public static final int INCRBYFLOAT_VALUE = 28;
     /**
-     * <code>MGET = 31;</code>
+     * <code>MGET = 29;</code>
      */
-    public static final int MGET_VALUE = 31;
+    public static final int MGET_VALUE = 29;
     /**
-     * <code>MSET = 32;</code>
+     * <code>MSET = 30;</code>
      */
-    public static final int MSET_VALUE = 32;
+    public static final int MSET_VALUE = 30;
     /**
-     * <code>MSETNX = 33;</code>
+     * <code>MSETNX = 31;</code>
      */
-    public static final int MSETNX_VALUE = 33;
+    public static final int MSETNX_VALUE = 31;
     /**
-     * <code>PSETEX = 34;</code>
+     * <code>PSETEX = 32;</code>
      */
-    public static final int PSETEX_VALUE = 34;
+    public static final int PSETEX_VALUE = 32;
     /**
-     * <code>SET = 35;</code>
+     * <code>SET = 33;</code>
      */
-    public static final int SET_VALUE = 35;
+    public static final int SET_VALUE = 33;
     /**
-     * <code>SETBIT = 36;</code>
+     * <code>SETBIT = 34;</code>
      */
-    public static final int SETBIT_VALUE = 36;
+    public static final int SETBIT_VALUE = 34;
     /**
-     * <code>SETEX = 37;</code>
+     * <code>SETEX = 35;</code>
      */
-    public static final int SETEX_VALUE = 37;
+    public static final int SETEX_VALUE = 35;
     /**
-     * <code>SETNX = 38;</code>
+     * <code>SETNX = 36;</code>
      */
-    public static final int SETNX_VALUE = 38;
+    public static final int SETNX_VALUE = 36;
     /**
-     * <code>SETRANGE = 39;</code>
+     * <code>SETRANGE = 37;</code>
      */
-    public static final int SETRANGE_VALUE = 39;
+    public static final int SETRANGE_VALUE = 37;
     /**
-     * <code>STRLEN = 40;</code>
+     * <code>STRLEN = 38;</code>
      */
-    public static final int STRLEN_VALUE = 40;
+    public static final int STRLEN_VALUE = 38;
     /**
      * <pre>
      *hash
      * </pre>
      *
-     * <code>HDEL = 41;</code>
+     * <code>HDEL = 39;</code>
      */
-    public static final int HDEL_VALUE = 41;
+    public static final int HDEL_VALUE = 39;
     /**
-     * <code>HEXISTS = 42;</code>
+     * <code>HEXISTS = 40;</code>
      */
-    public static final int HEXISTS_VALUE = 42;
+    public static final int HEXISTS_VALUE = 40;
     /**
-     * <code>HGET = 43;</code>
+     * <code>HGET = 41;</code>
      */
-    public static final int HGET_VALUE = 43;
+    public static final int HGET_VALUE = 41;
     /**
-     * <code>HGETALL = 44;</code>
+     * <code>HGETALL = 42;</code>
      */
-    public static final int HGETALL_VALUE = 44;
+    public static final int HGETALL_VALUE = 42;
     /**
-     * <code>HINCRBY = 45;</code>
+     * <code>HINCRBY = 43;</code>
      */
-    public static final int HINCRBY_VALUE = 45;
+    public static final int HINCRBY_VALUE = 43;
     /**
-     * <code>HINCRBYFLOAT = 46;</code>
+     * <code>HINCRBYFLOAT = 44;</code>
      */
-    public static final int HINCRBYFLOAT_VALUE = 46;
+    public static final int HINCRBYFLOAT_VALUE = 44;
     /**
-     * <code>HKEYS = 47;</code>
+     * <code>HKEYS = 45;</code>
      */
-    public static final int HKEYS_VALUE = 47;
+    public static final int HKEYS_VALUE = 45;
     /**
-     * <code>HLEN = 48;</code>
+     * <code>HLEN = 46;</code>
      */
-    public static final int HLEN_VALUE = 48;
+    public static final int HLEN_VALUE = 46;
     /**
-     * <code>HMGET = 49;</code>
+     * <code>HSTRLEN = 47;</code>
      */
-    public static final int HMGET_VALUE = 49;
+    public static final int HSTRLEN_VALUE = 47;
     /**
-     * <code>HMSET = 50;</code>
+     * <code>HMGET = 48;</code>
      */
-    public static final int HMSET_VALUE = 50;
+    public static final int HMGET_VALUE = 48;
     /**
-     * <code>HSET = 51;</code>
+     * <code>HMSET = 49;</code>
      */
-    public static final int HSET_VALUE = 51;
+    public static final int HMSET_VALUE = 49;
     /**
-     * <code>HSETNX = 52;</code>
+     * <code>HSET = 50;</code>
      */
-    public static final int HSETNX_VALUE = 52;
+    public static final int HSET_VALUE = 50;
     /**
-     * <code>HVALS = 53;</code>
+     * <code>HSETNX = 51;</code>
      */
-    public static final int HVALS_VALUE = 53;
+    public static final int HSETNX_VALUE = 51;
     /**
-     * <code>HSCAN = 54;</code>
+     * <code>HVALS = 52;</code>
      */
-    public static final int HSCAN_VALUE = 54;
+    public static final int HVALS_VALUE = 52;
+    /**
+     * <code>HSCAN = 53;</code>
+     */
+    public static final int HSCAN_VALUE = 53;
     /**
      * <pre>
      *list
      * </pre>
      *
-     * <code>BLPOP = 55;</code>
+     * <code>BLPOP = 54;</code>
      */
-    public static final int BLPOP_VALUE = 55;
+    public static final int BLPOP_VALUE = 54;
     /**
-     * <code>BRPOP = 56;</code>
+     * <code>BRPOP = 55;</code>
      */
-    public static final int BRPOP_VALUE = 56;
+    public static final int BRPOP_VALUE = 55;
     /**
-     * <code>BRPOPLPUSH = 57;</code>
+     * <code>BRPOPLPUSH = 56;</code>
      */
-    public static final int BRPOPLPUSH_VALUE = 57;
+    public static final int BRPOPLPUSH_VALUE = 56;
     /**
-     * <code>LINDEX = 58;</code>
+     * <code>LINDEX = 57;</code>
      */
-    public static final int LINDEX_VALUE = 58;
+    public static final int LINDEX_VALUE = 57;
     /**
-     * <code>LINSERT = 59;</code>
+     * <code>LINSERT = 58;</code>
      */
-    public static final int LINSERT_VALUE = 59;
+    public static final int LINSERT_VALUE = 58;
     /**
-     * <code>LLEN = 60;</code>
+     * <code>LLEN = 59;</code>
      */
-    public static final int LLEN_VALUE = 60;
+    public static final int LLEN_VALUE = 59;
     /**
-     * <code>LPOP = 61;</code>
+     * <code>LPOP = 60;</code>
      */
-    public static final int LPOP_VALUE = 61;
+    public static final int LPOP_VALUE = 60;
     /**
-     * <code>LPUSH = 62;</code>
+     * <code>LPUSH = 61;</code>
      */
-    public static final int LPUSH_VALUE = 62;
+    public static final int LPUSH_VALUE = 61;
     /**
-     * <code>LPUSHX = 63;</code>
+     * <code>LPUSHX = 62;</code>
      */
-    public static final int LPUSHX_VALUE = 63;
+    public static final int LPUSHX_VALUE = 62;
     /**
-     * <code>LRANGE = 64;</code>
+     * <code>LRANGE = 63;</code>
      */
-    public static final int LRANGE_VALUE = 64;
+    public static final int LRANGE_VALUE = 63;
     /**
-     * <code>LREM = 65;</code>
+     * <code>LREM = 64;</code>
      */
-    public static final int LREM_VALUE = 65;
+    public static final int LREM_VALUE = 64;
     /**
-     * <code>LSET = 66;</code>
+     * <code>LSET = 65;</code>
      */
-    public static final int LSET_VALUE = 66;
+    public static final int LSET_VALUE = 65;
     /**
-     * <code>LTRIM = 67;</code>
+     * <code>LTRIM = 66;</code>
      */
-    public static final int LTRIM_VALUE = 67;
+    public static final int LTRIM_VALUE = 66;
     /**
-     * <code>RPOP = 68;</code>
+     * <code>RPOP = 67;</code>
      */
-    public static final int RPOP_VALUE = 68;
+    public static final int RPOP_VALUE = 67;
     /**
-     * <code>RPOPLPUSH = 69;</code>
+     * <code>RPOPLPUSH = 68;</code>
      */
-    public static final int RPOPLPUSH_VALUE = 69;
+    public static final int RPOPLPUSH_VALUE = 68;
     /**
-     * <code>RPUSH = 70;</code>
+     * <code>RPUSH = 69;</code>
      */
-    public static final int RPUSH_VALUE = 70;
+    public static final int RPUSH_VALUE = 69;
     /**
-     * <code>RPUSHX = 71;</code>
+     * <code>RPUSHX = 70;</code>
      */
-    public static final int RPUSHX_VALUE = 71;
+    public static final int RPUSHX_VALUE = 70;
     /**
-     * <code>SADD = 72;</code>
+     * <pre>
+     *set
+     * </pre>
+     *
+     * <code>SADD = 71;</code>
      */
-    public static final int SADD_VALUE = 72;
+    public static final int SADD_VALUE = 71;
     /**
-     * <code>SCARD = 73;</code>
+     * <code>SCARD = 72;</code>
      */
-    public static final int SCARD_VALUE = 73;
+    public static final int SCARD_VALUE = 72;
     /**
-     * <code>SDIFF = 74;</code>
+     * <code>SDIFF = 73;</code>
      */
-    public static final int SDIFF_VALUE = 74;
+    public static final int SDIFF_VALUE = 73;
     /**
-     * <code>SDIFFSTORE = 75;</code>
+     * <code>SDIFFSTORE = 74;</code>
      */
-    public static final int SDIFFSTORE_VALUE = 75;
+    public static final int SDIFFSTORE_VALUE = 74;
     /**
-     * <code>SINTER = 76;</code>
+     * <code>SINTER = 75;</code>
      */
-    public static final int SINTER_VALUE = 76;
+    public static final int SINTER_VALUE = 75;
     /**
-     * <code>SINTERSTORE = 77;</code>
+     * <code>SINTERSTORE = 76;</code>
      */
-    public static final int SINTERSTORE_VALUE = 77;
+    public static final int SINTERSTORE_VALUE = 76;
     /**
-     * <code>SISMEMBER = 78;</code>
+     * <code>SISMEMBER = 77;</code>
      */
-    public static final int SISMEMBER_VALUE = 78;
+    public static final int SISMEMBER_VALUE = 77;
     /**
-     * <code>SMEMBERS = 79;</code>
+     * <code>SMEMBERS = 78;</code>
      */
-    public static final int SMEMBERS_VALUE = 79;
+    public static final int SMEMBERS_VALUE = 78;
     /**
-     * <code>SMOVE = 80;</code>
+     * <code>SMOVE = 79;</code>
      */
-    public static final int SMOVE_VALUE = 80;
+    public static final int SMOVE_VALUE = 79;
     /**
-     * <code>SPOP = 81;</code>
+     * <code>SPOP = 80;</code>
      */
-    public static final int SPOP_VALUE = 81;
+    public static final int SPOP_VALUE = 80;
     /**
-     * <code>SRANDMEMBER = 82;</code>
+     * <code>SRANDMEMBER = 81;</code>
      */
-    public static final int SRANDMEMBER_VALUE = 82;
+    public static final int SRANDMEMBER_VALUE = 81;
     /**
-     * <code>SREM = 83;</code>
+     * <code>SREM = 82;</code>
      */
-    public static final int SREM_VALUE = 83;
+    public static final int SREM_VALUE = 82;
     /**
-     * <code>SUNION = 84;</code>
+     * <code>SUNION = 83;</code>
      */
-    public static final int SUNION_VALUE = 84;
+    public static final int SUNION_VALUE = 83;
     /**
-     * <code>SUNIONSTORE = 85;</code>
+     * <code>SUNIONSTORE = 84;</code>
      */
-    public static final int SUNIONSTORE_VALUE = 85;
+    public static final int SUNIONSTORE_VALUE = 84;
     /**
-     * <code>SSCAN = 86;</code>
+     * <code>SSCAN = 85;</code>
      */
-    public static final int SSCAN_VALUE = 86;
+    public static final int SSCAN_VALUE = 85;
     /**
-     * <code>ZADD = 87;</code>
+     * <pre>
+     *zset
+     * </pre>
+     *
+     * <code>ZADD = 86;</code>
      */
-    public static final int ZADD_VALUE = 87;
+    public static final int ZADD_VALUE = 86;
     /**
-     * <code>ZCARD = 88;</code>
+     * <code>ZCARD = 87;</code>
      */
-    public static final int ZCARD_VALUE = 88;
+    public static final int ZCARD_VALUE = 87;
     /**
-     * <code>ZCOUNT = 89;</code>
+     * <code>ZCOUNT = 88;</code>
      */
-    public static final int ZCOUNT_VALUE = 89;
+    public static final int ZCOUNT_VALUE = 88;
     /**
-     * <code>ZINCRBY = 90;</code>
+     * <code>ZINCRBY = 89;</code>
      */
-    public static final int ZINCRBY_VALUE = 90;
+    public static final int ZINCRBY_VALUE = 89;
     /**
-     * <code>ZRANGE = 91;</code>
+     * <code>ZRANGE = 90;</code>
      */
-    public static final int ZRANGE_VALUE = 91;
+    public static final int ZRANGE_VALUE = 90;
     /**
-     * <code>ZRANGEBYSCORE = 92;</code>
+     * <code>ZRANGEBYSCORE = 91;</code>
      */
-    public static final int ZRANGEBYSCORE_VALUE = 92;
+    public static final int ZRANGEBYSCORE_VALUE = 91;
     /**
-     * <code>ZRANK = 93;</code>
+     * <code>ZRANK = 92;</code>
      */
-    public static final int ZRANK_VALUE = 93;
+    public static final int ZRANK_VALUE = 92;
     /**
-     * <code>ZREM = 94;</code>
+     * <code>ZREM = 93;</code>
      */
-    public static final int ZREM_VALUE = 94;
+    public static final int ZREM_VALUE = 93;
     /**
-     * <code>ZREMRANGEBYRANK = 95;</code>
+     * <code>ZREMRANGEBYRANK = 94;</code>
      */
-    public static final int ZREMRANGEBYRANK_VALUE = 95;
+    public static final int ZREMRANGEBYRANK_VALUE = 94;
     /**
-     * <code>ZREMRANGEBYSCORE = 96;</code>
+     * <code>ZREMRANGEBYSCORE = 95;</code>
      */
-    public static final int ZREMRANGEBYSCORE_VALUE = 96;
+    public static final int ZREMRANGEBYSCORE_VALUE = 95;
     /**
-     * <code>ZREVRANGE = 97;</code>
+     * <code>ZREVRANGE = 96;</code>
      */
-    public static final int ZREVRANGE_VALUE = 97;
+    public static final int ZREVRANGE_VALUE = 96;
     /**
-     * <code>ZREVRANGEBYSCORE = 98;</code>
+     * <code>ZREVRANGEBYSCORE = 97;</code>
      */
-    public static final int ZREVRANGEBYSCORE_VALUE = 98;
+    public static final int ZREVRANGEBYSCORE_VALUE = 97;
     /**
-     * <code>ZREVRANK = 99;</code>
+     * <code>ZREVRANK = 98;</code>
      */
-    public static final int ZREVRANK_VALUE = 99;
+    public static final int ZREVRANK_VALUE = 98;
     /**
-     * <code>ZSCORE = 100;</code>
+     * <code>ZSCORE = 99;</code>
      */
-    public static final int ZSCORE_VALUE = 100;
+    public static final int ZSCORE_VALUE = 99;
     /**
-     * <code>ZUNIONSTORE = 101;</code>
+     * <code>ZUNIONSTORE = 100;</code>
      */
-    public static final int ZUNIONSTORE_VALUE = 101;
+    public static final int ZUNIONSTORE_VALUE = 100;
     /**
-     * <code>ZINTERSTORE = 102;</code>
+     * <code>ZINTERSTORE = 101;</code>
      */
-    public static final int ZINTERSTORE_VALUE = 102;
+    public static final int ZINTERSTORE_VALUE = 101;
     /**
-     * <code>ZSCAN = 103;</code>
+     * <code>ZSCAN = 102;</code>
      */
-    public static final int ZSCAN_VALUE = 103;
+    public static final int ZSCAN_VALUE = 102;
     /**
-     * <code>ZRANGEBYLEX = 104;</code>
+     * <code>ZRANGEBYLEX = 103;</code>
      */
-    public static final int ZRANGEBYLEX_VALUE = 104;
+    public static final int ZRANGEBYLEX_VALUE = 103;
     /**
-     * <code>ZLEXCOUNT = 105;</code>
+     * <code>ZLEXCOUNT = 104;</code>
      */
-    public static final int ZLEXCOUNT_VALUE = 105;
+    public static final int ZLEXCOUNT_VALUE = 104;
     /**
-     * <code>ZREMRANGEBYLEX = 106;</code>
+     * <code>ZREMRANGEBYLEX = 105;</code>
      */
-    public static final int ZREMRANGEBYLEX_VALUE = 106;
+    public static final int ZREMRANGEBYLEX_VALUE = 105;
     /**
-     * <code>ZREVRANGEBYLEX = 107;</code>
+     * <code>PFADD = 106;</code>
      */
-    public static final int ZREVRANGEBYLEX_VALUE = 107;
+    public static final int PFADD_VALUE = 106;
     /**
-     * <code>PFADD = 108;</code>
+     * <code>PFCOUNT = 107;</code>
      */
-    public static final int PFADD_VALUE = 108;
+    public static final int PFCOUNT_VALUE = 107;
     /**
-     * <code>PFCOUNT = 109;</code>
+     * <code>PFMERGE = 108;</code>
      */
-    public static final int PFCOUNT_VALUE = 109;
+    public static final int PFMERGE_VALUE = 108;
     /**
-     * <code>PFMERGE = 110;</code>
+     * <code>PFSELFTEST = 109;</code>
      */
-    public static final int PFMERGE_VALUE = 110;
+    public static final int PFSELFTEST_VALUE = 109;
     /**
-     * <code>PFSELFTEST = 111;</code>
+     * <code>PFDEBUG = 110;</code>
      */
-    public static final int PFSELFTEST_VALUE = 111;
+    public static final int PFDEBUG_VALUE = 110;
     /**
-     * <code>PFDEBUG = 112;</code>
+     * <code>DISCARD = 111;</code>
      */
-    public static final int PFDEBUG_VALUE = 112;
+    public static final int DISCARD_VALUE = 111;
     /**
-     * <code>DISCARD = 113;</code>
+     * <code>EXEC = 112;</code>
      */
-    public static final int DISCARD_VALUE = 113;
+    public static final int EXEC_VALUE = 112;
     /**
-     * <code>EXEC = 115;</code>
+     * <code>MULTI = 113;</code>
      */
-    public static final int EXEC_VALUE = 115;
+    public static final int MULTI_VALUE = 113;
     /**
-     * <code>MULTI = 116;</code>
+     * <code>UNWATCH = 114;</code>
      */
-    public static final int MULTI_VALUE = 116;
+    public static final int UNWATCH_VALUE = 114;
     /**
-     * <code>UNWATCH = 117;</code>
+     * <code>WATCH = 115;</code>
      */
-    public static final int UNWATCH_VALUE = 117;
+    public static final int WATCH_VALUE = 115;
     /**
-     * <code>WATCH = 118;</code>
+     * <code>EVAL = 116;</code>
      */
-    public static final int WATCH_VALUE = 118;
+    public static final int EVAL_VALUE = 116;
     /**
-     * <code>EVAL = 119;</code>
+     * <code>EVALSHA = 117;</code>
      */
-    public static final int EVAL_VALUE = 119;
+    public static final int EVALSHA_VALUE = 117;
     /**
-     * <code>EVALSHA = 120;</code>
+     * <code>SCRIPT = 118;</code>
      */
-    public static final int EVALSHA_VALUE = 120;
+    public static final int SCRIPT_VALUE = 118;
     /**
-     * <code>SCRIPT = 121;</code>
+     * <code>AUTH = 119;</code>
      */
-    public static final int SCRIPT_VALUE = 121;
+    public static final int AUTH_VALUE = 119;
     /**
-     * <code>AUTH = 122;</code>
+     * <code>PING = 120;</code>
      */
-    public static final int AUTH_VALUE = 122;
+    public static final int PING_VALUE = 120;
     /**
-     * <code>PING = 123;</code>
+     * <code>CLIENT = 121;</code>
      */
-    public static final int PING_VALUE = 123;
+    public static final int CLIENT_VALUE = 121;
     /**
-     * <code>CLIENT = 124;</code>
+     * <code>CONFIG = 122;</code>
      */
-    public static final int CLIENT_VALUE = 124;
+    public static final int CONFIG_VALUE = 122;
     /**
-     * <code>CONFIG = 125;</code>
+     * <code>DBSIZE = 123;</code>
      */
-    public static final int CONFIG_VALUE = 125;
+    public static final int DBSIZE_VALUE = 123;
     /**
-     * <code>DBSIZE = 126;</code>
+     * <code>DEBUG = 124;</code>
      */
-    public static final int DBSIZE_VALUE = 126;
+    public static final int DEBUG_VALUE = 124;
     /**
-     * <code>DEBUG = 127;</code>
+     * <code>FLUSHALL = 125;</code>
      */
-    public static final int DEBUG_VALUE = 127;
+    public static final int FLUSHALL_VALUE = 125;
     /**
-     * <code>FLUSHDB = 128;</code>
+     * <code>INFO = 126;</code>
      */
-    public static final int FLUSHDB_VALUE = 128;
+    public static final int INFO_VALUE = 126;
     /**
-     * <code>FLUSHALL = 129;</code>
+     * <code>SLOWLOG = 127;</code>
      */
-    public static final int FLUSHALL_VALUE = 129;
+    public static final int SLOWLOG_VALUE = 127;
     /**
-     * <code>INFO = 130;</code>
+     * <code>TIME = 128;</code>
      */
-    public static final int INFO_VALUE = 130;
+    public static final int TIME_VALUE = 128;
     /**
-     * <code>PSYNC = 131;</code>
+     * <code>CLEAREXPIRED = 129;</code>
      */
-    public static final int PSYNC_VALUE = 131;
-    /**
-     * <code>SLOWLOG = 132;</code>
-     */
-    public static final int SLOWLOG_VALUE = 132;
-    /**
-     * <code>SYNC = 133;</code>
-     */
-    public static final int SYNC_VALUE = 133;
-    /**
-     * <code>TIME = 134;</code>
-     */
-    public static final int TIME_VALUE = 134;
+    public static final int CLEAREXPIRED_VALUE = 129;
 
 
     public final int getNumber() {
@@ -1150,136 +1134,132 @@ public final class Kv {
         case 1: return EXISTS;
         case 2: return EXPIRE;
         case 3: return EXPIREAT;
-        case 4: return KEYS;
-        case 5: return OBJECT;
-        case 6: return PERSIST;
-        case 7: return PEXPIRE;
-        case 8: return PEXPIREAT;
-        case 9: return PTTL;
-        case 10: return RANDOMKEY;
-        case 11: return RENAME;
-        case 12: return RENAMENX;
-        case 13: return SORT;
-        case 14: return TTL;
-        case 15: return TYPE;
-        case 16: return SCAN;
-        case 17: return APPEND;
-        case 18: return BITCOUNT;
-        case 19: return BITOP;
-        case 20: return BITPOS;
-        case 21: return DECR;
-        case 22: return DECRBY;
-        case 23: return GET;
-        case 24: return GETBIT;
-        case 25: return GETRANGE;
-        case 26: return SUBSTR;
-        case 27: return GETSET;
-        case 28: return INCR;
-        case 29: return INCRBY;
-        case 30: return INCRBYFLOAT;
-        case 31: return MGET;
-        case 32: return MSET;
-        case 33: return MSETNX;
-        case 34: return PSETEX;
-        case 35: return SET;
-        case 36: return SETBIT;
-        case 37: return SETEX;
-        case 38: return SETNX;
-        case 39: return SETRANGE;
-        case 40: return STRLEN;
-        case 41: return HDEL;
-        case 42: return HEXISTS;
-        case 43: return HGET;
-        case 44: return HGETALL;
-        case 45: return HINCRBY;
-        case 46: return HINCRBYFLOAT;
-        case 47: return HKEYS;
-        case 48: return HLEN;
-        case 49: return HMGET;
-        case 50: return HMSET;
-        case 51: return HSET;
-        case 52: return HSETNX;
-        case 53: return HVALS;
-        case 54: return HSCAN;
-        case 55: return BLPOP;
-        case 56: return BRPOP;
-        case 57: return BRPOPLPUSH;
-        case 58: return LINDEX;
-        case 59: return LINSERT;
-        case 60: return LLEN;
-        case 61: return LPOP;
-        case 62: return LPUSH;
-        case 63: return LPUSHX;
-        case 64: return LRANGE;
-        case 65: return LREM;
-        case 66: return LSET;
-        case 67: return LTRIM;
-        case 68: return RPOP;
-        case 69: return RPOPLPUSH;
-        case 70: return RPUSH;
-        case 71: return RPUSHX;
-        case 72: return SADD;
-        case 73: return SCARD;
-        case 74: return SDIFF;
-        case 75: return SDIFFSTORE;
-        case 76: return SINTER;
-        case 77: return SINTERSTORE;
-        case 78: return SISMEMBER;
-        case 79: return SMEMBERS;
-        case 80: return SMOVE;
-        case 81: return SPOP;
-        case 82: return SRANDMEMBER;
-        case 83: return SREM;
-        case 84: return SUNION;
-        case 85: return SUNIONSTORE;
-        case 86: return SSCAN;
-        case 87: return ZADD;
-        case 88: return ZCARD;
-        case 89: return ZCOUNT;
-        case 90: return ZINCRBY;
-        case 91: return ZRANGE;
-        case 92: return ZRANGEBYSCORE;
-        case 93: return ZRANK;
-        case 94: return ZREM;
-        case 95: return ZREMRANGEBYRANK;
-        case 96: return ZREMRANGEBYSCORE;
-        case 97: return ZREVRANGE;
-        case 98: return ZREVRANGEBYSCORE;
-        case 99: return ZREVRANK;
-        case 100: return ZSCORE;
-        case 101: return ZUNIONSTORE;
-        case 102: return ZINTERSTORE;
-        case 103: return ZSCAN;
-        case 104: return ZRANGEBYLEX;
-        case 105: return ZLEXCOUNT;
-        case 106: return ZREMRANGEBYLEX;
-        case 107: return ZREVRANGEBYLEX;
-        case 108: return PFADD;
-        case 109: return PFCOUNT;
-        case 110: return PFMERGE;
-        case 111: return PFSELFTEST;
-        case 112: return PFDEBUG;
-        case 113: return DISCARD;
-        case 115: return EXEC;
-        case 116: return MULTI;
-        case 117: return UNWATCH;
-        case 118: return WATCH;
-        case 119: return EVAL;
-        case 120: return EVALSHA;
-        case 121: return SCRIPT;
-        case 122: return AUTH;
-        case 123: return PING;
-        case 124: return CLIENT;
-        case 125: return CONFIG;
-        case 126: return DBSIZE;
-        case 127: return DEBUG;
-        case 128: return FLUSHDB;
-        case 129: return FLUSHALL;
-        case 130: return INFO;
-        case 131: return PSYNC;
-        case 132: return SLOWLOG;
-        case 133: return SYNC;
-        case 134: return TIME;
+        case 4: return PERSIST;
+        case 5: return PEXPIRE;
+        case 6: return PEXPIREAT;
+        case 7: return PTTL;
+        case 8: return SORT;
+        case 9: return TTL;
+        case 10: return TYPE;
+        case 11: return SCAN;
+        case 12: return DUMP;
+        case 13: return RESTORE;
+        case 14: return OBJECT;
+        case 15: return APPEND;
+        case 16: return BITCOUNT;
+        case 17: return BITOP;
+        case 18: return BITPOS;
+        case 19: return DECR;
+        case 20: return DECRBY;
+        case 21: return GET;
+        case 22: return GETBIT;
+        case 23: return GETRANGE;
+        case 24: return SUBSTR;
+        case 25: return GETSET;
+        case 26: return INCR;
+        case 27: return INCRBY;
+        case 28: return INCRBYFLOAT;
+        case 29: return MGET;
+        case 30: return MSET;
+        case 31: return MSETNX;
+        case 32: return PSETEX;
+        case 33: return SET;
+        case 34: return SETBIT;
+        case 35: return SETEX;
+        case 36: return SETNX;
+        case 37: return SETRANGE;
+        case 38: return STRLEN;
+        case 39: return HDEL;
+        case 40: return HEXISTS;
+        case 41: return HGET;
+        case 42: return HGETALL;
+        case 43: return HINCRBY;
+        case 44: return HINCRBYFLOAT;
+        case 45: return HKEYS;
+        case 46: return HLEN;
+        case 47: return HSTRLEN;
+        case 48: return HMGET;
+        case 49: return HMSET;
+        case 50: return HSET;
+        case 51: return HSETNX;
+        case 52: return HVALS;
+        case 53: return HSCAN;
+        case 54: return BLPOP;
+        case 55: return BRPOP;
+        case 56: return BRPOPLPUSH;
+        case 57: return LINDEX;
+        case 58: return LINSERT;
+        case 59: return LLEN;
+        case 60: return LPOP;
+        case 61: return LPUSH;
+        case 62: return LPUSHX;
+        case 63: return LRANGE;
+        case 64: return LREM;
+        case 65: return LSET;
+        case 66: return LTRIM;
+        case 67: return RPOP;
+        case 68: return RPOPLPUSH;
+        case 69: return RPUSH;
+        case 70: return RPUSHX;
+        case 71: return SADD;
+        case 72: return SCARD;
+        case 73: return SDIFF;
+        case 74: return SDIFFSTORE;
+        case 75: return SINTER;
+        case 76: return SINTERSTORE;
+        case 77: return SISMEMBER;
+        case 78: return SMEMBERS;
+        case 79: return SMOVE;
+        case 80: return SPOP;
+        case 81: return SRANDMEMBER;
+        case 82: return SREM;
+        case 83: return SUNION;
+        case 84: return SUNIONSTORE;
+        case 85: return SSCAN;
+        case 86: return ZADD;
+        case 87: return ZCARD;
+        case 88: return ZCOUNT;
+        case 89: return ZINCRBY;
+        case 90: return ZRANGE;
+        case 91: return ZRANGEBYSCORE;
+        case 92: return ZRANK;
+        case 93: return ZREM;
+        case 94: return ZREMRANGEBYRANK;
+        case 95: return ZREMRANGEBYSCORE;
+        case 96: return ZREVRANGE;
+        case 97: return ZREVRANGEBYSCORE;
+        case 98: return ZREVRANK;
+        case 99: return ZSCORE;
+        case 100: return ZUNIONSTORE;
+        case 101: return ZINTERSTORE;
+        case 102: return ZSCAN;
+        case 103: return ZRANGEBYLEX;
+        case 104: return ZLEXCOUNT;
+        case 105: return ZREMRANGEBYLEX;
+        case 106: return PFADD;
+        case 107: return PFCOUNT;
+        case 108: return PFMERGE;
+        case 109: return PFSELFTEST;
+        case 110: return PFDEBUG;
+        case 111: return DISCARD;
+        case 112: return EXEC;
+        case 113: return MULTI;
+        case 114: return UNWATCH;
+        case 115: return WATCH;
+        case 116: return EVAL;
+        case 117: return EVALSHA;
+        case 118: return SCRIPT;
+        case 119: return AUTH;
+        case 120: return PING;
+        case 121: return CLIENT;
+        case 122: return CONFIG;
+        case 123: return DBSIZE;
+        case 124: return DEBUG;
+        case 125: return FLUSHALL;
+        case 126: return INFO;
+        case 127: return SLOWLOG;
+        case 128: return TIME;
+        case 129: return CLEAREXPIRED;
         default: return null;
       }
     }
@@ -1464,6 +1444,2507 @@ public final class Kv {
     }
 
     // @@protoc_insertion_point(enum_scope:dspb.RedisReplyType)
+  }
+
+  /**
+   * Protobuf enum {@code dspb.RedisType}
+   */
+  public enum RedisType
+      implements com.google.protobuf.ProtocolMessageEnum {
+    /**
+     * <code>TSTRING = 0;</code>
+     */
+    TSTRING(0),
+    /**
+     * <code>TLIST = 1;</code>
+     */
+    TLIST(1),
+    /**
+     * <code>TSET = 2;</code>
+     */
+    TSET(2),
+    /**
+     * <code>TZSET = 3;</code>
+     */
+    TZSET(3),
+    /**
+     * <code>THASH = 4;</code>
+     */
+    THASH(4),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>TSTRING = 0;</code>
+     */
+    public static final int TSTRING_VALUE = 0;
+    /**
+     * <code>TLIST = 1;</code>
+     */
+    public static final int TLIST_VALUE = 1;
+    /**
+     * <code>TSET = 2;</code>
+     */
+    public static final int TSET_VALUE = 2;
+    /**
+     * <code>TZSET = 3;</code>
+     */
+    public static final int TZSET_VALUE = 3;
+    /**
+     * <code>THASH = 4;</code>
+     */
+    public static final int THASH_VALUE = 4;
+
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static RedisType valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static RedisType forNumber(int value) {
+      switch (value) {
+        case 0: return TSTRING;
+        case 1: return TLIST;
+        case 2: return TSET;
+        case 3: return TZSET;
+        case 4: return THASH;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<RedisType>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        RedisType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<RedisType>() {
+            public RedisType findValueByNumber(int number) {
+              return RedisType.forNumber(number);
+            }
+          };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+        getValueDescriptor() {
+      return getDescriptor().getValues().get(ordinal());
+    }
+    public final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptorForType() {
+      return getDescriptor();
+    }
+    public static final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptor() {
+      return io.jimdb.pb.Kv.getDescriptor().getEnumTypes().get(2);
+    }
+
+    private static final RedisType[] VALUES = values();
+
+    public static RedisType valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException(
+          "EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private RedisType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:dspb.RedisType)
+  }
+
+  /**
+   * Protobuf enum {@code dspb.CFType}
+   */
+  public enum CFType
+      implements com.google.protobuf.ProtocolMessageEnum {
+    /**
+     * <code>CF_DEFAULT = 0;</code>
+     */
+    CF_DEFAULT(0),
+    /**
+     * <code>CF_TXN = 1;</code>
+     */
+    CF_TXN(1),
+    /**
+     * <code>CF_EXPIRED = 2;</code>
+     */
+    CF_EXPIRED(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>CF_DEFAULT = 0;</code>
+     */
+    public static final int CF_DEFAULT_VALUE = 0;
+    /**
+     * <code>CF_TXN = 1;</code>
+     */
+    public static final int CF_TXN_VALUE = 1;
+    /**
+     * <code>CF_EXPIRED = 2;</code>
+     */
+    public static final int CF_EXPIRED_VALUE = 2;
+
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static CFType valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static CFType forNumber(int value) {
+      switch (value) {
+        case 0: return CF_DEFAULT;
+        case 1: return CF_TXN;
+        case 2: return CF_EXPIRED;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<CFType>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        CFType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<CFType>() {
+            public CFType findValueByNumber(int number) {
+              return CFType.forNumber(number);
+            }
+          };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+        getValueDescriptor() {
+      return getDescriptor().getValues().get(ordinal());
+    }
+    public final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptorForType() {
+      return getDescriptor();
+    }
+    public static final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptor() {
+      return io.jimdb.pb.Kv.getDescriptor().getEnumTypes().get(3);
+    }
+
+    private static final CFType[] VALUES = values();
+
+    public static CFType valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException(
+          "EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private CFType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:dspb.CFType)
+  }
+
+  public interface KvValueOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:dspb.KvValue)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>bytes key = 1;</code>
+     */
+    com.google.protobuf.ByteString getKey();
+
+    /**
+     * <code>bytes value = 2;</code>
+     */
+    com.google.protobuf.ByteString getValue();
+  }
+  /**
+   * Protobuf type {@code dspb.KvValue}
+   */
+  public  static final class KvValue extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:dspb.KvValue)
+      KvValueOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use KvValue.newBuilder() to construct.
+    private KvValue(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private KvValue() {
+      key_ = com.google.protobuf.ByteString.EMPTY;
+      value_ = com.google.protobuf.ByteString.EMPTY;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private KvValue(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+
+              key_ = input.readBytes();
+              break;
+            }
+            case 18: {
+
+              value_ = input.readBytes();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Kv.internal_static_dspb_KvValue_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Kv.internal_static_dspb_KvValue_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Kv.KvValue.class, io.jimdb.pb.Kv.KvValue.Builder.class);
+    }
+
+    public static final int KEY_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString key_;
+    /**
+     * <code>bytes key = 1;</code>
+     */
+    public com.google.protobuf.ByteString getKey() {
+      return key_;
+    }
+
+    public static final int VALUE_FIELD_NUMBER = 2;
+    private com.google.protobuf.ByteString value_;
+    /**
+     * <code>bytes value = 2;</code>
+     */
+    public com.google.protobuf.ByteString getValue() {
+      return value_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!key_.isEmpty()) {
+        output.writeBytes(1, key_);
+      }
+      if (!value_.isEmpty()) {
+        output.writeBytes(2, value_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!key_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, key_);
+      }
+      if (!value_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, value_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Kv.KvValue)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Kv.KvValue other = (io.jimdb.pb.Kv.KvValue) obj;
+
+      boolean result = true;
+      result = result && getKey()
+          .equals(other.getKey());
+      result = result && getValue()
+          .equals(other.getValue());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + KEY_FIELD_NUMBER;
+      hash = (53 * hash) + getKey().hashCode();
+      hash = (37 * hash) + VALUE_FIELD_NUMBER;
+      hash = (53 * hash) + getValue().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Kv.KvValue parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.KvValue parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.KvValue parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.KvValue parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.KvValue parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.KvValue parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.KvValue parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.KvValue parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.KvValue parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.KvValue parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.KvValue parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.KvValue parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Kv.KvValue prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code dspb.KvValue}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:dspb.KvValue)
+        io.jimdb.pb.Kv.KvValueOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Kv.internal_static_dspb_KvValue_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Kv.internal_static_dspb_KvValue_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Kv.KvValue.class, io.jimdb.pb.Kv.KvValue.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Kv.KvValue.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        key_ = com.google.protobuf.ByteString.EMPTY;
+
+        value_ = com.google.protobuf.ByteString.EMPTY;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Kv.internal_static_dspb_KvValue_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.KvValue getDefaultInstanceForType() {
+        return io.jimdb.pb.Kv.KvValue.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.KvValue build() {
+        io.jimdb.pb.Kv.KvValue result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.KvValue buildPartial() {
+        io.jimdb.pb.Kv.KvValue result = new io.jimdb.pb.Kv.KvValue(this);
+        result.key_ = key_;
+        result.value_ = value_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Kv.KvValue) {
+          return mergeFrom((io.jimdb.pb.Kv.KvValue)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Kv.KvValue other) {
+        if (other == io.jimdb.pb.Kv.KvValue.getDefaultInstance()) return this;
+        if (other.getKey() != com.google.protobuf.ByteString.EMPTY) {
+          setKey(other.getKey());
+        }
+        if (other.getValue() != com.google.protobuf.ByteString.EMPTY) {
+          setValue(other.getValue());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Kv.KvValue parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Kv.KvValue) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private com.google.protobuf.ByteString key_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes key = 1;</code>
+       */
+      public com.google.protobuf.ByteString getKey() {
+        return key_;
+      }
+      /**
+       * <code>bytes key = 1;</code>
+       */
+      public Builder setKey(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        key_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes key = 1;</code>
+       */
+      public Builder clearKey() {
+        
+        key_ = getDefaultInstance().getKey();
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString value_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes value = 2;</code>
+       */
+      public com.google.protobuf.ByteString getValue() {
+        return value_;
+      }
+      /**
+       * <code>bytes value = 2;</code>
+       */
+      public Builder setValue(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes value = 2;</code>
+       */
+      public Builder clearValue() {
+        
+        value_ = getDefaultInstance().getValue();
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:dspb.KvValue)
+    }
+
+    // @@protoc_insertion_point(class_scope:dspb.KvValue)
+    private static final io.jimdb.pb.Kv.KvValue DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Kv.KvValue();
+    }
+
+    public static io.jimdb.pb.Kv.KvValue getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<KvValue>
+        PARSER = new com.google.protobuf.AbstractParser<KvValue>() {
+      @java.lang.Override
+      public KvValue parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new KvValue(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<KvValue> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<KvValue> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Kv.KvValue getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface KeyRangeOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:dspb.KeyRange)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>bytes start_key = 1;</code>
+     */
+    com.google.protobuf.ByteString getStartKey();
+
+    /**
+     * <code>bytes end_key = 2;</code>
+     */
+    com.google.protobuf.ByteString getEndKey();
+  }
+  /**
+   * Protobuf type {@code dspb.KeyRange}
+   */
+  public  static final class KeyRange extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:dspb.KeyRange)
+      KeyRangeOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use KeyRange.newBuilder() to construct.
+    private KeyRange(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private KeyRange() {
+      startKey_ = com.google.protobuf.ByteString.EMPTY;
+      endKey_ = com.google.protobuf.ByteString.EMPTY;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private KeyRange(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+
+              startKey_ = input.readBytes();
+              break;
+            }
+            case 18: {
+
+              endKey_ = input.readBytes();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Kv.internal_static_dspb_KeyRange_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Kv.internal_static_dspb_KeyRange_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Kv.KeyRange.class, io.jimdb.pb.Kv.KeyRange.Builder.class);
+    }
+
+    public static final int START_KEY_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString startKey_;
+    /**
+     * <code>bytes start_key = 1;</code>
+     */
+    public com.google.protobuf.ByteString getStartKey() {
+      return startKey_;
+    }
+
+    public static final int END_KEY_FIELD_NUMBER = 2;
+    private com.google.protobuf.ByteString endKey_;
+    /**
+     * <code>bytes end_key = 2;</code>
+     */
+    public com.google.protobuf.ByteString getEndKey() {
+      return endKey_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!startKey_.isEmpty()) {
+        output.writeBytes(1, startKey_);
+      }
+      if (!endKey_.isEmpty()) {
+        output.writeBytes(2, endKey_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!startKey_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, startKey_);
+      }
+      if (!endKey_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, endKey_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Kv.KeyRange)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Kv.KeyRange other = (io.jimdb.pb.Kv.KeyRange) obj;
+
+      boolean result = true;
+      result = result && getStartKey()
+          .equals(other.getStartKey());
+      result = result && getEndKey()
+          .equals(other.getEndKey());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + START_KEY_FIELD_NUMBER;
+      hash = (53 * hash) + getStartKey().hashCode();
+      hash = (37 * hash) + END_KEY_FIELD_NUMBER;
+      hash = (53 * hash) + getEndKey().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Kv.KeyRange parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.KeyRange parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.KeyRange parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.KeyRange parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.KeyRange parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.KeyRange parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.KeyRange parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.KeyRange parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.KeyRange parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.KeyRange parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.KeyRange parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.KeyRange parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Kv.KeyRange prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code dspb.KeyRange}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:dspb.KeyRange)
+        io.jimdb.pb.Kv.KeyRangeOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Kv.internal_static_dspb_KeyRange_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Kv.internal_static_dspb_KeyRange_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Kv.KeyRange.class, io.jimdb.pb.Kv.KeyRange.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Kv.KeyRange.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        startKey_ = com.google.protobuf.ByteString.EMPTY;
+
+        endKey_ = com.google.protobuf.ByteString.EMPTY;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Kv.internal_static_dspb_KeyRange_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.KeyRange getDefaultInstanceForType() {
+        return io.jimdb.pb.Kv.KeyRange.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.KeyRange build() {
+        io.jimdb.pb.Kv.KeyRange result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.KeyRange buildPartial() {
+        io.jimdb.pb.Kv.KeyRange result = new io.jimdb.pb.Kv.KeyRange(this);
+        result.startKey_ = startKey_;
+        result.endKey_ = endKey_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Kv.KeyRange) {
+          return mergeFrom((io.jimdb.pb.Kv.KeyRange)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Kv.KeyRange other) {
+        if (other == io.jimdb.pb.Kv.KeyRange.getDefaultInstance()) return this;
+        if (other.getStartKey() != com.google.protobuf.ByteString.EMPTY) {
+          setStartKey(other.getStartKey());
+        }
+        if (other.getEndKey() != com.google.protobuf.ByteString.EMPTY) {
+          setEndKey(other.getEndKey());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Kv.KeyRange parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Kv.KeyRange) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private com.google.protobuf.ByteString startKey_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes start_key = 1;</code>
+       */
+      public com.google.protobuf.ByteString getStartKey() {
+        return startKey_;
+      }
+      /**
+       * <code>bytes start_key = 1;</code>
+       */
+      public Builder setStartKey(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        startKey_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes start_key = 1;</code>
+       */
+      public Builder clearStartKey() {
+        
+        startKey_ = getDefaultInstance().getStartKey();
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString endKey_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes end_key = 2;</code>
+       */
+      public com.google.protobuf.ByteString getEndKey() {
+        return endKey_;
+      }
+      /**
+       * <code>bytes end_key = 2;</code>
+       */
+      public Builder setEndKey(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        endKey_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes end_key = 2;</code>
+       */
+      public Builder clearEndKey() {
+        
+        endKey_ = getDefaultInstance().getEndKey();
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:dspb.KeyRange)
+    }
+
+    // @@protoc_insertion_point(class_scope:dspb.KeyRange)
+    private static final io.jimdb.pb.Kv.KeyRange DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Kv.KeyRange();
+    }
+
+    public static io.jimdb.pb.Kv.KeyRange getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<KeyRange>
+        PARSER = new com.google.protobuf.AbstractParser<KeyRange>() {
+      @java.lang.Override
+      public KeyRange parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new KeyRange(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<KeyRange> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<KeyRange> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Kv.KeyRange getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface RedisMetaOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:dspb.RedisMeta)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.dspb.RedisType type = 1;</code>
+     */
+    int getTypeValue();
+    /**
+     * <code>.dspb.RedisType type = 1;</code>
+     */
+    io.jimdb.pb.Kv.RedisType getType();
+
+    /**
+     * <code>uint64 expire = 2;</code>
+     */
+    long getExpire();
+
+    /**
+     * <code>uint64 access_time = 3;</code>
+     */
+    long getAccessTime();
+
+    /**
+     * <code>uint64 size = 4;</code>
+     */
+    long getSize();
+
+    /**
+     * <pre>
+     *next element sequence of list
+     * </pre>
+     *
+     * <code>uint64 next_seq = 5;</code>
+     */
+    long getNextSeq();
+
+    /**
+     * <pre>
+     *first element sequence of list
+     * </pre>
+     *
+     * <code>uint64 first_seq = 6;</code>
+     */
+    long getFirstSeq();
+
+    /**
+     * <pre>
+     *last element sequence of list
+     * </pre>
+     *
+     * <code>uint64 last_seq = 7;</code>
+     */
+    long getLastSeq();
+
+    /**
+     * <code>int64 integer = 8;</code>
+     */
+    long getInteger();
+
+    /**
+     * <code>bytes str = 9;</code>
+     */
+    com.google.protobuf.ByteString getStr();
+
+    public io.jimdb.pb.Kv.RedisMeta.ValueCase getValueCase();
+  }
+  /**
+   * Protobuf type {@code dspb.RedisMeta}
+   */
+  public  static final class RedisMeta extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:dspb.RedisMeta)
+      RedisMetaOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use RedisMeta.newBuilder() to construct.
+    private RedisMeta(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private RedisMeta() {
+      type_ = 0;
+      expire_ = 0L;
+      accessTime_ = 0L;
+      size_ = 0L;
+      nextSeq_ = 0L;
+      firstSeq_ = 0L;
+      lastSeq_ = 0L;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private RedisMeta(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+              int rawValue = input.readEnum();
+
+              type_ = rawValue;
+              break;
+            }
+            case 16: {
+
+              expire_ = input.readUInt64();
+              break;
+            }
+            case 24: {
+
+              accessTime_ = input.readUInt64();
+              break;
+            }
+            case 32: {
+
+              size_ = input.readUInt64();
+              break;
+            }
+            case 40: {
+
+              nextSeq_ = input.readUInt64();
+              break;
+            }
+            case 48: {
+
+              firstSeq_ = input.readUInt64();
+              break;
+            }
+            case 56: {
+
+              lastSeq_ = input.readUInt64();
+              break;
+            }
+            case 64: {
+              valueCase_ = 8;
+              value_ = input.readInt64();
+              break;
+            }
+            case 74: {
+              valueCase_ = 9;
+              value_ = input.readBytes();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Kv.internal_static_dspb_RedisMeta_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Kv.internal_static_dspb_RedisMeta_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Kv.RedisMeta.class, io.jimdb.pb.Kv.RedisMeta.Builder.class);
+    }
+
+    private int valueCase_ = 0;
+    private java.lang.Object value_;
+    public enum ValueCase
+        implements com.google.protobuf.Internal.EnumLite {
+      INTEGER(8),
+      STR(9),
+      VALUE_NOT_SET(0);
+      private final int value;
+      private ValueCase(int value) {
+        this.value = value;
+      }
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static ValueCase valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static ValueCase forNumber(int value) {
+        switch (value) {
+          case 8: return INTEGER;
+          case 9: return STR;
+          case 0: return VALUE_NOT_SET;
+          default: return null;
+        }
+      }
+      public int getNumber() {
+        return this.value;
+      }
+    };
+
+    public ValueCase
+    getValueCase() {
+      return ValueCase.forNumber(
+          valueCase_);
+    }
+
+    public static final int TYPE_FIELD_NUMBER = 1;
+    private int type_;
+    /**
+     * <code>.dspb.RedisType type = 1;</code>
+     */
+    public int getTypeValue() {
+      return type_;
+    }
+    /**
+     * <code>.dspb.RedisType type = 1;</code>
+     */
+    public io.jimdb.pb.Kv.RedisType getType() {
+      @SuppressWarnings("deprecation")
+      io.jimdb.pb.Kv.RedisType result = io.jimdb.pb.Kv.RedisType.valueOf(type_);
+      return result == null ? io.jimdb.pb.Kv.RedisType.UNRECOGNIZED : result;
+    }
+
+    public static final int EXPIRE_FIELD_NUMBER = 2;
+    private long expire_;
+    /**
+     * <code>uint64 expire = 2;</code>
+     */
+    public long getExpire() {
+      return expire_;
+    }
+
+    public static final int ACCESS_TIME_FIELD_NUMBER = 3;
+    private long accessTime_;
+    /**
+     * <code>uint64 access_time = 3;</code>
+     */
+    public long getAccessTime() {
+      return accessTime_;
+    }
+
+    public static final int SIZE_FIELD_NUMBER = 4;
+    private long size_;
+    /**
+     * <code>uint64 size = 4;</code>
+     */
+    public long getSize() {
+      return size_;
+    }
+
+    public static final int NEXT_SEQ_FIELD_NUMBER = 5;
+    private long nextSeq_;
+    /**
+     * <pre>
+     *next element sequence of list
+     * </pre>
+     *
+     * <code>uint64 next_seq = 5;</code>
+     */
+    public long getNextSeq() {
+      return nextSeq_;
+    }
+
+    public static final int FIRST_SEQ_FIELD_NUMBER = 6;
+    private long firstSeq_;
+    /**
+     * <pre>
+     *first element sequence of list
+     * </pre>
+     *
+     * <code>uint64 first_seq = 6;</code>
+     */
+    public long getFirstSeq() {
+      return firstSeq_;
+    }
+
+    public static final int LAST_SEQ_FIELD_NUMBER = 7;
+    private long lastSeq_;
+    /**
+     * <pre>
+     *last element sequence of list
+     * </pre>
+     *
+     * <code>uint64 last_seq = 7;</code>
+     */
+    public long getLastSeq() {
+      return lastSeq_;
+    }
+
+    public static final int INTEGER_FIELD_NUMBER = 8;
+    /**
+     * <code>int64 integer = 8;</code>
+     */
+    public long getInteger() {
+      if (valueCase_ == 8) {
+        return (java.lang.Long) value_;
+      }
+      return 0L;
+    }
+
+    public static final int STR_FIELD_NUMBER = 9;
+    /**
+     * <code>bytes str = 9;</code>
+     */
+    public com.google.protobuf.ByteString getStr() {
+      if (valueCase_ == 9) {
+        return (com.google.protobuf.ByteString) value_;
+      }
+      return com.google.protobuf.ByteString.EMPTY;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (type_ != io.jimdb.pb.Kv.RedisType.TSTRING.getNumber()) {
+        output.writeEnum(1, type_);
+      }
+      if (expire_ != 0L) {
+        output.writeUInt64(2, expire_);
+      }
+      if (accessTime_ != 0L) {
+        output.writeUInt64(3, accessTime_);
+      }
+      if (size_ != 0L) {
+        output.writeUInt64(4, size_);
+      }
+      if (nextSeq_ != 0L) {
+        output.writeUInt64(5, nextSeq_);
+      }
+      if (firstSeq_ != 0L) {
+        output.writeUInt64(6, firstSeq_);
+      }
+      if (lastSeq_ != 0L) {
+        output.writeUInt64(7, lastSeq_);
+      }
+      if (valueCase_ == 8) {
+        output.writeInt64(
+            8, (long)((java.lang.Long) value_));
+      }
+      if (valueCase_ == 9) {
+        output.writeBytes(
+            9, (com.google.protobuf.ByteString) value_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (type_ != io.jimdb.pb.Kv.RedisType.TSTRING.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(1, type_);
+      }
+      if (expire_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(2, expire_);
+      }
+      if (accessTime_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(3, accessTime_);
+      }
+      if (size_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(4, size_);
+      }
+      if (nextSeq_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(5, nextSeq_);
+      }
+      if (firstSeq_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(6, firstSeq_);
+      }
+      if (lastSeq_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(7, lastSeq_);
+      }
+      if (valueCase_ == 8) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(
+              8, (long)((java.lang.Long) value_));
+      }
+      if (valueCase_ == 9) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(
+              9, (com.google.protobuf.ByteString) value_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Kv.RedisMeta)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Kv.RedisMeta other = (io.jimdb.pb.Kv.RedisMeta) obj;
+
+      boolean result = true;
+      result = result && type_ == other.type_;
+      result = result && (getExpire()
+          == other.getExpire());
+      result = result && (getAccessTime()
+          == other.getAccessTime());
+      result = result && (getSize()
+          == other.getSize());
+      result = result && (getNextSeq()
+          == other.getNextSeq());
+      result = result && (getFirstSeq()
+          == other.getFirstSeq());
+      result = result && (getLastSeq()
+          == other.getLastSeq());
+      result = result && getValueCase().equals(
+          other.getValueCase());
+      if (!result) return false;
+      switch (valueCase_) {
+        case 8:
+          result = result && (getInteger()
+              == other.getInteger());
+          break;
+        case 9:
+          result = result && getStr()
+              .equals(other.getStr());
+          break;
+        case 0:
+        default:
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + type_;
+      hash = (37 * hash) + EXPIRE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getExpire());
+      hash = (37 * hash) + ACCESS_TIME_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getAccessTime());
+      hash = (37 * hash) + SIZE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getSize());
+      hash = (37 * hash) + NEXT_SEQ_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getNextSeq());
+      hash = (37 * hash) + FIRST_SEQ_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getFirstSeq());
+      hash = (37 * hash) + LAST_SEQ_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getLastSeq());
+      switch (valueCase_) {
+        case 8:
+          hash = (37 * hash) + INTEGER_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+              getInteger());
+          break;
+        case 9:
+          hash = (37 * hash) + STR_FIELD_NUMBER;
+          hash = (53 * hash) + getStr().hashCode();
+          break;
+        case 0:
+        default:
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Kv.RedisMeta parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.RedisMeta parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisMeta parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.RedisMeta parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisMeta parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.RedisMeta parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisMeta parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.RedisMeta parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisMeta parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.RedisMeta parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisMeta parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.RedisMeta parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Kv.RedisMeta prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code dspb.RedisMeta}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:dspb.RedisMeta)
+        io.jimdb.pb.Kv.RedisMetaOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Kv.internal_static_dspb_RedisMeta_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Kv.internal_static_dspb_RedisMeta_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Kv.RedisMeta.class, io.jimdb.pb.Kv.RedisMeta.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Kv.RedisMeta.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        type_ = 0;
+
+        expire_ = 0L;
+
+        accessTime_ = 0L;
+
+        size_ = 0L;
+
+        nextSeq_ = 0L;
+
+        firstSeq_ = 0L;
+
+        lastSeq_ = 0L;
+
+        valueCase_ = 0;
+        value_ = null;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Kv.internal_static_dspb_RedisMeta_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.RedisMeta getDefaultInstanceForType() {
+        return io.jimdb.pb.Kv.RedisMeta.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.RedisMeta build() {
+        io.jimdb.pb.Kv.RedisMeta result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.RedisMeta buildPartial() {
+        io.jimdb.pb.Kv.RedisMeta result = new io.jimdb.pb.Kv.RedisMeta(this);
+        result.type_ = type_;
+        result.expire_ = expire_;
+        result.accessTime_ = accessTime_;
+        result.size_ = size_;
+        result.nextSeq_ = nextSeq_;
+        result.firstSeq_ = firstSeq_;
+        result.lastSeq_ = lastSeq_;
+        if (valueCase_ == 8) {
+          result.value_ = value_;
+        }
+        if (valueCase_ == 9) {
+          result.value_ = value_;
+        }
+        result.valueCase_ = valueCase_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Kv.RedisMeta) {
+          return mergeFrom((io.jimdb.pb.Kv.RedisMeta)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Kv.RedisMeta other) {
+        if (other == io.jimdb.pb.Kv.RedisMeta.getDefaultInstance()) return this;
+        if (other.type_ != 0) {
+          setTypeValue(other.getTypeValue());
+        }
+        if (other.getExpire() != 0L) {
+          setExpire(other.getExpire());
+        }
+        if (other.getAccessTime() != 0L) {
+          setAccessTime(other.getAccessTime());
+        }
+        if (other.getSize() != 0L) {
+          setSize(other.getSize());
+        }
+        if (other.getNextSeq() != 0L) {
+          setNextSeq(other.getNextSeq());
+        }
+        if (other.getFirstSeq() != 0L) {
+          setFirstSeq(other.getFirstSeq());
+        }
+        if (other.getLastSeq() != 0L) {
+          setLastSeq(other.getLastSeq());
+        }
+        switch (other.getValueCase()) {
+          case INTEGER: {
+            setInteger(other.getInteger());
+            break;
+          }
+          case STR: {
+            setStr(other.getStr());
+            break;
+          }
+          case VALUE_NOT_SET: {
+            break;
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Kv.RedisMeta parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Kv.RedisMeta) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int valueCase_ = 0;
+      private java.lang.Object value_;
+      public ValueCase
+          getValueCase() {
+        return ValueCase.forNumber(
+            valueCase_);
+      }
+
+      public Builder clearValue() {
+        valueCase_ = 0;
+        value_ = null;
+        onChanged();
+        return this;
+      }
+
+
+      private int type_ = 0;
+      /**
+       * <code>.dspb.RedisType type = 1;</code>
+       */
+      public int getTypeValue() {
+        return type_;
+      }
+      /**
+       * <code>.dspb.RedisType type = 1;</code>
+       */
+      public Builder setTypeValue(int value) {
+        type_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.dspb.RedisType type = 1;</code>
+       */
+      public io.jimdb.pb.Kv.RedisType getType() {
+        @SuppressWarnings("deprecation")
+        io.jimdb.pb.Kv.RedisType result = io.jimdb.pb.Kv.RedisType.valueOf(type_);
+        return result == null ? io.jimdb.pb.Kv.RedisType.UNRECOGNIZED : result;
+      }
+      /**
+       * <code>.dspb.RedisType type = 1;</code>
+       */
+      public Builder setType(io.jimdb.pb.Kv.RedisType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        
+        type_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.dspb.RedisType type = 1;</code>
+       */
+      public Builder clearType() {
+        
+        type_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long expire_ ;
+      /**
+       * <code>uint64 expire = 2;</code>
+       */
+      public long getExpire() {
+        return expire_;
+      }
+      /**
+       * <code>uint64 expire = 2;</code>
+       */
+      public Builder setExpire(long value) {
+        
+        expire_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint64 expire = 2;</code>
+       */
+      public Builder clearExpire() {
+        
+        expire_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long accessTime_ ;
+      /**
+       * <code>uint64 access_time = 3;</code>
+       */
+      public long getAccessTime() {
+        return accessTime_;
+      }
+      /**
+       * <code>uint64 access_time = 3;</code>
+       */
+      public Builder setAccessTime(long value) {
+        
+        accessTime_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint64 access_time = 3;</code>
+       */
+      public Builder clearAccessTime() {
+        
+        accessTime_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long size_ ;
+      /**
+       * <code>uint64 size = 4;</code>
+       */
+      public long getSize() {
+        return size_;
+      }
+      /**
+       * <code>uint64 size = 4;</code>
+       */
+      public Builder setSize(long value) {
+        
+        size_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint64 size = 4;</code>
+       */
+      public Builder clearSize() {
+        
+        size_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long nextSeq_ ;
+      /**
+       * <pre>
+       *next element sequence of list
+       * </pre>
+       *
+       * <code>uint64 next_seq = 5;</code>
+       */
+      public long getNextSeq() {
+        return nextSeq_;
+      }
+      /**
+       * <pre>
+       *next element sequence of list
+       * </pre>
+       *
+       * <code>uint64 next_seq = 5;</code>
+       */
+      public Builder setNextSeq(long value) {
+        
+        nextSeq_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *next element sequence of list
+       * </pre>
+       *
+       * <code>uint64 next_seq = 5;</code>
+       */
+      public Builder clearNextSeq() {
+        
+        nextSeq_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long firstSeq_ ;
+      /**
+       * <pre>
+       *first element sequence of list
+       * </pre>
+       *
+       * <code>uint64 first_seq = 6;</code>
+       */
+      public long getFirstSeq() {
+        return firstSeq_;
+      }
+      /**
+       * <pre>
+       *first element sequence of list
+       * </pre>
+       *
+       * <code>uint64 first_seq = 6;</code>
+       */
+      public Builder setFirstSeq(long value) {
+        
+        firstSeq_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *first element sequence of list
+       * </pre>
+       *
+       * <code>uint64 first_seq = 6;</code>
+       */
+      public Builder clearFirstSeq() {
+        
+        firstSeq_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long lastSeq_ ;
+      /**
+       * <pre>
+       *last element sequence of list
+       * </pre>
+       *
+       * <code>uint64 last_seq = 7;</code>
+       */
+      public long getLastSeq() {
+        return lastSeq_;
+      }
+      /**
+       * <pre>
+       *last element sequence of list
+       * </pre>
+       *
+       * <code>uint64 last_seq = 7;</code>
+       */
+      public Builder setLastSeq(long value) {
+        
+        lastSeq_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *last element sequence of list
+       * </pre>
+       *
+       * <code>uint64 last_seq = 7;</code>
+       */
+      public Builder clearLastSeq() {
+        
+        lastSeq_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      /**
+       * <code>int64 integer = 8;</code>
+       */
+      public long getInteger() {
+        if (valueCase_ == 8) {
+          return (java.lang.Long) value_;
+        }
+        return 0L;
+      }
+      /**
+       * <code>int64 integer = 8;</code>
+       */
+      public Builder setInteger(long value) {
+        valueCase_ = 8;
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 integer = 8;</code>
+       */
+      public Builder clearInteger() {
+        if (valueCase_ == 8) {
+          valueCase_ = 0;
+          value_ = null;
+          onChanged();
+        }
+        return this;
+      }
+
+      /**
+       * <code>bytes str = 9;</code>
+       */
+      public com.google.protobuf.ByteString getStr() {
+        if (valueCase_ == 9) {
+          return (com.google.protobuf.ByteString) value_;
+        }
+        return com.google.protobuf.ByteString.EMPTY;
+      }
+      /**
+       * <code>bytes str = 9;</code>
+       */
+      public Builder setStr(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  valueCase_ = 9;
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes str = 9;</code>
+       */
+      public Builder clearStr() {
+        if (valueCase_ == 9) {
+          valueCase_ = 0;
+          value_ = null;
+          onChanged();
+        }
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:dspb.RedisMeta)
+    }
+
+    // @@protoc_insertion_point(class_scope:dspb.RedisMeta)
+    private static final io.jimdb.pb.Kv.RedisMeta DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Kv.RedisMeta();
+    }
+
+    public static io.jimdb.pb.Kv.RedisMeta getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RedisMeta>
+        PARSER = new com.google.protobuf.AbstractParser<RedisMeta>() {
+      @java.lang.Override
+      public RedisMeta parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new RedisMeta(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<RedisMeta> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RedisMeta> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Kv.RedisMeta getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   public interface RedisRequestOrBuilder extends
@@ -2127,6 +4608,775 @@ public final class Kv {
 
     @java.lang.Override
     public io.jimdb.pb.Kv.RedisRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface RedisObjectOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:dspb.RedisObject)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>uint64 prev_seq = 1;</code>
+     */
+    long getPrevSeq();
+
+    /**
+     * <code>uint64 next_seq = 2;</code>
+     */
+    long getNextSeq();
+
+    /**
+     * <code>int64 integer = 3;</code>
+     */
+    long getInteger();
+
+    /**
+     * <code>bytes string = 4;</code>
+     */
+    com.google.protobuf.ByteString getString();
+
+    public io.jimdb.pb.Kv.RedisObject.ValueCase getValueCase();
+  }
+  /**
+   * Protobuf type {@code dspb.RedisObject}
+   */
+  public  static final class RedisObject extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:dspb.RedisObject)
+      RedisObjectOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use RedisObject.newBuilder() to construct.
+    private RedisObject(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private RedisObject() {
+      prevSeq_ = 0L;
+      nextSeq_ = 0L;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private RedisObject(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              prevSeq_ = input.readUInt64();
+              break;
+            }
+            case 16: {
+
+              nextSeq_ = input.readUInt64();
+              break;
+            }
+            case 24: {
+              valueCase_ = 3;
+              value_ = input.readInt64();
+              break;
+            }
+            case 34: {
+              valueCase_ = 4;
+              value_ = input.readBytes();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Kv.internal_static_dspb_RedisObject_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Kv.internal_static_dspb_RedisObject_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Kv.RedisObject.class, io.jimdb.pb.Kv.RedisObject.Builder.class);
+    }
+
+    private int valueCase_ = 0;
+    private java.lang.Object value_;
+    public enum ValueCase
+        implements com.google.protobuf.Internal.EnumLite {
+      INTEGER(3),
+      STRING(4),
+      VALUE_NOT_SET(0);
+      private final int value;
+      private ValueCase(int value) {
+        this.value = value;
+      }
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static ValueCase valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static ValueCase forNumber(int value) {
+        switch (value) {
+          case 3: return INTEGER;
+          case 4: return STRING;
+          case 0: return VALUE_NOT_SET;
+          default: return null;
+        }
+      }
+      public int getNumber() {
+        return this.value;
+      }
+    };
+
+    public ValueCase
+    getValueCase() {
+      return ValueCase.forNumber(
+          valueCase_);
+    }
+
+    public static final int PREV_SEQ_FIELD_NUMBER = 1;
+    private long prevSeq_;
+    /**
+     * <code>uint64 prev_seq = 1;</code>
+     */
+    public long getPrevSeq() {
+      return prevSeq_;
+    }
+
+    public static final int NEXT_SEQ_FIELD_NUMBER = 2;
+    private long nextSeq_;
+    /**
+     * <code>uint64 next_seq = 2;</code>
+     */
+    public long getNextSeq() {
+      return nextSeq_;
+    }
+
+    public static final int INTEGER_FIELD_NUMBER = 3;
+    /**
+     * <code>int64 integer = 3;</code>
+     */
+    public long getInteger() {
+      if (valueCase_ == 3) {
+        return (java.lang.Long) value_;
+      }
+      return 0L;
+    }
+
+    public static final int STRING_FIELD_NUMBER = 4;
+    /**
+     * <code>bytes string = 4;</code>
+     */
+    public com.google.protobuf.ByteString getString() {
+      if (valueCase_ == 4) {
+        return (com.google.protobuf.ByteString) value_;
+      }
+      return com.google.protobuf.ByteString.EMPTY;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (prevSeq_ != 0L) {
+        output.writeUInt64(1, prevSeq_);
+      }
+      if (nextSeq_ != 0L) {
+        output.writeUInt64(2, nextSeq_);
+      }
+      if (valueCase_ == 3) {
+        output.writeInt64(
+            3, (long)((java.lang.Long) value_));
+      }
+      if (valueCase_ == 4) {
+        output.writeBytes(
+            4, (com.google.protobuf.ByteString) value_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (prevSeq_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(1, prevSeq_);
+      }
+      if (nextSeq_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(2, nextSeq_);
+      }
+      if (valueCase_ == 3) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(
+              3, (long)((java.lang.Long) value_));
+      }
+      if (valueCase_ == 4) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(
+              4, (com.google.protobuf.ByteString) value_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Kv.RedisObject)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Kv.RedisObject other = (io.jimdb.pb.Kv.RedisObject) obj;
+
+      boolean result = true;
+      result = result && (getPrevSeq()
+          == other.getPrevSeq());
+      result = result && (getNextSeq()
+          == other.getNextSeq());
+      result = result && getValueCase().equals(
+          other.getValueCase());
+      if (!result) return false;
+      switch (valueCase_) {
+        case 3:
+          result = result && (getInteger()
+              == other.getInteger());
+          break;
+        case 4:
+          result = result && getString()
+              .equals(other.getString());
+          break;
+        case 0:
+        default:
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + PREV_SEQ_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getPrevSeq());
+      hash = (37 * hash) + NEXT_SEQ_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getNextSeq());
+      switch (valueCase_) {
+        case 3:
+          hash = (37 * hash) + INTEGER_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+              getInteger());
+          break;
+        case 4:
+          hash = (37 * hash) + STRING_FIELD_NUMBER;
+          hash = (53 * hash) + getString().hashCode();
+          break;
+        case 0:
+        default:
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Kv.RedisObject parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.RedisObject parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisObject parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.RedisObject parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisObject parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.RedisObject parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisObject parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.RedisObject parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisObject parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.RedisObject parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisObject parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.RedisObject parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Kv.RedisObject prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code dspb.RedisObject}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:dspb.RedisObject)
+        io.jimdb.pb.Kv.RedisObjectOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Kv.internal_static_dspb_RedisObject_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Kv.internal_static_dspb_RedisObject_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Kv.RedisObject.class, io.jimdb.pb.Kv.RedisObject.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Kv.RedisObject.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        prevSeq_ = 0L;
+
+        nextSeq_ = 0L;
+
+        valueCase_ = 0;
+        value_ = null;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Kv.internal_static_dspb_RedisObject_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.RedisObject getDefaultInstanceForType() {
+        return io.jimdb.pb.Kv.RedisObject.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.RedisObject build() {
+        io.jimdb.pb.Kv.RedisObject result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.RedisObject buildPartial() {
+        io.jimdb.pb.Kv.RedisObject result = new io.jimdb.pb.Kv.RedisObject(this);
+        result.prevSeq_ = prevSeq_;
+        result.nextSeq_ = nextSeq_;
+        if (valueCase_ == 3) {
+          result.value_ = value_;
+        }
+        if (valueCase_ == 4) {
+          result.value_ = value_;
+        }
+        result.valueCase_ = valueCase_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Kv.RedisObject) {
+          return mergeFrom((io.jimdb.pb.Kv.RedisObject)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Kv.RedisObject other) {
+        if (other == io.jimdb.pb.Kv.RedisObject.getDefaultInstance()) return this;
+        if (other.getPrevSeq() != 0L) {
+          setPrevSeq(other.getPrevSeq());
+        }
+        if (other.getNextSeq() != 0L) {
+          setNextSeq(other.getNextSeq());
+        }
+        switch (other.getValueCase()) {
+          case INTEGER: {
+            setInteger(other.getInteger());
+            break;
+          }
+          case STRING: {
+            setString(other.getString());
+            break;
+          }
+          case VALUE_NOT_SET: {
+            break;
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Kv.RedisObject parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Kv.RedisObject) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int valueCase_ = 0;
+      private java.lang.Object value_;
+      public ValueCase
+          getValueCase() {
+        return ValueCase.forNumber(
+            valueCase_);
+      }
+
+      public Builder clearValue() {
+        valueCase_ = 0;
+        value_ = null;
+        onChanged();
+        return this;
+      }
+
+
+      private long prevSeq_ ;
+      /**
+       * <code>uint64 prev_seq = 1;</code>
+       */
+      public long getPrevSeq() {
+        return prevSeq_;
+      }
+      /**
+       * <code>uint64 prev_seq = 1;</code>
+       */
+      public Builder setPrevSeq(long value) {
+        
+        prevSeq_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint64 prev_seq = 1;</code>
+       */
+      public Builder clearPrevSeq() {
+        
+        prevSeq_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long nextSeq_ ;
+      /**
+       * <code>uint64 next_seq = 2;</code>
+       */
+      public long getNextSeq() {
+        return nextSeq_;
+      }
+      /**
+       * <code>uint64 next_seq = 2;</code>
+       */
+      public Builder setNextSeq(long value) {
+        
+        nextSeq_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint64 next_seq = 2;</code>
+       */
+      public Builder clearNextSeq() {
+        
+        nextSeq_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      /**
+       * <code>int64 integer = 3;</code>
+       */
+      public long getInteger() {
+        if (valueCase_ == 3) {
+          return (java.lang.Long) value_;
+        }
+        return 0L;
+      }
+      /**
+       * <code>int64 integer = 3;</code>
+       */
+      public Builder setInteger(long value) {
+        valueCase_ = 3;
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 integer = 3;</code>
+       */
+      public Builder clearInteger() {
+        if (valueCase_ == 3) {
+          valueCase_ = 0;
+          value_ = null;
+          onChanged();
+        }
+        return this;
+      }
+
+      /**
+       * <code>bytes string = 4;</code>
+       */
+      public com.google.protobuf.ByteString getString() {
+        if (valueCase_ == 4) {
+          return (com.google.protobuf.ByteString) value_;
+        }
+        return com.google.protobuf.ByteString.EMPTY;
+      }
+      /**
+       * <code>bytes string = 4;</code>
+       */
+      public Builder setString(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  valueCase_ = 4;
+        value_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes string = 4;</code>
+       */
+      public Builder clearString() {
+        if (valueCase_ == 4) {
+          valueCase_ = 0;
+          value_ = null;
+          onChanged();
+        }
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:dspb.RedisObject)
+    }
+
+    // @@protoc_insertion_point(class_scope:dspb.RedisObject)
+    private static final io.jimdb.pb.Kv.RedisObject DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Kv.RedisObject();
+    }
+
+    public static io.jimdb.pb.Kv.RedisObject getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RedisObject>
+        PARSER = new com.google.protobuf.AbstractParser<RedisObject>() {
+      @java.lang.Override
+      public RedisObject parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new RedisObject(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<RedisObject> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RedisObject> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Kv.RedisObject getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3135,6 +6385,1879 @@ public final class Kv {
 
     @java.lang.Override
     public io.jimdb.pb.Kv.RedisResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface RedisMutationOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:dspb.RedisMutation)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+     */
+    java.util.List<io.jimdb.pb.Kv.RedisMutation.Item> 
+        getMutsList();
+    /**
+     * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+     */
+    io.jimdb.pb.Kv.RedisMutation.Item getMuts(int index);
+    /**
+     * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+     */
+    int getMutsCount();
+    /**
+     * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+     */
+    java.util.List<? extends io.jimdb.pb.Kv.RedisMutation.ItemOrBuilder> 
+        getMutsOrBuilderList();
+    /**
+     * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+     */
+    io.jimdb.pb.Kv.RedisMutation.ItemOrBuilder getMutsOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code dspb.RedisMutation}
+   */
+  public  static final class RedisMutation extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:dspb.RedisMutation)
+      RedisMutationOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use RedisMutation.newBuilder() to construct.
+    private RedisMutation(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private RedisMutation() {
+      muts_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private RedisMutation(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                muts_ = new java.util.ArrayList<io.jimdb.pb.Kv.RedisMutation.Item>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              muts_.add(
+                  input.readMessage(io.jimdb.pb.Kv.RedisMutation.Item.parser(), extensionRegistry));
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          muts_ = java.util.Collections.unmodifiableList(muts_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Kv.internal_static_dspb_RedisMutation_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Kv.internal_static_dspb_RedisMutation_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Kv.RedisMutation.class, io.jimdb.pb.Kv.RedisMutation.Builder.class);
+    }
+
+    public interface ItemOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:dspb.RedisMutation.Item)
+        com.google.protobuf.MessageOrBuilder {
+
+      /**
+       * <code>.dspb.CFType cf = 1;</code>
+       */
+      int getCfValue();
+      /**
+       * <code>.dspb.CFType cf = 1;</code>
+       */
+      io.jimdb.pb.Kv.CFType getCf();
+
+      /**
+       * <code>.dspb.KvValue put_kv = 2;</code>
+       */
+      boolean hasPutKv();
+      /**
+       * <code>.dspb.KvValue put_kv = 2;</code>
+       */
+      io.jimdb.pb.Kv.KvValue getPutKv();
+      /**
+       * <code>.dspb.KvValue put_kv = 2;</code>
+       */
+      io.jimdb.pb.Kv.KvValueOrBuilder getPutKvOrBuilder();
+
+      /**
+       * <code>bytes del_key = 3;</code>
+       */
+      com.google.protobuf.ByteString getDelKey();
+
+      /**
+       * <code>.dspb.KeyRange del_range = 4;</code>
+       */
+      boolean hasDelRange();
+      /**
+       * <code>.dspb.KeyRange del_range = 4;</code>
+       */
+      io.jimdb.pb.Kv.KeyRange getDelRange();
+      /**
+       * <code>.dspb.KeyRange del_range = 4;</code>
+       */
+      io.jimdb.pb.Kv.KeyRangeOrBuilder getDelRangeOrBuilder();
+
+      public io.jimdb.pb.Kv.RedisMutation.Item.MutCase getMutCase();
+    }
+    /**
+     * Protobuf type {@code dspb.RedisMutation.Item}
+     */
+    public  static final class Item extends
+        com.google.protobuf.GeneratedMessageV3 implements
+        // @@protoc_insertion_point(message_implements:dspb.RedisMutation.Item)
+        ItemOrBuilder {
+    private static final long serialVersionUID = 0L;
+      // Use Item.newBuilder() to construct.
+      private Item(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+        super(builder);
+      }
+      private Item() {
+        cf_ = 0;
+      }
+
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+      getUnknownFields() {
+        return this.unknownFields;
+      }
+      private Item(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        this();
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                int rawValue = input.readEnum();
+
+                cf_ = rawValue;
+                break;
+              }
+              case 18: {
+                io.jimdb.pb.Kv.KvValue.Builder subBuilder = null;
+                if (mutCase_ == 2) {
+                  subBuilder = ((io.jimdb.pb.Kv.KvValue) mut_).toBuilder();
+                }
+                mut_ =
+                    input.readMessage(io.jimdb.pb.Kv.KvValue.parser(), extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom((io.jimdb.pb.Kv.KvValue) mut_);
+                  mut_ = subBuilder.buildPartial();
+                }
+                mutCase_ = 2;
+                break;
+              }
+              case 26: {
+                mutCase_ = 3;
+                mut_ = input.readBytes();
+                break;
+              }
+              case 34: {
+                io.jimdb.pb.Kv.KeyRange.Builder subBuilder = null;
+                if (mutCase_ == 4) {
+                  subBuilder = ((io.jimdb.pb.Kv.KeyRange) mut_).toBuilder();
+                }
+                mut_ =
+                    input.readMessage(io.jimdb.pb.Kv.KeyRange.parser(), extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom((io.jimdb.pb.Kv.KeyRange) mut_);
+                  mut_ = subBuilder.buildPartial();
+                }
+                mutCase_ = 4;
+                break;
+              }
+              default: {
+                if (!parseUnknownFieldProto3(
+                    input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Kv.internal_static_dspb_RedisMutation_Item_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Kv.internal_static_dspb_RedisMutation_Item_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Kv.RedisMutation.Item.class, io.jimdb.pb.Kv.RedisMutation.Item.Builder.class);
+      }
+
+      private int mutCase_ = 0;
+      private java.lang.Object mut_;
+      public enum MutCase
+          implements com.google.protobuf.Internal.EnumLite {
+        PUT_KV(2),
+        DEL_KEY(3),
+        DEL_RANGE(4),
+        MUT_NOT_SET(0);
+        private final int value;
+        private MutCase(int value) {
+          this.value = value;
+        }
+        /**
+         * @deprecated Use {@link #forNumber(int)} instead.
+         */
+        @java.lang.Deprecated
+        public static MutCase valueOf(int value) {
+          return forNumber(value);
+        }
+
+        public static MutCase forNumber(int value) {
+          switch (value) {
+            case 2: return PUT_KV;
+            case 3: return DEL_KEY;
+            case 4: return DEL_RANGE;
+            case 0: return MUT_NOT_SET;
+            default: return null;
+          }
+        }
+        public int getNumber() {
+          return this.value;
+        }
+      };
+
+      public MutCase
+      getMutCase() {
+        return MutCase.forNumber(
+            mutCase_);
+      }
+
+      public static final int CF_FIELD_NUMBER = 1;
+      private int cf_;
+      /**
+       * <code>.dspb.CFType cf = 1;</code>
+       */
+      public int getCfValue() {
+        return cf_;
+      }
+      /**
+       * <code>.dspb.CFType cf = 1;</code>
+       */
+      public io.jimdb.pb.Kv.CFType getCf() {
+        @SuppressWarnings("deprecation")
+        io.jimdb.pb.Kv.CFType result = io.jimdb.pb.Kv.CFType.valueOf(cf_);
+        return result == null ? io.jimdb.pb.Kv.CFType.UNRECOGNIZED : result;
+      }
+
+      public static final int PUT_KV_FIELD_NUMBER = 2;
+      /**
+       * <code>.dspb.KvValue put_kv = 2;</code>
+       */
+      public boolean hasPutKv() {
+        return mutCase_ == 2;
+      }
+      /**
+       * <code>.dspb.KvValue put_kv = 2;</code>
+       */
+      public io.jimdb.pb.Kv.KvValue getPutKv() {
+        if (mutCase_ == 2) {
+           return (io.jimdb.pb.Kv.KvValue) mut_;
+        }
+        return io.jimdb.pb.Kv.KvValue.getDefaultInstance();
+      }
+      /**
+       * <code>.dspb.KvValue put_kv = 2;</code>
+       */
+      public io.jimdb.pb.Kv.KvValueOrBuilder getPutKvOrBuilder() {
+        if (mutCase_ == 2) {
+           return (io.jimdb.pb.Kv.KvValue) mut_;
+        }
+        return io.jimdb.pb.Kv.KvValue.getDefaultInstance();
+      }
+
+      public static final int DEL_KEY_FIELD_NUMBER = 3;
+      /**
+       * <code>bytes del_key = 3;</code>
+       */
+      public com.google.protobuf.ByteString getDelKey() {
+        if (mutCase_ == 3) {
+          return (com.google.protobuf.ByteString) mut_;
+        }
+        return com.google.protobuf.ByteString.EMPTY;
+      }
+
+      public static final int DEL_RANGE_FIELD_NUMBER = 4;
+      /**
+       * <code>.dspb.KeyRange del_range = 4;</code>
+       */
+      public boolean hasDelRange() {
+        return mutCase_ == 4;
+      }
+      /**
+       * <code>.dspb.KeyRange del_range = 4;</code>
+       */
+      public io.jimdb.pb.Kv.KeyRange getDelRange() {
+        if (mutCase_ == 4) {
+           return (io.jimdb.pb.Kv.KeyRange) mut_;
+        }
+        return io.jimdb.pb.Kv.KeyRange.getDefaultInstance();
+      }
+      /**
+       * <code>.dspb.KeyRange del_range = 4;</code>
+       */
+      public io.jimdb.pb.Kv.KeyRangeOrBuilder getDelRangeOrBuilder() {
+        if (mutCase_ == 4) {
+           return (io.jimdb.pb.Kv.KeyRange) mut_;
+        }
+        return io.jimdb.pb.Kv.KeyRange.getDefaultInstance();
+      }
+
+      private byte memoizedIsInitialized = -1;
+      @java.lang.Override
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      @java.lang.Override
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        if (cf_ != io.jimdb.pb.Kv.CFType.CF_DEFAULT.getNumber()) {
+          output.writeEnum(1, cf_);
+        }
+        if (mutCase_ == 2) {
+          output.writeMessage(2, (io.jimdb.pb.Kv.KvValue) mut_);
+        }
+        if (mutCase_ == 3) {
+          output.writeBytes(
+              3, (com.google.protobuf.ByteString) mut_);
+        }
+        if (mutCase_ == 4) {
+          output.writeMessage(4, (io.jimdb.pb.Kv.KeyRange) mut_);
+        }
+        unknownFields.writeTo(output);
+      }
+
+      @java.lang.Override
+      public int getSerializedSize() {
+        int size = memoizedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (cf_ != io.jimdb.pb.Kv.CFType.CF_DEFAULT.getNumber()) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeEnumSize(1, cf_);
+        }
+        if (mutCase_ == 2) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(2, (io.jimdb.pb.Kv.KvValue) mut_);
+        }
+        if (mutCase_ == 3) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeBytesSize(
+                3, (com.google.protobuf.ByteString) mut_);
+        }
+        if (mutCase_ == 4) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(4, (io.jimdb.pb.Kv.KeyRange) mut_);
+        }
+        size += unknownFields.getSerializedSize();
+        memoizedSize = size;
+        return size;
+      }
+
+      @java.lang.Override
+      public boolean equals(final java.lang.Object obj) {
+        if (obj == this) {
+         return true;
+        }
+        if (!(obj instanceof io.jimdb.pb.Kv.RedisMutation.Item)) {
+          return super.equals(obj);
+        }
+        io.jimdb.pb.Kv.RedisMutation.Item other = (io.jimdb.pb.Kv.RedisMutation.Item) obj;
+
+        boolean result = true;
+        result = result && cf_ == other.cf_;
+        result = result && getMutCase().equals(
+            other.getMutCase());
+        if (!result) return false;
+        switch (mutCase_) {
+          case 2:
+            result = result && getPutKv()
+                .equals(other.getPutKv());
+            break;
+          case 3:
+            result = result && getDelKey()
+                .equals(other.getDelKey());
+            break;
+          case 4:
+            result = result && getDelRange()
+                .equals(other.getDelRange());
+            break;
+          case 0:
+          default:
+        }
+        result = result && unknownFields.equals(other.unknownFields);
+        return result;
+      }
+
+      @java.lang.Override
+      public int hashCode() {
+        if (memoizedHashCode != 0) {
+          return memoizedHashCode;
+        }
+        int hash = 41;
+        hash = (19 * hash) + getDescriptor().hashCode();
+        hash = (37 * hash) + CF_FIELD_NUMBER;
+        hash = (53 * hash) + cf_;
+        switch (mutCase_) {
+          case 2:
+            hash = (37 * hash) + PUT_KV_FIELD_NUMBER;
+            hash = (53 * hash) + getPutKv().hashCode();
+            break;
+          case 3:
+            hash = (37 * hash) + DEL_KEY_FIELD_NUMBER;
+            hash = (53 * hash) + getDelKey().hashCode();
+            break;
+          case 4:
+            hash = (37 * hash) + DEL_RANGE_FIELD_NUMBER;
+            hash = (53 * hash) + getDelRange().hashCode();
+            break;
+          case 0:
+          default:
+        }
+        hash = (29 * hash) + unknownFields.hashCode();
+        memoizedHashCode = hash;
+        return hash;
+      }
+
+      public static io.jimdb.pb.Kv.RedisMutation.Item parseFrom(
+          java.nio.ByteBuffer data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static io.jimdb.pb.Kv.RedisMutation.Item parseFrom(
+          java.nio.ByteBuffer data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static io.jimdb.pb.Kv.RedisMutation.Item parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static io.jimdb.pb.Kv.RedisMutation.Item parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static io.jimdb.pb.Kv.RedisMutation.Item parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static io.jimdb.pb.Kv.RedisMutation.Item parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static io.jimdb.pb.Kv.RedisMutation.Item parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input);
+      }
+      public static io.jimdb.pb.Kv.RedisMutation.Item parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input, extensionRegistry);
+      }
+      public static io.jimdb.pb.Kv.RedisMutation.Item parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseDelimitedWithIOException(PARSER, input);
+      }
+      public static io.jimdb.pb.Kv.RedisMutation.Item parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+      }
+      public static io.jimdb.pb.Kv.RedisMutation.Item parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input);
+      }
+      public static io.jimdb.pb.Kv.RedisMutation.Item parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input, extensionRegistry);
+      }
+
+      @java.lang.Override
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder() {
+        return DEFAULT_INSTANCE.toBuilder();
+      }
+      public static Builder newBuilder(io.jimdb.pb.Kv.RedisMutation.Item prototype) {
+        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      }
+      @java.lang.Override
+      public Builder toBuilder() {
+        return this == DEFAULT_INSTANCE
+            ? new Builder() : new Builder().mergeFrom(this);
+      }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code dspb.RedisMutation.Item}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+          // @@protoc_insertion_point(builder_implements:dspb.RedisMutation.Item)
+          io.jimdb.pb.Kv.RedisMutation.ItemOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return io.jimdb.pb.Kv.internal_static_dspb_RedisMutation_Item_descriptor;
+        }
+
+        @java.lang.Override
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return io.jimdb.pb.Kv.internal_static_dspb_RedisMutation_Item_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  io.jimdb.pb.Kv.RedisMutation.Item.class, io.jimdb.pb.Kv.RedisMutation.Item.Builder.class);
+        }
+
+        // Construct using io.jimdb.pb.Kv.RedisMutation.Item.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessageV3
+                  .alwaysUseFieldBuilders) {
+          }
+        }
+        @java.lang.Override
+        public Builder clear() {
+          super.clear();
+          cf_ = 0;
+
+          mutCase_ = 0;
+          mut_ = null;
+          return this;
+        }
+
+        @java.lang.Override
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return io.jimdb.pb.Kv.internal_static_dspb_RedisMutation_Item_descriptor;
+        }
+
+        @java.lang.Override
+        public io.jimdb.pb.Kv.RedisMutation.Item getDefaultInstanceForType() {
+          return io.jimdb.pb.Kv.RedisMutation.Item.getDefaultInstance();
+        }
+
+        @java.lang.Override
+        public io.jimdb.pb.Kv.RedisMutation.Item build() {
+          io.jimdb.pb.Kv.RedisMutation.Item result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        @java.lang.Override
+        public io.jimdb.pb.Kv.RedisMutation.Item buildPartial() {
+          io.jimdb.pb.Kv.RedisMutation.Item result = new io.jimdb.pb.Kv.RedisMutation.Item(this);
+          result.cf_ = cf_;
+          if (mutCase_ == 2) {
+            if (putKvBuilder_ == null) {
+              result.mut_ = mut_;
+            } else {
+              result.mut_ = putKvBuilder_.build();
+            }
+          }
+          if (mutCase_ == 3) {
+            result.mut_ = mut_;
+          }
+          if (mutCase_ == 4) {
+            if (delRangeBuilder_ == null) {
+              result.mut_ = mut_;
+            } else {
+              result.mut_ = delRangeBuilder_.build();
+            }
+          }
+          result.mutCase_ = mutCase_;
+          onBuilt();
+          return result;
+        }
+
+        @java.lang.Override
+        public Builder clone() {
+          return (Builder) super.clone();
+        }
+        @java.lang.Override
+        public Builder setField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            java.lang.Object value) {
+          return (Builder) super.setField(field, value);
+        }
+        @java.lang.Override
+        public Builder clearField(
+            com.google.protobuf.Descriptors.FieldDescriptor field) {
+          return (Builder) super.clearField(field);
+        }
+        @java.lang.Override
+        public Builder clearOneof(
+            com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+          return (Builder) super.clearOneof(oneof);
+        }
+        @java.lang.Override
+        public Builder setRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            int index, java.lang.Object value) {
+          return (Builder) super.setRepeatedField(field, index, value);
+        }
+        @java.lang.Override
+        public Builder addRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            java.lang.Object value) {
+          return (Builder) super.addRepeatedField(field, value);
+        }
+        @java.lang.Override
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof io.jimdb.pb.Kv.RedisMutation.Item) {
+            return mergeFrom((io.jimdb.pb.Kv.RedisMutation.Item)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(io.jimdb.pb.Kv.RedisMutation.Item other) {
+          if (other == io.jimdb.pb.Kv.RedisMutation.Item.getDefaultInstance()) return this;
+          if (other.cf_ != 0) {
+            setCfValue(other.getCfValue());
+          }
+          switch (other.getMutCase()) {
+            case PUT_KV: {
+              mergePutKv(other.getPutKv());
+              break;
+            }
+            case DEL_KEY: {
+              setDelKey(other.getDelKey());
+              break;
+            }
+            case DEL_RANGE: {
+              mergeDelRange(other.getDelRange());
+              break;
+            }
+            case MUT_NOT_SET: {
+              break;
+            }
+          }
+          this.mergeUnknownFields(other.unknownFields);
+          onChanged();
+          return this;
+        }
+
+        @java.lang.Override
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        @java.lang.Override
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          io.jimdb.pb.Kv.RedisMutation.Item parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (io.jimdb.pb.Kv.RedisMutation.Item) e.getUnfinishedMessage();
+            throw e.unwrapIOException();
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int mutCase_ = 0;
+        private java.lang.Object mut_;
+        public MutCase
+            getMutCase() {
+          return MutCase.forNumber(
+              mutCase_);
+        }
+
+        public Builder clearMut() {
+          mutCase_ = 0;
+          mut_ = null;
+          onChanged();
+          return this;
+        }
+
+
+        private int cf_ = 0;
+        /**
+         * <code>.dspb.CFType cf = 1;</code>
+         */
+        public int getCfValue() {
+          return cf_;
+        }
+        /**
+         * <code>.dspb.CFType cf = 1;</code>
+         */
+        public Builder setCfValue(int value) {
+          cf_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>.dspb.CFType cf = 1;</code>
+         */
+        public io.jimdb.pb.Kv.CFType getCf() {
+          @SuppressWarnings("deprecation")
+          io.jimdb.pb.Kv.CFType result = io.jimdb.pb.Kv.CFType.valueOf(cf_);
+          return result == null ? io.jimdb.pb.Kv.CFType.UNRECOGNIZED : result;
+        }
+        /**
+         * <code>.dspb.CFType cf = 1;</code>
+         */
+        public Builder setCf(io.jimdb.pb.Kv.CFType value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          
+          cf_ = value.getNumber();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>.dspb.CFType cf = 1;</code>
+         */
+        public Builder clearCf() {
+          
+          cf_ = 0;
+          onChanged();
+          return this;
+        }
+
+        private com.google.protobuf.SingleFieldBuilderV3<
+            io.jimdb.pb.Kv.KvValue, io.jimdb.pb.Kv.KvValue.Builder, io.jimdb.pb.Kv.KvValueOrBuilder> putKvBuilder_;
+        /**
+         * <code>.dspb.KvValue put_kv = 2;</code>
+         */
+        public boolean hasPutKv() {
+          return mutCase_ == 2;
+        }
+        /**
+         * <code>.dspb.KvValue put_kv = 2;</code>
+         */
+        public io.jimdb.pb.Kv.KvValue getPutKv() {
+          if (putKvBuilder_ == null) {
+            if (mutCase_ == 2) {
+              return (io.jimdb.pb.Kv.KvValue) mut_;
+            }
+            return io.jimdb.pb.Kv.KvValue.getDefaultInstance();
+          } else {
+            if (mutCase_ == 2) {
+              return putKvBuilder_.getMessage();
+            }
+            return io.jimdb.pb.Kv.KvValue.getDefaultInstance();
+          }
+        }
+        /**
+         * <code>.dspb.KvValue put_kv = 2;</code>
+         */
+        public Builder setPutKv(io.jimdb.pb.Kv.KvValue value) {
+          if (putKvBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            mut_ = value;
+            onChanged();
+          } else {
+            putKvBuilder_.setMessage(value);
+          }
+          mutCase_ = 2;
+          return this;
+        }
+        /**
+         * <code>.dspb.KvValue put_kv = 2;</code>
+         */
+        public Builder setPutKv(
+            io.jimdb.pb.Kv.KvValue.Builder builderForValue) {
+          if (putKvBuilder_ == null) {
+            mut_ = builderForValue.build();
+            onChanged();
+          } else {
+            putKvBuilder_.setMessage(builderForValue.build());
+          }
+          mutCase_ = 2;
+          return this;
+        }
+        /**
+         * <code>.dspb.KvValue put_kv = 2;</code>
+         */
+        public Builder mergePutKv(io.jimdb.pb.Kv.KvValue value) {
+          if (putKvBuilder_ == null) {
+            if (mutCase_ == 2 &&
+                mut_ != io.jimdb.pb.Kv.KvValue.getDefaultInstance()) {
+              mut_ = io.jimdb.pb.Kv.KvValue.newBuilder((io.jimdb.pb.Kv.KvValue) mut_)
+                  .mergeFrom(value).buildPartial();
+            } else {
+              mut_ = value;
+            }
+            onChanged();
+          } else {
+            if (mutCase_ == 2) {
+              putKvBuilder_.mergeFrom(value);
+            }
+            putKvBuilder_.setMessage(value);
+          }
+          mutCase_ = 2;
+          return this;
+        }
+        /**
+         * <code>.dspb.KvValue put_kv = 2;</code>
+         */
+        public Builder clearPutKv() {
+          if (putKvBuilder_ == null) {
+            if (mutCase_ == 2) {
+              mutCase_ = 0;
+              mut_ = null;
+              onChanged();
+            }
+          } else {
+            if (mutCase_ == 2) {
+              mutCase_ = 0;
+              mut_ = null;
+            }
+            putKvBuilder_.clear();
+          }
+          return this;
+        }
+        /**
+         * <code>.dspb.KvValue put_kv = 2;</code>
+         */
+        public io.jimdb.pb.Kv.KvValue.Builder getPutKvBuilder() {
+          return getPutKvFieldBuilder().getBuilder();
+        }
+        /**
+         * <code>.dspb.KvValue put_kv = 2;</code>
+         */
+        public io.jimdb.pb.Kv.KvValueOrBuilder getPutKvOrBuilder() {
+          if ((mutCase_ == 2) && (putKvBuilder_ != null)) {
+            return putKvBuilder_.getMessageOrBuilder();
+          } else {
+            if (mutCase_ == 2) {
+              return (io.jimdb.pb.Kv.KvValue) mut_;
+            }
+            return io.jimdb.pb.Kv.KvValue.getDefaultInstance();
+          }
+        }
+        /**
+         * <code>.dspb.KvValue put_kv = 2;</code>
+         */
+        private com.google.protobuf.SingleFieldBuilderV3<
+            io.jimdb.pb.Kv.KvValue, io.jimdb.pb.Kv.KvValue.Builder, io.jimdb.pb.Kv.KvValueOrBuilder> 
+            getPutKvFieldBuilder() {
+          if (putKvBuilder_ == null) {
+            if (!(mutCase_ == 2)) {
+              mut_ = io.jimdb.pb.Kv.KvValue.getDefaultInstance();
+            }
+            putKvBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+                io.jimdb.pb.Kv.KvValue, io.jimdb.pb.Kv.KvValue.Builder, io.jimdb.pb.Kv.KvValueOrBuilder>(
+                    (io.jimdb.pb.Kv.KvValue) mut_,
+                    getParentForChildren(),
+                    isClean());
+            mut_ = null;
+          }
+          mutCase_ = 2;
+          onChanged();;
+          return putKvBuilder_;
+        }
+
+        /**
+         * <code>bytes del_key = 3;</code>
+         */
+        public com.google.protobuf.ByteString getDelKey() {
+          if (mutCase_ == 3) {
+            return (com.google.protobuf.ByteString) mut_;
+          }
+          return com.google.protobuf.ByteString.EMPTY;
+        }
+        /**
+         * <code>bytes del_key = 3;</code>
+         */
+        public Builder setDelKey(com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  mutCase_ = 3;
+          mut_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>bytes del_key = 3;</code>
+         */
+        public Builder clearDelKey() {
+          if (mutCase_ == 3) {
+            mutCase_ = 0;
+            mut_ = null;
+            onChanged();
+          }
+          return this;
+        }
+
+        private com.google.protobuf.SingleFieldBuilderV3<
+            io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder> delRangeBuilder_;
+        /**
+         * <code>.dspb.KeyRange del_range = 4;</code>
+         */
+        public boolean hasDelRange() {
+          return mutCase_ == 4;
+        }
+        /**
+         * <code>.dspb.KeyRange del_range = 4;</code>
+         */
+        public io.jimdb.pb.Kv.KeyRange getDelRange() {
+          if (delRangeBuilder_ == null) {
+            if (mutCase_ == 4) {
+              return (io.jimdb.pb.Kv.KeyRange) mut_;
+            }
+            return io.jimdb.pb.Kv.KeyRange.getDefaultInstance();
+          } else {
+            if (mutCase_ == 4) {
+              return delRangeBuilder_.getMessage();
+            }
+            return io.jimdb.pb.Kv.KeyRange.getDefaultInstance();
+          }
+        }
+        /**
+         * <code>.dspb.KeyRange del_range = 4;</code>
+         */
+        public Builder setDelRange(io.jimdb.pb.Kv.KeyRange value) {
+          if (delRangeBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            mut_ = value;
+            onChanged();
+          } else {
+            delRangeBuilder_.setMessage(value);
+          }
+          mutCase_ = 4;
+          return this;
+        }
+        /**
+         * <code>.dspb.KeyRange del_range = 4;</code>
+         */
+        public Builder setDelRange(
+            io.jimdb.pb.Kv.KeyRange.Builder builderForValue) {
+          if (delRangeBuilder_ == null) {
+            mut_ = builderForValue.build();
+            onChanged();
+          } else {
+            delRangeBuilder_.setMessage(builderForValue.build());
+          }
+          mutCase_ = 4;
+          return this;
+        }
+        /**
+         * <code>.dspb.KeyRange del_range = 4;</code>
+         */
+        public Builder mergeDelRange(io.jimdb.pb.Kv.KeyRange value) {
+          if (delRangeBuilder_ == null) {
+            if (mutCase_ == 4 &&
+                mut_ != io.jimdb.pb.Kv.KeyRange.getDefaultInstance()) {
+              mut_ = io.jimdb.pb.Kv.KeyRange.newBuilder((io.jimdb.pb.Kv.KeyRange) mut_)
+                  .mergeFrom(value).buildPartial();
+            } else {
+              mut_ = value;
+            }
+            onChanged();
+          } else {
+            if (mutCase_ == 4) {
+              delRangeBuilder_.mergeFrom(value);
+            }
+            delRangeBuilder_.setMessage(value);
+          }
+          mutCase_ = 4;
+          return this;
+        }
+        /**
+         * <code>.dspb.KeyRange del_range = 4;</code>
+         */
+        public Builder clearDelRange() {
+          if (delRangeBuilder_ == null) {
+            if (mutCase_ == 4) {
+              mutCase_ = 0;
+              mut_ = null;
+              onChanged();
+            }
+          } else {
+            if (mutCase_ == 4) {
+              mutCase_ = 0;
+              mut_ = null;
+            }
+            delRangeBuilder_.clear();
+          }
+          return this;
+        }
+        /**
+         * <code>.dspb.KeyRange del_range = 4;</code>
+         */
+        public io.jimdb.pb.Kv.KeyRange.Builder getDelRangeBuilder() {
+          return getDelRangeFieldBuilder().getBuilder();
+        }
+        /**
+         * <code>.dspb.KeyRange del_range = 4;</code>
+         */
+        public io.jimdb.pb.Kv.KeyRangeOrBuilder getDelRangeOrBuilder() {
+          if ((mutCase_ == 4) && (delRangeBuilder_ != null)) {
+            return delRangeBuilder_.getMessageOrBuilder();
+          } else {
+            if (mutCase_ == 4) {
+              return (io.jimdb.pb.Kv.KeyRange) mut_;
+            }
+            return io.jimdb.pb.Kv.KeyRange.getDefaultInstance();
+          }
+        }
+        /**
+         * <code>.dspb.KeyRange del_range = 4;</code>
+         */
+        private com.google.protobuf.SingleFieldBuilderV3<
+            io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder> 
+            getDelRangeFieldBuilder() {
+          if (delRangeBuilder_ == null) {
+            if (!(mutCase_ == 4)) {
+              mut_ = io.jimdb.pb.Kv.KeyRange.getDefaultInstance();
+            }
+            delRangeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+                io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder>(
+                    (io.jimdb.pb.Kv.KeyRange) mut_,
+                    getParentForChildren(),
+                    isClean());
+            mut_ = null;
+          }
+          mutCase_ = 4;
+          onChanged();;
+          return delRangeBuilder_;
+        }
+        @java.lang.Override
+        public final Builder setUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.setUnknownFieldsProto3(unknownFields);
+        }
+
+        @java.lang.Override
+        public final Builder mergeUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.mergeUnknownFields(unknownFields);
+        }
+
+
+        // @@protoc_insertion_point(builder_scope:dspb.RedisMutation.Item)
+      }
+
+      // @@protoc_insertion_point(class_scope:dspb.RedisMutation.Item)
+      private static final io.jimdb.pb.Kv.RedisMutation.Item DEFAULT_INSTANCE;
+      static {
+        DEFAULT_INSTANCE = new io.jimdb.pb.Kv.RedisMutation.Item();
+      }
+
+      public static io.jimdb.pb.Kv.RedisMutation.Item getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static final com.google.protobuf.Parser<Item>
+          PARSER = new com.google.protobuf.AbstractParser<Item>() {
+        @java.lang.Override
+        public Item parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new Item(input, extensionRegistry);
+        }
+      };
+
+      public static com.google.protobuf.Parser<Item> parser() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<Item> getParserForType() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.RedisMutation.Item getDefaultInstanceForType() {
+        return DEFAULT_INSTANCE;
+      }
+
+    }
+
+    public static final int MUTS_FIELD_NUMBER = 1;
+    private java.util.List<io.jimdb.pb.Kv.RedisMutation.Item> muts_;
+    /**
+     * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+     */
+    public java.util.List<io.jimdb.pb.Kv.RedisMutation.Item> getMutsList() {
+      return muts_;
+    }
+    /**
+     * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+     */
+    public java.util.List<? extends io.jimdb.pb.Kv.RedisMutation.ItemOrBuilder> 
+        getMutsOrBuilderList() {
+      return muts_;
+    }
+    /**
+     * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+     */
+    public int getMutsCount() {
+      return muts_.size();
+    }
+    /**
+     * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+     */
+    public io.jimdb.pb.Kv.RedisMutation.Item getMuts(int index) {
+      return muts_.get(index);
+    }
+    /**
+     * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+     */
+    public io.jimdb.pb.Kv.RedisMutation.ItemOrBuilder getMutsOrBuilder(
+        int index) {
+      return muts_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < muts_.size(); i++) {
+        output.writeMessage(1, muts_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < muts_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, muts_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Kv.RedisMutation)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Kv.RedisMutation other = (io.jimdb.pb.Kv.RedisMutation) obj;
+
+      boolean result = true;
+      result = result && getMutsList()
+          .equals(other.getMutsList());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getMutsCount() > 0) {
+        hash = (37 * hash) + MUTS_FIELD_NUMBER;
+        hash = (53 * hash) + getMutsList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Kv.RedisMutation parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.RedisMutation parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisMutation parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.RedisMutation parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisMutation parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Kv.RedisMutation parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisMutation parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.RedisMutation parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisMutation parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.RedisMutation parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Kv.RedisMutation parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Kv.RedisMutation parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Kv.RedisMutation prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code dspb.RedisMutation}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:dspb.RedisMutation)
+        io.jimdb.pb.Kv.RedisMutationOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Kv.internal_static_dspb_RedisMutation_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Kv.internal_static_dspb_RedisMutation_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Kv.RedisMutation.class, io.jimdb.pb.Kv.RedisMutation.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Kv.RedisMutation.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+          getMutsFieldBuilder();
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (mutsBuilder_ == null) {
+          muts_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          mutsBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Kv.internal_static_dspb_RedisMutation_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.RedisMutation getDefaultInstanceForType() {
+        return io.jimdb.pb.Kv.RedisMutation.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.RedisMutation build() {
+        io.jimdb.pb.Kv.RedisMutation result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Kv.RedisMutation buildPartial() {
+        io.jimdb.pb.Kv.RedisMutation result = new io.jimdb.pb.Kv.RedisMutation(this);
+        int from_bitField0_ = bitField0_;
+        if (mutsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
+            muts_ = java.util.Collections.unmodifiableList(muts_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.muts_ = muts_;
+        } else {
+          result.muts_ = mutsBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Kv.RedisMutation) {
+          return mergeFrom((io.jimdb.pb.Kv.RedisMutation)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Kv.RedisMutation other) {
+        if (other == io.jimdb.pb.Kv.RedisMutation.getDefaultInstance()) return this;
+        if (mutsBuilder_ == null) {
+          if (!other.muts_.isEmpty()) {
+            if (muts_.isEmpty()) {
+              muts_ = other.muts_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureMutsIsMutable();
+              muts_.addAll(other.muts_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.muts_.isEmpty()) {
+            if (mutsBuilder_.isEmpty()) {
+              mutsBuilder_.dispose();
+              mutsBuilder_ = null;
+              muts_ = other.muts_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              mutsBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getMutsFieldBuilder() : null;
+            } else {
+              mutsBuilder_.addAllMessages(other.muts_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Kv.RedisMutation parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Kv.RedisMutation) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<io.jimdb.pb.Kv.RedisMutation.Item> muts_ =
+        java.util.Collections.emptyList();
+      private void ensureMutsIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          muts_ = new java.util.ArrayList<io.jimdb.pb.Kv.RedisMutation.Item>(muts_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          io.jimdb.pb.Kv.RedisMutation.Item, io.jimdb.pb.Kv.RedisMutation.Item.Builder, io.jimdb.pb.Kv.RedisMutation.ItemOrBuilder> mutsBuilder_;
+
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public java.util.List<io.jimdb.pb.Kv.RedisMutation.Item> getMutsList() {
+        if (mutsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(muts_);
+        } else {
+          return mutsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public int getMutsCount() {
+        if (mutsBuilder_ == null) {
+          return muts_.size();
+        } else {
+          return mutsBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public io.jimdb.pb.Kv.RedisMutation.Item getMuts(int index) {
+        if (mutsBuilder_ == null) {
+          return muts_.get(index);
+        } else {
+          return mutsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public Builder setMuts(
+          int index, io.jimdb.pb.Kv.RedisMutation.Item value) {
+        if (mutsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMutsIsMutable();
+          muts_.set(index, value);
+          onChanged();
+        } else {
+          mutsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public Builder setMuts(
+          int index, io.jimdb.pb.Kv.RedisMutation.Item.Builder builderForValue) {
+        if (mutsBuilder_ == null) {
+          ensureMutsIsMutable();
+          muts_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          mutsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public Builder addMuts(io.jimdb.pb.Kv.RedisMutation.Item value) {
+        if (mutsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMutsIsMutable();
+          muts_.add(value);
+          onChanged();
+        } else {
+          mutsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public Builder addMuts(
+          int index, io.jimdb.pb.Kv.RedisMutation.Item value) {
+        if (mutsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMutsIsMutable();
+          muts_.add(index, value);
+          onChanged();
+        } else {
+          mutsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public Builder addMuts(
+          io.jimdb.pb.Kv.RedisMutation.Item.Builder builderForValue) {
+        if (mutsBuilder_ == null) {
+          ensureMutsIsMutable();
+          muts_.add(builderForValue.build());
+          onChanged();
+        } else {
+          mutsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public Builder addMuts(
+          int index, io.jimdb.pb.Kv.RedisMutation.Item.Builder builderForValue) {
+        if (mutsBuilder_ == null) {
+          ensureMutsIsMutable();
+          muts_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          mutsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public Builder addAllMuts(
+          java.lang.Iterable<? extends io.jimdb.pb.Kv.RedisMutation.Item> values) {
+        if (mutsBuilder_ == null) {
+          ensureMutsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, muts_);
+          onChanged();
+        } else {
+          mutsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public Builder clearMuts() {
+        if (mutsBuilder_ == null) {
+          muts_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          mutsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public Builder removeMuts(int index) {
+        if (mutsBuilder_ == null) {
+          ensureMutsIsMutable();
+          muts_.remove(index);
+          onChanged();
+        } else {
+          mutsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public io.jimdb.pb.Kv.RedisMutation.Item.Builder getMutsBuilder(
+          int index) {
+        return getMutsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public io.jimdb.pb.Kv.RedisMutation.ItemOrBuilder getMutsOrBuilder(
+          int index) {
+        if (mutsBuilder_ == null) {
+          return muts_.get(index);  } else {
+          return mutsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public java.util.List<? extends io.jimdb.pb.Kv.RedisMutation.ItemOrBuilder> 
+           getMutsOrBuilderList() {
+        if (mutsBuilder_ != null) {
+          return mutsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(muts_);
+        }
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public io.jimdb.pb.Kv.RedisMutation.Item.Builder addMutsBuilder() {
+        return getMutsFieldBuilder().addBuilder(
+            io.jimdb.pb.Kv.RedisMutation.Item.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public io.jimdb.pb.Kv.RedisMutation.Item.Builder addMutsBuilder(
+          int index) {
+        return getMutsFieldBuilder().addBuilder(
+            index, io.jimdb.pb.Kv.RedisMutation.Item.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .dspb.RedisMutation.Item muts = 1;</code>
+       */
+      public java.util.List<io.jimdb.pb.Kv.RedisMutation.Item.Builder> 
+           getMutsBuilderList() {
+        return getMutsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          io.jimdb.pb.Kv.RedisMutation.Item, io.jimdb.pb.Kv.RedisMutation.Item.Builder, io.jimdb.pb.Kv.RedisMutation.ItemOrBuilder> 
+          getMutsFieldBuilder() {
+        if (mutsBuilder_ == null) {
+          mutsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              io.jimdb.pb.Kv.RedisMutation.Item, io.jimdb.pb.Kv.RedisMutation.Item.Builder, io.jimdb.pb.Kv.RedisMutation.ItemOrBuilder>(
+                  muts_,
+                  ((bitField0_ & 0x00000001) == 0x00000001),
+                  getParentForChildren(),
+                  isClean());
+          muts_ = null;
+        }
+        return mutsBuilder_;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:dspb.RedisMutation)
+    }
+
+    // @@protoc_insertion_point(class_scope:dspb.RedisMutation)
+    private static final io.jimdb.pb.Kv.RedisMutation DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Kv.RedisMutation();
+    }
+
+    public static io.jimdb.pb.Kv.RedisMutation getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RedisMutation>
+        PARSER = new com.google.protobuf.AbstractParser<RedisMutation>() {
+      @java.lang.Override
+      public RedisMutation parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new RedisMutation(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<RedisMutation> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RedisMutation> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Kv.RedisMutation getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -4717,551 +9840,6 @@ public final class Kv {
 
     @java.lang.Override
     public io.jimdb.pb.Kv.KvScanRequest getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface KvValueOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:dspb.KvValue)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>bytes key = 1;</code>
-     */
-    com.google.protobuf.ByteString getKey();
-
-    /**
-     * <code>bytes value = 2;</code>
-     */
-    com.google.protobuf.ByteString getValue();
-  }
-  /**
-   * Protobuf type {@code dspb.KvValue}
-   */
-  public  static final class KvValue extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:dspb.KvValue)
-      KvValueOrBuilder {
-  private static final long serialVersionUID = 0L;
-    // Use KvValue.newBuilder() to construct.
-    private KvValue(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private KvValue() {
-      key_ = com.google.protobuf.ByteString.EMPTY;
-      value_ = com.google.protobuf.ByteString.EMPTY;
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private KvValue(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-
-              key_ = input.readBytes();
-              break;
-            }
-            case 18: {
-
-              value_ = input.readBytes();
-              break;
-            }
-            default: {
-              if (!parseUnknownFieldProto3(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return io.jimdb.pb.Kv.internal_static_dspb_KvValue_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return io.jimdb.pb.Kv.internal_static_dspb_KvValue_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              io.jimdb.pb.Kv.KvValue.class, io.jimdb.pb.Kv.KvValue.Builder.class);
-    }
-
-    public static final int KEY_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString key_;
-    /**
-     * <code>bytes key = 1;</code>
-     */
-    public com.google.protobuf.ByteString getKey() {
-      return key_;
-    }
-
-    public static final int VALUE_FIELD_NUMBER = 2;
-    private com.google.protobuf.ByteString value_;
-    /**
-     * <code>bytes value = 2;</code>
-     */
-    public com.google.protobuf.ByteString getValue() {
-      return value_;
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (!key_.isEmpty()) {
-        output.writeBytes(1, key_);
-      }
-      if (!value_.isEmpty()) {
-        output.writeBytes(2, value_);
-      }
-      unknownFields.writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (!key_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, key_);
-      }
-      if (!value_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, value_);
-      }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof io.jimdb.pb.Kv.KvValue)) {
-        return super.equals(obj);
-      }
-      io.jimdb.pb.Kv.KvValue other = (io.jimdb.pb.Kv.KvValue) obj;
-
-      boolean result = true;
-      result = result && getKey()
-          .equals(other.getKey());
-      result = result && getValue()
-          .equals(other.getValue());
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + KEY_FIELD_NUMBER;
-      hash = (53 * hash) + getKey().hashCode();
-      hash = (37 * hash) + VALUE_FIELD_NUMBER;
-      hash = (53 * hash) + getValue().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static io.jimdb.pb.Kv.KvValue parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static io.jimdb.pb.Kv.KvValue parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static io.jimdb.pb.Kv.KvValue parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static io.jimdb.pb.Kv.KvValue parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static io.jimdb.pb.Kv.KvValue parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static io.jimdb.pb.Kv.KvValue parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static io.jimdb.pb.Kv.KvValue parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static io.jimdb.pb.Kv.KvValue parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static io.jimdb.pb.Kv.KvValue parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static io.jimdb.pb.Kv.KvValue parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static io.jimdb.pb.Kv.KvValue parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static io.jimdb.pb.Kv.KvValue parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(io.jimdb.pb.Kv.KvValue prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code dspb.KvValue}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:dspb.KvValue)
-        io.jimdb.pb.Kv.KvValueOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return io.jimdb.pb.Kv.internal_static_dspb_KvValue_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return io.jimdb.pb.Kv.internal_static_dspb_KvValue_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                io.jimdb.pb.Kv.KvValue.class, io.jimdb.pb.Kv.KvValue.Builder.class);
-      }
-
-      // Construct using io.jimdb.pb.Kv.KvValue.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        key_ = com.google.protobuf.ByteString.EMPTY;
-
-        value_ = com.google.protobuf.ByteString.EMPTY;
-
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return io.jimdb.pb.Kv.internal_static_dspb_KvValue_descriptor;
-      }
-
-      @java.lang.Override
-      public io.jimdb.pb.Kv.KvValue getDefaultInstanceForType() {
-        return io.jimdb.pb.Kv.KvValue.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public io.jimdb.pb.Kv.KvValue build() {
-        io.jimdb.pb.Kv.KvValue result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public io.jimdb.pb.Kv.KvValue buildPartial() {
-        io.jimdb.pb.Kv.KvValue result = new io.jimdb.pb.Kv.KvValue(this);
-        result.key_ = key_;
-        result.value_ = value_;
-        onBuilt();
-        return result;
-      }
-
-      @java.lang.Override
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof io.jimdb.pb.Kv.KvValue) {
-          return mergeFrom((io.jimdb.pb.Kv.KvValue)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(io.jimdb.pb.Kv.KvValue other) {
-        if (other == io.jimdb.pb.Kv.KvValue.getDefaultInstance()) return this;
-        if (other.getKey() != com.google.protobuf.ByteString.EMPTY) {
-          setKey(other.getKey());
-        }
-        if (other.getValue() != com.google.protobuf.ByteString.EMPTY) {
-          setValue(other.getValue());
-        }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        io.jimdb.pb.Kv.KvValue parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (io.jimdb.pb.Kv.KvValue) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-
-      private com.google.protobuf.ByteString key_ = com.google.protobuf.ByteString.EMPTY;
-      /**
-       * <code>bytes key = 1;</code>
-       */
-      public com.google.protobuf.ByteString getKey() {
-        return key_;
-      }
-      /**
-       * <code>bytes key = 1;</code>
-       */
-      public Builder setKey(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        key_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bytes key = 1;</code>
-       */
-      public Builder clearKey() {
-        
-        key_ = getDefaultInstance().getKey();
-        onChanged();
-        return this;
-      }
-
-      private com.google.protobuf.ByteString value_ = com.google.protobuf.ByteString.EMPTY;
-      /**
-       * <code>bytes value = 2;</code>
-       */
-      public com.google.protobuf.ByteString getValue() {
-        return value_;
-      }
-      /**
-       * <code>bytes value = 2;</code>
-       */
-      public Builder setValue(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        value_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bytes value = 2;</code>
-       */
-      public Builder clearValue() {
-        
-        value_ = getDefaultInstance().getValue();
-        onChanged();
-        return this;
-      }
-      @java.lang.Override
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFieldsProto3(unknownFields);
-      }
-
-      @java.lang.Override
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:dspb.KvValue)
-    }
-
-    // @@protoc_insertion_point(class_scope:dspb.KvValue)
-    private static final io.jimdb.pb.Kv.KvValue DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new io.jimdb.pb.Kv.KvValue();
-    }
-
-    public static io.jimdb.pb.Kv.KvValue getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<KvValue>
-        PARSER = new com.google.protobuf.AbstractParser<KvValue>() {
-      @java.lang.Override
-      public KvValue parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new KvValue(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<KvValue> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<KvValue> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public io.jimdb.pb.Kv.KvValue getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -9201,15 +13779,45 @@ public final class Kv {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_dspb_KvValue_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_dspb_KvValue_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_dspb_KeyRange_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_dspb_KeyRange_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_dspb_RedisMeta_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_dspb_RedisMeta_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_dspb_RedisRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_dspb_RedisRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_dspb_RedisObject_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_dspb_RedisObject_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_dspb_RedisResponse_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_dspb_RedisResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_dspb_RedisMutation_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_dspb_RedisMutation_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_dspb_RedisMutation_Item_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_dspb_RedisMutation_Item_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_dspb_KvGetRequest_descriptor;
   private static final 
@@ -9225,11 +13833,6 @@ public final class Kv {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_dspb_KvScanRequest_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_dspb_KvValue_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_dspb_KvValue_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_dspb_KvScanReponse_descriptor;
   private static final 
@@ -9274,69 +13877,83 @@ public final class Kv {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\rdspb/kv.proto\022\004dspb\">\n\014RedisRequest\022 \n" +
-      "\004type\030\001 \001(\0162\022.dspb.RedisCmdType\022\014\n\004args\030" +
-      "\002 \003(\014\"x\n\rRedisResponse\022\"\n\004type\030\001 \001(\0162\024.d" +
-      "spb.RedisReplyType\022\013\n\003str\030\002 \001(\014\022\017\n\007integ" +
-      "er\030\003 \001(\005\022%\n\010elements\030\004 \003(\0132\023.dspb.RedisR" +
-      "esponse\"\033\n\014KvGetRequest\022\013\n\003key\030\001 \001(\014\",\n\r" +
-      "KvGetResponse\022\014\n\004code\030\001 \001(\005\022\r\n\005value\030\002 \001" +
-      "(\014\"3\n\rKvScanRequest\022\021\n\tstart_key\030\001 \001(\014\022\017" +
-      "\n\007end_key\030\002 \001(\014\"%\n\007KvValue\022\013\n\003key\030\001 \001(\014\022" +
-      "\r\n\005value\030\002 \001(\014\"<\n\rKvScanReponse\022\014\n\004code\030" +
-      "\001 \001(\005\022\035\n\006values\030\002 \003(\0132\r.dspb.KvValue\"*\n\014" +
-      "KvPutRequest\022\013\n\003key\030\001 \001(\014\022\r\n\005value\030\002 \001(\014" +
-      "\"\035\n\rKvPutResponse\022\014\n\004code\030\001 \001(\005\"\036\n\017KvDel" +
-      "eteRequest\022\013\n\003key\030\001 \001(\014\" \n\020KvDeleteRespo" +
-      "nse\022\014\n\004code\030\001 \001(\005\"7\n\021KvDelRangeRequest\022\021" +
-      "\n\tstart_key\030\001 \001(\014\022\017\n\007end_key\030\002 \001(\014\"1\n\022Kv" +
-      "DelRangeResponse\022\014\n\004code\030\001 \001(\005\022\r\n\005count\030" +
-      "\002 \001(\003*\226\r\n\014RedisCmdType\022\007\n\003DEL\020\000\022\n\n\006EXIST" +
-      "S\020\001\022\n\n\006EXPIRE\020\002\022\014\n\010EXPIREAT\020\003\022\010\n\004KEYS\020\004\022" +
-      "\n\n\006OBJECT\020\005\022\013\n\007PERSIST\020\006\022\013\n\007PEXPIRE\020\007\022\r\n" +
-      "\tPEXPIREAT\020\010\022\010\n\004PTTL\020\t\022\r\n\tRANDOMKEY\020\n\022\n\n" +
-      "\006RENAME\020\013\022\014\n\010RENAMENX\020\014\022\010\n\004SORT\020\r\022\007\n\003TTL" +
-      "\020\016\022\010\n\004TYPE\020\017\022\010\n\004SCAN\020\020\022\n\n\006APPEND\020\021\022\014\n\010BI" +
-      "TCOUNT\020\022\022\t\n\005BITOP\020\023\022\n\n\006BITPOS\020\024\022\010\n\004DECR\020" +
-      "\025\022\n\n\006DECRBY\020\026\022\007\n\003GET\020\027\022\n\n\006GETBIT\020\030\022\014\n\010GE" +
-      "TRANGE\020\031\022\n\n\006SUBSTR\020\032\022\n\n\006GETSET\020\033\022\010\n\004INCR" +
-      "\020\034\022\n\n\006INCRBY\020\035\022\017\n\013INCRBYFLOAT\020\036\022\010\n\004MGET\020" +
-      "\037\022\010\n\004MSET\020 \022\n\n\006MSETNX\020!\022\n\n\006PSETEX\020\"\022\007\n\003S" +
-      "ET\020#\022\n\n\006SETBIT\020$\022\t\n\005SETEX\020%\022\t\n\005SETNX\020&\022\014" +
-      "\n\010SETRANGE\020\'\022\n\n\006STRLEN\020(\022\010\n\004HDEL\020)\022\013\n\007HE" +
-      "XISTS\020*\022\010\n\004HGET\020+\022\013\n\007HGETALL\020,\022\013\n\007HINCRB" +
-      "Y\020-\022\020\n\014HINCRBYFLOAT\020.\022\t\n\005HKEYS\020/\022\010\n\004HLEN" +
-      "\0200\022\t\n\005HMGET\0201\022\t\n\005HMSET\0202\022\010\n\004HSET\0203\022\n\n\006HS" +
-      "ETNX\0204\022\t\n\005HVALS\0205\022\t\n\005HSCAN\0206\022\t\n\005BLPOP\0207\022" +
-      "\t\n\005BRPOP\0208\022\016\n\nBRPOPLPUSH\0209\022\n\n\006LINDEX\020:\022\013" +
-      "\n\007LINSERT\020;\022\010\n\004LLEN\020<\022\010\n\004LPOP\020=\022\t\n\005LPUSH" +
-      "\020>\022\n\n\006LPUSHX\020?\022\n\n\006LRANGE\020@\022\010\n\004LREM\020A\022\010\n\004" +
-      "LSET\020B\022\t\n\005LTRIM\020C\022\010\n\004RPOP\020D\022\r\n\tRPOPLPUSH" +
-      "\020E\022\t\n\005RPUSH\020F\022\n\n\006RPUSHX\020G\022\010\n\004SADD\020H\022\t\n\005S" +
-      "CARD\020I\022\t\n\005SDIFF\020J\022\016\n\nSDIFFSTORE\020K\022\n\n\006SIN" +
-      "TER\020L\022\017\n\013SINTERSTORE\020M\022\r\n\tSISMEMBER\020N\022\014\n" +
-      "\010SMEMBERS\020O\022\t\n\005SMOVE\020P\022\010\n\004SPOP\020Q\022\017\n\013SRAN" +
-      "DMEMBER\020R\022\010\n\004SREM\020S\022\n\n\006SUNION\020T\022\017\n\013SUNIO" +
-      "NSTORE\020U\022\t\n\005SSCAN\020V\022\010\n\004ZADD\020W\022\t\n\005ZCARD\020X" +
-      "\022\n\n\006ZCOUNT\020Y\022\013\n\007ZINCRBY\020Z\022\n\n\006ZRANGE\020[\022\021\n" +
-      "\rZRANGEBYSCORE\020\\\022\t\n\005ZRANK\020]\022\010\n\004ZREM\020^\022\023\n" +
-      "\017ZREMRANGEBYRANK\020_\022\024\n\020ZREMRANGEBYSCORE\020`" +
-      "\022\r\n\tZREVRANGE\020a\022\024\n\020ZREVRANGEBYSCORE\020b\022\014\n" +
-      "\010ZREVRANK\020c\022\n\n\006ZSCORE\020d\022\017\n\013ZUNIONSTORE\020e" +
-      "\022\017\n\013ZINTERSTORE\020f\022\t\n\005ZSCAN\020g\022\017\n\013ZRANGEBY" +
-      "LEX\020h\022\r\n\tZLEXCOUNT\020i\022\022\n\016ZREMRANGEBYLEX\020j" +
-      "\022\022\n\016ZREVRANGEBYLEX\020k\022\t\n\005PFADD\020l\022\013\n\007PFCOU" +
-      "NT\020m\022\013\n\007PFMERGE\020n\022\016\n\nPFSELFTEST\020o\022\013\n\007PFD" +
-      "EBUG\020p\022\013\n\007DISCARD\020q\022\010\n\004EXEC\020s\022\t\n\005MULTI\020t" +
-      "\022\013\n\007UNWATCH\020u\022\t\n\005WATCH\020v\022\010\n\004EVAL\020w\022\013\n\007EV" +
-      "ALSHA\020x\022\n\n\006SCRIPT\020y\022\010\n\004AUTH\020z\022\010\n\004PING\020{\022" +
-      "\n\n\006CLIENT\020|\022\n\n\006CONFIG\020}\022\n\n\006DBSIZE\020~\022\t\n\005D" +
-      "EBUG\020\177\022\014\n\007FLUSHDB\020\200\001\022\r\n\010FLUSHALL\020\201\001\022\t\n\004I" +
-      "NFO\020\202\001\022\n\n\005PSYNC\020\203\001\022\014\n\007SLOWLOG\020\204\001\022\t\n\004SYNC" +
-      "\020\205\001\022\t\n\004TIME\020\206\001*T\n\016RedisReplyType\022\n\n\006STAT" +
-      "US\020\000\022\013\n\007INTEGER\020\001\022\n\n\006STRING\020\002\022\t\n\005ERROR\020\003" +
-      "\022\007\n\003NIL\020\004\022\t\n\005ARRAY\020\005B\r\n\013io.jimdb.pbb\006pro" +
-      "to3"
+      "\n\rdspb/kv.proto\022\004dspb\"%\n\007KvValue\022\013\n\003key\030" +
+      "\001 \001(\014\022\r\n\005value\030\002 \001(\014\".\n\010KeyRange\022\021\n\tstar" +
+      "t_key\030\001 \001(\014\022\017\n\007end_key\030\002 \001(\014\"\277\001\n\tRedisMe" +
+      "ta\022\035\n\004type\030\001 \001(\0162\017.dspb.RedisType\022\016\n\006exp" +
+      "ire\030\002 \001(\004\022\023\n\013access_time\030\003 \001(\004\022\014\n\004size\030\004" +
+      " \001(\004\022\020\n\010next_seq\030\005 \001(\004\022\021\n\tfirst_seq\030\006 \001(" +
+      "\004\022\020\n\010last_seq\030\007 \001(\004\022\021\n\007integer\030\010 \001(\003H\000\022\r" +
+      "\n\003str\030\t \001(\014H\000B\007\n\005value\">\n\014RedisRequest\022 " +
+      "\n\004type\030\001 \001(\0162\022.dspb.RedisCmdType\022\014\n\004args" +
+      "\030\002 \003(\014\"_\n\013RedisObject\022\020\n\010prev_seq\030\001 \001(\004\022" +
+      "\020\n\010next_seq\030\002 \001(\004\022\021\n\007integer\030\003 \001(\003H\000\022\020\n\006" +
+      "string\030\004 \001(\014H\000B\007\n\005value\"x\n\rRedisResponse" +
+      "\022\"\n\004type\030\001 \001(\0162\024.dspb.RedisReplyType\022\013\n\003" +
+      "str\030\002 \001(\014\022\017\n\007integer\030\003 \001(\005\022%\n\010elements\030\004" +
+      " \003(\0132\023.dspb.RedisResponse\"\272\001\n\rRedisMutat" +
+      "ion\022&\n\004muts\030\001 \003(\0132\030.dspb.RedisMutation.I" +
+      "tem\032\200\001\n\004Item\022\030\n\002cf\030\001 \001(\0162\014.dspb.CFType\022\037" +
+      "\n\006put_kv\030\002 \001(\0132\r.dspb.KvValueH\000\022\021\n\007del_k" +
+      "ey\030\003 \001(\014H\000\022#\n\tdel_range\030\004 \001(\0132\016.dspb.Key" +
+      "RangeH\000B\005\n\003mut\"\033\n\014KvGetRequest\022\013\n\003key\030\001 " +
+      "\001(\014\",\n\rKvGetResponse\022\014\n\004code\030\001 \001(\005\022\r\n\005va" +
+      "lue\030\002 \001(\014\"3\n\rKvScanRequest\022\021\n\tstart_key\030" +
+      "\001 \001(\014\022\017\n\007end_key\030\002 \001(\014\"<\n\rKvScanReponse\022" +
+      "\014\n\004code\030\001 \001(\005\022\035\n\006values\030\002 \003(\0132\r.dspb.KvV" +
+      "alue\"*\n\014KvPutRequest\022\013\n\003key\030\001 \001(\014\022\r\n\005val" +
+      "ue\030\002 \001(\014\"\035\n\rKvPutResponse\022\014\n\004code\030\001 \001(\005\"" +
+      "\036\n\017KvDeleteRequest\022\013\n\003key\030\001 \001(\014\" \n\020KvDel" +
+      "eteResponse\022\014\n\004code\030\001 \001(\005\"7\n\021KvDelRangeR" +
+      "equest\022\021\n\tstart_key\030\001 \001(\014\022\017\n\007end_key\030\002 \001" +
+      "(\014\"1\n\022KvDelRangeResponse\022\014\n\004code\030\001 \001(\005\022\r" +
+      "\n\005count\030\002 \001(\003*\336\014\n\014RedisCmdType\022\007\n\003DEL\020\000\022" +
+      "\n\n\006EXISTS\020\001\022\n\n\006EXPIRE\020\002\022\014\n\010EXPIREAT\020\003\022\013\n" +
+      "\007PERSIST\020\004\022\013\n\007PEXPIRE\020\005\022\r\n\tPEXPIREAT\020\006\022\010" +
+      "\n\004PTTL\020\007\022\010\n\004SORT\020\010\022\007\n\003TTL\020\t\022\010\n\004TYPE\020\n\022\010\n" +
+      "\004SCAN\020\013\022\010\n\004DUMP\020\014\022\013\n\007RESTORE\020\r\022\n\n\006OBJECT" +
+      "\020\016\022\n\n\006APPEND\020\017\022\014\n\010BITCOUNT\020\020\022\t\n\005BITOP\020\021\022" +
+      "\n\n\006BITPOS\020\022\022\010\n\004DECR\020\023\022\n\n\006DECRBY\020\024\022\007\n\003GET" +
+      "\020\025\022\n\n\006GETBIT\020\026\022\014\n\010GETRANGE\020\027\022\n\n\006SUBSTR\020\030" +
+      "\022\n\n\006GETSET\020\031\022\010\n\004INCR\020\032\022\n\n\006INCRBY\020\033\022\017\n\013IN" +
+      "CRBYFLOAT\020\034\022\010\n\004MGET\020\035\022\010\n\004MSET\020\036\022\n\n\006MSETN" +
+      "X\020\037\022\n\n\006PSETEX\020 \022\007\n\003SET\020!\022\n\n\006SETBIT\020\"\022\t\n\005" +
+      "SETEX\020#\022\t\n\005SETNX\020$\022\014\n\010SETRANGE\020%\022\n\n\006STRL" +
+      "EN\020&\022\010\n\004HDEL\020\'\022\013\n\007HEXISTS\020(\022\010\n\004HGET\020)\022\013\n" +
+      "\007HGETALL\020*\022\013\n\007HINCRBY\020+\022\020\n\014HINCRBYFLOAT\020" +
+      ",\022\t\n\005HKEYS\020-\022\010\n\004HLEN\020.\022\013\n\007HSTRLEN\020/\022\t\n\005H" +
+      "MGET\0200\022\t\n\005HMSET\0201\022\010\n\004HSET\0202\022\n\n\006HSETNX\0203\022" +
+      "\t\n\005HVALS\0204\022\t\n\005HSCAN\0205\022\t\n\005BLPOP\0206\022\t\n\005BRPO" +
+      "P\0207\022\016\n\nBRPOPLPUSH\0208\022\n\n\006LINDEX\0209\022\013\n\007LINSE" +
+      "RT\020:\022\010\n\004LLEN\020;\022\010\n\004LPOP\020<\022\t\n\005LPUSH\020=\022\n\n\006L" +
+      "PUSHX\020>\022\n\n\006LRANGE\020?\022\010\n\004LREM\020@\022\010\n\004LSET\020A\022" +
+      "\t\n\005LTRIM\020B\022\010\n\004RPOP\020C\022\r\n\tRPOPLPUSH\020D\022\t\n\005R" +
+      "PUSH\020E\022\n\n\006RPUSHX\020F\022\010\n\004SADD\020G\022\t\n\005SCARD\020H\022" +
+      "\t\n\005SDIFF\020I\022\016\n\nSDIFFSTORE\020J\022\n\n\006SINTER\020K\022\017" +
+      "\n\013SINTERSTORE\020L\022\r\n\tSISMEMBER\020M\022\014\n\010SMEMBE" +
+      "RS\020N\022\t\n\005SMOVE\020O\022\010\n\004SPOP\020P\022\017\n\013SRANDMEMBER" +
+      "\020Q\022\010\n\004SREM\020R\022\n\n\006SUNION\020S\022\017\n\013SUNIONSTORE\020" +
+      "T\022\t\n\005SSCAN\020U\022\010\n\004ZADD\020V\022\t\n\005ZCARD\020W\022\n\n\006ZCO" +
+      "UNT\020X\022\013\n\007ZINCRBY\020Y\022\n\n\006ZRANGE\020Z\022\021\n\rZRANGE" +
+      "BYSCORE\020[\022\t\n\005ZRANK\020\\\022\010\n\004ZREM\020]\022\023\n\017ZREMRA" +
+      "NGEBYRANK\020^\022\024\n\020ZREMRANGEBYSCORE\020_\022\r\n\tZRE" +
+      "VRANGE\020`\022\024\n\020ZREVRANGEBYSCORE\020a\022\014\n\010ZREVRA" +
+      "NK\020b\022\n\n\006ZSCORE\020c\022\017\n\013ZUNIONSTORE\020d\022\017\n\013ZIN" +
+      "TERSTORE\020e\022\t\n\005ZSCAN\020f\022\017\n\013ZRANGEBYLEX\020g\022\r" +
+      "\n\tZLEXCOUNT\020h\022\022\n\016ZREMRANGEBYLEX\020i\022\t\n\005PFA" +
+      "DD\020j\022\013\n\007PFCOUNT\020k\022\013\n\007PFMERGE\020l\022\016\n\nPFSELF" +
+      "TEST\020m\022\013\n\007PFDEBUG\020n\022\013\n\007DISCARD\020o\022\010\n\004EXEC" +
+      "\020p\022\t\n\005MULTI\020q\022\013\n\007UNWATCH\020r\022\t\n\005WATCH\020s\022\010\n" +
+      "\004EVAL\020t\022\013\n\007EVALSHA\020u\022\n\n\006SCRIPT\020v\022\010\n\004AUTH" +
+      "\020w\022\010\n\004PING\020x\022\n\n\006CLIENT\020y\022\n\n\006CONFIG\020z\022\n\n\006" +
+      "DBSIZE\020{\022\t\n\005DEBUG\020|\022\014\n\010FLUSHALL\020}\022\010\n\004INF" +
+      "O\020~\022\013\n\007SLOWLOG\020\177\022\t\n\004TIME\020\200\001\022\021\n\014CLEAREXPI" +
+      "RED\020\201\001*T\n\016RedisReplyType\022\n\n\006STATUS\020\000\022\013\n\007" +
+      "INTEGER\020\001\022\n\n\006STRING\020\002\022\t\n\005ERROR\020\003\022\007\n\003NIL\020" +
+      "\004\022\t\n\005ARRAY\020\005*C\n\tRedisType\022\013\n\007TSTRING\020\000\022\t" +
+      "\n\005TLIST\020\001\022\010\n\004TSET\020\002\022\t\n\005TZSET\020\003\022\t\n\005THASH\020" +
+      "\004*4\n\006CFType\022\016\n\nCF_DEFAULT\020\000\022\n\n\006CF_TXN\020\001\022" +
+      "\016\n\nCF_EXPIRED\020\002B\r\n\013io.jimdb.pbb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -9350,80 +13967,110 @@ public final class Kv {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
-    internal_static_dspb_RedisRequest_descriptor =
+    internal_static_dspb_KvValue_descriptor =
       getDescriptor().getMessageTypes().get(0);
+    internal_static_dspb_KvValue_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_dspb_KvValue_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_dspb_KeyRange_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_dspb_KeyRange_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_dspb_KeyRange_descriptor,
+        new java.lang.String[] { "StartKey", "EndKey", });
+    internal_static_dspb_RedisMeta_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+    internal_static_dspb_RedisMeta_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_dspb_RedisMeta_descriptor,
+        new java.lang.String[] { "Type", "Expire", "AccessTime", "Size", "NextSeq", "FirstSeq", "LastSeq", "Integer", "Str", "Value", });
+    internal_static_dspb_RedisRequest_descriptor =
+      getDescriptor().getMessageTypes().get(3);
     internal_static_dspb_RedisRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_RedisRequest_descriptor,
         new java.lang.String[] { "Type", "Args", });
+    internal_static_dspb_RedisObject_descriptor =
+      getDescriptor().getMessageTypes().get(4);
+    internal_static_dspb_RedisObject_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_dspb_RedisObject_descriptor,
+        new java.lang.String[] { "PrevSeq", "NextSeq", "Integer", "String", "Value", });
     internal_static_dspb_RedisResponse_descriptor =
-      getDescriptor().getMessageTypes().get(1);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_dspb_RedisResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_RedisResponse_descriptor,
         new java.lang.String[] { "Type", "Str", "Integer", "Elements", });
+    internal_static_dspb_RedisMutation_descriptor =
+      getDescriptor().getMessageTypes().get(6);
+    internal_static_dspb_RedisMutation_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_dspb_RedisMutation_descriptor,
+        new java.lang.String[] { "Muts", });
+    internal_static_dspb_RedisMutation_Item_descriptor =
+      internal_static_dspb_RedisMutation_descriptor.getNestedTypes().get(0);
+    internal_static_dspb_RedisMutation_Item_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_dspb_RedisMutation_Item_descriptor,
+        new java.lang.String[] { "Cf", "PutKv", "DelKey", "DelRange", "Mut", });
     internal_static_dspb_KvGetRequest_descriptor =
-      getDescriptor().getMessageTypes().get(2);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_dspb_KvGetRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_KvGetRequest_descriptor,
         new java.lang.String[] { "Key", });
     internal_static_dspb_KvGetResponse_descriptor =
-      getDescriptor().getMessageTypes().get(3);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_dspb_KvGetResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_KvGetResponse_descriptor,
         new java.lang.String[] { "Code", "Value", });
     internal_static_dspb_KvScanRequest_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_dspb_KvScanRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_KvScanRequest_descriptor,
         new java.lang.String[] { "StartKey", "EndKey", });
-    internal_static_dspb_KvValue_descriptor =
-      getDescriptor().getMessageTypes().get(5);
-    internal_static_dspb_KvValue_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_dspb_KvValue_descriptor,
-        new java.lang.String[] { "Key", "Value", });
     internal_static_dspb_KvScanReponse_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_dspb_KvScanReponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_KvScanReponse_descriptor,
         new java.lang.String[] { "Code", "Values", });
     internal_static_dspb_KvPutRequest_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(11);
     internal_static_dspb_KvPutRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_KvPutRequest_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_dspb_KvPutResponse_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(12);
     internal_static_dspb_KvPutResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_KvPutResponse_descriptor,
         new java.lang.String[] { "Code", });
     internal_static_dspb_KvDeleteRequest_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(13);
     internal_static_dspb_KvDeleteRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_KvDeleteRequest_descriptor,
         new java.lang.String[] { "Key", });
     internal_static_dspb_KvDeleteResponse_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(14);
     internal_static_dspb_KvDeleteResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_KvDeleteResponse_descriptor,
         new java.lang.String[] { "Code", });
     internal_static_dspb_KvDelRangeRequest_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(15);
     internal_static_dspb_KvDelRangeRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_KvDelRangeRequest_descriptor,
         new java.lang.String[] { "StartKey", "EndKey", });
     internal_static_dspb_KvDelRangeResponse_descriptor =
-      getDescriptor().getMessageTypes().get(12);
+      getDescriptor().getMessageTypes().get(16);
     internal_static_dspb_KvDelRangeResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_KvDelRangeResponse_descriptor,

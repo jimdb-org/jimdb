@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import io.jimdb.core.Session;
 import io.jimdb.core.expression.Expression;
@@ -153,9 +152,10 @@ public class RangeBuilder {
     List<ValueRange> ranges = new ArrayList<>(rangePoints.size() / 2);
     Metapb.SQLType newSqlType = ValueConvertor.convertToSafe(type);
 
+    ValueType valueType = Types.sqlToValueType(type);
     for (int i = 0; i < rangePoints.size(); i += 2) {
-      Point startPoint = rangePoints.get(i).castType(session, newSqlType);
-      Point endPoint = rangePoints.get(i + 1).castType(session, newSqlType);
+      Point startPoint = rangePoints.get(i).castType(session, newSqlType, valueType);
+      Point endPoint = rangePoints.get(i + 1).castType(session, newSqlType, valueType);
 
       if (isInvalidInterval(session, startPoint, endPoint)) {
         continue;
@@ -170,14 +170,14 @@ public class RangeBuilder {
     List<ValueRange> ranges = new ArrayList<>(rangePoints.size() / 2);
     Metapb.SQLType newSqlType = ValueConvertor.convertToSafe(type);
 
+    ValueType valueType = Types.sqlToValueType(type);
     for (int i = 0; i < rangePoints.size(); i += 2) {
-      Point startPoint = rangePoints.get(i).castType(session, newSqlType);
-      Point endPoint = rangePoints.get(i + 1).castType(session, newSqlType);
+      Point startPoint = rangePoints.get(i).castType(session, newSqlType, valueType);
+      Point endPoint = rangePoints.get(i + 1).castType(session, newSqlType, valueType);
 
       if (isInvalidInterval(session, startPoint, endPoint)) {
         continue;
       }
-
       ranges.add(new ValueRange(startPoint, endPoint));
     }
     return ranges;
@@ -302,21 +302,25 @@ public class RangeBuilder {
   private static List<ValueRange> appendPointsToIndexRange(Session session, ValueRange range, List<Point> rangePoints, Metapb.SQLType type) {
     List<ValueRange> ranges = Lists.newArrayListWithCapacity(rangePoints.size() / 2);
 
+    ValueRange newRange;
+    ValueType valueType = Types.sqlToValueType(type);
     for (int i = 0; i < rangePoints.size(); i += 2) {
-      Point startPoint = rangePoints.get(i).castType(session, type);
-      Point endPoint = rangePoints.get(i + 1).castType(session, type);
+      Point startPoint = rangePoints.get(i).castType(session, type, valueType);
+      Point endPoint = rangePoints.get(i + 1).castType(session, type, valueType);
 
       if (isInvalidInterval(session, startPoint, endPoint)) {
         continue;
       }
 
-      List<Value> starts = Lists.newArrayList(range.getStarts());
+      List<Value> starts = Lists.newArrayListWithCapacity(range.getStarts().size() + 1);
+      starts.addAll(range.getStarts());
       starts.add(startPoint.getValue());
 
-      List<Value> ends = Lists.newArrayList(range.getEnds());
+      List<Value> ends = new ArrayList<>(range.getEnds().size() + 1);
+      ends.addAll(range.getEnds());
       ends.add(endPoint.getValue());
 
-      ValueRange newRange = new ValueRange(starts, ends, startPoint.isInclusive(), endPoint.isInclusive());
+      newRange = new ValueRange(starts, ends, startPoint.isInclusive(), endPoint.isInclusive());
       ranges.add(newRange);
     }
     return ranges;
@@ -327,9 +331,9 @@ public class RangeBuilder {
   static List<ValueRange> buildCNFIndexRanges(Session session, List<Expression> accessConditions,
                                               int[] prefixLengths, int equalCount, List<Metapb.SQLType> returnTypes) {
 
-    final List<Metapb.SQLType> typeList = accessConditions.stream().map(Expression::getResultType).collect(Collectors.toList());
-    // FIXME is this correct?
-    returnTypes.addAll(typeList);
+    for (Expression condition : accessConditions) {
+      returnTypes.add(condition.getResultType());
+    }
 
     List<ValueRange> ranges = Collections.emptyList();
     for (int i = 0; i < equalCount; i++) {

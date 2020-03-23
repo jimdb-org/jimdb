@@ -115,12 +115,14 @@ import com.alibaba.druid.sql.ast.expr.SQLValuesExpr;
 import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
 import com.alibaba.druid.sql.ast.statement.*;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 /**
  * @version V1.0
  */
+@SuppressFBWarnings("ACEM_ABSTRACT_CLASS_EMPTY_METHODS")
 public abstract class ExpressionAnalyzer implements SQLAnalyzer {
 //  private static final Map<String, DataType> DATA_TYPE_MAP;
 
@@ -455,7 +457,7 @@ public abstract class ExpressionAnalyzer implements SQLAnalyzer {
         if (!params.isEmpty()) {
           args[0] = stack.pollFirst();
         }
-        stack.addFirst(this.buildFuncExpr(FuncType.NOW, Types.UNDEFINE_TYPE, args));
+        stack.addFirst(this.buildFuncExpr(FuncType.NOW, Types.UNDEFINE_SQLTYPE, args));
         return;
       }
     }
@@ -483,7 +485,7 @@ public abstract class ExpressionAnalyzer implements SQLAnalyzer {
       case Plus:
       case NOT:
       default:
-        funcExpr = this.buildFuncExpr(FuncType.forName(opExpr.getOperator().name()), Types.UNDEFINE_TYPE, arg);
+        funcExpr = this.buildFuncExpr(FuncType.forName(opExpr.getOperator().name()), Types.UNDEFINE_SQLTYPE, arg);
     }
     stack.addFirst(funcExpr);
   }
@@ -508,7 +510,7 @@ public abstract class ExpressionAnalyzer implements SQLAnalyzer {
       default:
         arg2 = stack.pollFirst();
         arg1 = stack.pollFirst();
-        funcExpr = this.buildFuncExpr(FuncType.forName(opExpr.getOperator().name()), Types.UNDEFINE_TYPE, arg1, arg2);
+        funcExpr = this.buildFuncExpr(FuncType.forName(opExpr.getOperator().name()), Types.UNDEFINE_SQLTYPE, arg1, arg2);
     }
 
     stack.addFirst(funcExpr);
@@ -1679,6 +1681,16 @@ public abstract class ExpressionAnalyzer implements SQLAnalyzer {
 
   @Override
   public boolean visit(SQLShowTablesStatement x) {
+    return true;
+  }
+
+  @Override
+  public void endVisit(SQLShowTablesInfoStatement x) {
+
+  }
+
+  @Override
+  public boolean visit(SQLShowTablesInfoStatement x) {
     return true;
   }
 

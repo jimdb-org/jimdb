@@ -18,7 +18,7 @@ package io.jimdb.common.utils.lang;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
-import com.alibaba.druid.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * String util
@@ -71,7 +71,7 @@ public final class StringUtil {
    * Match name of the locale with the given name.
    *
    * @param locale TODO
-   * @param name TODO
+   * @param name   TODO
    * @return TODO
    */
   public static boolean matchCollationName(final Locale locale, final String name) {
@@ -92,7 +92,7 @@ public final class StringUtil {
    * Convert bytes to hex string.
    *
    * @param value TODO
-   * @param len TODO
+   * @param len   TODO
    * @return TODO
    */
   public static String toHex(byte[] value, int len) {
@@ -125,7 +125,7 @@ public final class StringUtil {
   /**
    * Matching character suffix, anyChar match all ，'_' match one
    *
-   * @param src TODO
+   * @param src    TODO
    * @param target TODO
    * @return match
    */
@@ -239,7 +239,6 @@ public final class StringUtil {
     return doMatchString(src, target, PAT_CATALOG_ANY) == MATCH;
   }
 
-
   /**
    * @param cs TODO
    * @return TODO
@@ -263,6 +262,5 @@ public final class StringUtil {
    */
   public static boolean isNotBlank(CharSequence cs) {
     return !isBlank(cs);
-
   }
 }

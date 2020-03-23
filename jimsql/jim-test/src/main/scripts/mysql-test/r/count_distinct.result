@@ -1,0 +1,95 @@
+drop table if exists t1,t2,t3;
+create table t1 (libname varchar(21) not null, city text, primary key (libname)) COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1 ;
+create table t2 (isbn varchar(21) not null, author text, title text, primary key (isbn)) COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+create table t3 (isbn varchar(21) not null, libname varchar(21) not null, quantity int ,primary key (isbn,libname))COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+insert into t2 values ('001','Daffy','A duck''s life');
+insert into t2 values ('002','Bugs','A rabbit\'s life');
+insert into t2 values ('003','Cowboy','Life on the range');
+insert into t2 values ('000','Anonymous','Wanna buy this book?');
+insert into t2 values ('004','Best Seller','One Heckuva book');
+insert into t2 values ('005','EveryoneBuys','This very book');
+insert into t2 values ('006','San Fran','It is a san fran lifestyle');
+insert into t2 values ('007','BerkAuthor','Cool.Berkley.the.book');
+insert into t3 values('000','New York Public Libra','1');
+insert into t3 values('001','New York Public Libra','2');
+insert into t3 values('002','New York Public Libra','3');
+insert into t3 values('003','New York Public Libra','4');
+insert into t3 values('004','New York Public Libra','5');
+insert into t3 values('005','New York Public Libra','6');
+insert into t3 values('006','San Fransisco Public','5');
+insert into t3 values('007','Berkeley Public1','3');
+insert into t3 values('007','Berkeley Public2','3');
+insert into t3 values('001','NYC Lib','8');
+insert into t1 values ('New York Public Libra','New York');
+insert into t1 values ('San Fransisco Public','San Fran');
+insert into t1 values ('Berkeley Public1','Berkeley');
+insert into t1 values ('Berkeley Public2','Berkeley');
+insert into t1 values ('NYC Lib','New York');
+drop table t1, t2, t3;
+create table t1 (f1 bigint unsigned primary key) COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+insert into t1 values (1);
+create table t2 (f1 bigint unsigned primary key ,f2 bigint) COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+drop table t1,t2;
+create table t1 (f1 bigint unsigned primary key) COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+select count(distinct f1) from t1;
+COUNT(DISTINCT f1)
+drop table t1;
+create table t1 (a char(3), b char(20), primary key (a, b)) COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+insert into t1 values ('ABW', 'Dutch'), ('ABW', 'English');
+drop table t1;
+create table t1 (f1 bigint unsigned primary key, f2 bigint) COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+insert into t1 values (0,1),(1,2);
+drop table t1;
+create table t1 (f1 bigint unsigned primary key) COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+insert into t1 values (0), (1);
+drop table t1;
+#
+# Bug#11760197: INCORRECT RESULTS WITH COUNT DISTINCT AND BIG_TABLES
+#
+CREATE TABLE t1 (a bigINT PRIMARY KEY) COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+INSERT INTO t1 VALUES (1),(2);
+SET @big_tables_save= @@big_tables;
+SET SESSION big_tables=0;
+DROP TABLE  t1;
+#
+# BUG#17607155: ASSERTION FAILED:
+#               ((ITEM_RESULT_FIELD*)ITEM)->RESULT_FIELD
+#
+#
+# BUG#17957913: ASSERTION `((ITEM_RESULT_FIELD*)ITEM)->RESULT_FIELD'
+#               FAILS IN CREATE_TMP_FIELD
+#
+#
+# Bug #17555462: SELECT DISTINCT OF VIEW WITH CONSTANT STRING
+#                RETURNS WRONG RESULT
+#
+#
+# Bug #17634335 SELECT DISTINCT...GROUP BY RETURNS WRONG
+#               RESULTS IN SOME CASES
+#
+#
+# Bug #18853696 WRONG RESULT FOR COUNT DISTINCT OF RESULT
+#               OF JOINED DERIVED TABLE
+#
+CREATE TABLE t1 (
+pk INT NOT NULL,
+col_varchar_key VARCHAR(1),
+col_varchar_nokey VARCHAR(1),
+PRIMARY KEY (pk),
+KEY col_varchar_key (col_varchar_key)
+)COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+INSERT INTO t1 VALUES (10,'x','x');
+INSERT INTO t1 VALUES (11,'d','d');
+INSERT INTO t1 VALUES (12,'r','r');
+INSERT INTO t1 VALUES (13,'f','f');
+INSERT INTO t1 VALUES (14,'y','y');
+CREATE TABLE t2 (
+pk INT NOT NULL,
+col_int_nokey INT,
+col_varchar_key VARCHAR(1),
+PRIMARY KEY (pk),
+KEY col_varchar_key (col_varchar_key)
+)COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+INSERT INTO t2 VALUES (1,7,'x');
+DROP TABLE t1,t2;
+# End of test for Bug#18853696

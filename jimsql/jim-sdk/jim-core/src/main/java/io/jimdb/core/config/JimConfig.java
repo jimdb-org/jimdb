@@ -139,11 +139,11 @@ public final class JimConfig extends BaseConfig implements Closeable {
     this.metaStoreClass = getString(PLUGIN_METASTORE, "io.jimdb.meta.EtcdMetaStore");
     this.sqlEngineClass = getString(PLUGIN_SQLENGINE, "io.jimdb.mysql.MySQLEngine");
     this.sqlExecutorClass = getString(PLUGIN_SQLEXECUTOR, "io.jimdb.sql.JimSQLExecutor");
-    this.storeEngineClass = getString(PLUGIN_STOREENGINE, "io.jimdb.engine.JimStoreEngine");
+    this.storeEngineClass = getString(PLUGIN_STOREENGINE, "io.jimdb.engine.ExecutionEngine");
     this.privilegeClass = getString(PLUGIN_PRIVILEGE, "io.jimdb.privilege.SimplePrivilegeManager");
     this.routerStoreClass = getString(PLUGIN_ROUTERSTORE, "io.jimdb.meta.client.MasterClient");
     this.enableStatsPushDown = getBoolean(ENABLE_STATS_PUSH_DOWN, true);
-    this.enableBackgroundStatsCollector = getBoolean(ENABLE_BACKGROUND_STATS_COLLECTOR, true);
+    this.enableBackgroundStatsCollector = getBoolean(ENABLE_BACKGROUND_STATS_COLLECTOR, false);
 
     int outThreads = this.getInt(EXECUTOR_OUTBOUND_THREADS, -1);
     int inThreads = this.getInt(EXECUTOR_INBOUND_THREADS, -1);

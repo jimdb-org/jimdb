@@ -55,6 +55,8 @@ public final class MasterClient implements RouterStore {
   private static final String NODE_GET = "/node/get";
   private static final String TABLE_STAT_COUNT = "/table/count";
 
+  private static final String GENERATE_ID = "/id/generate";
+
   private String url;
   private long clusterId;
 
@@ -175,6 +177,23 @@ public final class MasterClient implements RouterStore {
   }
 
   /******************************************************************************
+   gen id api
+   ******************************************************************************/
+
+  public int generateId() {
+    Mspb.RequestHeader header = Mspb.RequestHeader.newBuilder().setClusterId(clusterId).build();
+    Mspb.GeneralRequest.Builder builder = Mspb.GeneralRequest.newBuilder().setHeader(header);
+    byte[] content = builder.build().toByteArray();
+    try {
+      byte[] data = postWithPb(url + GENERATE_ID, content);
+      Mspb.GenerateIdResponse response = Mspb.GenerateIdResponse.parseFrom(data);
+      return (int) response.getGenerateId();
+    } catch (IOException ex) {
+      throw DBException.get(ErrorModule.META, ErrorCode.ER_UNKNOWN_ERROR, ex);
+    }
+  }
+
+  /******************************************************************************
    node api
    ******************************************************************************/
 
@@ -208,7 +227,7 @@ public final class MasterClient implements RouterStore {
    */
   public Mspb.CountTableResponse getAllTableStats(int retry) {
     if (retry < 0) {
-      throw DBException.get(ErrorModule.META, ErrorCode.ER_META_GET_TABLE_STATS);
+      throw DBException.get(ErrorModule.META, ErrorCode.ER_META_GET_TABLE_STATS, "getAllTableStats");
     }
     Mspb.RequestHeader header = Mspb.RequestHeader.newBuilder().setClusterId(clusterId).build();
     Mspb.CountTableRequest getTableStatsRequest = Mspb.CountTableRequest.newBuilder()
@@ -226,7 +245,7 @@ public final class MasterClient implements RouterStore {
 
       return getAllTableStats(--retry);
     } catch (IOException ex) {
-      throw DBException.get(ErrorModule.META, ErrorCode.ER_META_GET_TABLE_STATS);
+      throw DBException.get(ErrorModule.META, ErrorCode.ER_META_GET_TABLE_STATS, "getAllTableStats");
     }
   }
 
@@ -239,7 +258,7 @@ public final class MasterClient implements RouterStore {
    */
   public Mspb.CountTableResponse getTableStats(Set<Table> tables, int retry) {
     if (retry < 0) {
-      throw DBException.get(ErrorModule.META, ErrorCode.ER_META_GET_TABLE_STATS);
+      throw DBException.get(ErrorModule.META, ErrorCode.ER_META_GET_TABLE_STATS, "getTableStats");
     }
 
     Set<Mspb.Counter> pbTables = tables.stream()
@@ -257,7 +276,9 @@ public final class MasterClient implements RouterStore {
     byte[] content = getTableStatsRequest.toByteArray();
     try {
       byte[] data = postWithPb(url + TABLE_STAT_COUNT, content);
+      LOGGER.debug("data = {}", data);
       Mspb.CountTableResponse getTableStatsResponse = Mspb.CountTableResponse.parseFrom(data);
+      LOGGER.debug("getTableStatsResponse = {}", getTableStatsResponse);
       Mspb.ResponseHeader responseHeader = getTableStatsResponse.getHeader();
       if (!responseHeader.hasError()) {
         return getTableStatsResponse;
@@ -266,7 +287,7 @@ public final class MasterClient implements RouterStore {
 
       return getTableStats(tables, --retry);
     } catch (IOException ex) {
-      throw DBException.get(ErrorModule.META, ErrorCode.ER_META_GET_TABLE_LIST);
+      throw DBException.get(ErrorModule.META, ErrorCode.ER_META_GET_TABLE_LIST, "getTableStats");
     }
   }
 

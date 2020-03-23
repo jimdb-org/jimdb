@@ -15,6 +15,7 @@
  */
 package io.jimdb.core.expression;
 
+import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.values.NullValue;
 import io.jimdb.core.values.Value;
 import io.jimdb.common.exception.DBException;
@@ -42,6 +43,11 @@ public interface ValueAccessor {
     public void set(int index, Value value) {
       throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_NOT_SUPPORTED_YET, "ValueAccessor set value");
     }
+
+    @Override
+    public Value[] extractValues(Column[] columns, ColumnExpr[] columnExprs) {
+      return new Value[0];
+    }
   };
 
   int size();
@@ -49,4 +55,6 @@ public interface ValueAccessor {
   Value get(int index);
 
   void set(int index, Value value);
+
+  Value[] extractValues(Column[] columns, ColumnExpr[] columnExprs);
 }

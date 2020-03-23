@@ -26,7 +26,7 @@ import io.jimdb.core.model.meta.Column;
 import io.jimdb.core.model.meta.Index;
 import io.jimdb.core.model.result.impl.QueryExecResult;
 import io.jimdb.sql.optimizer.statistics.TableStats;
-import io.jimdb.test.mock.store.MockTransaction;
+import io.jimdb.test.mock.store.MockStoreEngine;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -43,7 +43,7 @@ public class TableStatsTest extends CboTest {
   @BeforeClass
   public static void tableStatsTestSetup() {
     schema = new Schema(session, table.getReadableColumns());
-    queryExecResult = (QueryExecResult) ((MockTransaction) session.getTxn()).getExecResult(table, schema.getColumns().toArray(new ColumnExpr[0]), null);
+    queryExecResult = (QueryExecResult) ((MockStoreEngine) session.getStoreEngine()).getExecResult(table, schema.getColumns().toArray(new ColumnExpr[0]), null);
     tableStats = new TableStats(table, 0);
   }
 

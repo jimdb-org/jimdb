@@ -96,12 +96,12 @@ public final class ComparatorFacade {
   }
 
   private static ValueType getCompareType(ValueType arg1ValueType, ValueType arg2ValueType, SQLType arg1SqlType, SQLType arg2SqlType) {
-    if (arg1SqlType == Types.UNDEFINE_TYPE || arg2SqlType == Types.UNDEFINE_TYPE) {
+    if (arg1SqlType == Types.UNDEFINE_SQLTYPE || arg2SqlType == Types.UNDEFINE_SQLTYPE) {
       if (arg1SqlType.getType() == arg2SqlType.getType()) {
         return ValueType.STRING;
       }
 
-      if (arg1SqlType == Types.UNDEFINE_TYPE) {
+      if (arg1SqlType == Types.UNDEFINE_SQLTYPE) {
         arg1ValueType = arg2ValueType;
       } else {
         arg2ValueType = arg1ValueType;

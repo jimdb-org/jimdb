@@ -44,7 +44,7 @@ public class TxnConfig {
 
   private Table table;
 
-  TxnConfig(long ttl) {
+  public TxnConfig(long ttl) {
     this.txnId = generateTxnId();
     if (ttl > 0) {
       this.ttl = ttl;

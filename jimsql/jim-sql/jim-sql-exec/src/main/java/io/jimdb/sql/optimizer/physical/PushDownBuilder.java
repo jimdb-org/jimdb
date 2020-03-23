@@ -29,7 +29,6 @@ import io.jimdb.core.expression.FuncExpr;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.expression.aggregate.AggregateExpr;
 import io.jimdb.core.model.meta.Column;
-import io.jimdb.core.types.ValueType;
 import io.jimdb.core.values.DateValue;
 import io.jimdb.core.values.Value;
 import io.jimdb.pb.Exprpb;

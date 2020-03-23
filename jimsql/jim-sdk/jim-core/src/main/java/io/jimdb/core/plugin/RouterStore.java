@@ -33,4 +33,6 @@ public interface RouterStore extends Plugin {
   Mspb.GetRouteResponse getRoute(long dbId, long tableId, byte[] key, int retry);
 
   Mspb.GetNodeResponse getNode(long id, int retry);
+
+  int generateId();
 }

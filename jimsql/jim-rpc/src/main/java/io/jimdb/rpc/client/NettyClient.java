@@ -26,6 +26,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import io.jimdb.common.config.NettyClientConfig;
+import io.jimdb.common.utils.event.Event;
+import io.jimdb.common.utils.event.EventBus;
+import io.jimdb.common.utils.event.EventListener;
+import io.jimdb.common.utils.lang.NamedThreadFactory;
 import io.jimdb.rpc.ChannelPipeline;
 import io.jimdb.rpc.client.command.Command;
 import io.jimdb.rpc.client.command.CommandCallback;
@@ -33,13 +37,10 @@ import io.jimdb.rpc.client.handler.CommandHandler;
 import io.jimdb.rpc.client.handler.ConnectHandler;
 import io.jimdb.rpc.client.heartbeat.HeartbeatCommand;
 import io.jimdb.rpc.client.heartbeat.HeartbeatListener;
-import io.jimdb.common.utils.event.Event;
-import io.jimdb.common.utils.event.EventBus;
-import io.jimdb.common.utils.event.EventListener;
-import io.jimdb.common.utils.lang.NamedThreadFactory;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.WriteBufferWaterMark;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -147,6 +148,7 @@ public final class NettyClient implements Closeable {
             .option(ChannelOption.SO_SNDBUF, config.getSocketBufferSize())
             .option(ChannelOption.ALLOCATOR, config.getAllocatorFactory().getByteBufAllocator())
             .option(ChannelOption.RCVBUF_ALLOCATOR, config.getAllocatorFactory().getRecvByteBufAllocator())
+            .option(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(128 * 1024, 1024 * 1024))
             .handler(new ChannelPipeline(config.getAllocatorFactory(), config.getHandlerSupplier()));
 
     return bootstrap;

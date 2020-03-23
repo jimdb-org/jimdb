@@ -2579,11 +2579,11 @@ public final class Processorpb {
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
-    io.jimdb.pb.Processorpb.KeyRange getRange();
+    io.jimdb.pb.Kv.KeyRange getRange();
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
-    io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder();
+    io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder();
 
     /**
      * <code>repeated bytes pk_keys = 4;</code>
@@ -2662,11 +2662,11 @@ public final class Processorpb {
               break;
             }
             case 26: {
-              io.jimdb.pb.Processorpb.KeyRange.Builder subBuilder = null;
+              io.jimdb.pb.Kv.KeyRange.Builder subBuilder = null;
               if (range_ != null) {
                 subBuilder = range_.toBuilder();
               }
-              range_ = input.readMessage(io.jimdb.pb.Processorpb.KeyRange.parser(), extensionRegistry);
+              range_ = input.readMessage(io.jimdb.pb.Kv.KeyRange.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(range_);
                 range_ = subBuilder.buildPartial();
@@ -2779,7 +2779,7 @@ public final class Processorpb {
     }
 
     public static final int RANGE_FIELD_NUMBER = 3;
-    private io.jimdb.pb.Processorpb.KeyRange range_;
+    private io.jimdb.pb.Kv.KeyRange range_;
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
@@ -2789,13 +2789,13 @@ public final class Processorpb {
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
-    public io.jimdb.pb.Processorpb.KeyRange getRange() {
-      return range_ == null ? io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+    public io.jimdb.pb.Kv.KeyRange getRange() {
+      return range_ == null ? io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
     }
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
-    public io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder() {
+    public io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder() {
       return getRange();
     }
 
@@ -3559,9 +3559,9 @@ public final class Processorpb {
         return this;
       }
 
-      private io.jimdb.pb.Processorpb.KeyRange range_ = null;
+      private io.jimdb.pb.Kv.KeyRange range_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
-          io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder> rangeBuilder_;
+          io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder> rangeBuilder_;
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
@@ -3571,9 +3571,9 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRange getRange() {
+      public io.jimdb.pb.Kv.KeyRange getRange() {
         if (rangeBuilder_ == null) {
-          return range_ == null ? io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+          return range_ == null ? io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
         } else {
           return rangeBuilder_.getMessage();
         }
@@ -3581,7 +3581,7 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public Builder setRange(io.jimdb.pb.Processorpb.KeyRange value) {
+      public Builder setRange(io.jimdb.pb.Kv.KeyRange value) {
         if (rangeBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -3598,7 +3598,7 @@ public final class Processorpb {
        * <code>.dspb.KeyRange range = 3;</code>
        */
       public Builder setRange(
-          io.jimdb.pb.Processorpb.KeyRange.Builder builderForValue) {
+          io.jimdb.pb.Kv.KeyRange.Builder builderForValue) {
         if (rangeBuilder_ == null) {
           range_ = builderForValue.build();
           onChanged();
@@ -3611,11 +3611,11 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public Builder mergeRange(io.jimdb.pb.Processorpb.KeyRange value) {
+      public Builder mergeRange(io.jimdb.pb.Kv.KeyRange value) {
         if (rangeBuilder_ == null) {
           if (range_ != null) {
             range_ =
-              io.jimdb.pb.Processorpb.KeyRange.newBuilder(range_).mergeFrom(value).buildPartial();
+              io.jimdb.pb.Kv.KeyRange.newBuilder(range_).mergeFrom(value).buildPartial();
           } else {
             range_ = value;
           }
@@ -3643,7 +3643,7 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRange.Builder getRangeBuilder() {
+      public io.jimdb.pb.Kv.KeyRange.Builder getRangeBuilder() {
         
         onChanged();
         return getRangeFieldBuilder().getBuilder();
@@ -3651,23 +3651,23 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder() {
+      public io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder() {
         if (rangeBuilder_ != null) {
           return rangeBuilder_.getMessageOrBuilder();
         } else {
           return range_ == null ?
-              io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+              io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
         }
       }
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder> 
+          io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder> 
           getRangeFieldBuilder() {
         if (rangeBuilder_ == null) {
           rangeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder>(
+              io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder>(
                   getRange(),
                   getParentForChildren(),
                   isClean());
@@ -3826,551 +3826,6 @@ public final class Processorpb {
 
   }
 
-  public interface KeyRangeOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:dspb.KeyRange)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>bytes start_key = 1;</code>
-     */
-    com.google.protobuf.ByteString getStartKey();
-
-    /**
-     * <code>bytes end_key = 2;</code>
-     */
-    com.google.protobuf.ByteString getEndKey();
-  }
-  /**
-   * Protobuf type {@code dspb.KeyRange}
-   */
-  public  static final class KeyRange extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:dspb.KeyRange)
-      KeyRangeOrBuilder {
-  private static final long serialVersionUID = 0L;
-    // Use KeyRange.newBuilder() to construct.
-    private KeyRange(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private KeyRange() {
-      startKey_ = com.google.protobuf.ByteString.EMPTY;
-      endKey_ = com.google.protobuf.ByteString.EMPTY;
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private KeyRange(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-
-              startKey_ = input.readBytes();
-              break;
-            }
-            case 18: {
-
-              endKey_ = input.readBytes();
-              break;
-            }
-            default: {
-              if (!parseUnknownFieldProto3(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return io.jimdb.pb.Processorpb.internal_static_dspb_KeyRange_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return io.jimdb.pb.Processorpb.internal_static_dspb_KeyRange_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              io.jimdb.pb.Processorpb.KeyRange.class, io.jimdb.pb.Processorpb.KeyRange.Builder.class);
-    }
-
-    public static final int START_KEY_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString startKey_;
-    /**
-     * <code>bytes start_key = 1;</code>
-     */
-    public com.google.protobuf.ByteString getStartKey() {
-      return startKey_;
-    }
-
-    public static final int END_KEY_FIELD_NUMBER = 2;
-    private com.google.protobuf.ByteString endKey_;
-    /**
-     * <code>bytes end_key = 2;</code>
-     */
-    public com.google.protobuf.ByteString getEndKey() {
-      return endKey_;
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (!startKey_.isEmpty()) {
-        output.writeBytes(1, startKey_);
-      }
-      if (!endKey_.isEmpty()) {
-        output.writeBytes(2, endKey_);
-      }
-      unknownFields.writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (!startKey_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, startKey_);
-      }
-      if (!endKey_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, endKey_);
-      }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof io.jimdb.pb.Processorpb.KeyRange)) {
-        return super.equals(obj);
-      }
-      io.jimdb.pb.Processorpb.KeyRange other = (io.jimdb.pb.Processorpb.KeyRange) obj;
-
-      boolean result = true;
-      result = result && getStartKey()
-          .equals(other.getStartKey());
-      result = result && getEndKey()
-          .equals(other.getEndKey());
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + START_KEY_FIELD_NUMBER;
-      hash = (53 * hash) + getStartKey().hashCode();
-      hash = (37 * hash) + END_KEY_FIELD_NUMBER;
-      hash = (53 * hash) + getEndKey().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static io.jimdb.pb.Processorpb.KeyRange parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static io.jimdb.pb.Processorpb.KeyRange parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static io.jimdb.pb.Processorpb.KeyRange parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static io.jimdb.pb.Processorpb.KeyRange parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static io.jimdb.pb.Processorpb.KeyRange parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static io.jimdb.pb.Processorpb.KeyRange parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static io.jimdb.pb.Processorpb.KeyRange parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static io.jimdb.pb.Processorpb.KeyRange parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static io.jimdb.pb.Processorpb.KeyRange parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static io.jimdb.pb.Processorpb.KeyRange parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static io.jimdb.pb.Processorpb.KeyRange parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static io.jimdb.pb.Processorpb.KeyRange parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(io.jimdb.pb.Processorpb.KeyRange prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code dspb.KeyRange}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:dspb.KeyRange)
-        io.jimdb.pb.Processorpb.KeyRangeOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return io.jimdb.pb.Processorpb.internal_static_dspb_KeyRange_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return io.jimdb.pb.Processorpb.internal_static_dspb_KeyRange_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                io.jimdb.pb.Processorpb.KeyRange.class, io.jimdb.pb.Processorpb.KeyRange.Builder.class);
-      }
-
-      // Construct using io.jimdb.pb.Processorpb.KeyRange.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        startKey_ = com.google.protobuf.ByteString.EMPTY;
-
-        endKey_ = com.google.protobuf.ByteString.EMPTY;
-
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return io.jimdb.pb.Processorpb.internal_static_dspb_KeyRange_descriptor;
-      }
-
-      @java.lang.Override
-      public io.jimdb.pb.Processorpb.KeyRange getDefaultInstanceForType() {
-        return io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public io.jimdb.pb.Processorpb.KeyRange build() {
-        io.jimdb.pb.Processorpb.KeyRange result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public io.jimdb.pb.Processorpb.KeyRange buildPartial() {
-        io.jimdb.pb.Processorpb.KeyRange result = new io.jimdb.pb.Processorpb.KeyRange(this);
-        result.startKey_ = startKey_;
-        result.endKey_ = endKey_;
-        onBuilt();
-        return result;
-      }
-
-      @java.lang.Override
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof io.jimdb.pb.Processorpb.KeyRange) {
-          return mergeFrom((io.jimdb.pb.Processorpb.KeyRange)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(io.jimdb.pb.Processorpb.KeyRange other) {
-        if (other == io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance()) return this;
-        if (other.getStartKey() != com.google.protobuf.ByteString.EMPTY) {
-          setStartKey(other.getStartKey());
-        }
-        if (other.getEndKey() != com.google.protobuf.ByteString.EMPTY) {
-          setEndKey(other.getEndKey());
-        }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        io.jimdb.pb.Processorpb.KeyRange parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (io.jimdb.pb.Processorpb.KeyRange) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-
-      private com.google.protobuf.ByteString startKey_ = com.google.protobuf.ByteString.EMPTY;
-      /**
-       * <code>bytes start_key = 1;</code>
-       */
-      public com.google.protobuf.ByteString getStartKey() {
-        return startKey_;
-      }
-      /**
-       * <code>bytes start_key = 1;</code>
-       */
-      public Builder setStartKey(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        startKey_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bytes start_key = 1;</code>
-       */
-      public Builder clearStartKey() {
-        
-        startKey_ = getDefaultInstance().getStartKey();
-        onChanged();
-        return this;
-      }
-
-      private com.google.protobuf.ByteString endKey_ = com.google.protobuf.ByteString.EMPTY;
-      /**
-       * <code>bytes end_key = 2;</code>
-       */
-      public com.google.protobuf.ByteString getEndKey() {
-        return endKey_;
-      }
-      /**
-       * <code>bytes end_key = 2;</code>
-       */
-      public Builder setEndKey(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        endKey_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bytes end_key = 2;</code>
-       */
-      public Builder clearEndKey() {
-        
-        endKey_ = getDefaultInstance().getEndKey();
-        onChanged();
-        return this;
-      }
-      @java.lang.Override
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFieldsProto3(unknownFields);
-      }
-
-      @java.lang.Override
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:dspb.KeyRange)
-    }
-
-    // @@protoc_insertion_point(class_scope:dspb.KeyRange)
-    private static final io.jimdb.pb.Processorpb.KeyRange DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new io.jimdb.pb.Processorpb.KeyRange();
-    }
-
-    public static io.jimdb.pb.Processorpb.KeyRange getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<KeyRange>
-        PARSER = new com.google.protobuf.AbstractParser<KeyRange>() {
-      @java.lang.Override
-      public KeyRange parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new KeyRange(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<KeyRange> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<KeyRange> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public io.jimdb.pb.Processorpb.KeyRange getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
   public interface IndexReadOrBuilder extends
       // @@protoc_insertion_point(interface_extends:dspb.IndexRead)
       com.google.protobuf.MessageOrBuilder {
@@ -4415,11 +3870,11 @@ public final class Processorpb {
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
-    io.jimdb.pb.Processorpb.KeyRange getRange();
+    io.jimdb.pb.Kv.KeyRange getRange();
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
-    io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder();
+    io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder();
 
     /**
      * <code>repeated bytes index_keys = 4;</code>
@@ -4510,11 +3965,11 @@ public final class Processorpb {
               break;
             }
             case 26: {
-              io.jimdb.pb.Processorpb.KeyRange.Builder subBuilder = null;
+              io.jimdb.pb.Kv.KeyRange.Builder subBuilder = null;
               if (range_ != null) {
                 subBuilder = range_.toBuilder();
               }
-              range_ = input.readMessage(io.jimdb.pb.Processorpb.KeyRange.parser(), extensionRegistry);
+              range_ = input.readMessage(io.jimdb.pb.Kv.KeyRange.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(range_);
                 range_ = subBuilder.buildPartial();
@@ -4637,7 +4092,7 @@ public final class Processorpb {
     }
 
     public static final int RANGE_FIELD_NUMBER = 3;
-    private io.jimdb.pb.Processorpb.KeyRange range_;
+    private io.jimdb.pb.Kv.KeyRange range_;
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
@@ -4647,13 +4102,13 @@ public final class Processorpb {
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
-    public io.jimdb.pb.Processorpb.KeyRange getRange() {
-      return range_ == null ? io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+    public io.jimdb.pb.Kv.KeyRange getRange() {
+      return range_ == null ? io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
     }
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
-    public io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder() {
+    public io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder() {
       return getRange();
     }
 
@@ -5471,9 +4926,9 @@ public final class Processorpb {
         return this;
       }
 
-      private io.jimdb.pb.Processorpb.KeyRange range_ = null;
+      private io.jimdb.pb.Kv.KeyRange range_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
-          io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder> rangeBuilder_;
+          io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder> rangeBuilder_;
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
@@ -5483,9 +4938,9 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRange getRange() {
+      public io.jimdb.pb.Kv.KeyRange getRange() {
         if (rangeBuilder_ == null) {
-          return range_ == null ? io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+          return range_ == null ? io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
         } else {
           return rangeBuilder_.getMessage();
         }
@@ -5493,7 +4948,7 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public Builder setRange(io.jimdb.pb.Processorpb.KeyRange value) {
+      public Builder setRange(io.jimdb.pb.Kv.KeyRange value) {
         if (rangeBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -5510,7 +4965,7 @@ public final class Processorpb {
        * <code>.dspb.KeyRange range = 3;</code>
        */
       public Builder setRange(
-          io.jimdb.pb.Processorpb.KeyRange.Builder builderForValue) {
+          io.jimdb.pb.Kv.KeyRange.Builder builderForValue) {
         if (rangeBuilder_ == null) {
           range_ = builderForValue.build();
           onChanged();
@@ -5523,11 +4978,11 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public Builder mergeRange(io.jimdb.pb.Processorpb.KeyRange value) {
+      public Builder mergeRange(io.jimdb.pb.Kv.KeyRange value) {
         if (rangeBuilder_ == null) {
           if (range_ != null) {
             range_ =
-              io.jimdb.pb.Processorpb.KeyRange.newBuilder(range_).mergeFrom(value).buildPartial();
+              io.jimdb.pb.Kv.KeyRange.newBuilder(range_).mergeFrom(value).buildPartial();
           } else {
             range_ = value;
           }
@@ -5555,7 +5010,7 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRange.Builder getRangeBuilder() {
+      public io.jimdb.pb.Kv.KeyRange.Builder getRangeBuilder() {
         
         onChanged();
         return getRangeFieldBuilder().getBuilder();
@@ -5563,23 +5018,23 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder() {
+      public io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder() {
         if (rangeBuilder_ != null) {
           return rangeBuilder_.getMessageOrBuilder();
         } else {
           return range_ == null ?
-              io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+              io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
         }
       }
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder> 
+          io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder> 
           getRangeFieldBuilder() {
         if (rangeBuilder_ == null) {
           rangeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder>(
+              io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder>(
                   getRange(),
                   getParentForChildren(),
                   isClean());
@@ -9937,11 +9392,11 @@ public final class Processorpb {
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
-    io.jimdb.pb.Processorpb.KeyRange getRange();
+    io.jimdb.pb.Kv.KeyRange getRange();
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
-    io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder();
+    io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder();
 
     /**
      * <code>double ratio = 4;</code>
@@ -10006,11 +9461,11 @@ public final class Processorpb {
               break;
             }
             case 26: {
-              io.jimdb.pb.Processorpb.KeyRange.Builder subBuilder = null;
+              io.jimdb.pb.Kv.KeyRange.Builder subBuilder = null;
               if (range_ != null) {
                 subBuilder = range_.toBuilder();
               }
-              range_ = input.readMessage(io.jimdb.pb.Processorpb.KeyRange.parser(), extensionRegistry);
+              range_ = input.readMessage(io.jimdb.pb.Kv.KeyRange.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(range_);
                 range_ = subBuilder.buildPartial();
@@ -10201,7 +9656,7 @@ public final class Processorpb {
     }
 
     public static final int RANGE_FIELD_NUMBER = 3;
-    private io.jimdb.pb.Processorpb.KeyRange range_;
+    private io.jimdb.pb.Kv.KeyRange range_;
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
@@ -10211,13 +9666,13 @@ public final class Processorpb {
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
-    public io.jimdb.pb.Processorpb.KeyRange getRange() {
-      return range_ == null ? io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+    public io.jimdb.pb.Kv.KeyRange getRange() {
+      return range_ == null ? io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
     }
     /**
      * <code>.dspb.KeyRange range = 3;</code>
      */
-    public io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder() {
+    public io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder() {
       return getRange();
     }
 
@@ -10926,9 +10381,9 @@ public final class Processorpb {
         return columnsBuilder_;
       }
 
-      private io.jimdb.pb.Processorpb.KeyRange range_ = null;
+      private io.jimdb.pb.Kv.KeyRange range_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
-          io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder> rangeBuilder_;
+          io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder> rangeBuilder_;
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
@@ -10938,9 +10393,9 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRange getRange() {
+      public io.jimdb.pb.Kv.KeyRange getRange() {
         if (rangeBuilder_ == null) {
-          return range_ == null ? io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+          return range_ == null ? io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
         } else {
           return rangeBuilder_.getMessage();
         }
@@ -10948,7 +10403,7 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public Builder setRange(io.jimdb.pb.Processorpb.KeyRange value) {
+      public Builder setRange(io.jimdb.pb.Kv.KeyRange value) {
         if (rangeBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -10965,7 +10420,7 @@ public final class Processorpb {
        * <code>.dspb.KeyRange range = 3;</code>
        */
       public Builder setRange(
-          io.jimdb.pb.Processorpb.KeyRange.Builder builderForValue) {
+          io.jimdb.pb.Kv.KeyRange.Builder builderForValue) {
         if (rangeBuilder_ == null) {
           range_ = builderForValue.build();
           onChanged();
@@ -10978,11 +10433,11 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public Builder mergeRange(io.jimdb.pb.Processorpb.KeyRange value) {
+      public Builder mergeRange(io.jimdb.pb.Kv.KeyRange value) {
         if (rangeBuilder_ == null) {
           if (range_ != null) {
             range_ =
-              io.jimdb.pb.Processorpb.KeyRange.newBuilder(range_).mergeFrom(value).buildPartial();
+              io.jimdb.pb.Kv.KeyRange.newBuilder(range_).mergeFrom(value).buildPartial();
           } else {
             range_ = value;
           }
@@ -11010,7 +10465,7 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRange.Builder getRangeBuilder() {
+      public io.jimdb.pb.Kv.KeyRange.Builder getRangeBuilder() {
         
         onChanged();
         return getRangeFieldBuilder().getBuilder();
@@ -11018,23 +10473,23 @@ public final class Processorpb {
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder() {
+      public io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder() {
         if (rangeBuilder_ != null) {
           return rangeBuilder_.getMessageOrBuilder();
         } else {
           return range_ == null ?
-              io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+              io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
         }
       }
       /**
        * <code>.dspb.KeyRange range = 3;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder> 
+          io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder> 
           getRangeFieldBuilder() {
         if (rangeBuilder_ == null) {
           rangeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder>(
+              io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder>(
                   getRange(),
                   getParentForChildren(),
                   isClean());
@@ -12364,11 +11819,6 @@ public final class Processorpb {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_dspb_TableRead_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_dspb_KeyRange_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_dspb_KeyRange_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_dspb_IndexRead_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -12423,47 +11873,46 @@ public final class Processorpb {
   static {
     java.lang.String[] descriptorData = {
       "\n\026dspb/processorpb.proto\022\004dspb\032\017dspb/exp" +
-      "r.proto\"\376\002\n\tProcessor\022!\n\004type\030\001 \001(\0162\023.ds" +
-      "pb.ProcessorType\022#\n\ntable_read\030\002 \001(\0132\017.d" +
-      "spb.TableRead\022#\n\nindex_read\030\003 \001(\0132\017.dspb" +
-      ".IndexRead\022\"\n\tselection\030\004 \001(\0132\017.dspb.Sel" +
-      "ection\022$\n\nprojection\030\005 \001(\0132\020.dspb.Projec" +
-      "tion\022&\n\013aggregation\030\006 \001(\0132\021.dspb.Aggrega" +
-      "tion\022-\n\022stream_aggregation\030\007 \001(\0132\021.dspb." +
-      "Aggregation\022 \n\010ordering\030\010 \001(\0132\016.dspb.Ord" +
-      "ering\022\032\n\005limit\030\t \001(\0132\013.dspb.Limit\022%\n\013dat" +
-      "a_sample\030\n \001(\0132\020.dspb.DataSample\"\211\001\n\tTab" +
-      "leRead\022!\n\007columns\030\001 \003(\0132\020.dspb.ColumnInf" +
-      "o\022\033\n\004type\030\002 \001(\0162\r.dspb.KeyType\022\035\n\005range\030" +
-      "\003 \001(\0132\016.dspb.KeyRange\022\017\n\007pk_keys\030\004 \003(\014\022\014" +
-      "\n\004desc\030\005 \001(\010\".\n\010KeyRange\022\021\n\tstart_key\030\001 " +
-      "\001(\014\022\017\n\007end_key\030\002 \001(\014\"\256\001\n\tIndexRead\022!\n\007co" +
-      "lumns\030\001 \003(\0132\020.dspb.ColumnInfo\022\033\n\004type\030\002 " +
-      "\001(\0162\r.dspb.KeyType\022\035\n\005range\030\003 \001(\0132\016.dspb" +
-      ".KeyRange\022\022\n\nindex_keys\030\004 \003(\014\022\014\n\004desc\030\005 " +
-      "\001(\010\022\016\n\006unique\030\006 \001(\010\022\020\n\010pks_flag\030\007 \001(\010\"\'\n" +
-      "\tSelection\022\032\n\006filter\030\001 \003(\0132\n.dspb.Expr\")" +
-      "\n\nProjection\022\033\n\007columns\030\001 \003(\0132\n.dspb.Exp" +
-      "r\"?\n\010Ordering\022$\n\007columns\030\001 \003(\0132\023.dspb.Or" +
-      "derByColumn\022\r\n\005count\030\002 \001(\004\"E\n\013Aggregatio" +
-      "n\022\030\n\004func\030\001 \003(\0132\n.dspb.Expr\022\034\n\010group_by\030" +
-      "\002 \003(\0132\n.dspb.Expr\"&\n\005Limit\022\016\n\006offset\030\001 \001" +
-      "(\004\022\r\n\005count\030\002 \001(\004\"\264\001\n\nDataSample\022-\n\006meth" +
-      "od\030\001 \001(\0162\035.dspb.DataSample.SampleMethod\022" +
-      "!\n\007columns\030\002 \003(\0132\020.dspb.ColumnInfo\022\035\n\005ra" +
-      "nge\030\003 \001(\0132\016.dspb.KeyRange\022\r\n\005ratio\030\004 \001(\001" +
-      "\"&\n\014SampleMethod\022\026\n\022RESERVIOR_SAMPLING\020\000" +
-      "\"6\n\rOrderByColumn\022\030\n\004expr\030\001 \001(\0132\n.dspb.E" +
-      "xpr\022\013\n\003asc\030\002 \001(\010\"=\n\016ProcessorTrace\022\026\n\016pr" +
-      "ocessed_rows\030\001 \001(\004\022\023\n\013elapse_time\030\002 \001(\004*" +
-      "\316\001\n\rProcessorType\022\023\n\017TABLE_READ_TYPE\020\000\022\023" +
-      "\n\017INDEX_READ_TYPE\020\001\022\022\n\016SELECTION_TYPE\020\002\022" +
-      "\023\n\017PROJECTION_TYPE\020\003\022\024\n\020AGGREGATION_TYPE" +
-      "\020\004\022\033\n\027STREAM_AGGREGATION_TYPE\020\005\022\021\n\rORDER" +
-      "_BY_TYPE\020\006\022\016\n\nLIMIT_TYPE\020\007\022\024\n\020DATA_SAMPL" +
-      "E_TYPE\020\010*L\n\007KeyType\022\026\n\022DEFAULT_RANGE_TYP" +
-      "E\020\000\022\024\n\020PRIMARY_KEY_TYPE\020\001\022\023\n\017KEYS_RANGE_" +
-      "TYPE\020\002B\r\n\013io.jimdb.pbb\006proto3"
+      "r.proto\032\rdspb/kv.proto\"\376\002\n\tProcessor\022!\n\004" +
+      "type\030\001 \001(\0162\023.dspb.ProcessorType\022#\n\ntable" +
+      "_read\030\002 \001(\0132\017.dspb.TableRead\022#\n\nindex_re" +
+      "ad\030\003 \001(\0132\017.dspb.IndexRead\022\"\n\tselection\030\004" +
+      " \001(\0132\017.dspb.Selection\022$\n\nprojection\030\005 \001(" +
+      "\0132\020.dspb.Projection\022&\n\013aggregation\030\006 \001(\013" +
+      "2\021.dspb.Aggregation\022-\n\022stream_aggregatio" +
+      "n\030\007 \001(\0132\021.dspb.Aggregation\022 \n\010ordering\030\010" +
+      " \001(\0132\016.dspb.Ordering\022\032\n\005limit\030\t \001(\0132\013.ds" +
+      "pb.Limit\022%\n\013data_sample\030\n \001(\0132\020.dspb.Dat" +
+      "aSample\"\211\001\n\tTableRead\022!\n\007columns\030\001 \003(\0132\020" +
+      ".dspb.ColumnInfo\022\033\n\004type\030\002 \001(\0162\r.dspb.Ke" +
+      "yType\022\035\n\005range\030\003 \001(\0132\016.dspb.KeyRange\022\017\n\007" +
+      "pk_keys\030\004 \003(\014\022\014\n\004desc\030\005 \001(\010\"\256\001\n\tIndexRea" +
+      "d\022!\n\007columns\030\001 \003(\0132\020.dspb.ColumnInfo\022\033\n\004" +
+      "type\030\002 \001(\0162\r.dspb.KeyType\022\035\n\005range\030\003 \001(\013" +
+      "2\016.dspb.KeyRange\022\022\n\nindex_keys\030\004 \003(\014\022\014\n\004" +
+      "desc\030\005 \001(\010\022\016\n\006unique\030\006 \001(\010\022\020\n\010pks_flag\030\007" +
+      " \001(\010\"\'\n\tSelection\022\032\n\006filter\030\001 \003(\0132\n.dspb" +
+      ".Expr\")\n\nProjection\022\033\n\007columns\030\001 \003(\0132\n.d" +
+      "spb.Expr\"?\n\010Ordering\022$\n\007columns\030\001 \003(\0132\023." +
+      "dspb.OrderByColumn\022\r\n\005count\030\002 \001(\004\"E\n\013Agg" +
+      "regation\022\030\n\004func\030\001 \003(\0132\n.dspb.Expr\022\034\n\010gr" +
+      "oup_by\030\002 \003(\0132\n.dspb.Expr\"&\n\005Limit\022\016\n\006off" +
+      "set\030\001 \001(\004\022\r\n\005count\030\002 \001(\004\"\264\001\n\nDataSample\022" +
+      "-\n\006method\030\001 \001(\0162\035.dspb.DataSample.Sample" +
+      "Method\022!\n\007columns\030\002 \003(\0132\020.dspb.ColumnInf" +
+      "o\022\035\n\005range\030\003 \001(\0132\016.dspb.KeyRange\022\r\n\005rati" +
+      "o\030\004 \001(\001\"&\n\014SampleMethod\022\026\n\022RESERVIOR_SAM" +
+      "PLING\020\000\"6\n\rOrderByColumn\022\030\n\004expr\030\001 \001(\0132\n" +
+      ".dspb.Expr\022\013\n\003asc\030\002 \001(\010\"=\n\016ProcessorTrac" +
+      "e\022\026\n\016processed_rows\030\001 \001(\004\022\023\n\013elapse_time" +
+      "\030\002 \001(\004*\316\001\n\rProcessorType\022\023\n\017TABLE_READ_T" +
+      "YPE\020\000\022\023\n\017INDEX_READ_TYPE\020\001\022\022\n\016SELECTION_" +
+      "TYPE\020\002\022\023\n\017PROJECTION_TYPE\020\003\022\024\n\020AGGREGATI" +
+      "ON_TYPE\020\004\022\033\n\027STREAM_AGGREGATION_TYPE\020\005\022\021" +
+      "\n\rORDER_BY_TYPE\020\006\022\016\n\nLIMIT_TYPE\020\007\022\024\n\020DAT" +
+      "A_SAMPLE_TYPE\020\010*L\n\007KeyType\022\026\n\022DEFAULT_RA" +
+      "NGE_TYPE\020\000\022\024\n\020PRIMARY_KEY_TYPE\020\001\022\023\n\017KEYS" +
+      "_RANGE_TYPE\020\002B\r\n\013io.jimdb.pbb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -12477,6 +11926,7 @@ public final class Processorpb {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           io.jimdb.pb.Exprpb.getDescriptor(),
+          io.jimdb.pb.Kv.getDescriptor(),
         }, assigner);
     internal_static_dspb_Processor_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -12490,67 +11940,62 @@ public final class Processorpb {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_TableRead_descriptor,
         new java.lang.String[] { "Columns", "Type", "Range", "PkKeys", "Desc", });
-    internal_static_dspb_KeyRange_descriptor =
-      getDescriptor().getMessageTypes().get(2);
-    internal_static_dspb_KeyRange_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_dspb_KeyRange_descriptor,
-        new java.lang.String[] { "StartKey", "EndKey", });
     internal_static_dspb_IndexRead_descriptor =
-      getDescriptor().getMessageTypes().get(3);
+      getDescriptor().getMessageTypes().get(2);
     internal_static_dspb_IndexRead_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_IndexRead_descriptor,
         new java.lang.String[] { "Columns", "Type", "Range", "IndexKeys", "Desc", "Unique", "PksFlag", });
     internal_static_dspb_Selection_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(3);
     internal_static_dspb_Selection_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_Selection_descriptor,
         new java.lang.String[] { "Filter", });
     internal_static_dspb_Projection_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(4);
     internal_static_dspb_Projection_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_Projection_descriptor,
         new java.lang.String[] { "Columns", });
     internal_static_dspb_Ordering_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_dspb_Ordering_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_Ordering_descriptor,
         new java.lang.String[] { "Columns", "Count", });
     internal_static_dspb_Aggregation_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_dspb_Aggregation_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_Aggregation_descriptor,
         new java.lang.String[] { "Func", "GroupBy", });
     internal_static_dspb_Limit_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_dspb_Limit_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_Limit_descriptor,
         new java.lang.String[] { "Offset", "Count", });
     internal_static_dspb_DataSample_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_dspb_DataSample_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_DataSample_descriptor,
         new java.lang.String[] { "Method", "Columns", "Range", "Ratio", });
     internal_static_dspb_OrderByColumn_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_dspb_OrderByColumn_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_OrderByColumn_descriptor,
         new java.lang.String[] { "Expr", "Asc", });
     internal_static_dspb_ProcessorTrace_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_dspb_ProcessorTrace_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dspb_ProcessorTrace_descriptor,
         new java.lang.String[] { "ProcessedRows", "ElapseTime", });
     io.jimdb.pb.Exprpb.getDescriptor();
+    io.jimdb.pb.Kv.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

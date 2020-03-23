@@ -221,7 +221,7 @@ public class AnalyzeColumnsExecutor extends AnalyzeExecutor {
 
 
 
-    return storeEngine.analyzeColumns(table, columns, this.session.getStmtContext().getTimeout(), ranges, reqBuilder);
+    return storeEngine.analyzeColumns(session, table, columns, this.session.getStmtContext().getTimeout(), ranges, reqBuilder);
   }
 
 }

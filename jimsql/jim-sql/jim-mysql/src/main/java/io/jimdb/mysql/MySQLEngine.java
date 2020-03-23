@@ -54,6 +54,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.CompositeByteBuf;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
@@ -64,6 +66,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 @SuppressFBWarnings({ "HES_EXECUTOR_OVERWRITTEN_WITHOUT_SHUTDOWN", "HES_EXECUTOR_NEVER_SHUTDOWN", "CC_CYCLOMATIC_COMPLEXITY" })
 public final class MySQLEngine implements SQLEngine {
+  private static final Logger LOG = LoggerFactory.getLogger(MySQLEngine.class);
+
   private static final String MYSQL_AUTH = "mysql_authorized";
   private static final String MYSQL_AUTH_DATA = "mysql_authorized_data";
   private static final int PAYLOAD_LENGTH = 3;
@@ -199,6 +203,7 @@ public final class MySQLEngine implements SQLEngine {
         je = (BaseException) ex;
       } else {
         je = DBException.get(ErrorModule.PROTO, ErrorCode.ER_UNKNOWN_ERROR, ex);
+        LOG.error("unknown error:{}", ex.getMessage(), ex);
       }
 
       out.readerIndex(out.writerIndex());

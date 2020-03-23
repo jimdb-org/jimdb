@@ -51,11 +51,11 @@ public final class Delete extends Operator {
   @Override
   public Flux<ExecResult> execute(Session session) throws BaseException {
     if (this.select == null) {
-      return session.getTxn().delete(table, null);
+      return session.getStoreEngine().delete(session, table, null);
     }
 
     return this.select.execute(session)
-            .flatMap(r -> session.getTxn().delete(table, (QueryResult) r));
+            .flatMap(r -> session.getStoreEngine().delete(session, table, (QueryResult) r));
   }
 
   @Override

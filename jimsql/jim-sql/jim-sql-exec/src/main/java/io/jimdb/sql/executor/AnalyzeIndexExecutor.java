@@ -177,6 +177,6 @@ public class AnalyzeIndexExecutor extends AnalyzeExecutor {
                                                            .setCmsketchWidth(DEFAULT_CMS_WIDTH)
                                                            .addAllColumnsInfo(columnInfoList);
 
-    return storeEngine.analyzeIndex(table, index, this.session.getStmtContext().getTimeout(), ranges, reqBuilder);
+    return storeEngine.analyzeIndex(session, table, index, this.session.getStmtContext().getTimeout(), ranges, reqBuilder);
   }
 }

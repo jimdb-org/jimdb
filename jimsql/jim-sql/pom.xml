@@ -33,6 +33,7 @@
         <module>jim-server</module>
         <module>jim-sql-exec</module>
         <module>jim-ddl</module>
-        <!--   <module>jim-sql-smith</module> -->
+        <module>jim-sqlgen</module>
+        <module>jim-parser</module>
     </modules>
 </project>

@@ -34,6 +34,8 @@ import io.jimdb.test.mysql.SqlTestBase;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -48,7 +50,7 @@ import reactor.util.function.Tuples;
 public class SelectAggTest extends SqlTestBase {
   private static String DBNAME = "test_agg";
 
-//  @BeforeClass
+  @BeforeClass
   public static void init() {
     createDB();
     createTable();
@@ -74,6 +76,7 @@ public class SelectAggTest extends SqlTestBase {
             + "`gender` tinyint NOT NULL, "
             + "`company` varchar(100) NOT NULL, "
             + "`card_id` bigint NOT NULL, "
+            + "`cost_decimal` decimal(10,2) NOT NULL, "
             + "`crt_timestamp` timestamp NOT NULL, "
             + "`crt_date` date NOT NULL, "
             + "`crt_datetime` datetime NOT NULL, "
@@ -85,7 +88,6 @@ public class SelectAggTest extends SqlTestBase {
             + "UNIQUE INDEX cardid_idx (card_id) "
             + ") COMMENT 'REPLICA=1' ENGINE=MEMORY AUTO_INCREMENT=0 ";
     dropAndCreateTable("baker_agg", sql);
-
   }
 
   private static void initData() {
@@ -104,7 +106,7 @@ public class SelectAggTest extends SqlTestBase {
       int onesize = 10;
       String sql = "INSERT INTO baker_agg("
               + "name, age, country, num_float, num_double, "
-              + "num_smallint, num_bigint, gender, company, card_id, "
+              + "num_smallint, num_bigint, gender, company, card_id,cost_decimal, "
               + "crt_timestamp, crt_date, crt_datetime, crt_time, crt_year) VALUES";
       for (int n = 0; n < onesize; n++) {
         Date base = new Date();
@@ -113,7 +115,7 @@ public class SelectAggTest extends SqlTestBase {
         sql += "('" + name[idx % name.length] + "-" + (idx % size) + "' , " + (idx % 100) + ", '" + country[idx %
                 country.length] + "', " + (idx % 90) + ", " + (idx % 70) + ", "
                 + (idx % 16) + ", " + (idx % 100) + "00000000, " + (idx % 2) + ", '" + company[idx % company
-                .length] + "', " + idx +
+                .length] + "', " + idx + " , " + reserveBitTwo(batch * 10 + 1.01) +
                 ", '" + dateTimeFormat.format(date) + "', '" + dateFormat.format(date) + "','" + dateTimeFormat
                 .format(date) + "','" + timeFormat.format(date) + "', " + year + ")";
         if (n + 1 < 10) {
@@ -123,6 +125,10 @@ public class SelectAggTest extends SqlTestBase {
       }
       execUpdate(sql, onesize, true);
     }
+  }
+
+  private static double reserveBitTwo(double d) {
+    return new BigDecimal(d).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue();
   }
 
   @Before
@@ -210,7 +216,8 @@ public class SelectAggTest extends SqlTestBase {
   @Test
   public void testSelectBigIntGroupby() {
     List<String> expected = expectedStr(new String[]{
-            "company=baidu; sum=120000000000; avg=4800000000.0000; cnt=25; max=8800000000; min=800000000; country=china; "
+            "company=baidu; sum=120000000000; avg=4800000000.0000; cnt=25; max=8800000000; min=800000000; "
+                    + "country=china; "
                     + "gender=0; company=baidu",
             "company=facebook; sum=140000000000; avg=5600000000.0000; cnt=25; max=9600000000; min=1600000000; "
                     + "country=china; gender=0; company=facebook",
@@ -258,9 +265,11 @@ public class SelectAggTest extends SqlTestBase {
   @Test
   public void testSelectIndexLookUpGroupbyCol() {
     List<String> expected = expectedStr(new String[]{
-            "company=jingdong; country=england; age=20; COUNT(1)=10; AVG(age)=20.0000; MIN(age)=20; SUM(age)=200; MAX(age)"
+            "company=jingdong; country=england; age=20; COUNT(1)=10; AVG(age)=20.0000; MIN(age)=20; SUM(age)=200; MAX"
+                    + "(age)"
                     + "=20; age=20",
-            "company=ibm; country=french; age=21; COUNT(1)=10; AVG(age)=21.0000; MIN(age)=21; SUM(age)=210; MAX(age)=21; "
+            "company=ibm; country=french; age=21; COUNT(1)=10; AVG(age)=21.0000; MIN(age)=21; SUM(age)=210; MAX(age)"
+                    + "=21; "
                     + "age=21",
             "company=oracle; country=brazil; age=22; COUNT(1)=10; AVG(age)=22.0000; MIN(age)=22; SUM(age)=220; MAX(age)"
                     + "=22; age=22"
@@ -296,9 +305,8 @@ public class SelectAggTest extends SqlTestBase {
             "country=french; company=sap",
             "country=england; company=tencent"
     });
-    execQuery("select distinct country , company from baker_agg group by company order by company" , expected);
+    execQuery("select distinct country , company from baker_agg group by company order by company", expected);
   }
-
 
   @Test
   public void testSelectGroupbyHaving() {
@@ -561,8 +569,13 @@ public class SelectAggTest extends SqlTestBase {
       }
 
       BigDecimal count = new BigDecimal(allResult.stream().map(r -> r.get(metaName)).distinct().count());
-      List<BigDecimal> sumList = allResult.stream().map(r -> r.get(metaName)).distinct().map(m -> new BigDecimal(m.toString())).collect(Collectors.toList());
+      List<BigDecimal> sumList =
+              allResult.stream().map(r -> r.get(metaName)).distinct().map(m -> new BigDecimal(m.toString())).collect(Collectors.toList());
       BigDecimal sum = new BigDecimal(0);
+      if (metaName.equals("cost_decimal")) {
+        // cost_decimal's scale is 2 , mysql avg scale = decimal scale + 4
+        sum = BigDecimal.valueOf(0, 2 + 4);
+      }
       for (BigDecimal bigDecimal : sumList) {
         sum = sum.add(bigDecimal);
       }
@@ -605,6 +618,10 @@ public class SelectAggTest extends SqlTestBase {
       List<BigDecimal> sumList =
               allResult.stream().map(r -> r.get(metaName)).map(m -> new BigDecimal(m.toString())).collect(Collectors.toList());
       BigDecimal sum = new BigDecimal(0);
+      if (metaName.equals("cost_decimal")) {
+        // cost_decimal's scale is 2 , mysql avg scale = decimal scale + 4
+        sum = BigDecimal.valueOf(0, 2 + 4);
+      }
       for (BigDecimal bigDecimal : sumList) {
         sum = sum.add(bigDecimal);
       }
@@ -773,7 +790,6 @@ public class SelectAggTest extends SqlTestBase {
       });
       execQuery("select sum(distinct " + metaName + "), company from baker_agg group by company", esp);
     }
-
   }
 
   @Test
@@ -802,6 +818,10 @@ public class SelectAggTest extends SqlTestBase {
                 || metaKV.getT2().equals(Types.INTEGER) || metaKV.getT2().equals(Types.SMALLINT)
                 || metaKV.getT2().equals(Types.TINYINT)) {
           BigDecimal avg = new BigDecimal("0.0000");
+          if (metaName.equals("cost_decimal")) {
+            // cost_decimal's scale is 2 , mysql avg scale = decimal scale + 4
+            avg = BigDecimal.valueOf(0, 2 + 4);
+          }
           for (BigDecimal bigDecimal : sumList) {
             avg = avg.add(bigDecimal);
           }
@@ -809,13 +829,16 @@ public class SelectAggTest extends SqlTestBase {
           result = avg.toString();
         } else {
           BigDecimal avg = new BigDecimal("0.0");
+          if (metaName.equals("cost_decimal")) {
+            // cost_decimal's scale is 2 , mysql avg scale = decimal scale + 4
+            avg = BigDecimal.valueOf(0, 2 + 4);
+          }
           for (BigDecimal bigDecimal : sumList) {
             avg = avg.add(bigDecimal);
           }
           avg = avg.divide(new BigDecimal(sumList.size()));
-          result = String.valueOf(avg.doubleValue());
+          result = avg.toString();
         }
-
 
         String value = "AVG(DISTINCT " + metaName + ")=" + result.toString() + "; company=" + k;
         esp.add(value);
@@ -833,20 +856,22 @@ public class SelectAggTest extends SqlTestBase {
 
     List<String> esp = new ArrayList<>();
     allResult.stream().collect(Collectors.groupingBy((r) -> r.get("company"))).forEach((k, v) -> {
-      int count = v.stream().map(r -> (Integer)r.get("age")).distinct().collect(Collectors.toList()).size();
-      List<Integer> sumDistinctList = v.stream().map(r -> (Integer)r.get("age")).distinct().collect(Collectors.toList());
+      int count = v.stream().map(r -> (Integer) r.get("age")).distinct().collect(Collectors.toList()).size();
+      List<Integer> sumDistinctList =
+              v.stream().map(r -> (Integer) r.get("age")).distinct().collect(Collectors.toList());
       int sum = 0;
       for (Integer i : sumDistinctList) {
         sum += i.intValue();
       }
-      int maxAge = v.stream().map(r -> (Integer)r.get("age")).max(Comparable::compareTo).get();
-      int minAge = v.stream().map(r -> (Integer)r.get("age")).min(Comparable::compareTo).get();
+      int maxAge = v.stream().map(r -> (Integer) r.get("age")).max(Comparable::compareTo).get();
+      int minAge = v.stream().map(r -> (Integer) r.get("age")).min(Comparable::compareTo).get();
 
       String value = String.format("COUNT(DISTINCT age)=%s; SUM(DISTINCT age)=%s; MAX(age)=%s; "
               + "MIN(age)=%s; company=%s", count, sum, maxAge, minAge, k);
       esp.add(value);
     });
-    execQuery("select count(distinct age), sum(distinct age), max(age),min(age), company from baker_agg group by company", esp);
+    execQuery("select count(distinct age), sum(distinct age), max(age),min(age), company from baker_agg group by "
+            + "company", esp);
   }
 
   @Test
@@ -899,7 +924,8 @@ public class SelectAggTest extends SqlTestBase {
             + ")COMMENT 'REPLICA=1' ENGINE=memory AUTO_INCREMENT=0 PARTITION BY RANGE(id) PARTITIONS 1 ";
     execUpdate(sql, 0, true);
 
-    sql = String.format("INSERT INTO %s(topic, app, retry_time, status) VALUES('topic-1','app-1','2010-02-10 12:21:01',1)", TEST_TABLENAME);
+    sql = String.format("INSERT INTO %s(topic, app, retry_time, status) VALUES('topic-1','app-1','2010-02-10 "
+            + "12:21:01',1)", TEST_TABLENAME);
     execUpdate(sql, 1, true);
     execQuery(String.format("select count(1),  topic from %s where status=1 group by topic ", TEST_TABLENAME));
 
@@ -910,7 +936,8 @@ public class SelectAggTest extends SqlTestBase {
 //    for (int i = 0; i < size; i++) {
 //      service.execute(() -> {
 //        try {
-//          execQuery(String.format("select count(1),  topic, app from %s where status=1 group by topic,app ", TEST_TABLENAME));
+//          execQuery(String.format("select count(1),  topic, app from %s where status=1 group by topic,app ",
+//          TEST_TABLENAME));
 //        } finally {
 //          latch.countDown();
 //        }
@@ -922,5 +949,20 @@ public class SelectAggTest extends SqlTestBase {
 //    } catch (InterruptedException e) {
 //      e.printStackTrace();
 //    }
+  }
+
+  @Test
+  public void testSumDecimal() {
+    List<Map<String, Comparable>> allResult = new ArrayList<>();
+    List<Tuple2<String, Integer>> meta = new ArrayList<>();
+    selectAllfromTablebaker02(allResult, meta);
+    final BigDecimal[] cost_decimal = { BigDecimal.ZERO };
+    allResult.stream().filter(row -> row.get("age").compareTo(10) == 1).forEach(row -> {
+      cost_decimal[0] = ((BigDecimal) row.get("cost_decimal")).add(cost_decimal[0]);
+    });
+    List<String> expected = new ArrayList<>();
+    expected.add(String.format("SUM(cost_decimal)=%s", cost_decimal[0]));
+    System.out.println(expected);
+    execQuery("select sum(cost_decimal) from baker_agg where age > 10 ", expected);
   }
 }

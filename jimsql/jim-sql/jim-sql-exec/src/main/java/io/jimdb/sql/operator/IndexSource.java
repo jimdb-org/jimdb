@@ -103,7 +103,7 @@ public class IndexSource extends RelOperator {
       outputOffsets.add(i);
     }
 
-    return session.getTxn().select(keyValueRange.getIndex(), processors,
+    return session.getStoreEngine().select(session, keyValueRange.getIndex(), processors,
             this.schema.getColumns().toArray(new ColumnExpr[size]), outputOffsets, keyValueRange.getValueRanges());
 //    return mockdatas;
   }

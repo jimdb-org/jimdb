@@ -220,7 +220,7 @@ final class IndexWorker implements Closeable {
         }
 
         Transaction txn = session.getTxn();
-        byte[] lastKey = txn.addIndex(index, NettyByteString.asByteArray(reorg.getLastKey()),
+        byte[] lastKey = storeEngine.addIndex(session, index, NettyByteString.asByteArray(reorg.getLastKey()),
                 NettyByteString.asByteArray(reorg.getEndKey()), BATCH_SIZE);
         txn.commit().blockFirst();
 

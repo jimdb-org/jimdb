@@ -60,6 +60,8 @@ public final class RangeInfo implements Comparable, Cloneable {
   // table id
   private long tableId;
 
+  private String leaderAddr;
+
   public RangeInfo() {
   }
 
@@ -93,6 +95,7 @@ public final class RangeInfo implements Comparable, Cloneable {
 
   public void setLeaderNode(Basepb.Node leaderNode) {
     this.leaderNode = leaderNode;
+    resetLeaderAddr();
   }
 
   public Basepb.RangeEpoch getRangeEpoch() {
@@ -104,8 +107,14 @@ public final class RangeInfo implements Comparable, Cloneable {
   }
 
   public String getLeaderAddr() {
-//    return leaderNode == null ? "" : String.format("%s:%d", leaderNode.getIp(), leaderNode.getServerPort());
-    return leaderNode == null ? "" : leaderNode.getIp() + ":" + leaderNode.getServerPort();
+    if (leaderAddr == null || leaderAddr.isEmpty()) {
+      resetLeaderAddr();
+    }
+    return leaderAddr;
+  }
+
+  private void resetLeaderAddr() {
+    leaderAddr = leaderNode == null ? "" : leaderNode.getIp() + ":" + leaderNode.getServerPort();
   }
 
   public long getTableId() {

@@ -40,7 +40,7 @@ import io.jimdb.core.values.LongValue;
 import io.jimdb.core.values.NullValue;
 import io.jimdb.core.values.StringValue;
 import io.jimdb.core.values.Value;
-import io.jimdb.engine.JimStoreEngine;
+import io.jimdb.engine.ExecutionEngine;
 import io.jimdb.pb.Basepb;
 
 import org.openjdk.jmh.annotations.Benchmark;
@@ -75,7 +75,7 @@ import reactor.core.publisher.Flux;
 public class EngineBenchMark {
   private static final Logger LOG = LoggerFactory.getLogger(EngineBenchMark.class);
   private static final AtomicLong ID = new AtomicLong(0L);
-  JimStoreEngine engine;
+  ExecutionEngine engine;
   int type;
   int dataLength;
   int dataBatch;
@@ -102,10 +102,10 @@ public class EngineBenchMark {
       this.dataLength = config.getInt("test.data.len", 256);
       this.dataBatch = config.getInt("test.data.batch", 1);
       Engine e = PluginFactory.getStoreEngine();
-      if (!(e instanceof JimStoreEngine)) {
+      if (!(e instanceof ExecutionEngine)) {
         throw new IllegalArgumentException("engine error");
       }
-      this.engine = (JimStoreEngine) e;
+      this.engine = (ExecutionEngine) e;
       this.t = MetaData.Holder.get().getTable(this.catalog, this.tableName);
 
       Index pkIndex = null, uniqueIndex = null;
@@ -193,7 +193,8 @@ public class EngineBenchMark {
       return;
     }
 
-    List<Expression[]> exprList = new ArrayList<>();
+    int rowNum = 3;
+    Expression[][] exprList = new Expression[rowNum][];
     for (int i = 0; i < dataBatch; i++) {
       long rowId = ID.incrementAndGet();
       Expression[] exprs = new Expression[4];
@@ -201,14 +202,14 @@ public class EngineBenchMark {
       exprs[1] = new ValueExpr(LongValue.getInstance(rowId), Types.buildSQLType(Basepb.DataType.BigInt));
       exprs[2] = new ValueExpr(StringValue.getInstance(String.format("%d", rowId)), Types.buildSQLType(Basepb.DataType.Varchar));
       exprs[3] = new ValueExpr(StringValue.getInstance(TestUtil.getRandomString(this.dataLength)), Types.buildSQLType(Basepb.DataType.BigInt));
-      exprList.add(exprs);
+      exprList[i] = exprs;
     }
 
     CountDownLatch latch = new CountDownLatch(1);
     Transaction txn = this.engine.beginTxn(this.session);
 
     try {
-      Flux<ExecResult> flux = txn.insert(this.t, this.t.getWritableColumns(), exprList, null, false).flatMap((execResult) -> {
+      Flux<ExecResult> flux = engine.insert(session, this.t, this.t.getWritableColumns(), exprList, null, false).flatMap((execResult) -> {
         if (LOG.isInfoEnabled()) {
           LOG.info("insert success, affected row" + execResult.getAffectedRows());
         }
@@ -370,7 +371,7 @@ public class EngineBenchMark {
     Transaction txn = this.engine.beginTxn(this.session);
     CountDownLatch latch = new CountDownLatch(1);
     try {
-      Flux<ExecResult> flux = txn.get(pkIndexes, values, exprsNoSystem);
+      Flux<ExecResult> flux = engine.get(session, pkIndexes, values, exprsNoSystem);
       subscribe(flux, latch);
 
       try {

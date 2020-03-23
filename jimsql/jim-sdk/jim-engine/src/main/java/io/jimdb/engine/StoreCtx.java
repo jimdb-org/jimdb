@@ -22,10 +22,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import io.jimdb.common.utils.os.SystemClock;
 import io.jimdb.common.utils.retry.RetryPolicy;
+import io.jimdb.core.Session;
 import io.jimdb.core.model.meta.Table;
-import io.jimdb.engine.sender.DispatcherImpl;
-import io.jimdb.meta.RouterManager;
-import io.jimdb.meta.route.RoutePolicy;
+import io.jimdb.meta.Router;
+import io.jimdb.meta.route.RoutingPolicy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,41 +40,52 @@ public class StoreCtx {
   private long cxtId;
 
   private Table table;
-  private RoutePolicy routePolicy;
+  private RoutingPolicy routingPolicy;
   private final Instant timeout;
 
   private TimeZone timeZone = TimeZone.getDefault();
 
-  private final RouterManager rpcManager;
-  private final DispatcherImpl sender;
+  private final Router router;
 
   private RetryPolicy retryPolicy;
   private AtomicInteger retry = new AtomicInteger(0);
 
-  public StoreCtx(final Table table, final Instant timeout, RouterManager rpcManager, DispatcherImpl sender) {
+  private StoreCtx(final Table table, final Instant timeout, Router router) {
     this.cxtId = ID.incrementAndGet();
     this.table = table;
-    this.rpcManager = rpcManager;
-    this.routePolicy = rpcManager.getOrCreatePolicy(table.getCatalog().getId(), table.getId());
+    this.router = router;
+    this.routingPolicy = router.getOrCreatePolicy(table.getCatalog().getId(), table.getId());
     this.timeout = timeout;
-    this.sender = sender;
     this.retryPolicy = new RetryPolicy.Builder().retryDelay(20).useExponentialBackOff(true).backOffMultiplier(1.35)
             .build();
   }
 
-  public static StoreCtx buildCtx(final Table table, final Instant timeout, RouterManager rpcManager, DispatcherImpl sender) {
-    if (timeout == null) {
-      return new StoreCtx(table, SystemClock.currentTimeStamp().plusSeconds(20), rpcManager, sender);
+  public static StoreCtx buildCtx(Session session, Table table, Router router) {
+    Instant timeout = null;
+    if (session != null) {
+      timeout = session.getStmtContext().getTimeout();
     }
-    return new StoreCtx(table, timeout, rpcManager, sender);
+
+    if (timeout == null) {
+      return new StoreCtx(table, SystemClock.currentTimeStamp().plusSeconds(20), router);
+    }
+    return new StoreCtx(table, timeout, router);
+  }
+
+  @Deprecated
+  public static StoreCtx buildCtx(final Table table, final Instant timeout, Router rpcManager) {
+    if (timeout == null) {
+      return new StoreCtx(table, SystemClock.currentTimeStamp().plusSeconds(20), rpcManager);
+    }
+    return new StoreCtx(table, timeout, rpcManager);
   }
 
   public Table getTable() {
     return table;
   }
 
-  public RoutePolicy getRoutePolicy() {
-    return routePolicy;
+  public RoutingPolicy getRoutingPolicy() {
+    return routingPolicy;
   }
 
   public Instant getTimeout() {
@@ -103,20 +114,12 @@ public class StoreCtx {
     return retryPolicy.getDelay(this.timeout, retry.get());
   }
 
-  public RouterManager getRpcManager() {
-    return rpcManager;
-  }
-
-  public DispatcherImpl getSender() {
-    return sender;
+  public Router getRouter() {
+    return router;
   }
 
   public void setTable(Table table) {
     this.table = table;
-  }
-
-  public void setRoutePolicy(RoutePolicy routePolicy) {
-    this.routePolicy = routePolicy;
   }
 
   public long getCxtId() {

@@ -15,15 +15,9 @@
  */
 package io.jimdb.engine.client;
 
-import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import io.jimdb.common.exception.CodecException;
 import io.jimdb.common.exception.ErrorCode;
 import io.jimdb.pb.Api;
-import io.jimdb.pb.Function.FunctionID;
 import io.jimdb.rpc.client.command.Command;
 import io.jimdb.rpc.client.command.CommandType;
 import io.netty.buffer.ByteBuf;
@@ -51,14 +45,6 @@ public final class JimCommand implements Command {
   public static final int LENGTH_FIELD_SIZE = 4;
 
   private static final int HEADER_SIZE = 28;
-
-  private static final Map<Short, Class> FUNC_ID_REQUEST = new ConcurrentHashMap<>();
-  private static final Map<Short, Class> FUNC_ID_RESPONSE = new ConcurrentHashMap<>();
-
-  static {
-    FUNC_ID_REQUEST.put((short) FunctionID.kFuncRangeRequest_VALUE, Api.RangeRequest.class);
-    FUNC_ID_RESPONSE.put((short) FunctionID.kFuncRangeRequest_VALUE, Api.RangeResponse.class);
-  }
 
   private int magic;
   private short version;
@@ -147,25 +133,18 @@ public final class JimCommand implements Command {
       this.timeout = buf.readInt();
       this.bodyLen = buf.readInt();
 
-      Class clazz = null;
       switch (msgType) {
         case TYPE_REQUEST:
-          clazz = FUNC_ID_REQUEST.get(funcId);
+          this.body = Api.RangeRequest.parseFrom(buf.nioBuffer());
           break;
 
         case TYPE_RESPONSE:
-          clazz = FUNC_ID_RESPONSE.get(funcId);
+          this.body = Api.RangeResponse.parseFrom(buf.nioBuffer());
           break;
-
         default:
-          clazz = null;
+          break;
       }
 
-      if (clazz == null) {
-        return;
-      }
-      Method method = clazz.getMethod("parseFrom", ByteBuffer.class);
-      this.body = method.invoke(clazz, buf.nioBuffer());
     } catch (Exception ex) {
       throw CodecException.get(ErrorCode.ER_RPC_REQUEST_CODEC, ex);
     }

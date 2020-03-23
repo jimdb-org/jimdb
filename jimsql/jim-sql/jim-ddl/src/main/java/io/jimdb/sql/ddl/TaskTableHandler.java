@@ -214,7 +214,7 @@ final class TaskTableHandler {
     }
 
     BigInteger autoInitIdValue = new BigInteger(Long.toUnsignedString(autoInitId));
-    BigInteger maxValue = ValueChecker.computeUpperBound(type.getUnsigned(), type.getType());
+    BigInteger maxValue = ValueChecker.getUpperBound(type.getUnsigned(), type.getType());
     //calculate auto_increment scope
     long sequence = maxValue.subtract(autoInitIdValue).add(BigInteger.valueOf(1))
             .divide(BigInteger.valueOf(DDLUtils.DEFAULT_SEQ_REGION)).longValue();

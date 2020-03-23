@@ -13273,10 +13273,18 @@ public final class Mspb {
     int getAdminPort();
 
     /**
+     * <pre>
+     * build version
+     * </pre>
+     *
      * <code>string version = 5;</code>
      */
     java.lang.String getVersion();
     /**
+     * <pre>
+     * build version
+     * </pre>
+     *
      * <code>string version = 5;</code>
      */
     com.google.protobuf.ByteString
@@ -13314,6 +13322,11 @@ public final class Mspb {
      */
     io.jimdb.pb.Mspb.RangeFingerprintOrBuilder getRangesOrBuilder(
         int index);
+
+    /**
+     * <code>int32 protocol_version = 8;</code>
+     */
+    int getProtocolVersion();
   }
   /**
    * Protobuf type {@code mspb.RegisterNodeRequest}
@@ -13334,6 +13347,7 @@ public final class Mspb {
       version_ = "";
       stEngine_ = 0;
       ranges_ = java.util.Collections.emptyList();
+      protocolVersion_ = 0;
     }
 
     @java.lang.Override
@@ -13407,6 +13421,11 @@ public final class Mspb {
               }
               ranges_.add(
                   input.readMessage(io.jimdb.pb.Mspb.RangeFingerprint.parser(), extensionRegistry));
+              break;
+            }
+            case 64: {
+
+              protocolVersion_ = input.readInt32();
               break;
             }
             default: {
@@ -13496,6 +13515,10 @@ public final class Mspb {
     public static final int VERSION_FIELD_NUMBER = 5;
     private volatile java.lang.Object version_;
     /**
+     * <pre>
+     * build version
+     * </pre>
+     *
      * <code>string version = 5;</code>
      */
     public java.lang.String getVersion() {
@@ -13511,6 +13534,10 @@ public final class Mspb {
       }
     }
     /**
+     * <pre>
+     * build version
+     * </pre>
+     *
      * <code>string version = 5;</code>
      */
     public com.google.protobuf.ByteString
@@ -13579,6 +13606,15 @@ public final class Mspb {
       return ranges_.get(index);
     }
 
+    public static final int PROTOCOL_VERSION_FIELD_NUMBER = 8;
+    private int protocolVersion_;
+    /**
+     * <code>int32 protocol_version = 8;</code>
+     */
+    public int getProtocolVersion() {
+      return protocolVersion_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -13613,6 +13649,9 @@ public final class Mspb {
       }
       for (int i = 0; i < ranges_.size(); i++) {
         output.writeMessage(7, ranges_.get(i));
+      }
+      if (protocolVersion_ != 0) {
+        output.writeInt32(8, protocolVersion_);
       }
       unknownFields.writeTo(output);
     }
@@ -13650,6 +13689,10 @@ public final class Mspb {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(7, ranges_.get(i));
       }
+      if (protocolVersion_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(8, protocolVersion_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -13682,6 +13725,8 @@ public final class Mspb {
       result = result && stEngine_ == other.stEngine_;
       result = result && getRangesList()
           .equals(other.getRangesList());
+      result = result && (getProtocolVersion()
+          == other.getProtocolVersion());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -13711,6 +13756,8 @@ public final class Mspb {
         hash = (37 * hash) + RANGES_FIELD_NUMBER;
         hash = (53 * hash) + getRangesList().hashCode();
       }
+      hash = (37 * hash) + PROTOCOL_VERSION_FIELD_NUMBER;
+      hash = (53 * hash) + getProtocolVersion();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -13867,6 +13914,8 @@ public final class Mspb {
         } else {
           rangesBuilder_.clear();
         }
+        protocolVersion_ = 0;
+
         return this;
       }
 
@@ -13914,6 +13963,7 @@ public final class Mspb {
         } else {
           result.ranges_ = rangesBuilder_.build();
         }
+        result.protocolVersion_ = protocolVersion_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -14007,6 +14057,9 @@ public final class Mspb {
               rangesBuilder_.addAllMessages(other.ranges_);
             }
           }
+        }
+        if (other.getProtocolVersion() != 0) {
+          setProtocolVersion(other.getProtocolVersion());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -14235,6 +14288,10 @@ public final class Mspb {
 
       private java.lang.Object version_ = "";
       /**
+       * <pre>
+       * build version
+       * </pre>
+       *
        * <code>string version = 5;</code>
        */
       public java.lang.String getVersion() {
@@ -14250,6 +14307,10 @@ public final class Mspb {
         }
       }
       /**
+       * <pre>
+       * build version
+       * </pre>
+       *
        * <code>string version = 5;</code>
        */
       public com.google.protobuf.ByteString
@@ -14266,6 +14327,10 @@ public final class Mspb {
         }
       }
       /**
+       * <pre>
+       * build version
+       * </pre>
+       *
        * <code>string version = 5;</code>
        */
       public Builder setVersion(
@@ -14279,6 +14344,10 @@ public final class Mspb {
         return this;
       }
       /**
+       * <pre>
+       * build version
+       * </pre>
+       *
        * <code>string version = 5;</code>
        */
       public Builder clearVersion() {
@@ -14288,6 +14357,10 @@ public final class Mspb {
         return this;
       }
       /**
+       * <pre>
+       * build version
+       * </pre>
+       *
        * <code>string version = 5;</code>
        */
       public Builder setVersionBytes(
@@ -14585,6 +14658,32 @@ public final class Mspb {
           ranges_ = null;
         }
         return rangesBuilder_;
+      }
+
+      private int protocolVersion_ ;
+      /**
+       * <code>int32 protocol_version = 8;</code>
+       */
+      public int getProtocolVersion() {
+        return protocolVersion_;
+      }
+      /**
+       * <code>int32 protocol_version = 8;</code>
+       */
+      public Builder setProtocolVersion(int value) {
+        
+        protocolVersion_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 protocol_version = 8;</code>
+       */
+      public Builder clearProtocolVersion() {
+        
+        protocolVersion_ = 0;
+        onChanged();
+        return this;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -26565,6 +26664,613 @@ public final class Mspb {
 
   }
 
+  public interface GeneralRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.GeneralRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeader getHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder();
+  }
+  /**
+   * Protobuf type {@code mspb.GeneralRequest}
+   */
+  public  static final class GeneralRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.GeneralRequest)
+      GeneralRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GeneralRequest.newBuilder() to construct.
+    private GeneralRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GeneralRequest() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GeneralRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.RequestHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.RequestHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GeneralRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GeneralRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.GeneralRequest.class, io.jimdb.pb.Mspb.GeneralRequest.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.RequestHeader header_;
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.GeneralRequest)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.GeneralRequest other = (io.jimdb.pb.Mspb.GeneralRequest) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.GeneralRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GeneralRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GeneralRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GeneralRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GeneralRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GeneralRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GeneralRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GeneralRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GeneralRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GeneralRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GeneralRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GeneralRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.GeneralRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.GeneralRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.GeneralRequest)
+        io.jimdb.pb.Mspb.GeneralRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GeneralRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GeneralRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.GeneralRequest.class, io.jimdb.pb.Mspb.GeneralRequest.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.GeneralRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GeneralRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GeneralRequest getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.GeneralRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GeneralRequest build() {
+        io.jimdb.pb.Mspb.GeneralRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GeneralRequest buildPartial() {
+        io.jimdb.pb.Mspb.GeneralRequest result = new io.jimdb.pb.Mspb.GeneralRequest(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.GeneralRequest) {
+          return mergeFrom((io.jimdb.pb.Mspb.GeneralRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.GeneralRequest other) {
+        if (other == io.jimdb.pb.Mspb.GeneralRequest.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.GeneralRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.GeneralRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.RequestHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.RequestHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.RequestHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.GeneralRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.GeneralRequest)
+    private static final io.jimdb.pb.Mspb.GeneralRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.GeneralRequest();
+    }
+
+    public static io.jimdb.pb.Mspb.GeneralRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GeneralRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GeneralRequest>() {
+      @java.lang.Override
+      public GeneralRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GeneralRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<GeneralRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GeneralRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.GeneralRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface GeneralResponseOrBuilder extends
       // @@protoc_insertion_point(interface_extends:mspb.GeneralResponse)
       com.google.protobuf.MessageOrBuilder {
@@ -35145,6 +35851,14769 @@ public final class Mspb {
 
   }
 
+  public interface GroupOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.Group)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int32 group_id = 1;</code>
+     */
+    int getGroupId();
+
+    /**
+     * <code>string group_name = 2;</code>
+     */
+    java.lang.String getGroupName();
+    /**
+     * <code>string group_name = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getGroupNameBytes();
+
+    /**
+     * <code>int64 create_time = 3;</code>
+     */
+    long getCreateTime();
+  }
+  /**
+   * <pre>
+   *&#47;/////////////  FOR CONSOLE-KV COMPATIBILITY USE BELOW  ////////////////
+   * </pre>
+   *
+   * Protobuf type {@code mspb.Group}
+   */
+  public  static final class Group extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.Group)
+      GroupOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use Group.newBuilder() to construct.
+    private Group(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private Group() {
+      groupId_ = 0;
+      groupName_ = "";
+      createTime_ = 0L;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Group(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              groupId_ = input.readInt32();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              groupName_ = s;
+              break;
+            }
+            case 24: {
+
+              createTime_ = input.readInt64();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_Group_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_Group_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.Group.class, io.jimdb.pb.Mspb.Group.Builder.class);
+    }
+
+    public static final int GROUP_ID_FIELD_NUMBER = 1;
+    private int groupId_;
+    /**
+     * <code>int32 group_id = 1;</code>
+     */
+    public int getGroupId() {
+      return groupId_;
+    }
+
+    public static final int GROUP_NAME_FIELD_NUMBER = 2;
+    private volatile java.lang.Object groupName_;
+    /**
+     * <code>string group_name = 2;</code>
+     */
+    public java.lang.String getGroupName() {
+      java.lang.Object ref = groupName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        groupName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string group_name = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getGroupNameBytes() {
+      java.lang.Object ref = groupName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        groupName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CREATE_TIME_FIELD_NUMBER = 3;
+    private long createTime_;
+    /**
+     * <code>int64 create_time = 3;</code>
+     */
+    public long getCreateTime() {
+      return createTime_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (groupId_ != 0) {
+        output.writeInt32(1, groupId_);
+      }
+      if (!getGroupNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, groupName_);
+      }
+      if (createTime_ != 0L) {
+        output.writeInt64(3, createTime_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (groupId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, groupId_);
+      }
+      if (!getGroupNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, groupName_);
+      }
+      if (createTime_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(3, createTime_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.Group)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.Group other = (io.jimdb.pb.Mspb.Group) obj;
+
+      boolean result = true;
+      result = result && (getGroupId()
+          == other.getGroupId());
+      result = result && getGroupName()
+          .equals(other.getGroupName());
+      result = result && (getCreateTime()
+          == other.getCreateTime());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + GROUP_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getGroupId();
+      hash = (37 * hash) + GROUP_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getGroupName().hashCode();
+      hash = (37 * hash) + CREATE_TIME_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getCreateTime());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.Group parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.Group parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.Group parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.Group parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.Group parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.Group parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.Group parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.Group parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.Group parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.Group parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.Group parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.Group parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.Group prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     *&#47;/////////////  FOR CONSOLE-KV COMPATIBILITY USE BELOW  ////////////////
+     * </pre>
+     *
+     * Protobuf type {@code mspb.Group}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.Group)
+        io.jimdb.pb.Mspb.GroupOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_Group_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_Group_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.Group.class, io.jimdb.pb.Mspb.Group.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.Group.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        groupId_ = 0;
+
+        groupName_ = "";
+
+        createTime_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_Group_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.Group getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.Group.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.Group build() {
+        io.jimdb.pb.Mspb.Group result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.Group buildPartial() {
+        io.jimdb.pb.Mspb.Group result = new io.jimdb.pb.Mspb.Group(this);
+        result.groupId_ = groupId_;
+        result.groupName_ = groupName_;
+        result.createTime_ = createTime_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.Group) {
+          return mergeFrom((io.jimdb.pb.Mspb.Group)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.Group other) {
+        if (other == io.jimdb.pb.Mspb.Group.getDefaultInstance()) return this;
+        if (other.getGroupId() != 0) {
+          setGroupId(other.getGroupId());
+        }
+        if (!other.getGroupName().isEmpty()) {
+          groupName_ = other.groupName_;
+          onChanged();
+        }
+        if (other.getCreateTime() != 0L) {
+          setCreateTime(other.getCreateTime());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.Group parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.Group) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int groupId_ ;
+      /**
+       * <code>int32 group_id = 1;</code>
+       */
+      public int getGroupId() {
+        return groupId_;
+      }
+      /**
+       * <code>int32 group_id = 1;</code>
+       */
+      public Builder setGroupId(int value) {
+        
+        groupId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 group_id = 1;</code>
+       */
+      public Builder clearGroupId() {
+        
+        groupId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object groupName_ = "";
+      /**
+       * <code>string group_name = 2;</code>
+       */
+      public java.lang.String getGroupName() {
+        java.lang.Object ref = groupName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          groupName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string group_name = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getGroupNameBytes() {
+        java.lang.Object ref = groupName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          groupName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string group_name = 2;</code>
+       */
+      public Builder setGroupName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        groupName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string group_name = 2;</code>
+       */
+      public Builder clearGroupName() {
+        
+        groupName_ = getDefaultInstance().getGroupName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string group_name = 2;</code>
+       */
+      public Builder setGroupNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        groupName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long createTime_ ;
+      /**
+       * <code>int64 create_time = 3;</code>
+       */
+      public long getCreateTime() {
+        return createTime_;
+      }
+      /**
+       * <code>int64 create_time = 3;</code>
+       */
+      public Builder setCreateTime(long value) {
+        
+        createTime_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 create_time = 3;</code>
+       */
+      public Builder clearCreateTime() {
+        
+        createTime_ = 0L;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.Group)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.Group)
+    private static final io.jimdb.pb.Mspb.Group DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.Group();
+    }
+
+    public static io.jimdb.pb.Mspb.Group getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Group>
+        PARSER = new com.google.protobuf.AbstractParser<Group>() {
+      @java.lang.Override
+      public Group parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Group(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<Group> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Group> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.Group getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface SpaceOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.Space)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int32 group_id = 1;</code>
+     */
+    int getGroupId();
+
+    /**
+     * <code>int32 space_id = 2;</code>
+     */
+    int getSpaceId();
+
+    /**
+     * <code>string space_name = 3;</code>
+     */
+    java.lang.String getSpaceName();
+    /**
+     * <code>string space_name = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getSpaceNameBytes();
+
+    /**
+     * <code>int32 replicas = 4;</code>
+     */
+    int getReplicas();
+
+    /**
+     * <code>int64 create_time = 5;</code>
+     */
+    long getCreateTime();
+  }
+  /**
+   * Protobuf type {@code mspb.Space}
+   */
+  public  static final class Space extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.Space)
+      SpaceOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use Space.newBuilder() to construct.
+    private Space(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private Space() {
+      groupId_ = 0;
+      spaceId_ = 0;
+      spaceName_ = "";
+      replicas_ = 0;
+      createTime_ = 0L;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Space(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              groupId_ = input.readInt32();
+              break;
+            }
+            case 16: {
+
+              spaceId_ = input.readInt32();
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              spaceName_ = s;
+              break;
+            }
+            case 32: {
+
+              replicas_ = input.readInt32();
+              break;
+            }
+            case 40: {
+
+              createTime_ = input.readInt64();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_Space_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_Space_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.Space.class, io.jimdb.pb.Mspb.Space.Builder.class);
+    }
+
+    public static final int GROUP_ID_FIELD_NUMBER = 1;
+    private int groupId_;
+    /**
+     * <code>int32 group_id = 1;</code>
+     */
+    public int getGroupId() {
+      return groupId_;
+    }
+
+    public static final int SPACE_ID_FIELD_NUMBER = 2;
+    private int spaceId_;
+    /**
+     * <code>int32 space_id = 2;</code>
+     */
+    public int getSpaceId() {
+      return spaceId_;
+    }
+
+    public static final int SPACE_NAME_FIELD_NUMBER = 3;
+    private volatile java.lang.Object spaceName_;
+    /**
+     * <code>string space_name = 3;</code>
+     */
+    public java.lang.String getSpaceName() {
+      java.lang.Object ref = spaceName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        spaceName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string space_name = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getSpaceNameBytes() {
+      java.lang.Object ref = spaceName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        spaceName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int REPLICAS_FIELD_NUMBER = 4;
+    private int replicas_;
+    /**
+     * <code>int32 replicas = 4;</code>
+     */
+    public int getReplicas() {
+      return replicas_;
+    }
+
+    public static final int CREATE_TIME_FIELD_NUMBER = 5;
+    private long createTime_;
+    /**
+     * <code>int64 create_time = 5;</code>
+     */
+    public long getCreateTime() {
+      return createTime_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (groupId_ != 0) {
+        output.writeInt32(1, groupId_);
+      }
+      if (spaceId_ != 0) {
+        output.writeInt32(2, spaceId_);
+      }
+      if (!getSpaceNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, spaceName_);
+      }
+      if (replicas_ != 0) {
+        output.writeInt32(4, replicas_);
+      }
+      if (createTime_ != 0L) {
+        output.writeInt64(5, createTime_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (groupId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, groupId_);
+      }
+      if (spaceId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, spaceId_);
+      }
+      if (!getSpaceNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, spaceName_);
+      }
+      if (replicas_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(4, replicas_);
+      }
+      if (createTime_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(5, createTime_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.Space)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.Space other = (io.jimdb.pb.Mspb.Space) obj;
+
+      boolean result = true;
+      result = result && (getGroupId()
+          == other.getGroupId());
+      result = result && (getSpaceId()
+          == other.getSpaceId());
+      result = result && getSpaceName()
+          .equals(other.getSpaceName());
+      result = result && (getReplicas()
+          == other.getReplicas());
+      result = result && (getCreateTime()
+          == other.getCreateTime());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + GROUP_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getGroupId();
+      hash = (37 * hash) + SPACE_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getSpaceId();
+      hash = (37 * hash) + SPACE_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getSpaceName().hashCode();
+      hash = (37 * hash) + REPLICAS_FIELD_NUMBER;
+      hash = (53 * hash) + getReplicas();
+      hash = (37 * hash) + CREATE_TIME_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getCreateTime());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.Space parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.Space parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.Space parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.Space parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.Space parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.Space parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.Space parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.Space parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.Space parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.Space parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.Space parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.Space parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.Space prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.Space}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.Space)
+        io.jimdb.pb.Mspb.SpaceOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_Space_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_Space_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.Space.class, io.jimdb.pb.Mspb.Space.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.Space.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        groupId_ = 0;
+
+        spaceId_ = 0;
+
+        spaceName_ = "";
+
+        replicas_ = 0;
+
+        createTime_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_Space_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.Space getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.Space.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.Space build() {
+        io.jimdb.pb.Mspb.Space result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.Space buildPartial() {
+        io.jimdb.pb.Mspb.Space result = new io.jimdb.pb.Mspb.Space(this);
+        result.groupId_ = groupId_;
+        result.spaceId_ = spaceId_;
+        result.spaceName_ = spaceName_;
+        result.replicas_ = replicas_;
+        result.createTime_ = createTime_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.Space) {
+          return mergeFrom((io.jimdb.pb.Mspb.Space)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.Space other) {
+        if (other == io.jimdb.pb.Mspb.Space.getDefaultInstance()) return this;
+        if (other.getGroupId() != 0) {
+          setGroupId(other.getGroupId());
+        }
+        if (other.getSpaceId() != 0) {
+          setSpaceId(other.getSpaceId());
+        }
+        if (!other.getSpaceName().isEmpty()) {
+          spaceName_ = other.spaceName_;
+          onChanged();
+        }
+        if (other.getReplicas() != 0) {
+          setReplicas(other.getReplicas());
+        }
+        if (other.getCreateTime() != 0L) {
+          setCreateTime(other.getCreateTime());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.Space parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.Space) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int groupId_ ;
+      /**
+       * <code>int32 group_id = 1;</code>
+       */
+      public int getGroupId() {
+        return groupId_;
+      }
+      /**
+       * <code>int32 group_id = 1;</code>
+       */
+      public Builder setGroupId(int value) {
+        
+        groupId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 group_id = 1;</code>
+       */
+      public Builder clearGroupId() {
+        
+        groupId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int spaceId_ ;
+      /**
+       * <code>int32 space_id = 2;</code>
+       */
+      public int getSpaceId() {
+        return spaceId_;
+      }
+      /**
+       * <code>int32 space_id = 2;</code>
+       */
+      public Builder setSpaceId(int value) {
+        
+        spaceId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 space_id = 2;</code>
+       */
+      public Builder clearSpaceId() {
+        
+        spaceId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object spaceName_ = "";
+      /**
+       * <code>string space_name = 3;</code>
+       */
+      public java.lang.String getSpaceName() {
+        java.lang.Object ref = spaceName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          spaceName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string space_name = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getSpaceNameBytes() {
+        java.lang.Object ref = spaceName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          spaceName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string space_name = 3;</code>
+       */
+      public Builder setSpaceName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        spaceName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string space_name = 3;</code>
+       */
+      public Builder clearSpaceName() {
+        
+        spaceName_ = getDefaultInstance().getSpaceName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string space_name = 3;</code>
+       */
+      public Builder setSpaceNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        spaceName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int replicas_ ;
+      /**
+       * <code>int32 replicas = 4;</code>
+       */
+      public int getReplicas() {
+        return replicas_;
+      }
+      /**
+       * <code>int32 replicas = 4;</code>
+       */
+      public Builder setReplicas(int value) {
+        
+        replicas_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 replicas = 4;</code>
+       */
+      public Builder clearReplicas() {
+        
+        replicas_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long createTime_ ;
+      /**
+       * <code>int64 create_time = 5;</code>
+       */
+      public long getCreateTime() {
+        return createTime_;
+      }
+      /**
+       * <code>int64 create_time = 5;</code>
+       */
+      public Builder setCreateTime(long value) {
+        
+        createTime_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 create_time = 5;</code>
+       */
+      public Builder clearCreateTime() {
+        
+        createTime_ = 0L;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.Space)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.Space)
+    private static final io.jimdb.pb.Mspb.Space DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.Space();
+    }
+
+    public static io.jimdb.pb.Mspb.Space getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Space>
+        PARSER = new com.google.protobuf.AbstractParser<Space>() {
+      @java.lang.Override
+      public Space parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Space(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<Space> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Space> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.Space getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface GenerateIdResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.GenerateIdResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeader getHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>int64 generate_id = 2;</code>
+     */
+    long getGenerateId();
+  }
+  /**
+   * Protobuf type {@code mspb.GenerateIdResponse}
+   */
+  public  static final class GenerateIdResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.GenerateIdResponse)
+      GenerateIdResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GenerateIdResponse.newBuilder() to construct.
+    private GenerateIdResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GenerateIdResponse() {
+      generateId_ = 0L;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GenerateIdResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.ResponseHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.ResponseHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 16: {
+
+              generateId_ = input.readInt64();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GenerateIdResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GenerateIdResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.GenerateIdResponse.class, io.jimdb.pb.Mspb.GenerateIdResponse.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.ResponseHeader header_;
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int GENERATE_ID_FIELD_NUMBER = 2;
+    private long generateId_;
+    /**
+     * <code>int64 generate_id = 2;</code>
+     */
+    public long getGenerateId() {
+      return generateId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (generateId_ != 0L) {
+        output.writeInt64(2, generateId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (generateId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(2, generateId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.GenerateIdResponse)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.GenerateIdResponse other = (io.jimdb.pb.Mspb.GenerateIdResponse) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && (getGenerateId()
+          == other.getGenerateId());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      hash = (37 * hash) + GENERATE_ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getGenerateId());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.GenerateIdResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GenerateIdResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GenerateIdResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GenerateIdResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GenerateIdResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GenerateIdResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GenerateIdResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GenerateIdResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GenerateIdResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GenerateIdResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GenerateIdResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GenerateIdResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.GenerateIdResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.GenerateIdResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.GenerateIdResponse)
+        io.jimdb.pb.Mspb.GenerateIdResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GenerateIdResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GenerateIdResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.GenerateIdResponse.class, io.jimdb.pb.Mspb.GenerateIdResponse.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.GenerateIdResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        generateId_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GenerateIdResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GenerateIdResponse getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.GenerateIdResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GenerateIdResponse build() {
+        io.jimdb.pb.Mspb.GenerateIdResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GenerateIdResponse buildPartial() {
+        io.jimdb.pb.Mspb.GenerateIdResponse result = new io.jimdb.pb.Mspb.GenerateIdResponse(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        result.generateId_ = generateId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.GenerateIdResponse) {
+          return mergeFrom((io.jimdb.pb.Mspb.GenerateIdResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.GenerateIdResponse other) {
+        if (other == io.jimdb.pb.Mspb.GenerateIdResponse.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (other.getGenerateId() != 0L) {
+          setGenerateId(other.getGenerateId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.GenerateIdResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.GenerateIdResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.ResponseHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.ResponseHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.ResponseHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private long generateId_ ;
+      /**
+       * <code>int64 generate_id = 2;</code>
+       */
+      public long getGenerateId() {
+        return generateId_;
+      }
+      /**
+       * <code>int64 generate_id = 2;</code>
+       */
+      public Builder setGenerateId(long value) {
+        
+        generateId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 generate_id = 2;</code>
+       */
+      public Builder clearGenerateId() {
+        
+        generateId_ = 0L;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.GenerateIdResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.GenerateIdResponse)
+    private static final io.jimdb.pb.Mspb.GenerateIdResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.GenerateIdResponse();
+    }
+
+    public static io.jimdb.pb.Mspb.GenerateIdResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GenerateIdResponse>
+        PARSER = new com.google.protobuf.AbstractParser<GenerateIdResponse>() {
+      @java.lang.Override
+      public GenerateIdResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GenerateIdResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<GenerateIdResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GenerateIdResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.GenerateIdResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface CreateGroupRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.CreateGroupRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeader getHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    int getGroupId();
+
+    /**
+     * <code>string group_name = 3;</code>
+     */
+    java.lang.String getGroupName();
+    /**
+     * <code>string group_name = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getGroupNameBytes();
+  }
+  /**
+   * Protobuf type {@code mspb.CreateGroupRequest}
+   */
+  public  static final class CreateGroupRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.CreateGroupRequest)
+      CreateGroupRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use CreateGroupRequest.newBuilder() to construct.
+    private CreateGroupRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private CreateGroupRequest() {
+      groupId_ = 0;
+      groupName_ = "";
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private CreateGroupRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.RequestHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.RequestHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 16: {
+
+              groupId_ = input.readInt32();
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              groupName_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_CreateGroupRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_CreateGroupRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.CreateGroupRequest.class, io.jimdb.pb.Mspb.CreateGroupRequest.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.RequestHeader header_;
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int GROUP_ID_FIELD_NUMBER = 2;
+    private int groupId_;
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    public int getGroupId() {
+      return groupId_;
+    }
+
+    public static final int GROUP_NAME_FIELD_NUMBER = 3;
+    private volatile java.lang.Object groupName_;
+    /**
+     * <code>string group_name = 3;</code>
+     */
+    public java.lang.String getGroupName() {
+      java.lang.Object ref = groupName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        groupName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string group_name = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getGroupNameBytes() {
+      java.lang.Object ref = groupName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        groupName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        output.writeInt32(2, groupId_);
+      }
+      if (!getGroupNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, groupName_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, groupId_);
+      }
+      if (!getGroupNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, groupName_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.CreateGroupRequest)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.CreateGroupRequest other = (io.jimdb.pb.Mspb.CreateGroupRequest) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && (getGroupId()
+          == other.getGroupId());
+      result = result && getGroupName()
+          .equals(other.getGroupName());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      hash = (37 * hash) + GROUP_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getGroupId();
+      hash = (37 * hash) + GROUP_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getGroupName().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.CreateGroupRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.CreateGroupRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.CreateGroupRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.CreateGroupRequest)
+        io.jimdb.pb.Mspb.CreateGroupRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_CreateGroupRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_CreateGroupRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.CreateGroupRequest.class, io.jimdb.pb.Mspb.CreateGroupRequest.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.CreateGroupRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        groupId_ = 0;
+
+        groupName_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_CreateGroupRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.CreateGroupRequest getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.CreateGroupRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.CreateGroupRequest build() {
+        io.jimdb.pb.Mspb.CreateGroupRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.CreateGroupRequest buildPartial() {
+        io.jimdb.pb.Mspb.CreateGroupRequest result = new io.jimdb.pb.Mspb.CreateGroupRequest(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        result.groupId_ = groupId_;
+        result.groupName_ = groupName_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.CreateGroupRequest) {
+          return mergeFrom((io.jimdb.pb.Mspb.CreateGroupRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.CreateGroupRequest other) {
+        if (other == io.jimdb.pb.Mspb.CreateGroupRequest.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (other.getGroupId() != 0) {
+          setGroupId(other.getGroupId());
+        }
+        if (!other.getGroupName().isEmpty()) {
+          groupName_ = other.groupName_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.CreateGroupRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.CreateGroupRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.RequestHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.RequestHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.RequestHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private int groupId_ ;
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public int getGroupId() {
+        return groupId_;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder setGroupId(int value) {
+        
+        groupId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder clearGroupId() {
+        
+        groupId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object groupName_ = "";
+      /**
+       * <code>string group_name = 3;</code>
+       */
+      public java.lang.String getGroupName() {
+        java.lang.Object ref = groupName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          groupName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string group_name = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getGroupNameBytes() {
+        java.lang.Object ref = groupName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          groupName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string group_name = 3;</code>
+       */
+      public Builder setGroupName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        groupName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string group_name = 3;</code>
+       */
+      public Builder clearGroupName() {
+        
+        groupName_ = getDefaultInstance().getGroupName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string group_name = 3;</code>
+       */
+      public Builder setGroupNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        groupName_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.CreateGroupRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.CreateGroupRequest)
+    private static final io.jimdb.pb.Mspb.CreateGroupRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.CreateGroupRequest();
+    }
+
+    public static io.jimdb.pb.Mspb.CreateGroupRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CreateGroupRequest>
+        PARSER = new com.google.protobuf.AbstractParser<CreateGroupRequest>() {
+      @java.lang.Override
+      public CreateGroupRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new CreateGroupRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<CreateGroupRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CreateGroupRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.CreateGroupRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface CreateGroupResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.CreateGroupResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeader getHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>.mspb.Group group = 2;</code>
+     */
+    boolean hasGroup();
+    /**
+     * <code>.mspb.Group group = 2;</code>
+     */
+    io.jimdb.pb.Mspb.Group getGroup();
+    /**
+     * <code>.mspb.Group group = 2;</code>
+     */
+    io.jimdb.pb.Mspb.GroupOrBuilder getGroupOrBuilder();
+  }
+  /**
+   * Protobuf type {@code mspb.CreateGroupResponse}
+   */
+  public  static final class CreateGroupResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.CreateGroupResponse)
+      CreateGroupResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use CreateGroupResponse.newBuilder() to construct.
+    private CreateGroupResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private CreateGroupResponse() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private CreateGroupResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.ResponseHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.ResponseHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 18: {
+              io.jimdb.pb.Mspb.Group.Builder subBuilder = null;
+              if (group_ != null) {
+                subBuilder = group_.toBuilder();
+              }
+              group_ = input.readMessage(io.jimdb.pb.Mspb.Group.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(group_);
+                group_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_CreateGroupResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_CreateGroupResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.CreateGroupResponse.class, io.jimdb.pb.Mspb.CreateGroupResponse.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.ResponseHeader header_;
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int GROUP_FIELD_NUMBER = 2;
+    private io.jimdb.pb.Mspb.Group group_;
+    /**
+     * <code>.mspb.Group group = 2;</code>
+     */
+    public boolean hasGroup() {
+      return group_ != null;
+    }
+    /**
+     * <code>.mspb.Group group = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.Group getGroup() {
+      return group_ == null ? io.jimdb.pb.Mspb.Group.getDefaultInstance() : group_;
+    }
+    /**
+     * <code>.mspb.Group group = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.GroupOrBuilder getGroupOrBuilder() {
+      return getGroup();
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (group_ != null) {
+        output.writeMessage(2, getGroup());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (group_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, getGroup());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.CreateGroupResponse)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.CreateGroupResponse other = (io.jimdb.pb.Mspb.CreateGroupResponse) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && (hasGroup() == other.hasGroup());
+      if (hasGroup()) {
+        result = result && getGroup()
+            .equals(other.getGroup());
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      if (hasGroup()) {
+        hash = (37 * hash) + GROUP_FIELD_NUMBER;
+        hash = (53 * hash) + getGroup().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.CreateGroupResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.CreateGroupResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.CreateGroupResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.CreateGroupResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.CreateGroupResponse)
+        io.jimdb.pb.Mspb.CreateGroupResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_CreateGroupResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_CreateGroupResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.CreateGroupResponse.class, io.jimdb.pb.Mspb.CreateGroupResponse.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.CreateGroupResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        if (groupBuilder_ == null) {
+          group_ = null;
+        } else {
+          group_ = null;
+          groupBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_CreateGroupResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.CreateGroupResponse getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.CreateGroupResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.CreateGroupResponse build() {
+        io.jimdb.pb.Mspb.CreateGroupResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.CreateGroupResponse buildPartial() {
+        io.jimdb.pb.Mspb.CreateGroupResponse result = new io.jimdb.pb.Mspb.CreateGroupResponse(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        if (groupBuilder_ == null) {
+          result.group_ = group_;
+        } else {
+          result.group_ = groupBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.CreateGroupResponse) {
+          return mergeFrom((io.jimdb.pb.Mspb.CreateGroupResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.CreateGroupResponse other) {
+        if (other == io.jimdb.pb.Mspb.CreateGroupResponse.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (other.hasGroup()) {
+          mergeGroup(other.getGroup());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.CreateGroupResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.CreateGroupResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.ResponseHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.ResponseHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.ResponseHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private io.jimdb.pb.Mspb.Group group_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.Group, io.jimdb.pb.Mspb.Group.Builder, io.jimdb.pb.Mspb.GroupOrBuilder> groupBuilder_;
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public boolean hasGroup() {
+        return groupBuilder_ != null || group_ != null;
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Group getGroup() {
+        if (groupBuilder_ == null) {
+          return group_ == null ? io.jimdb.pb.Mspb.Group.getDefaultInstance() : group_;
+        } else {
+          return groupBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public Builder setGroup(io.jimdb.pb.Mspb.Group value) {
+        if (groupBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          group_ = value;
+          onChanged();
+        } else {
+          groupBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public Builder setGroup(
+          io.jimdb.pb.Mspb.Group.Builder builderForValue) {
+        if (groupBuilder_ == null) {
+          group_ = builderForValue.build();
+          onChanged();
+        } else {
+          groupBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public Builder mergeGroup(io.jimdb.pb.Mspb.Group value) {
+        if (groupBuilder_ == null) {
+          if (group_ != null) {
+            group_ =
+              io.jimdb.pb.Mspb.Group.newBuilder(group_).mergeFrom(value).buildPartial();
+          } else {
+            group_ = value;
+          }
+          onChanged();
+        } else {
+          groupBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public Builder clearGroup() {
+        if (groupBuilder_ == null) {
+          group_ = null;
+          onChanged();
+        } else {
+          group_ = null;
+          groupBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Group.Builder getGroupBuilder() {
+        
+        onChanged();
+        return getGroupFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.GroupOrBuilder getGroupOrBuilder() {
+        if (groupBuilder_ != null) {
+          return groupBuilder_.getMessageOrBuilder();
+        } else {
+          return group_ == null ?
+              io.jimdb.pb.Mspb.Group.getDefaultInstance() : group_;
+        }
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.Group, io.jimdb.pb.Mspb.Group.Builder, io.jimdb.pb.Mspb.GroupOrBuilder> 
+          getGroupFieldBuilder() {
+        if (groupBuilder_ == null) {
+          groupBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.Group, io.jimdb.pb.Mspb.Group.Builder, io.jimdb.pb.Mspb.GroupOrBuilder>(
+                  getGroup(),
+                  getParentForChildren(),
+                  isClean());
+          group_ = null;
+        }
+        return groupBuilder_;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.CreateGroupResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.CreateGroupResponse)
+    private static final io.jimdb.pb.Mspb.CreateGroupResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.CreateGroupResponse();
+    }
+
+    public static io.jimdb.pb.Mspb.CreateGroupResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CreateGroupResponse>
+        PARSER = new com.google.protobuf.AbstractParser<CreateGroupResponse>() {
+      @java.lang.Override
+      public CreateGroupResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new CreateGroupResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<CreateGroupResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CreateGroupResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.CreateGroupResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface CreateSpaceRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.CreateSpaceRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeader getHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+     */
+    boolean hasRangeRequest();
+    /**
+     * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+     */
+    io.jimdb.pb.Mspb.CreateRangesRequest getRangeRequest();
+    /**
+     * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+     */
+    io.jimdb.pb.Mspb.CreateRangesRequestOrBuilder getRangeRequestOrBuilder();
+
+    /**
+     * <code>string space_name = 3;</code>
+     */
+    java.lang.String getSpaceName();
+    /**
+     * <code>string space_name = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getSpaceNameBytes();
+  }
+  /**
+   * Protobuf type {@code mspb.CreateSpaceRequest}
+   */
+  public  static final class CreateSpaceRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.CreateSpaceRequest)
+      CreateSpaceRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use CreateSpaceRequest.newBuilder() to construct.
+    private CreateSpaceRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private CreateSpaceRequest() {
+      spaceName_ = "";
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private CreateSpaceRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.RequestHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.RequestHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 18: {
+              io.jimdb.pb.Mspb.CreateRangesRequest.Builder subBuilder = null;
+              if (rangeRequest_ != null) {
+                subBuilder = rangeRequest_.toBuilder();
+              }
+              rangeRequest_ = input.readMessage(io.jimdb.pb.Mspb.CreateRangesRequest.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(rangeRequest_);
+                rangeRequest_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              spaceName_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_CreateSpaceRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_CreateSpaceRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.CreateSpaceRequest.class, io.jimdb.pb.Mspb.CreateSpaceRequest.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.RequestHeader header_;
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int RANGE_REQUEST_FIELD_NUMBER = 2;
+    private io.jimdb.pb.Mspb.CreateRangesRequest rangeRequest_;
+    /**
+     * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+     */
+    public boolean hasRangeRequest() {
+      return rangeRequest_ != null;
+    }
+    /**
+     * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.CreateRangesRequest getRangeRequest() {
+      return rangeRequest_ == null ? io.jimdb.pb.Mspb.CreateRangesRequest.getDefaultInstance() : rangeRequest_;
+    }
+    /**
+     * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.CreateRangesRequestOrBuilder getRangeRequestOrBuilder() {
+      return getRangeRequest();
+    }
+
+    public static final int SPACE_NAME_FIELD_NUMBER = 3;
+    private volatile java.lang.Object spaceName_;
+    /**
+     * <code>string space_name = 3;</code>
+     */
+    public java.lang.String getSpaceName() {
+      java.lang.Object ref = spaceName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        spaceName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string space_name = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getSpaceNameBytes() {
+      java.lang.Object ref = spaceName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        spaceName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (rangeRequest_ != null) {
+        output.writeMessage(2, getRangeRequest());
+      }
+      if (!getSpaceNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, spaceName_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (rangeRequest_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, getRangeRequest());
+      }
+      if (!getSpaceNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, spaceName_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.CreateSpaceRequest)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.CreateSpaceRequest other = (io.jimdb.pb.Mspb.CreateSpaceRequest) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && (hasRangeRequest() == other.hasRangeRequest());
+      if (hasRangeRequest()) {
+        result = result && getRangeRequest()
+            .equals(other.getRangeRequest());
+      }
+      result = result && getSpaceName()
+          .equals(other.getSpaceName());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      if (hasRangeRequest()) {
+        hash = (37 * hash) + RANGE_REQUEST_FIELD_NUMBER;
+        hash = (53 * hash) + getRangeRequest().hashCode();
+      }
+      hash = (37 * hash) + SPACE_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getSpaceName().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.CreateSpaceRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.CreateSpaceRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.CreateSpaceRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.CreateSpaceRequest)
+        io.jimdb.pb.Mspb.CreateSpaceRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_CreateSpaceRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_CreateSpaceRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.CreateSpaceRequest.class, io.jimdb.pb.Mspb.CreateSpaceRequest.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.CreateSpaceRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        if (rangeRequestBuilder_ == null) {
+          rangeRequest_ = null;
+        } else {
+          rangeRequest_ = null;
+          rangeRequestBuilder_ = null;
+        }
+        spaceName_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_CreateSpaceRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.CreateSpaceRequest getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.CreateSpaceRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.CreateSpaceRequest build() {
+        io.jimdb.pb.Mspb.CreateSpaceRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.CreateSpaceRequest buildPartial() {
+        io.jimdb.pb.Mspb.CreateSpaceRequest result = new io.jimdb.pb.Mspb.CreateSpaceRequest(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        if (rangeRequestBuilder_ == null) {
+          result.rangeRequest_ = rangeRequest_;
+        } else {
+          result.rangeRequest_ = rangeRequestBuilder_.build();
+        }
+        result.spaceName_ = spaceName_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.CreateSpaceRequest) {
+          return mergeFrom((io.jimdb.pb.Mspb.CreateSpaceRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.CreateSpaceRequest other) {
+        if (other == io.jimdb.pb.Mspb.CreateSpaceRequest.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (other.hasRangeRequest()) {
+          mergeRangeRequest(other.getRangeRequest());
+        }
+        if (!other.getSpaceName().isEmpty()) {
+          spaceName_ = other.spaceName_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.CreateSpaceRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.CreateSpaceRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.RequestHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.RequestHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.RequestHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private io.jimdb.pb.Mspb.CreateRangesRequest rangeRequest_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.CreateRangesRequest, io.jimdb.pb.Mspb.CreateRangesRequest.Builder, io.jimdb.pb.Mspb.CreateRangesRequestOrBuilder> rangeRequestBuilder_;
+      /**
+       * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+       */
+      public boolean hasRangeRequest() {
+        return rangeRequestBuilder_ != null || rangeRequest_ != null;
+      }
+      /**
+       * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.CreateRangesRequest getRangeRequest() {
+        if (rangeRequestBuilder_ == null) {
+          return rangeRequest_ == null ? io.jimdb.pb.Mspb.CreateRangesRequest.getDefaultInstance() : rangeRequest_;
+        } else {
+          return rangeRequestBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+       */
+      public Builder setRangeRequest(io.jimdb.pb.Mspb.CreateRangesRequest value) {
+        if (rangeRequestBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          rangeRequest_ = value;
+          onChanged();
+        } else {
+          rangeRequestBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+       */
+      public Builder setRangeRequest(
+          io.jimdb.pb.Mspb.CreateRangesRequest.Builder builderForValue) {
+        if (rangeRequestBuilder_ == null) {
+          rangeRequest_ = builderForValue.build();
+          onChanged();
+        } else {
+          rangeRequestBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+       */
+      public Builder mergeRangeRequest(io.jimdb.pb.Mspb.CreateRangesRequest value) {
+        if (rangeRequestBuilder_ == null) {
+          if (rangeRequest_ != null) {
+            rangeRequest_ =
+              io.jimdb.pb.Mspb.CreateRangesRequest.newBuilder(rangeRequest_).mergeFrom(value).buildPartial();
+          } else {
+            rangeRequest_ = value;
+          }
+          onChanged();
+        } else {
+          rangeRequestBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+       */
+      public Builder clearRangeRequest() {
+        if (rangeRequestBuilder_ == null) {
+          rangeRequest_ = null;
+          onChanged();
+        } else {
+          rangeRequest_ = null;
+          rangeRequestBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.CreateRangesRequest.Builder getRangeRequestBuilder() {
+        
+        onChanged();
+        return getRangeRequestFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.CreateRangesRequestOrBuilder getRangeRequestOrBuilder() {
+        if (rangeRequestBuilder_ != null) {
+          return rangeRequestBuilder_.getMessageOrBuilder();
+        } else {
+          return rangeRequest_ == null ?
+              io.jimdb.pb.Mspb.CreateRangesRequest.getDefaultInstance() : rangeRequest_;
+        }
+      }
+      /**
+       * <code>.mspb.CreateRangesRequest range_request = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.CreateRangesRequest, io.jimdb.pb.Mspb.CreateRangesRequest.Builder, io.jimdb.pb.Mspb.CreateRangesRequestOrBuilder> 
+          getRangeRequestFieldBuilder() {
+        if (rangeRequestBuilder_ == null) {
+          rangeRequestBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.CreateRangesRequest, io.jimdb.pb.Mspb.CreateRangesRequest.Builder, io.jimdb.pb.Mspb.CreateRangesRequestOrBuilder>(
+                  getRangeRequest(),
+                  getParentForChildren(),
+                  isClean());
+          rangeRequest_ = null;
+        }
+        return rangeRequestBuilder_;
+      }
+
+      private java.lang.Object spaceName_ = "";
+      /**
+       * <code>string space_name = 3;</code>
+       */
+      public java.lang.String getSpaceName() {
+        java.lang.Object ref = spaceName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          spaceName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string space_name = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getSpaceNameBytes() {
+        java.lang.Object ref = spaceName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          spaceName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string space_name = 3;</code>
+       */
+      public Builder setSpaceName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        spaceName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string space_name = 3;</code>
+       */
+      public Builder clearSpaceName() {
+        
+        spaceName_ = getDefaultInstance().getSpaceName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string space_name = 3;</code>
+       */
+      public Builder setSpaceNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        spaceName_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.CreateSpaceRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.CreateSpaceRequest)
+    private static final io.jimdb.pb.Mspb.CreateSpaceRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.CreateSpaceRequest();
+    }
+
+    public static io.jimdb.pb.Mspb.CreateSpaceRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CreateSpaceRequest>
+        PARSER = new com.google.protobuf.AbstractParser<CreateSpaceRequest>() {
+      @java.lang.Override
+      public CreateSpaceRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new CreateSpaceRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<CreateSpaceRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CreateSpaceRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.CreateSpaceRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface CreateSpaceResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.CreateSpaceResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeader getHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>.mspb.Space space = 2;</code>
+     */
+    boolean hasSpace();
+    /**
+     * <code>.mspb.Space space = 2;</code>
+     */
+    io.jimdb.pb.Mspb.Space getSpace();
+    /**
+     * <code>.mspb.Space space = 2;</code>
+     */
+    io.jimdb.pb.Mspb.SpaceOrBuilder getSpaceOrBuilder();
+  }
+  /**
+   * Protobuf type {@code mspb.CreateSpaceResponse}
+   */
+  public  static final class CreateSpaceResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.CreateSpaceResponse)
+      CreateSpaceResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use CreateSpaceResponse.newBuilder() to construct.
+    private CreateSpaceResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private CreateSpaceResponse() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private CreateSpaceResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.ResponseHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.ResponseHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 18: {
+              io.jimdb.pb.Mspb.Space.Builder subBuilder = null;
+              if (space_ != null) {
+                subBuilder = space_.toBuilder();
+              }
+              space_ = input.readMessage(io.jimdb.pb.Mspb.Space.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(space_);
+                space_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_CreateSpaceResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_CreateSpaceResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.CreateSpaceResponse.class, io.jimdb.pb.Mspb.CreateSpaceResponse.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.ResponseHeader header_;
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int SPACE_FIELD_NUMBER = 2;
+    private io.jimdb.pb.Mspb.Space space_;
+    /**
+     * <code>.mspb.Space space = 2;</code>
+     */
+    public boolean hasSpace() {
+      return space_ != null;
+    }
+    /**
+     * <code>.mspb.Space space = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.Space getSpace() {
+      return space_ == null ? io.jimdb.pb.Mspb.Space.getDefaultInstance() : space_;
+    }
+    /**
+     * <code>.mspb.Space space = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.SpaceOrBuilder getSpaceOrBuilder() {
+      return getSpace();
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (space_ != null) {
+        output.writeMessage(2, getSpace());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (space_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, getSpace());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.CreateSpaceResponse)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.CreateSpaceResponse other = (io.jimdb.pb.Mspb.CreateSpaceResponse) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && (hasSpace() == other.hasSpace());
+      if (hasSpace()) {
+        result = result && getSpace()
+            .equals(other.getSpace());
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      if (hasSpace()) {
+        hash = (37 * hash) + SPACE_FIELD_NUMBER;
+        hash = (53 * hash) + getSpace().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.CreateSpaceResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.CreateSpaceResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.CreateSpaceResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.CreateSpaceResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.CreateSpaceResponse)
+        io.jimdb.pb.Mspb.CreateSpaceResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_CreateSpaceResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_CreateSpaceResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.CreateSpaceResponse.class, io.jimdb.pb.Mspb.CreateSpaceResponse.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.CreateSpaceResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        if (spaceBuilder_ == null) {
+          space_ = null;
+        } else {
+          space_ = null;
+          spaceBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_CreateSpaceResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.CreateSpaceResponse getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.CreateSpaceResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.CreateSpaceResponse build() {
+        io.jimdb.pb.Mspb.CreateSpaceResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.CreateSpaceResponse buildPartial() {
+        io.jimdb.pb.Mspb.CreateSpaceResponse result = new io.jimdb.pb.Mspb.CreateSpaceResponse(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        if (spaceBuilder_ == null) {
+          result.space_ = space_;
+        } else {
+          result.space_ = spaceBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.CreateSpaceResponse) {
+          return mergeFrom((io.jimdb.pb.Mspb.CreateSpaceResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.CreateSpaceResponse other) {
+        if (other == io.jimdb.pb.Mspb.CreateSpaceResponse.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (other.hasSpace()) {
+          mergeSpace(other.getSpace());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.CreateSpaceResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.CreateSpaceResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.ResponseHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.ResponseHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.ResponseHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private io.jimdb.pb.Mspb.Space space_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.Space, io.jimdb.pb.Mspb.Space.Builder, io.jimdb.pb.Mspb.SpaceOrBuilder> spaceBuilder_;
+      /**
+       * <code>.mspb.Space space = 2;</code>
+       */
+      public boolean hasSpace() {
+        return spaceBuilder_ != null || space_ != null;
+      }
+      /**
+       * <code>.mspb.Space space = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Space getSpace() {
+        if (spaceBuilder_ == null) {
+          return space_ == null ? io.jimdb.pb.Mspb.Space.getDefaultInstance() : space_;
+        } else {
+          return spaceBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.Space space = 2;</code>
+       */
+      public Builder setSpace(io.jimdb.pb.Mspb.Space value) {
+        if (spaceBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          space_ = value;
+          onChanged();
+        } else {
+          spaceBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Space space = 2;</code>
+       */
+      public Builder setSpace(
+          io.jimdb.pb.Mspb.Space.Builder builderForValue) {
+        if (spaceBuilder_ == null) {
+          space_ = builderForValue.build();
+          onChanged();
+        } else {
+          spaceBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Space space = 2;</code>
+       */
+      public Builder mergeSpace(io.jimdb.pb.Mspb.Space value) {
+        if (spaceBuilder_ == null) {
+          if (space_ != null) {
+            space_ =
+              io.jimdb.pb.Mspb.Space.newBuilder(space_).mergeFrom(value).buildPartial();
+          } else {
+            space_ = value;
+          }
+          onChanged();
+        } else {
+          spaceBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Space space = 2;</code>
+       */
+      public Builder clearSpace() {
+        if (spaceBuilder_ == null) {
+          space_ = null;
+          onChanged();
+        } else {
+          space_ = null;
+          spaceBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Space space = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Space.Builder getSpaceBuilder() {
+        
+        onChanged();
+        return getSpaceFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.Space space = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.SpaceOrBuilder getSpaceOrBuilder() {
+        if (spaceBuilder_ != null) {
+          return spaceBuilder_.getMessageOrBuilder();
+        } else {
+          return space_ == null ?
+              io.jimdb.pb.Mspb.Space.getDefaultInstance() : space_;
+        }
+      }
+      /**
+       * <code>.mspb.Space space = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.Space, io.jimdb.pb.Mspb.Space.Builder, io.jimdb.pb.Mspb.SpaceOrBuilder> 
+          getSpaceFieldBuilder() {
+        if (spaceBuilder_ == null) {
+          spaceBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.Space, io.jimdb.pb.Mspb.Space.Builder, io.jimdb.pb.Mspb.SpaceOrBuilder>(
+                  getSpace(),
+                  getParentForChildren(),
+                  isClean());
+          space_ = null;
+        }
+        return spaceBuilder_;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.CreateSpaceResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.CreateSpaceResponse)
+    private static final io.jimdb.pb.Mspb.CreateSpaceResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.CreateSpaceResponse();
+    }
+
+    public static io.jimdb.pb.Mspb.CreateSpaceResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CreateSpaceResponse>
+        PARSER = new com.google.protobuf.AbstractParser<CreateSpaceResponse>() {
+      @java.lang.Override
+      public CreateSpaceResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new CreateSpaceResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<CreateSpaceResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CreateSpaceResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.CreateSpaceResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface GetSpaceTokenRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.GetSpaceTokenRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeader getHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    int getGroupId();
+
+    /**
+     * <code>int32 space_id = 3;</code>
+     */
+    int getSpaceId();
+  }
+  /**
+   * Protobuf type {@code mspb.GetSpaceTokenRequest}
+   */
+  public  static final class GetSpaceTokenRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.GetSpaceTokenRequest)
+      GetSpaceTokenRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GetSpaceTokenRequest.newBuilder() to construct.
+    private GetSpaceTokenRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GetSpaceTokenRequest() {
+      groupId_ = 0;
+      spaceId_ = 0;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GetSpaceTokenRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.RequestHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.RequestHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 16: {
+
+              groupId_ = input.readInt32();
+              break;
+            }
+            case 24: {
+
+              spaceId_ = input.readInt32();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceTokenRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceTokenRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.GetSpaceTokenRequest.class, io.jimdb.pb.Mspb.GetSpaceTokenRequest.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.RequestHeader header_;
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int GROUP_ID_FIELD_NUMBER = 2;
+    private int groupId_;
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    public int getGroupId() {
+      return groupId_;
+    }
+
+    public static final int SPACE_ID_FIELD_NUMBER = 3;
+    private int spaceId_;
+    /**
+     * <code>int32 space_id = 3;</code>
+     */
+    public int getSpaceId() {
+      return spaceId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        output.writeInt32(2, groupId_);
+      }
+      if (spaceId_ != 0) {
+        output.writeInt32(3, spaceId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, groupId_);
+      }
+      if (spaceId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, spaceId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.GetSpaceTokenRequest)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.GetSpaceTokenRequest other = (io.jimdb.pb.Mspb.GetSpaceTokenRequest) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && (getGroupId()
+          == other.getGroupId());
+      result = result && (getSpaceId()
+          == other.getSpaceId());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      hash = (37 * hash) + GROUP_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getGroupId();
+      hash = (37 * hash) + SPACE_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getSpaceId();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.GetSpaceTokenRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.GetSpaceTokenRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.GetSpaceTokenRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.GetSpaceTokenRequest)
+        io.jimdb.pb.Mspb.GetSpaceTokenRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceTokenRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceTokenRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.GetSpaceTokenRequest.class, io.jimdb.pb.Mspb.GetSpaceTokenRequest.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.GetSpaceTokenRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        groupId_ = 0;
+
+        spaceId_ = 0;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceTokenRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetSpaceTokenRequest getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.GetSpaceTokenRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetSpaceTokenRequest build() {
+        io.jimdb.pb.Mspb.GetSpaceTokenRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetSpaceTokenRequest buildPartial() {
+        io.jimdb.pb.Mspb.GetSpaceTokenRequest result = new io.jimdb.pb.Mspb.GetSpaceTokenRequest(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        result.groupId_ = groupId_;
+        result.spaceId_ = spaceId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.GetSpaceTokenRequest) {
+          return mergeFrom((io.jimdb.pb.Mspb.GetSpaceTokenRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.GetSpaceTokenRequest other) {
+        if (other == io.jimdb.pb.Mspb.GetSpaceTokenRequest.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (other.getGroupId() != 0) {
+          setGroupId(other.getGroupId());
+        }
+        if (other.getSpaceId() != 0) {
+          setSpaceId(other.getSpaceId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.GetSpaceTokenRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.GetSpaceTokenRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.RequestHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.RequestHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.RequestHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private int groupId_ ;
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public int getGroupId() {
+        return groupId_;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder setGroupId(int value) {
+        
+        groupId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder clearGroupId() {
+        
+        groupId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int spaceId_ ;
+      /**
+       * <code>int32 space_id = 3;</code>
+       */
+      public int getSpaceId() {
+        return spaceId_;
+      }
+      /**
+       * <code>int32 space_id = 3;</code>
+       */
+      public Builder setSpaceId(int value) {
+        
+        spaceId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 space_id = 3;</code>
+       */
+      public Builder clearSpaceId() {
+        
+        spaceId_ = 0;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.GetSpaceTokenRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.GetSpaceTokenRequest)
+    private static final io.jimdb.pb.Mspb.GetSpaceTokenRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.GetSpaceTokenRequest();
+    }
+
+    public static io.jimdb.pb.Mspb.GetSpaceTokenRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetSpaceTokenRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetSpaceTokenRequest>() {
+      @java.lang.Override
+      public GetSpaceTokenRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GetSpaceTokenRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetSpaceTokenRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetSpaceTokenRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.GetSpaceTokenRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface GetSpaceTokenResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.GetSpaceTokenResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeader getHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>string token = 2;</code>
+     */
+    java.lang.String getToken();
+    /**
+     * <code>string token = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getTokenBytes();
+  }
+  /**
+   * Protobuf type {@code mspb.GetSpaceTokenResponse}
+   */
+  public  static final class GetSpaceTokenResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.GetSpaceTokenResponse)
+      GetSpaceTokenResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GetSpaceTokenResponse.newBuilder() to construct.
+    private GetSpaceTokenResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GetSpaceTokenResponse() {
+      token_ = "";
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GetSpaceTokenResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.ResponseHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.ResponseHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              token_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceTokenResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceTokenResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.GetSpaceTokenResponse.class, io.jimdb.pb.Mspb.GetSpaceTokenResponse.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.ResponseHeader header_;
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int TOKEN_FIELD_NUMBER = 2;
+    private volatile java.lang.Object token_;
+    /**
+     * <code>string token = 2;</code>
+     */
+    public java.lang.String getToken() {
+      java.lang.Object ref = token_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        token_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string token = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTokenBytes() {
+      java.lang.Object ref = token_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        token_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (!getTokenBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, token_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (!getTokenBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, token_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.GetSpaceTokenResponse)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.GetSpaceTokenResponse other = (io.jimdb.pb.Mspb.GetSpaceTokenResponse) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && getToken()
+          .equals(other.getToken());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      hash = (37 * hash) + TOKEN_FIELD_NUMBER;
+      hash = (53 * hash) + getToken().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.GetSpaceTokenResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceTokenResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.GetSpaceTokenResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.GetSpaceTokenResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.GetSpaceTokenResponse)
+        io.jimdb.pb.Mspb.GetSpaceTokenResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceTokenResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceTokenResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.GetSpaceTokenResponse.class, io.jimdb.pb.Mspb.GetSpaceTokenResponse.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.GetSpaceTokenResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        token_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceTokenResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetSpaceTokenResponse getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.GetSpaceTokenResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetSpaceTokenResponse build() {
+        io.jimdb.pb.Mspb.GetSpaceTokenResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetSpaceTokenResponse buildPartial() {
+        io.jimdb.pb.Mspb.GetSpaceTokenResponse result = new io.jimdb.pb.Mspb.GetSpaceTokenResponse(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        result.token_ = token_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.GetSpaceTokenResponse) {
+          return mergeFrom((io.jimdb.pb.Mspb.GetSpaceTokenResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.GetSpaceTokenResponse other) {
+        if (other == io.jimdb.pb.Mspb.GetSpaceTokenResponse.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (!other.getToken().isEmpty()) {
+          token_ = other.token_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.GetSpaceTokenResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.GetSpaceTokenResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.ResponseHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.ResponseHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.ResponseHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private java.lang.Object token_ = "";
+      /**
+       * <code>string token = 2;</code>
+       */
+      public java.lang.String getToken() {
+        java.lang.Object ref = token_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          token_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string token = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getTokenBytes() {
+        java.lang.Object ref = token_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          token_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string token = 2;</code>
+       */
+      public Builder setToken(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        token_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string token = 2;</code>
+       */
+      public Builder clearToken() {
+        
+        token_ = getDefaultInstance().getToken();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string token = 2;</code>
+       */
+      public Builder setTokenBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        token_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.GetSpaceTokenResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.GetSpaceTokenResponse)
+    private static final io.jimdb.pb.Mspb.GetSpaceTokenResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.GetSpaceTokenResponse();
+    }
+
+    public static io.jimdb.pb.Mspb.GetSpaceTokenResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetSpaceTokenResponse>
+        PARSER = new com.google.protobuf.AbstractParser<GetSpaceTokenResponse>() {
+      @java.lang.Override
+      public GetSpaceTokenResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GetSpaceTokenResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetSpaceTokenResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetSpaceTokenResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.GetSpaceTokenResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface GroupListResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.GroupListResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeader getHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>repeated .mspb.Group groups = 2;</code>
+     */
+    java.util.List<io.jimdb.pb.Mspb.Group> 
+        getGroupsList();
+    /**
+     * <code>repeated .mspb.Group groups = 2;</code>
+     */
+    io.jimdb.pb.Mspb.Group getGroups(int index);
+    /**
+     * <code>repeated .mspb.Group groups = 2;</code>
+     */
+    int getGroupsCount();
+    /**
+     * <code>repeated .mspb.Group groups = 2;</code>
+     */
+    java.util.List<? extends io.jimdb.pb.Mspb.GroupOrBuilder> 
+        getGroupsOrBuilderList();
+    /**
+     * <code>repeated .mspb.Group groups = 2;</code>
+     */
+    io.jimdb.pb.Mspb.GroupOrBuilder getGroupsOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code mspb.GroupListResponse}
+   */
+  public  static final class GroupListResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.GroupListResponse)
+      GroupListResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GroupListResponse.newBuilder() to construct.
+    private GroupListResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GroupListResponse() {
+      groups_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GroupListResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.ResponseHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.ResponseHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                groups_ = new java.util.ArrayList<io.jimdb.pb.Mspb.Group>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              groups_.add(
+                  input.readMessage(io.jimdb.pb.Mspb.Group.parser(), extensionRegistry));
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+          groups_ = java.util.Collections.unmodifiableList(groups_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GroupListResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GroupListResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.GroupListResponse.class, io.jimdb.pb.Mspb.GroupListResponse.Builder.class);
+    }
+
+    private int bitField0_;
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.ResponseHeader header_;
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int GROUPS_FIELD_NUMBER = 2;
+    private java.util.List<io.jimdb.pb.Mspb.Group> groups_;
+    /**
+     * <code>repeated .mspb.Group groups = 2;</code>
+     */
+    public java.util.List<io.jimdb.pb.Mspb.Group> getGroupsList() {
+      return groups_;
+    }
+    /**
+     * <code>repeated .mspb.Group groups = 2;</code>
+     */
+    public java.util.List<? extends io.jimdb.pb.Mspb.GroupOrBuilder> 
+        getGroupsOrBuilderList() {
+      return groups_;
+    }
+    /**
+     * <code>repeated .mspb.Group groups = 2;</code>
+     */
+    public int getGroupsCount() {
+      return groups_.size();
+    }
+    /**
+     * <code>repeated .mspb.Group groups = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.Group getGroups(int index) {
+      return groups_.get(index);
+    }
+    /**
+     * <code>repeated .mspb.Group groups = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.GroupOrBuilder getGroupsOrBuilder(
+        int index) {
+      return groups_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      for (int i = 0; i < groups_.size(); i++) {
+        output.writeMessage(2, groups_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      for (int i = 0; i < groups_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, groups_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.GroupListResponse)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.GroupListResponse other = (io.jimdb.pb.Mspb.GroupListResponse) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && getGroupsList()
+          .equals(other.getGroupsList());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      if (getGroupsCount() > 0) {
+        hash = (37 * hash) + GROUPS_FIELD_NUMBER;
+        hash = (53 * hash) + getGroupsList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.GroupListResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GroupListResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GroupListResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GroupListResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GroupListResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GroupListResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GroupListResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GroupListResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GroupListResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GroupListResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GroupListResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GroupListResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.GroupListResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.GroupListResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.GroupListResponse)
+        io.jimdb.pb.Mspb.GroupListResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GroupListResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GroupListResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.GroupListResponse.class, io.jimdb.pb.Mspb.GroupListResponse.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.GroupListResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+          getGroupsFieldBuilder();
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        if (groupsBuilder_ == null) {
+          groups_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          groupsBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GroupListResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GroupListResponse getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.GroupListResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GroupListResponse build() {
+        io.jimdb.pb.Mspb.GroupListResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GroupListResponse buildPartial() {
+        io.jimdb.pb.Mspb.GroupListResponse result = new io.jimdb.pb.Mspb.GroupListResponse(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        if (groupsBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002)) {
+            groups_ = java.util.Collections.unmodifiableList(groups_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.groups_ = groups_;
+        } else {
+          result.groups_ = groupsBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.GroupListResponse) {
+          return mergeFrom((io.jimdb.pb.Mspb.GroupListResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.GroupListResponse other) {
+        if (other == io.jimdb.pb.Mspb.GroupListResponse.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (groupsBuilder_ == null) {
+          if (!other.groups_.isEmpty()) {
+            if (groups_.isEmpty()) {
+              groups_ = other.groups_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureGroupsIsMutable();
+              groups_.addAll(other.groups_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.groups_.isEmpty()) {
+            if (groupsBuilder_.isEmpty()) {
+              groupsBuilder_.dispose();
+              groupsBuilder_ = null;
+              groups_ = other.groups_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              groupsBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getGroupsFieldBuilder() : null;
+            } else {
+              groupsBuilder_.addAllMessages(other.groups_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.GroupListResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.GroupListResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private io.jimdb.pb.Mspb.ResponseHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.ResponseHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.ResponseHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private java.util.List<io.jimdb.pb.Mspb.Group> groups_ =
+        java.util.Collections.emptyList();
+      private void ensureGroupsIsMutable() {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+          groups_ = new java.util.ArrayList<io.jimdb.pb.Mspb.Group>(groups_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          io.jimdb.pb.Mspb.Group, io.jimdb.pb.Mspb.Group.Builder, io.jimdb.pb.Mspb.GroupOrBuilder> groupsBuilder_;
+
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public java.util.List<io.jimdb.pb.Mspb.Group> getGroupsList() {
+        if (groupsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(groups_);
+        } else {
+          return groupsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public int getGroupsCount() {
+        if (groupsBuilder_ == null) {
+          return groups_.size();
+        } else {
+          return groupsBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Group getGroups(int index) {
+        if (groupsBuilder_ == null) {
+          return groups_.get(index);
+        } else {
+          return groupsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public Builder setGroups(
+          int index, io.jimdb.pb.Mspb.Group value) {
+        if (groupsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureGroupsIsMutable();
+          groups_.set(index, value);
+          onChanged();
+        } else {
+          groupsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public Builder setGroups(
+          int index, io.jimdb.pb.Mspb.Group.Builder builderForValue) {
+        if (groupsBuilder_ == null) {
+          ensureGroupsIsMutable();
+          groups_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          groupsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public Builder addGroups(io.jimdb.pb.Mspb.Group value) {
+        if (groupsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureGroupsIsMutable();
+          groups_.add(value);
+          onChanged();
+        } else {
+          groupsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public Builder addGroups(
+          int index, io.jimdb.pb.Mspb.Group value) {
+        if (groupsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureGroupsIsMutable();
+          groups_.add(index, value);
+          onChanged();
+        } else {
+          groupsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public Builder addGroups(
+          io.jimdb.pb.Mspb.Group.Builder builderForValue) {
+        if (groupsBuilder_ == null) {
+          ensureGroupsIsMutable();
+          groups_.add(builderForValue.build());
+          onChanged();
+        } else {
+          groupsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public Builder addGroups(
+          int index, io.jimdb.pb.Mspb.Group.Builder builderForValue) {
+        if (groupsBuilder_ == null) {
+          ensureGroupsIsMutable();
+          groups_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          groupsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public Builder addAllGroups(
+          java.lang.Iterable<? extends io.jimdb.pb.Mspb.Group> values) {
+        if (groupsBuilder_ == null) {
+          ensureGroupsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, groups_);
+          onChanged();
+        } else {
+          groupsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public Builder clearGroups() {
+        if (groupsBuilder_ == null) {
+          groups_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          groupsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public Builder removeGroups(int index) {
+        if (groupsBuilder_ == null) {
+          ensureGroupsIsMutable();
+          groups_.remove(index);
+          onChanged();
+        } else {
+          groupsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Group.Builder getGroupsBuilder(
+          int index) {
+        return getGroupsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.GroupOrBuilder getGroupsOrBuilder(
+          int index) {
+        if (groupsBuilder_ == null) {
+          return groups_.get(index);  } else {
+          return groupsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public java.util.List<? extends io.jimdb.pb.Mspb.GroupOrBuilder> 
+           getGroupsOrBuilderList() {
+        if (groupsBuilder_ != null) {
+          return groupsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(groups_);
+        }
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Group.Builder addGroupsBuilder() {
+        return getGroupsFieldBuilder().addBuilder(
+            io.jimdb.pb.Mspb.Group.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Group.Builder addGroupsBuilder(
+          int index) {
+        return getGroupsFieldBuilder().addBuilder(
+            index, io.jimdb.pb.Mspb.Group.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .mspb.Group groups = 2;</code>
+       */
+      public java.util.List<io.jimdb.pb.Mspb.Group.Builder> 
+           getGroupsBuilderList() {
+        return getGroupsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          io.jimdb.pb.Mspb.Group, io.jimdb.pb.Mspb.Group.Builder, io.jimdb.pb.Mspb.GroupOrBuilder> 
+          getGroupsFieldBuilder() {
+        if (groupsBuilder_ == null) {
+          groupsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              io.jimdb.pb.Mspb.Group, io.jimdb.pb.Mspb.Group.Builder, io.jimdb.pb.Mspb.GroupOrBuilder>(
+                  groups_,
+                  ((bitField0_ & 0x00000002) == 0x00000002),
+                  getParentForChildren(),
+                  isClean());
+          groups_ = null;
+        }
+        return groupsBuilder_;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.GroupListResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.GroupListResponse)
+    private static final io.jimdb.pb.Mspb.GroupListResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.GroupListResponse();
+    }
+
+    public static io.jimdb.pb.Mspb.GroupListResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GroupListResponse>
+        PARSER = new com.google.protobuf.AbstractParser<GroupListResponse>() {
+      @java.lang.Override
+      public GroupListResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GroupListResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<GroupListResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GroupListResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.GroupListResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface SpaceListRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.SpaceListRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeader getHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    int getGroupId();
+  }
+  /**
+   * Protobuf type {@code mspb.SpaceListRequest}
+   */
+  public  static final class SpaceListRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.SpaceListRequest)
+      SpaceListRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use SpaceListRequest.newBuilder() to construct.
+    private SpaceListRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private SpaceListRequest() {
+      groupId_ = 0;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private SpaceListRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.RequestHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.RequestHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 16: {
+
+              groupId_ = input.readInt32();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_SpaceListRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_SpaceListRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.SpaceListRequest.class, io.jimdb.pb.Mspb.SpaceListRequest.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.RequestHeader header_;
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int GROUP_ID_FIELD_NUMBER = 2;
+    private int groupId_;
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    public int getGroupId() {
+      return groupId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        output.writeInt32(2, groupId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, groupId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.SpaceListRequest)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.SpaceListRequest other = (io.jimdb.pb.Mspb.SpaceListRequest) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && (getGroupId()
+          == other.getGroupId());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      hash = (37 * hash) + GROUP_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getGroupId();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.SpaceListRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.SpaceListRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.SpaceListRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.SpaceListRequest)
+        io.jimdb.pb.Mspb.SpaceListRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_SpaceListRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_SpaceListRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.SpaceListRequest.class, io.jimdb.pb.Mspb.SpaceListRequest.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.SpaceListRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        groupId_ = 0;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_SpaceListRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.SpaceListRequest getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.SpaceListRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.SpaceListRequest build() {
+        io.jimdb.pb.Mspb.SpaceListRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.SpaceListRequest buildPartial() {
+        io.jimdb.pb.Mspb.SpaceListRequest result = new io.jimdb.pb.Mspb.SpaceListRequest(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        result.groupId_ = groupId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.SpaceListRequest) {
+          return mergeFrom((io.jimdb.pb.Mspb.SpaceListRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.SpaceListRequest other) {
+        if (other == io.jimdb.pb.Mspb.SpaceListRequest.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (other.getGroupId() != 0) {
+          setGroupId(other.getGroupId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.SpaceListRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.SpaceListRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.RequestHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.RequestHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.RequestHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private int groupId_ ;
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public int getGroupId() {
+        return groupId_;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder setGroupId(int value) {
+        
+        groupId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder clearGroupId() {
+        
+        groupId_ = 0;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.SpaceListRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.SpaceListRequest)
+    private static final io.jimdb.pb.Mspb.SpaceListRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.SpaceListRequest();
+    }
+
+    public static io.jimdb.pb.Mspb.SpaceListRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<SpaceListRequest>
+        PARSER = new com.google.protobuf.AbstractParser<SpaceListRequest>() {
+      @java.lang.Override
+      public SpaceListRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new SpaceListRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<SpaceListRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SpaceListRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.SpaceListRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface SpaceListResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.SpaceListResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeader getHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>repeated .mspb.Space spaces = 2;</code>
+     */
+    java.util.List<io.jimdb.pb.Mspb.Space> 
+        getSpacesList();
+    /**
+     * <code>repeated .mspb.Space spaces = 2;</code>
+     */
+    io.jimdb.pb.Mspb.Space getSpaces(int index);
+    /**
+     * <code>repeated .mspb.Space spaces = 2;</code>
+     */
+    int getSpacesCount();
+    /**
+     * <code>repeated .mspb.Space spaces = 2;</code>
+     */
+    java.util.List<? extends io.jimdb.pb.Mspb.SpaceOrBuilder> 
+        getSpacesOrBuilderList();
+    /**
+     * <code>repeated .mspb.Space spaces = 2;</code>
+     */
+    io.jimdb.pb.Mspb.SpaceOrBuilder getSpacesOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code mspb.SpaceListResponse}
+   */
+  public  static final class SpaceListResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.SpaceListResponse)
+      SpaceListResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use SpaceListResponse.newBuilder() to construct.
+    private SpaceListResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private SpaceListResponse() {
+      spaces_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private SpaceListResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.ResponseHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.ResponseHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                spaces_ = new java.util.ArrayList<io.jimdb.pb.Mspb.Space>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              spaces_.add(
+                  input.readMessage(io.jimdb.pb.Mspb.Space.parser(), extensionRegistry));
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+          spaces_ = java.util.Collections.unmodifiableList(spaces_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_SpaceListResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_SpaceListResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.SpaceListResponse.class, io.jimdb.pb.Mspb.SpaceListResponse.Builder.class);
+    }
+
+    private int bitField0_;
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.ResponseHeader header_;
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int SPACES_FIELD_NUMBER = 2;
+    private java.util.List<io.jimdb.pb.Mspb.Space> spaces_;
+    /**
+     * <code>repeated .mspb.Space spaces = 2;</code>
+     */
+    public java.util.List<io.jimdb.pb.Mspb.Space> getSpacesList() {
+      return spaces_;
+    }
+    /**
+     * <code>repeated .mspb.Space spaces = 2;</code>
+     */
+    public java.util.List<? extends io.jimdb.pb.Mspb.SpaceOrBuilder> 
+        getSpacesOrBuilderList() {
+      return spaces_;
+    }
+    /**
+     * <code>repeated .mspb.Space spaces = 2;</code>
+     */
+    public int getSpacesCount() {
+      return spaces_.size();
+    }
+    /**
+     * <code>repeated .mspb.Space spaces = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.Space getSpaces(int index) {
+      return spaces_.get(index);
+    }
+    /**
+     * <code>repeated .mspb.Space spaces = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.SpaceOrBuilder getSpacesOrBuilder(
+        int index) {
+      return spaces_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      for (int i = 0; i < spaces_.size(); i++) {
+        output.writeMessage(2, spaces_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      for (int i = 0; i < spaces_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, spaces_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.SpaceListResponse)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.SpaceListResponse other = (io.jimdb.pb.Mspb.SpaceListResponse) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && getSpacesList()
+          .equals(other.getSpacesList());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      if (getSpacesCount() > 0) {
+        hash = (37 * hash) + SPACES_FIELD_NUMBER;
+        hash = (53 * hash) + getSpacesList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.SpaceListResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.SpaceListResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.SpaceListResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.SpaceListResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.SpaceListResponse)
+        io.jimdb.pb.Mspb.SpaceListResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_SpaceListResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_SpaceListResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.SpaceListResponse.class, io.jimdb.pb.Mspb.SpaceListResponse.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.SpaceListResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+          getSpacesFieldBuilder();
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        if (spacesBuilder_ == null) {
+          spaces_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          spacesBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_SpaceListResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.SpaceListResponse getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.SpaceListResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.SpaceListResponse build() {
+        io.jimdb.pb.Mspb.SpaceListResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.SpaceListResponse buildPartial() {
+        io.jimdb.pb.Mspb.SpaceListResponse result = new io.jimdb.pb.Mspb.SpaceListResponse(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        if (spacesBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002)) {
+            spaces_ = java.util.Collections.unmodifiableList(spaces_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.spaces_ = spaces_;
+        } else {
+          result.spaces_ = spacesBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.SpaceListResponse) {
+          return mergeFrom((io.jimdb.pb.Mspb.SpaceListResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.SpaceListResponse other) {
+        if (other == io.jimdb.pb.Mspb.SpaceListResponse.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (spacesBuilder_ == null) {
+          if (!other.spaces_.isEmpty()) {
+            if (spaces_.isEmpty()) {
+              spaces_ = other.spaces_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureSpacesIsMutable();
+              spaces_.addAll(other.spaces_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.spaces_.isEmpty()) {
+            if (spacesBuilder_.isEmpty()) {
+              spacesBuilder_.dispose();
+              spacesBuilder_ = null;
+              spaces_ = other.spaces_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              spacesBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getSpacesFieldBuilder() : null;
+            } else {
+              spacesBuilder_.addAllMessages(other.spaces_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.SpaceListResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.SpaceListResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private io.jimdb.pb.Mspb.ResponseHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.ResponseHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.ResponseHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private java.util.List<io.jimdb.pb.Mspb.Space> spaces_ =
+        java.util.Collections.emptyList();
+      private void ensureSpacesIsMutable() {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+          spaces_ = new java.util.ArrayList<io.jimdb.pb.Mspb.Space>(spaces_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          io.jimdb.pb.Mspb.Space, io.jimdb.pb.Mspb.Space.Builder, io.jimdb.pb.Mspb.SpaceOrBuilder> spacesBuilder_;
+
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public java.util.List<io.jimdb.pb.Mspb.Space> getSpacesList() {
+        if (spacesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(spaces_);
+        } else {
+          return spacesBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public int getSpacesCount() {
+        if (spacesBuilder_ == null) {
+          return spaces_.size();
+        } else {
+          return spacesBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Space getSpaces(int index) {
+        if (spacesBuilder_ == null) {
+          return spaces_.get(index);
+        } else {
+          return spacesBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public Builder setSpaces(
+          int index, io.jimdb.pb.Mspb.Space value) {
+        if (spacesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureSpacesIsMutable();
+          spaces_.set(index, value);
+          onChanged();
+        } else {
+          spacesBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public Builder setSpaces(
+          int index, io.jimdb.pb.Mspb.Space.Builder builderForValue) {
+        if (spacesBuilder_ == null) {
+          ensureSpacesIsMutable();
+          spaces_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          spacesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public Builder addSpaces(io.jimdb.pb.Mspb.Space value) {
+        if (spacesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureSpacesIsMutable();
+          spaces_.add(value);
+          onChanged();
+        } else {
+          spacesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public Builder addSpaces(
+          int index, io.jimdb.pb.Mspb.Space value) {
+        if (spacesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureSpacesIsMutable();
+          spaces_.add(index, value);
+          onChanged();
+        } else {
+          spacesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public Builder addSpaces(
+          io.jimdb.pb.Mspb.Space.Builder builderForValue) {
+        if (spacesBuilder_ == null) {
+          ensureSpacesIsMutable();
+          spaces_.add(builderForValue.build());
+          onChanged();
+        } else {
+          spacesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public Builder addSpaces(
+          int index, io.jimdb.pb.Mspb.Space.Builder builderForValue) {
+        if (spacesBuilder_ == null) {
+          ensureSpacesIsMutable();
+          spaces_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          spacesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public Builder addAllSpaces(
+          java.lang.Iterable<? extends io.jimdb.pb.Mspb.Space> values) {
+        if (spacesBuilder_ == null) {
+          ensureSpacesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, spaces_);
+          onChanged();
+        } else {
+          spacesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public Builder clearSpaces() {
+        if (spacesBuilder_ == null) {
+          spaces_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          spacesBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public Builder removeSpaces(int index) {
+        if (spacesBuilder_ == null) {
+          ensureSpacesIsMutable();
+          spaces_.remove(index);
+          onChanged();
+        } else {
+          spacesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Space.Builder getSpacesBuilder(
+          int index) {
+        return getSpacesFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.SpaceOrBuilder getSpacesOrBuilder(
+          int index) {
+        if (spacesBuilder_ == null) {
+          return spaces_.get(index);  } else {
+          return spacesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public java.util.List<? extends io.jimdb.pb.Mspb.SpaceOrBuilder> 
+           getSpacesOrBuilderList() {
+        if (spacesBuilder_ != null) {
+          return spacesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(spaces_);
+        }
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Space.Builder addSpacesBuilder() {
+        return getSpacesFieldBuilder().addBuilder(
+            io.jimdb.pb.Mspb.Space.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Space.Builder addSpacesBuilder(
+          int index) {
+        return getSpacesFieldBuilder().addBuilder(
+            index, io.jimdb.pb.Mspb.Space.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .mspb.Space spaces = 2;</code>
+       */
+      public java.util.List<io.jimdb.pb.Mspb.Space.Builder> 
+           getSpacesBuilderList() {
+        return getSpacesFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          io.jimdb.pb.Mspb.Space, io.jimdb.pb.Mspb.Space.Builder, io.jimdb.pb.Mspb.SpaceOrBuilder> 
+          getSpacesFieldBuilder() {
+        if (spacesBuilder_ == null) {
+          spacesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              io.jimdb.pb.Mspb.Space, io.jimdb.pb.Mspb.Space.Builder, io.jimdb.pb.Mspb.SpaceOrBuilder>(
+                  spaces_,
+                  ((bitField0_ & 0x00000002) == 0x00000002),
+                  getParentForChildren(),
+                  isClean());
+          spaces_ = null;
+        }
+        return spacesBuilder_;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.SpaceListResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.SpaceListResponse)
+    private static final io.jimdb.pb.Mspb.SpaceListResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.SpaceListResponse();
+    }
+
+    public static io.jimdb.pb.Mspb.SpaceListResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<SpaceListResponse>
+        PARSER = new com.google.protobuf.AbstractParser<SpaceListResponse>() {
+      @java.lang.Override
+      public SpaceListResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new SpaceListResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<SpaceListResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SpaceListResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.SpaceListResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface GetGroupRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.GetGroupRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeader getHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    int getGroupId();
+  }
+  /**
+   * Protobuf type {@code mspb.GetGroupRequest}
+   */
+  public  static final class GetGroupRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.GetGroupRequest)
+      GetGroupRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GetGroupRequest.newBuilder() to construct.
+    private GetGroupRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GetGroupRequest() {
+      groupId_ = 0;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GetGroupRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.RequestHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.RequestHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 16: {
+
+              groupId_ = input.readInt32();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetGroupRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetGroupRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.GetGroupRequest.class, io.jimdb.pb.Mspb.GetGroupRequest.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.RequestHeader header_;
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int GROUP_ID_FIELD_NUMBER = 2;
+    private int groupId_;
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    public int getGroupId() {
+      return groupId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        output.writeInt32(2, groupId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, groupId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.GetGroupRequest)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.GetGroupRequest other = (io.jimdb.pb.Mspb.GetGroupRequest) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && (getGroupId()
+          == other.getGroupId());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      hash = (37 * hash) + GROUP_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getGroupId();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.GetGroupRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.GetGroupRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.GetGroupRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.GetGroupRequest)
+        io.jimdb.pb.Mspb.GetGroupRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetGroupRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetGroupRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.GetGroupRequest.class, io.jimdb.pb.Mspb.GetGroupRequest.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.GetGroupRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        groupId_ = 0;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetGroupRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetGroupRequest getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.GetGroupRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetGroupRequest build() {
+        io.jimdb.pb.Mspb.GetGroupRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetGroupRequest buildPartial() {
+        io.jimdb.pb.Mspb.GetGroupRequest result = new io.jimdb.pb.Mspb.GetGroupRequest(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        result.groupId_ = groupId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.GetGroupRequest) {
+          return mergeFrom((io.jimdb.pb.Mspb.GetGroupRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.GetGroupRequest other) {
+        if (other == io.jimdb.pb.Mspb.GetGroupRequest.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (other.getGroupId() != 0) {
+          setGroupId(other.getGroupId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.GetGroupRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.GetGroupRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.RequestHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.RequestHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.RequestHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private int groupId_ ;
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public int getGroupId() {
+        return groupId_;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder setGroupId(int value) {
+        
+        groupId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder clearGroupId() {
+        
+        groupId_ = 0;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.GetGroupRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.GetGroupRequest)
+    private static final io.jimdb.pb.Mspb.GetGroupRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.GetGroupRequest();
+    }
+
+    public static io.jimdb.pb.Mspb.GetGroupRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetGroupRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetGroupRequest>() {
+      @java.lang.Override
+      public GetGroupRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GetGroupRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetGroupRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetGroupRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.GetGroupRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface GetGroupResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.GetGroupResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeader getHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>.mspb.Group group = 2;</code>
+     */
+    boolean hasGroup();
+    /**
+     * <code>.mspb.Group group = 2;</code>
+     */
+    io.jimdb.pb.Mspb.Group getGroup();
+    /**
+     * <code>.mspb.Group group = 2;</code>
+     */
+    io.jimdb.pb.Mspb.GroupOrBuilder getGroupOrBuilder();
+  }
+  /**
+   * Protobuf type {@code mspb.GetGroupResponse}
+   */
+  public  static final class GetGroupResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.GetGroupResponse)
+      GetGroupResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GetGroupResponse.newBuilder() to construct.
+    private GetGroupResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GetGroupResponse() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GetGroupResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.ResponseHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.ResponseHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 18: {
+              io.jimdb.pb.Mspb.Group.Builder subBuilder = null;
+              if (group_ != null) {
+                subBuilder = group_.toBuilder();
+              }
+              group_ = input.readMessage(io.jimdb.pb.Mspb.Group.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(group_);
+                group_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetGroupResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetGroupResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.GetGroupResponse.class, io.jimdb.pb.Mspb.GetGroupResponse.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.ResponseHeader header_;
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int GROUP_FIELD_NUMBER = 2;
+    private io.jimdb.pb.Mspb.Group group_;
+    /**
+     * <code>.mspb.Group group = 2;</code>
+     */
+    public boolean hasGroup() {
+      return group_ != null;
+    }
+    /**
+     * <code>.mspb.Group group = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.Group getGroup() {
+      return group_ == null ? io.jimdb.pb.Mspb.Group.getDefaultInstance() : group_;
+    }
+    /**
+     * <code>.mspb.Group group = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.GroupOrBuilder getGroupOrBuilder() {
+      return getGroup();
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (group_ != null) {
+        output.writeMessage(2, getGroup());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (group_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, getGroup());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.GetGroupResponse)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.GetGroupResponse other = (io.jimdb.pb.Mspb.GetGroupResponse) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && (hasGroup() == other.hasGroup());
+      if (hasGroup()) {
+        result = result && getGroup()
+            .equals(other.getGroup());
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      if (hasGroup()) {
+        hash = (37 * hash) + GROUP_FIELD_NUMBER;
+        hash = (53 * hash) + getGroup().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.GetGroupResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetGroupResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.GetGroupResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.GetGroupResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.GetGroupResponse)
+        io.jimdb.pb.Mspb.GetGroupResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetGroupResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetGroupResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.GetGroupResponse.class, io.jimdb.pb.Mspb.GetGroupResponse.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.GetGroupResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        if (groupBuilder_ == null) {
+          group_ = null;
+        } else {
+          group_ = null;
+          groupBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetGroupResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetGroupResponse getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.GetGroupResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetGroupResponse build() {
+        io.jimdb.pb.Mspb.GetGroupResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetGroupResponse buildPartial() {
+        io.jimdb.pb.Mspb.GetGroupResponse result = new io.jimdb.pb.Mspb.GetGroupResponse(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        if (groupBuilder_ == null) {
+          result.group_ = group_;
+        } else {
+          result.group_ = groupBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.GetGroupResponse) {
+          return mergeFrom((io.jimdb.pb.Mspb.GetGroupResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.GetGroupResponse other) {
+        if (other == io.jimdb.pb.Mspb.GetGroupResponse.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (other.hasGroup()) {
+          mergeGroup(other.getGroup());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.GetGroupResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.GetGroupResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.ResponseHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.ResponseHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.ResponseHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private io.jimdb.pb.Mspb.Group group_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.Group, io.jimdb.pb.Mspb.Group.Builder, io.jimdb.pb.Mspb.GroupOrBuilder> groupBuilder_;
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public boolean hasGroup() {
+        return groupBuilder_ != null || group_ != null;
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Group getGroup() {
+        if (groupBuilder_ == null) {
+          return group_ == null ? io.jimdb.pb.Mspb.Group.getDefaultInstance() : group_;
+        } else {
+          return groupBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public Builder setGroup(io.jimdb.pb.Mspb.Group value) {
+        if (groupBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          group_ = value;
+          onChanged();
+        } else {
+          groupBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public Builder setGroup(
+          io.jimdb.pb.Mspb.Group.Builder builderForValue) {
+        if (groupBuilder_ == null) {
+          group_ = builderForValue.build();
+          onChanged();
+        } else {
+          groupBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public Builder mergeGroup(io.jimdb.pb.Mspb.Group value) {
+        if (groupBuilder_ == null) {
+          if (group_ != null) {
+            group_ =
+              io.jimdb.pb.Mspb.Group.newBuilder(group_).mergeFrom(value).buildPartial();
+          } else {
+            group_ = value;
+          }
+          onChanged();
+        } else {
+          groupBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public Builder clearGroup() {
+        if (groupBuilder_ == null) {
+          group_ = null;
+          onChanged();
+        } else {
+          group_ = null;
+          groupBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Group.Builder getGroupBuilder() {
+        
+        onChanged();
+        return getGroupFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.GroupOrBuilder getGroupOrBuilder() {
+        if (groupBuilder_ != null) {
+          return groupBuilder_.getMessageOrBuilder();
+        } else {
+          return group_ == null ?
+              io.jimdb.pb.Mspb.Group.getDefaultInstance() : group_;
+        }
+      }
+      /**
+       * <code>.mspb.Group group = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.Group, io.jimdb.pb.Mspb.Group.Builder, io.jimdb.pb.Mspb.GroupOrBuilder> 
+          getGroupFieldBuilder() {
+        if (groupBuilder_ == null) {
+          groupBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.Group, io.jimdb.pb.Mspb.Group.Builder, io.jimdb.pb.Mspb.GroupOrBuilder>(
+                  getGroup(),
+                  getParentForChildren(),
+                  isClean());
+          group_ = null;
+        }
+        return groupBuilder_;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.GetGroupResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.GetGroupResponse)
+    private static final io.jimdb.pb.Mspb.GetGroupResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.GetGroupResponse();
+    }
+
+    public static io.jimdb.pb.Mspb.GetGroupResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetGroupResponse>
+        PARSER = new com.google.protobuf.AbstractParser<GetGroupResponse>() {
+      @java.lang.Override
+      public GetGroupResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GetGroupResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetGroupResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetGroupResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.GetGroupResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface GetSpaceRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.GetSpaceRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeader getHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    int getGroupId();
+
+    /**
+     * <code>int32 space_id = 3;</code>
+     */
+    int getSpaceId();
+  }
+  /**
+   * Protobuf type {@code mspb.GetSpaceRequest}
+   */
+  public  static final class GetSpaceRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.GetSpaceRequest)
+      GetSpaceRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GetSpaceRequest.newBuilder() to construct.
+    private GetSpaceRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GetSpaceRequest() {
+      groupId_ = 0;
+      spaceId_ = 0;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GetSpaceRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.RequestHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.RequestHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 16: {
+
+              groupId_ = input.readInt32();
+              break;
+            }
+            case 24: {
+
+              spaceId_ = input.readInt32();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.GetSpaceRequest.class, io.jimdb.pb.Mspb.GetSpaceRequest.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.RequestHeader header_;
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int GROUP_ID_FIELD_NUMBER = 2;
+    private int groupId_;
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    public int getGroupId() {
+      return groupId_;
+    }
+
+    public static final int SPACE_ID_FIELD_NUMBER = 3;
+    private int spaceId_;
+    /**
+     * <code>int32 space_id = 3;</code>
+     */
+    public int getSpaceId() {
+      return spaceId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        output.writeInt32(2, groupId_);
+      }
+      if (spaceId_ != 0) {
+        output.writeInt32(3, spaceId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, groupId_);
+      }
+      if (spaceId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, spaceId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.GetSpaceRequest)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.GetSpaceRequest other = (io.jimdb.pb.Mspb.GetSpaceRequest) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && (getGroupId()
+          == other.getGroupId());
+      result = result && (getSpaceId()
+          == other.getSpaceId());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      hash = (37 * hash) + GROUP_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getGroupId();
+      hash = (37 * hash) + SPACE_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getSpaceId();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.GetSpaceRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.GetSpaceRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.GetSpaceRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.GetSpaceRequest)
+        io.jimdb.pb.Mspb.GetSpaceRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.GetSpaceRequest.class, io.jimdb.pb.Mspb.GetSpaceRequest.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.GetSpaceRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        groupId_ = 0;
+
+        spaceId_ = 0;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetSpaceRequest getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.GetSpaceRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetSpaceRequest build() {
+        io.jimdb.pb.Mspb.GetSpaceRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetSpaceRequest buildPartial() {
+        io.jimdb.pb.Mspb.GetSpaceRequest result = new io.jimdb.pb.Mspb.GetSpaceRequest(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        result.groupId_ = groupId_;
+        result.spaceId_ = spaceId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.GetSpaceRequest) {
+          return mergeFrom((io.jimdb.pb.Mspb.GetSpaceRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.GetSpaceRequest other) {
+        if (other == io.jimdb.pb.Mspb.GetSpaceRequest.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (other.getGroupId() != 0) {
+          setGroupId(other.getGroupId());
+        }
+        if (other.getSpaceId() != 0) {
+          setSpaceId(other.getSpaceId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.GetSpaceRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.GetSpaceRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.RequestHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.RequestHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.RequestHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private int groupId_ ;
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public int getGroupId() {
+        return groupId_;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder setGroupId(int value) {
+        
+        groupId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder clearGroupId() {
+        
+        groupId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int spaceId_ ;
+      /**
+       * <code>int32 space_id = 3;</code>
+       */
+      public int getSpaceId() {
+        return spaceId_;
+      }
+      /**
+       * <code>int32 space_id = 3;</code>
+       */
+      public Builder setSpaceId(int value) {
+        
+        spaceId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 space_id = 3;</code>
+       */
+      public Builder clearSpaceId() {
+        
+        spaceId_ = 0;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.GetSpaceRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.GetSpaceRequest)
+    private static final io.jimdb.pb.Mspb.GetSpaceRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.GetSpaceRequest();
+    }
+
+    public static io.jimdb.pb.Mspb.GetSpaceRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetSpaceRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetSpaceRequest>() {
+      @java.lang.Override
+      public GetSpaceRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GetSpaceRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetSpaceRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetSpaceRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.GetSpaceRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface GetSpaceResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.GetSpaceResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeader getHeader();
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>.mspb.Space Space = 2;</code>
+     */
+    boolean hasSpace();
+    /**
+     * <code>.mspb.Space Space = 2;</code>
+     */
+    io.jimdb.pb.Mspb.Space getSpace();
+    /**
+     * <code>.mspb.Space Space = 2;</code>
+     */
+    io.jimdb.pb.Mspb.SpaceOrBuilder getSpaceOrBuilder();
+  }
+  /**
+   * Protobuf type {@code mspb.GetSpaceResponse}
+   */
+  public  static final class GetSpaceResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.GetSpaceResponse)
+      GetSpaceResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GetSpaceResponse.newBuilder() to construct.
+    private GetSpaceResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GetSpaceResponse() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GetSpaceResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.ResponseHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.ResponseHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 18: {
+              io.jimdb.pb.Mspb.Space.Builder subBuilder = null;
+              if (space_ != null) {
+                subBuilder = space_.toBuilder();
+              }
+              space_ = input.readMessage(io.jimdb.pb.Mspb.Space.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(space_);
+                space_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.GetSpaceResponse.class, io.jimdb.pb.Mspb.GetSpaceResponse.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.ResponseHeader header_;
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.ResponseHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int SPACE_FIELD_NUMBER = 2;
+    private io.jimdb.pb.Mspb.Space space_;
+    /**
+     * <code>.mspb.Space Space = 2;</code>
+     */
+    public boolean hasSpace() {
+      return space_ != null;
+    }
+    /**
+     * <code>.mspb.Space Space = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.Space getSpace() {
+      return space_ == null ? io.jimdb.pb.Mspb.Space.getDefaultInstance() : space_;
+    }
+    /**
+     * <code>.mspb.Space Space = 2;</code>
+     */
+    public io.jimdb.pb.Mspb.SpaceOrBuilder getSpaceOrBuilder() {
+      return getSpace();
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (space_ != null) {
+        output.writeMessage(2, getSpace());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (space_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, getSpace());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.GetSpaceResponse)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.GetSpaceResponse other = (io.jimdb.pb.Mspb.GetSpaceResponse) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && (hasSpace() == other.hasSpace());
+      if (hasSpace()) {
+        result = result && getSpace()
+            .equals(other.getSpace());
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      if (hasSpace()) {
+        hash = (37 * hash) + SPACE_FIELD_NUMBER;
+        hash = (53 * hash) + getSpace().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.GetSpaceResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetSpaceResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.GetSpaceResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.GetSpaceResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.GetSpaceResponse)
+        io.jimdb.pb.Mspb.GetSpaceResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.GetSpaceResponse.class, io.jimdb.pb.Mspb.GetSpaceResponse.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.GetSpaceResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        if (spaceBuilder_ == null) {
+          space_ = null;
+        } else {
+          space_ = null;
+          spaceBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetSpaceResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetSpaceResponse getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.GetSpaceResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetSpaceResponse build() {
+        io.jimdb.pb.Mspb.GetSpaceResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetSpaceResponse buildPartial() {
+        io.jimdb.pb.Mspb.GetSpaceResponse result = new io.jimdb.pb.Mspb.GetSpaceResponse(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        if (spaceBuilder_ == null) {
+          result.space_ = space_;
+        } else {
+          result.space_ = spaceBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.GetSpaceResponse) {
+          return mergeFrom((io.jimdb.pb.Mspb.GetSpaceResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.GetSpaceResponse other) {
+        if (other == io.jimdb.pb.Mspb.GetSpaceResponse.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (other.hasSpace()) {
+          mergeSpace(other.getSpace());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.GetSpaceResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.GetSpaceResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.ResponseHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.ResponseHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.ResponseHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.ResponseHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.ResponseHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.ResponseHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.ResponseHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.ResponseHeader, io.jimdb.pb.Mspb.ResponseHeader.Builder, io.jimdb.pb.Mspb.ResponseHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private io.jimdb.pb.Mspb.Space space_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.Space, io.jimdb.pb.Mspb.Space.Builder, io.jimdb.pb.Mspb.SpaceOrBuilder> spaceBuilder_;
+      /**
+       * <code>.mspb.Space Space = 2;</code>
+       */
+      public boolean hasSpace() {
+        return spaceBuilder_ != null || space_ != null;
+      }
+      /**
+       * <code>.mspb.Space Space = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Space getSpace() {
+        if (spaceBuilder_ == null) {
+          return space_ == null ? io.jimdb.pb.Mspb.Space.getDefaultInstance() : space_;
+        } else {
+          return spaceBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.Space Space = 2;</code>
+       */
+      public Builder setSpace(io.jimdb.pb.Mspb.Space value) {
+        if (spaceBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          space_ = value;
+          onChanged();
+        } else {
+          spaceBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Space Space = 2;</code>
+       */
+      public Builder setSpace(
+          io.jimdb.pb.Mspb.Space.Builder builderForValue) {
+        if (spaceBuilder_ == null) {
+          space_ = builderForValue.build();
+          onChanged();
+        } else {
+          spaceBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Space Space = 2;</code>
+       */
+      public Builder mergeSpace(io.jimdb.pb.Mspb.Space value) {
+        if (spaceBuilder_ == null) {
+          if (space_ != null) {
+            space_ =
+              io.jimdb.pb.Mspb.Space.newBuilder(space_).mergeFrom(value).buildPartial();
+          } else {
+            space_ = value;
+          }
+          onChanged();
+        } else {
+          spaceBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Space Space = 2;</code>
+       */
+      public Builder clearSpace() {
+        if (spaceBuilder_ == null) {
+          space_ = null;
+          onChanged();
+        } else {
+          space_ = null;
+          spaceBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.Space Space = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.Space.Builder getSpaceBuilder() {
+        
+        onChanged();
+        return getSpaceFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.Space Space = 2;</code>
+       */
+      public io.jimdb.pb.Mspb.SpaceOrBuilder getSpaceOrBuilder() {
+        if (spaceBuilder_ != null) {
+          return spaceBuilder_.getMessageOrBuilder();
+        } else {
+          return space_ == null ?
+              io.jimdb.pb.Mspb.Space.getDefaultInstance() : space_;
+        }
+      }
+      /**
+       * <code>.mspb.Space Space = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.Space, io.jimdb.pb.Mspb.Space.Builder, io.jimdb.pb.Mspb.SpaceOrBuilder> 
+          getSpaceFieldBuilder() {
+        if (spaceBuilder_ == null) {
+          spaceBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.Space, io.jimdb.pb.Mspb.Space.Builder, io.jimdb.pb.Mspb.SpaceOrBuilder>(
+                  getSpace(),
+                  getParentForChildren(),
+                  isClean());
+          space_ = null;
+        }
+        return spaceBuilder_;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.GetSpaceResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.GetSpaceResponse)
+    private static final io.jimdb.pb.Mspb.GetSpaceResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.GetSpaceResponse();
+    }
+
+    public static io.jimdb.pb.Mspb.GetSpaceResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetSpaceResponse>
+        PARSER = new com.google.protobuf.AbstractParser<GetSpaceResponse>() {
+      @java.lang.Override
+      public GetSpaceResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GetSpaceResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetSpaceResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetSpaceResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.GetSpaceResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface DelGroupRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.DelGroupRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeader getHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    int getGroupId();
+  }
+  /**
+   * Protobuf type {@code mspb.DelGroupRequest}
+   */
+  public  static final class DelGroupRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.DelGroupRequest)
+      DelGroupRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use DelGroupRequest.newBuilder() to construct.
+    private DelGroupRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private DelGroupRequest() {
+      groupId_ = 0;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DelGroupRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.RequestHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.RequestHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 16: {
+
+              groupId_ = input.readInt32();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_DelGroupRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_DelGroupRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.DelGroupRequest.class, io.jimdb.pb.Mspb.DelGroupRequest.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.RequestHeader header_;
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int GROUP_ID_FIELD_NUMBER = 2;
+    private int groupId_;
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    public int getGroupId() {
+      return groupId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        output.writeInt32(2, groupId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, groupId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.DelGroupRequest)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.DelGroupRequest other = (io.jimdb.pb.Mspb.DelGroupRequest) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && (getGroupId()
+          == other.getGroupId());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      hash = (37 * hash) + GROUP_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getGroupId();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.DelGroupRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.DelGroupRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.DelGroupRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.DelGroupRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.DelGroupRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.DelGroupRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.DelGroupRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.DelGroupRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.DelGroupRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.DelGroupRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.DelGroupRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.DelGroupRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.DelGroupRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.DelGroupRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.DelGroupRequest)
+        io.jimdb.pb.Mspb.DelGroupRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_DelGroupRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_DelGroupRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.DelGroupRequest.class, io.jimdb.pb.Mspb.DelGroupRequest.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.DelGroupRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        groupId_ = 0;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_DelGroupRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.DelGroupRequest getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.DelGroupRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.DelGroupRequest build() {
+        io.jimdb.pb.Mspb.DelGroupRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.DelGroupRequest buildPartial() {
+        io.jimdb.pb.Mspb.DelGroupRequest result = new io.jimdb.pb.Mspb.DelGroupRequest(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        result.groupId_ = groupId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.DelGroupRequest) {
+          return mergeFrom((io.jimdb.pb.Mspb.DelGroupRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.DelGroupRequest other) {
+        if (other == io.jimdb.pb.Mspb.DelGroupRequest.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (other.getGroupId() != 0) {
+          setGroupId(other.getGroupId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.DelGroupRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.DelGroupRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.RequestHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.RequestHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.RequestHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private int groupId_ ;
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public int getGroupId() {
+        return groupId_;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder setGroupId(int value) {
+        
+        groupId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder clearGroupId() {
+        
+        groupId_ = 0;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.DelGroupRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.DelGroupRequest)
+    private static final io.jimdb.pb.Mspb.DelGroupRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.DelGroupRequest();
+    }
+
+    public static io.jimdb.pb.Mspb.DelGroupRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<DelGroupRequest>
+        PARSER = new com.google.protobuf.AbstractParser<DelGroupRequest>() {
+      @java.lang.Override
+      public DelGroupRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new DelGroupRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<DelGroupRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<DelGroupRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.DelGroupRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface DelSpaceRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.DelSpaceRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeader getHeader();
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    int getGroupId();
+
+    /**
+     * <code>int32 space_id = 3;</code>
+     */
+    int getSpaceId();
+  }
+  /**
+   * Protobuf type {@code mspb.DelSpaceRequest}
+   */
+  public  static final class DelSpaceRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.DelSpaceRequest)
+      DelSpaceRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use DelSpaceRequest.newBuilder() to construct.
+    private DelSpaceRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private DelSpaceRequest() {
+      groupId_ = 0;
+      spaceId_ = 0;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DelSpaceRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.RequestHeader.Builder subBuilder = null;
+              if (header_ != null) {
+                subBuilder = header_.toBuilder();
+              }
+              header_ = input.readMessage(io.jimdb.pb.Mspb.RequestHeader.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(header_);
+                header_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 16: {
+
+              groupId_ = input.readInt32();
+              break;
+            }
+            case 24: {
+
+              spaceId_ = input.readInt32();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_DelSpaceRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_DelSpaceRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.DelSpaceRequest.class, io.jimdb.pb.Mspb.DelSpaceRequest.Builder.class);
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.RequestHeader header_;
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public boolean hasHeader() {
+      return header_ != null;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+      return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+    }
+    /**
+     * <code>.mspb.RequestHeader header = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+      return getHeader();
+    }
+
+    public static final int GROUP_ID_FIELD_NUMBER = 2;
+    private int groupId_;
+    /**
+     * <code>int32 group_id = 2;</code>
+     */
+    public int getGroupId() {
+      return groupId_;
+    }
+
+    public static final int SPACE_ID_FIELD_NUMBER = 3;
+    private int spaceId_;
+    /**
+     * <code>int32 space_id = 3;</code>
+     */
+    public int getSpaceId() {
+      return spaceId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (header_ != null) {
+        output.writeMessage(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        output.writeInt32(2, groupId_);
+      }
+      if (spaceId_ != 0) {
+        output.writeInt32(3, spaceId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (header_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getHeader());
+      }
+      if (groupId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, groupId_);
+      }
+      if (spaceId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, spaceId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.DelSpaceRequest)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.DelSpaceRequest other = (io.jimdb.pb.Mspb.DelSpaceRequest) obj;
+
+      boolean result = true;
+      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader()) {
+        result = result && getHeader()
+            .equals(other.getHeader());
+      }
+      result = result && (getGroupId()
+          == other.getGroupId());
+      result = result && (getSpaceId()
+          == other.getSpaceId());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasHeader()) {
+        hash = (37 * hash) + HEADER_FIELD_NUMBER;
+        hash = (53 * hash) + getHeader().hashCode();
+      }
+      hash = (37 * hash) + GROUP_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getGroupId();
+      hash = (37 * hash) + SPACE_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getSpaceId();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.DelSpaceRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.DelSpaceRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.DelSpaceRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.DelSpaceRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.DelSpaceRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.DelSpaceRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.DelSpaceRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.DelSpaceRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.DelSpaceRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.DelSpaceRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.DelSpaceRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.DelSpaceRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.DelSpaceRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.DelSpaceRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.DelSpaceRequest)
+        io.jimdb.pb.Mspb.DelSpaceRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_DelSpaceRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_DelSpaceRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.DelSpaceRequest.class, io.jimdb.pb.Mspb.DelSpaceRequest.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.DelSpaceRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (headerBuilder_ == null) {
+          header_ = null;
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+        groupId_ = 0;
+
+        spaceId_ = 0;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_DelSpaceRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.DelSpaceRequest getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.DelSpaceRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.DelSpaceRequest build() {
+        io.jimdb.pb.Mspb.DelSpaceRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.DelSpaceRequest buildPartial() {
+        io.jimdb.pb.Mspb.DelSpaceRequest result = new io.jimdb.pb.Mspb.DelSpaceRequest(this);
+        if (headerBuilder_ == null) {
+          result.header_ = header_;
+        } else {
+          result.header_ = headerBuilder_.build();
+        }
+        result.groupId_ = groupId_;
+        result.spaceId_ = spaceId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.DelSpaceRequest) {
+          return mergeFrom((io.jimdb.pb.Mspb.DelSpaceRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.DelSpaceRequest other) {
+        if (other == io.jimdb.pb.Mspb.DelSpaceRequest.getDefaultInstance()) return this;
+        if (other.hasHeader()) {
+          mergeHeader(other.getHeader());
+        }
+        if (other.getGroupId() != 0) {
+          setGroupId(other.getGroupId());
+        }
+        if (other.getSpaceId() != 0) {
+          setSpaceId(other.getSpaceId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.DelSpaceRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.DelSpaceRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.RequestHeader header_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> headerBuilder_;
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public boolean hasHeader() {
+        return headerBuilder_ != null || header_ != null;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader getHeader() {
+        if (headerBuilder_ == null) {
+          return header_ == null ? io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        } else {
+          return headerBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          header_ = value;
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder setHeader(
+          io.jimdb.pb.Mspb.RequestHeader.Builder builderForValue) {
+        if (headerBuilder_ == null) {
+          header_ = builderForValue.build();
+          onChanged();
+        } else {
+          headerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder mergeHeader(io.jimdb.pb.Mspb.RequestHeader value) {
+        if (headerBuilder_ == null) {
+          if (header_ != null) {
+            header_ =
+              io.jimdb.pb.Mspb.RequestHeader.newBuilder(header_).mergeFrom(value).buildPartial();
+          } else {
+            header_ = value;
+          }
+          onChanged();
+        } else {
+          headerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public Builder clearHeader() {
+        if (headerBuilder_ == null) {
+          header_ = null;
+          onChanged();
+        } else {
+          header_ = null;
+          headerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeader.Builder getHeaderBuilder() {
+        
+        onChanged();
+        return getHeaderFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.RequestHeaderOrBuilder getHeaderOrBuilder() {
+        if (headerBuilder_ != null) {
+          return headerBuilder_.getMessageOrBuilder();
+        } else {
+          return header_ == null ?
+              io.jimdb.pb.Mspb.RequestHeader.getDefaultInstance() : header_;
+        }
+      }
+      /**
+       * <code>.mspb.RequestHeader header = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder> 
+          getHeaderFieldBuilder() {
+        if (headerBuilder_ == null) {
+          headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.RequestHeader, io.jimdb.pb.Mspb.RequestHeader.Builder, io.jimdb.pb.Mspb.RequestHeaderOrBuilder>(
+                  getHeader(),
+                  getParentForChildren(),
+                  isClean());
+          header_ = null;
+        }
+        return headerBuilder_;
+      }
+
+      private int groupId_ ;
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public int getGroupId() {
+        return groupId_;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder setGroupId(int value) {
+        
+        groupId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 group_id = 2;</code>
+       */
+      public Builder clearGroupId() {
+        
+        groupId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int spaceId_ ;
+      /**
+       * <code>int32 space_id = 3;</code>
+       */
+      public int getSpaceId() {
+        return spaceId_;
+      }
+      /**
+       * <code>int32 space_id = 3;</code>
+       */
+      public Builder setSpaceId(int value) {
+        
+        spaceId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 space_id = 3;</code>
+       */
+      public Builder clearSpaceId() {
+        
+        spaceId_ = 0;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.DelSpaceRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.DelSpaceRequest)
+    private static final io.jimdb.pb.Mspb.DelSpaceRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.DelSpaceRequest();
+    }
+
+    public static io.jimdb.pb.Mspb.DelSpaceRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<DelSpaceRequest>
+        PARSER = new com.google.protobuf.AbstractParser<DelSpaceRequest>() {
+      @java.lang.Override
+      public DelSpaceRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new DelSpaceRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<DelSpaceRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<DelSpaceRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.DelSpaceRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface GetTopoRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:mspb.GetTopoRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.mspb.GetRouteRequest route = 1;</code>
+     */
+    boolean hasRoute();
+    /**
+     * <code>.mspb.GetRouteRequest route = 1;</code>
+     */
+    io.jimdb.pb.Mspb.GetRouteRequest getRoute();
+    /**
+     * <code>.mspb.GetRouteRequest route = 1;</code>
+     */
+    io.jimdb.pb.Mspb.GetRouteRequestOrBuilder getRouteOrBuilder();
+
+    /**
+     * <code>string token = 2;</code>
+     */
+    java.lang.String getToken();
+    /**
+     * <code>string token = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getTokenBytes();
+  }
+  /**
+   * Protobuf type {@code mspb.GetTopoRequest}
+   */
+  public  static final class GetTopoRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:mspb.GetTopoRequest)
+      GetTopoRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GetTopoRequest.newBuilder() to construct.
+    private GetTopoRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GetTopoRequest() {
+      token_ = "";
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private GetTopoRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              io.jimdb.pb.Mspb.GetRouteRequest.Builder subBuilder = null;
+              if (route_ != null) {
+                subBuilder = route_.toBuilder();
+              }
+              route_ = input.readMessage(io.jimdb.pb.Mspb.GetRouteRequest.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(route_);
+                route_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              token_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetTopoRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return io.jimdb.pb.Mspb.internal_static_mspb_GetTopoRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              io.jimdb.pb.Mspb.GetTopoRequest.class, io.jimdb.pb.Mspb.GetTopoRequest.Builder.class);
+    }
+
+    public static final int ROUTE_FIELD_NUMBER = 1;
+    private io.jimdb.pb.Mspb.GetRouteRequest route_;
+    /**
+     * <code>.mspb.GetRouteRequest route = 1;</code>
+     */
+    public boolean hasRoute() {
+      return route_ != null;
+    }
+    /**
+     * <code>.mspb.GetRouteRequest route = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.GetRouteRequest getRoute() {
+      return route_ == null ? io.jimdb.pb.Mspb.GetRouteRequest.getDefaultInstance() : route_;
+    }
+    /**
+     * <code>.mspb.GetRouteRequest route = 1;</code>
+     */
+    public io.jimdb.pb.Mspb.GetRouteRequestOrBuilder getRouteOrBuilder() {
+      return getRoute();
+    }
+
+    public static final int TOKEN_FIELD_NUMBER = 2;
+    private volatile java.lang.Object token_;
+    /**
+     * <code>string token = 2;</code>
+     */
+    public java.lang.String getToken() {
+      java.lang.Object ref = token_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        token_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string token = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTokenBytes() {
+      java.lang.Object ref = token_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        token_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (route_ != null) {
+        output.writeMessage(1, getRoute());
+      }
+      if (!getTokenBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, token_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (route_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getRoute());
+      }
+      if (!getTokenBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, token_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof io.jimdb.pb.Mspb.GetTopoRequest)) {
+        return super.equals(obj);
+      }
+      io.jimdb.pb.Mspb.GetTopoRequest other = (io.jimdb.pb.Mspb.GetTopoRequest) obj;
+
+      boolean result = true;
+      result = result && (hasRoute() == other.hasRoute());
+      if (hasRoute()) {
+        result = result && getRoute()
+            .equals(other.getRoute());
+      }
+      result = result && getToken()
+          .equals(other.getToken());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasRoute()) {
+        hash = (37 * hash) + ROUTE_FIELD_NUMBER;
+        hash = (53 * hash) + getRoute().hashCode();
+      }
+      hash = (37 * hash) + TOKEN_FIELD_NUMBER;
+      hash = (53 * hash) + getToken().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static io.jimdb.pb.Mspb.GetTopoRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetTopoRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetTopoRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetTopoRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetTopoRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static io.jimdb.pb.Mspb.GetTopoRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetTopoRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetTopoRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetTopoRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetTopoRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static io.jimdb.pb.Mspb.GetTopoRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static io.jimdb.pb.Mspb.GetTopoRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(io.jimdb.pb.Mspb.GetTopoRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code mspb.GetTopoRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:mspb.GetTopoRequest)
+        io.jimdb.pb.Mspb.GetTopoRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetTopoRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetTopoRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                io.jimdb.pb.Mspb.GetTopoRequest.class, io.jimdb.pb.Mspb.GetTopoRequest.Builder.class);
+      }
+
+      // Construct using io.jimdb.pb.Mspb.GetTopoRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (routeBuilder_ == null) {
+          route_ = null;
+        } else {
+          route_ = null;
+          routeBuilder_ = null;
+        }
+        token_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return io.jimdb.pb.Mspb.internal_static_mspb_GetTopoRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetTopoRequest getDefaultInstanceForType() {
+        return io.jimdb.pb.Mspb.GetTopoRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetTopoRequest build() {
+        io.jimdb.pb.Mspb.GetTopoRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public io.jimdb.pb.Mspb.GetTopoRequest buildPartial() {
+        io.jimdb.pb.Mspb.GetTopoRequest result = new io.jimdb.pb.Mspb.GetTopoRequest(this);
+        if (routeBuilder_ == null) {
+          result.route_ = route_;
+        } else {
+          result.route_ = routeBuilder_.build();
+        }
+        result.token_ = token_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof io.jimdb.pb.Mspb.GetTopoRequest) {
+          return mergeFrom((io.jimdb.pb.Mspb.GetTopoRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(io.jimdb.pb.Mspb.GetTopoRequest other) {
+        if (other == io.jimdb.pb.Mspb.GetTopoRequest.getDefaultInstance()) return this;
+        if (other.hasRoute()) {
+          mergeRoute(other.getRoute());
+        }
+        if (!other.getToken().isEmpty()) {
+          token_ = other.token_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        io.jimdb.pb.Mspb.GetTopoRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (io.jimdb.pb.Mspb.GetTopoRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private io.jimdb.pb.Mspb.GetRouteRequest route_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.GetRouteRequest, io.jimdb.pb.Mspb.GetRouteRequest.Builder, io.jimdb.pb.Mspb.GetRouteRequestOrBuilder> routeBuilder_;
+      /**
+       * <code>.mspb.GetRouteRequest route = 1;</code>
+       */
+      public boolean hasRoute() {
+        return routeBuilder_ != null || route_ != null;
+      }
+      /**
+       * <code>.mspb.GetRouteRequest route = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.GetRouteRequest getRoute() {
+        if (routeBuilder_ == null) {
+          return route_ == null ? io.jimdb.pb.Mspb.GetRouteRequest.getDefaultInstance() : route_;
+        } else {
+          return routeBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.mspb.GetRouteRequest route = 1;</code>
+       */
+      public Builder setRoute(io.jimdb.pb.Mspb.GetRouteRequest value) {
+        if (routeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          route_ = value;
+          onChanged();
+        } else {
+          routeBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.GetRouteRequest route = 1;</code>
+       */
+      public Builder setRoute(
+          io.jimdb.pb.Mspb.GetRouteRequest.Builder builderForValue) {
+        if (routeBuilder_ == null) {
+          route_ = builderForValue.build();
+          onChanged();
+        } else {
+          routeBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.GetRouteRequest route = 1;</code>
+       */
+      public Builder mergeRoute(io.jimdb.pb.Mspb.GetRouteRequest value) {
+        if (routeBuilder_ == null) {
+          if (route_ != null) {
+            route_ =
+              io.jimdb.pb.Mspb.GetRouteRequest.newBuilder(route_).mergeFrom(value).buildPartial();
+          } else {
+            route_ = value;
+          }
+          onChanged();
+        } else {
+          routeBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.GetRouteRequest route = 1;</code>
+       */
+      public Builder clearRoute() {
+        if (routeBuilder_ == null) {
+          route_ = null;
+          onChanged();
+        } else {
+          route_ = null;
+          routeBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.mspb.GetRouteRequest route = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.GetRouteRequest.Builder getRouteBuilder() {
+        
+        onChanged();
+        return getRouteFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.mspb.GetRouteRequest route = 1;</code>
+       */
+      public io.jimdb.pb.Mspb.GetRouteRequestOrBuilder getRouteOrBuilder() {
+        if (routeBuilder_ != null) {
+          return routeBuilder_.getMessageOrBuilder();
+        } else {
+          return route_ == null ?
+              io.jimdb.pb.Mspb.GetRouteRequest.getDefaultInstance() : route_;
+        }
+      }
+      /**
+       * <code>.mspb.GetRouteRequest route = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          io.jimdb.pb.Mspb.GetRouteRequest, io.jimdb.pb.Mspb.GetRouteRequest.Builder, io.jimdb.pb.Mspb.GetRouteRequestOrBuilder> 
+          getRouteFieldBuilder() {
+        if (routeBuilder_ == null) {
+          routeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              io.jimdb.pb.Mspb.GetRouteRequest, io.jimdb.pb.Mspb.GetRouteRequest.Builder, io.jimdb.pb.Mspb.GetRouteRequestOrBuilder>(
+                  getRoute(),
+                  getParentForChildren(),
+                  isClean());
+          route_ = null;
+        }
+        return routeBuilder_;
+      }
+
+      private java.lang.Object token_ = "";
+      /**
+       * <code>string token = 2;</code>
+       */
+      public java.lang.String getToken() {
+        java.lang.Object ref = token_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          token_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string token = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getTokenBytes() {
+        java.lang.Object ref = token_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          token_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string token = 2;</code>
+       */
+      public Builder setToken(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        token_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string token = 2;</code>
+       */
+      public Builder clearToken() {
+        
+        token_ = getDefaultInstance().getToken();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string token = 2;</code>
+       */
+      public Builder setTokenBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        token_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:mspb.GetTopoRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:mspb.GetTopoRequest)
+    private static final io.jimdb.pb.Mspb.GetTopoRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new io.jimdb.pb.Mspb.GetTopoRequest();
+    }
+
+    public static io.jimdb.pb.Mspb.GetTopoRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetTopoRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetTopoRequest>() {
+      @java.lang.Override
+      public GetTopoRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new GetTopoRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetTopoRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetTopoRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public io.jimdb.pb.Mspb.GetTopoRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_mspb_ClusterInfoRequest_descriptor;
   private static final 
@@ -35296,6 +50765,11 @@ public final class Mspb {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_mspb_CountTableResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_GeneralRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_GeneralRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_mspb_GeneralResponse_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -35350,6 +50824,101 @@ public final class Mspb {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_mspb_Error_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_Group_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_Group_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_Space_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_Space_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_GenerateIdResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_GenerateIdResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_CreateGroupRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_CreateGroupRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_CreateGroupResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_CreateGroupResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_CreateSpaceRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_CreateSpaceRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_CreateSpaceResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_CreateSpaceResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_GetSpaceTokenRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_GetSpaceTokenRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_GetSpaceTokenResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_GetSpaceTokenResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_GroupListResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_GroupListResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_SpaceListRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_SpaceListRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_SpaceListResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_SpaceListResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_GetGroupRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_GetGroupRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_GetGroupResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_GetGroupResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_GetSpaceRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_GetSpaceRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_GetSpaceResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_GetSpaceResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_DelGroupRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_DelGroupRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_DelSpaceRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_DelSpaceRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_mspb_GetTopoRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_mspb_GetTopoRequest_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -35400,94 +50969,138 @@ public final class Mspb {
       "\004\022\021\n\tsplit_key\030\005 \001(\014\"\177\n\020RangeFingerprint" +
       "\022\020\n\010range_id\030\001 \001(\004\022\'\n\013range_epoch\030\002 \001(\0132" +
       "\022.basepb.RangeEpoch\022\r\n\005db_id\030\003 \001(\005\022\020\n\010ta" +
-      "ble_id\030\004 \001(\005\022\017\n\007peer_id\030\005 \001(\004\"\327\001\n\023Regist" +
+      "ble_id\030\004 \001(\005\022\017\n\007peer_id\030\005 \001(\004\"\361\001\n\023Regist" +
       "erNodeRequest\022#\n\006header\030\001 \001(\0132\023.mspb.Req" +
       "uestHeader\022\023\n\013server_port\030\002 \001(\r\022\021\n\traft_" +
       "port\030\003 \001(\r\022\022\n\nadmin_port\030\004 \001(\r\022\017\n\007versio" +
       "n\030\005 \001(\t\022&\n\tst_engine\030\006 \001(\0162\023.mspb.Storag" +
       "eEngine\022&\n\006ranges\030\007 \003(\0132\026.mspb.RangeFing" +
-      "erprint\"e\n\024RegisterNodeResponse\022$\n\006heade" +
-      "r\030\001 \001(\0132\024.mspb.ResponseHeader\022\017\n\007node_id" +
-      "\030\002 \001(\004\022\026\n\016invalid_ranges\030\003 \003(\004\"\250\001\n\017GetRo" +
-      "uteRequest\022#\n\006header\030\001 \001(\0132\023.mspb.Reques" +
-      "tHeader\022\r\n\005db_id\030\002 \001(\005\022\020\n\010table_id\030\003 \001(\005" +
-      "\022\013\n\003key\030\004 \001(\014\022\013\n\003max\030\005 \001(\r\022$\n\trangeType\030" +
-      "\006 \001(\0162\021.basepb.RangeType\022\017\n\007has_all\030\007 \001(" +
-      "\010\"x\n\020GetRouteResponse\022$\n\006header\030\001 \001(\0132\024." +
-      "mspb.ResponseHeader\022\035\n\006routes\030\002 \003(\0132\r.ba" +
-      "sepb.Range\022\016\n\006master\030\003 \001(\t\022\017\n\007version\030\004 " +
-      "\001(\004\"6\n\017GetNodesRequest\022#\n\006header\030\001 \001(\0132\023" +
-      ".mspb.RequestHeader\"U\n\020GetNodesResponse\022" +
-      "$\n\006header\030\001 \001(\0132\024.mspb.ResponseHeader\022\033\n" +
-      "\005nodes\030\002 \003(\0132\014.basepb.Node\"A\n\016GetNodeReq" +
+      "erprint\022\030\n\020protocol_version\030\010 \001(\005\"e\n\024Reg" +
+      "isterNodeResponse\022$\n\006header\030\001 \001(\0132\024.mspb" +
+      ".ResponseHeader\022\017\n\007node_id\030\002 \001(\004\022\026\n\016inva" +
+      "lid_ranges\030\003 \003(\004\"\250\001\n\017GetRouteRequest\022#\n\006" +
+      "header\030\001 \001(\0132\023.mspb.RequestHeader\022\r\n\005db_" +
+      "id\030\002 \001(\005\022\020\n\010table_id\030\003 \001(\005\022\013\n\003key\030\004 \001(\014\022" +
+      "\013\n\003max\030\005 \001(\r\022$\n\trangeType\030\006 \001(\0162\021.basepb" +
+      ".RangeType\022\017\n\007has_all\030\007 \001(\010\"x\n\020GetRouteR" +
+      "esponse\022$\n\006header\030\001 \001(\0132\024.mspb.ResponseH" +
+      "eader\022\035\n\006routes\030\002 \003(\0132\r.basepb.Range\022\016\n\006" +
+      "master\030\003 \001(\t\022\017\n\007version\030\004 \001(\004\"6\n\017GetNode" +
+      "sRequest\022#\n\006header\030\001 \001(\0132\023.mspb.RequestH" +
+      "eader\"U\n\020GetNodesResponse\022$\n\006header\030\001 \001(" +
+      "\0132\024.mspb.ResponseHeader\022\033\n\005nodes\030\002 \003(\0132\014" +
+      ".basepb.Node\"A\n\016GetNodeRequest\022#\n\006header" +
+      "\030\001 \001(\0132\023.mspb.RequestHeader\022\n\n\002id\030\002 \001(\004\"" +
+      "S\n\017GetNodeResponse\022$\n\006header\030\001 \001(\0132\024.msp" +
+      "b.ResponseHeader\022\032\n\004node\030\002 \001(\0132\014.basepb." +
+      "Node\"k\n\026ChangeNodeStateRequest\022#\n\006header" +
+      "\030\001 \001(\0132\023.mspb.RequestHeader\022\n\n\002id\030\002 \001(\004\022" +
+      " \n\005state\030\003 \001(\0162\021.basepb.NodeState\"[\n\027Cha" +
+      "ngeNodeStateResponse\022$\n\006header\030\001 \001(\0132\024.m" +
+      "spb.ResponseHeader\022\032\n\004node\030\002 \001(\0132\014.basep" +
+      "b.Node\"H\n\025CheckNodeStateRequest\022#\n\006heade" +
+      "r\030\001 \001(\0132\023.mspb.RequestHeader\022\n\n\002id\030\002 \001(\004" +
+      "\"\207\001\n\026CheckNodeStateResponse\022$\n\006header\030\001 " +
+      "\001(\0132\024.mspb.ResponseHeader\022\021\n\trange_num\030\002" +
+      " \001(\004\022\022\n\nleader_num\030\003 \001(\004\022 \n\005state\030\004 \001(\0162" +
+      "\021.basepb.NodeState\"A\n\014GetDBRequest\022#\n\006he" +
+      "ader\030\001 \001(\0132\023.mspb.RequestHeader\022\014\n\004name\030" +
+      "\002 \001(\t\"W\n\021CountTableRequest\022#\n\006header\030\001 \001" +
+      "(\0132\023.mspb.RequestHeader\022\035\n\006tables\030\002 \003(\0132" +
+      "\r.mspb.Counter\"W\n\022CountTableResponse\022$\n\006" +
+      "header\030\001 \001(\0132\024.mspb.ResponseHeader\022\033\n\004li" +
+      "st\030\002 \003(\0132\r.mspb.Counter\"5\n\016GeneralReques" +
+      "t\022#\n\006header\030\001 \001(\0132\023.mspb.RequestHeader\"7" +
+      "\n\017GeneralResponse\022$\n\006header\030\001 \001(\0132\024.mspb" +
+      ".ResponseHeader\"9\n\007Counter\022\r\n\005db_id\030\001 \001(" +
+      "\005\022\020\n\010table_id\030\002 \001(\005\022\r\n\005count\030\003 \001(\004\"|\n\017Ge" +
+      "tTableRequest\022#\n\006header\030\001 \001(\0132\023.mspb.Req" +
+      "uestHeader\022\r\n\005db_id\030\002 \001(\005\022\017\n\007db_name\030\003 \001" +
+      "(\t\022\020\n\010table_id\030\004 \001(\005\022\022\n\ntable_name\030\005 \001(\t" +
+      "\"9\n\022GetNodeInfoRequest\022#\n\006header\030\001 \001(\0132\023" +
+      ".mspb.RequestHeader\"a\n\023GetNodeInfoRespon" +
+      "se\022$\n\006header\030\001 \001(\0132\024.mspb.ResponseHeader" +
+      "\022$\n\tnodeInfos\030\002 \003(\0132\021.mspb.GetNodeInfo\"\\" +
+      "\n\013GetNodeInfo\022\013\n\003err\030\001 \001(\t\022\032\n\004node\030\002 \001(\013" +
+      "2\014.basepb.Node\022$\n\004info\030\003 \001(\0132\026.dspb.Node" +
+      "InfoResponse\"\214\001\n\023CreateRangesRequest\022#\n\006" +
+      "header\030\001 \001(\0132\023.mspb.RequestHeader\022\r\n\005db_" +
+      "id\030\002 \001(\005\022\020\n\010table_id\030\003 \001(\005\022\020\n\010replicas\030\004" +
+      " \001(\005\022\035\n\006ranges\030\005 \003(\0132\r.basepb.Range\"\224\001\n\023" +
+      "DeleteRangesRequest\022#\n\006header\030\001 \001(\0132\023.ms" +
+      "pb.RequestHeader\022\r\n\005db_id\030\002 \001(\005\022\020\n\010table" +
+      "_id\030\003 \001(\005\022%\n\nrange_type\030\004 \001(\0162\021.basepb.R" +
+      "angeType\022\020\n\010index_id\030\005 \001(\005\"#\n\rRequestHea" +
+      "der\022\022\n\ncluster_id\030\001 \001(\004\"@\n\016ResponseHeade" +
+      "r\022\022\n\ncluster_id\030\001 \001(\004\022\032\n\005error\030\002 \001(\0132\013.m" +
+      "spb.Error\"&\n\005Error\022\014\n\004code\030\001 \001(\r\022\017\n\007mess" +
+      "age\030\002 \001(\t\"B\n\005Group\022\020\n\010group_id\030\001 \001(\005\022\022\n\n" +
+      "group_name\030\002 \001(\t\022\023\n\013create_time\030\003 \001(\003\"f\n" +
+      "\005Space\022\020\n\010group_id\030\001 \001(\005\022\020\n\010space_id\030\002 \001" +
+      "(\005\022\022\n\nspace_name\030\003 \001(\t\022\020\n\010replicas\030\004 \001(\005" +
+      "\022\023\n\013create_time\030\005 \001(\003\"O\n\022GenerateIdRespo" +
+      "nse\022$\n\006header\030\001 \001(\0132\024.mspb.ResponseHeade" +
+      "r\022\023\n\013generate_id\030\002 \001(\003\"_\n\022CreateGroupReq" +
       "uest\022#\n\006header\030\001 \001(\0132\023.mspb.RequestHeade" +
-      "r\022\n\n\002id\030\002 \001(\004\"S\n\017GetNodeResponse\022$\n\006head" +
-      "er\030\001 \001(\0132\024.mspb.ResponseHeader\022\032\n\004node\030\002" +
-      " \001(\0132\014.basepb.Node\"k\n\026ChangeNodeStateReq" +
-      "uest\022#\n\006header\030\001 \001(\0132\023.mspb.RequestHeade" +
-      "r\022\n\n\002id\030\002 \001(\004\022 \n\005state\030\003 \001(\0162\021.basepb.No" +
-      "deState\"[\n\027ChangeNodeStateResponse\022$\n\006he" +
-      "ader\030\001 \001(\0132\024.mspb.ResponseHeader\022\032\n\004node" +
-      "\030\002 \001(\0132\014.basepb.Node\"H\n\025CheckNodeStateRe" +
-      "quest\022#\n\006header\030\001 \001(\0132\023.mspb.RequestHead" +
-      "er\022\n\n\002id\030\002 \001(\004\"\207\001\n\026CheckNodeStateRespons" +
-      "e\022$\n\006header\030\001 \001(\0132\024.mspb.ResponseHeader\022" +
-      "\021\n\trange_num\030\002 \001(\004\022\022\n\nleader_num\030\003 \001(\004\022 " +
-      "\n\005state\030\004 \001(\0162\021.basepb.NodeState\"A\n\014GetD" +
-      "BRequest\022#\n\006header\030\001 \001(\0132\023.mspb.RequestH" +
-      "eader\022\014\n\004name\030\002 \001(\t\"W\n\021CountTableRequest" +
-      "\022#\n\006header\030\001 \001(\0132\023.mspb.RequestHeader\022\035\n" +
-      "\006tables\030\002 \003(\0132\r.mspb.Counter\"W\n\022CountTab" +
-      "leResponse\022$\n\006header\030\001 \001(\0132\024.mspb.Respon" +
-      "seHeader\022\033\n\004list\030\002 \003(\0132\r.mspb.Counter\"7\n" +
-      "\017GeneralResponse\022$\n\006header\030\001 \001(\0132\024.mspb." +
-      "ResponseHeader\"9\n\007Counter\022\r\n\005db_id\030\001 \001(\005" +
-      "\022\020\n\010table_id\030\002 \001(\005\022\r\n\005count\030\003 \001(\004\"|\n\017Get" +
-      "TableRequest\022#\n\006header\030\001 \001(\0132\023.mspb.Requ" +
-      "estHeader\022\r\n\005db_id\030\002 \001(\005\022\017\n\007db_name\030\003 \001(" +
-      "\t\022\020\n\010table_id\030\004 \001(\005\022\022\n\ntable_name\030\005 \001(\t\"" +
-      "9\n\022GetNodeInfoRequest\022#\n\006header\030\001 \001(\0132\023." +
-      "mspb.RequestHeader\"a\n\023GetNodeInfoRespons" +
-      "e\022$\n\006header\030\001 \001(\0132\024.mspb.ResponseHeader\022" +
-      "$\n\tnodeInfos\030\002 \003(\0132\021.mspb.GetNodeInfo\"\\\n" +
-      "\013GetNodeInfo\022\013\n\003err\030\001 \001(\t\022\032\n\004node\030\002 \001(\0132" +
-      "\014.basepb.Node\022$\n\004info\030\003 \001(\0132\026.dspb.NodeI" +
-      "nfoResponse\"\214\001\n\023CreateRangesRequest\022#\n\006h" +
-      "eader\030\001 \001(\0132\023.mspb.RequestHeader\022\r\n\005db_i" +
-      "d\030\002 \001(\005\022\020\n\010table_id\030\003 \001(\005\022\020\n\010replicas\030\004 " +
-      "\001(\005\022\035\n\006ranges\030\005 \003(\0132\r.basepb.Range\"\224\001\n\023D" +
-      "eleteRangesRequest\022#\n\006header\030\001 \001(\0132\023.msp" +
-      "b.RequestHeader\022\r\n\005db_id\030\002 \001(\005\022\020\n\010table_" +
-      "id\030\003 \001(\005\022%\n\nrange_type\030\004 \001(\0162\021.basepb.Ra" +
-      "ngeType\022\020\n\010index_id\030\005 \001(\005\"#\n\rRequestHead" +
-      "er\022\022\n\ncluster_id\030\001 \001(\004\"@\n\016ResponseHeader" +
-      "\022\022\n\ncluster_id\030\001 \001(\004\022\032\n\005error\030\002 \001(\0132\013.ms" +
-      "pb.Error\"&\n\005Error\022\014\n\004code\030\001 \001(\r\022\017\n\007messa" +
-      "ge\030\002 \001(\t*\365\006\n\tErrorType\022\006\n\002No\020\000\022\014\n\010UnDefi" +
-      "ne\020\001\022\024\n\020ClusterIDNotSame\020\002\022\022\n\016NoSelected" +
-      "Node\020\003\022\021\n\rInternalError\020\004\022\t\n\005GenID\020\005\022\017\n\013" +
-      "DupDatabase\020\006\022\014\n\010DupTable\020\007\022\022\n\016NotRuning" +
-      "Table\020\010\022\024\n\020NotExistDatabase\020\t\022\021\n\rNotExis" +
-      "tTable\020\n\022\020\n\014NotExistNode\020\013\022\021\n\rNotActiveN" +
-      "ode\020\014\022\021\n\rNotExistRange\020\r\022\017\n\013ExistsRange\020" +
-      "\016\022\020\n\014NotExistPeer\020\017\022\026\n\022NotEnoughResource" +
-      "s\020\020\022\020\n\014InvalidParam\020\021\022\021\n\rInvalidColumn\020\022" +
-      "\022\020\n\014InvalidIndex\020\023\022\025\n\021ColumnNameTooLong\020" +
-      "\024\022\022\n\016ColumnNotExist\020\025\022\021\n\rDupColumnName\020\026" +
-      "\022\021\n\rPkMustNotNull\020\027\022\r\n\tMissingPk\020\030\022\034\n\030Pk" +
-      "MustNotSetDefaultValue\020\031\022\025\n\021NodeRejectNe" +
-      "wPeer\020\032\022\017\n\013NodeBlocked\020\033\022\025\n\021NodeStateCon" +
-      "fused\020\034\022\021\n\rNodeNotEnough\020\035\022\024\n\020SchedulerE" +
-      "xisted\020\036\022\025\n\021SchedulerNotFound\020\037\022\021\n\rWorke" +
-      "rExisted\020 \022\022\n\016WorkerNotFound\020!\022\023\n\017SqlRes" +
-      "ervedWord\020\"\022\022\n\016SQLSyntaxError\020#\022\025\n\021Range" +
-      "MetaConflict\020$\022\014\n\010NotFound\020%\022\021\n\rNotAllow" +
-      "Split\020&\022\r\n\tNotCancel\020\'\022\022\n\016NotAllowDelete" +
-      "\020(\022\022\n\016ClientIPNotSet\020)\022\024\n\020DatabaseNotEmp" +
-      "ty\020*\022\030\n\024NodeStateNotExpected\020+\022\030\n\024Watche" +
-      "rMasterHashErr\020,*C\n\rStorageEngine\022\017\n\013STE" +
-      "_Invalid\020\000\022\020\n\014STE_MassTree\020\001\022\017\n\013STE_Rock" +
-      "sDB\020\002B\r\n\013io.jimdb.pbb\006proto3"
+      "r\022\020\n\010group_id\030\002 \001(\005\022\022\n\ngroup_name\030\003 \001(\t\"" +
+      "W\n\023CreateGroupResponse\022$\n\006header\030\001 \001(\0132\024" +
+      ".mspb.ResponseHeader\022\032\n\005group\030\002 \001(\0132\013.ms" +
+      "pb.Group\"\177\n\022CreateSpaceRequest\022#\n\006header" +
+      "\030\001 \001(\0132\023.mspb.RequestHeader\0220\n\rrange_req" +
+      "uest\030\002 \001(\0132\031.mspb.CreateRangesRequest\022\022\n" +
+      "\nspace_name\030\003 \001(\t\"W\n\023CreateSpaceResponse" +
+      "\022$\n\006header\030\001 \001(\0132\024.mspb.ResponseHeader\022\032" +
+      "\n\005space\030\002 \001(\0132\013.mspb.Space\"_\n\024GetSpaceTo" +
+      "kenRequest\022#\n\006header\030\001 \001(\0132\023.mspb.Reques" +
+      "tHeader\022\020\n\010group_id\030\002 \001(\005\022\020\n\010space_id\030\003 " +
+      "\001(\005\"L\n\025GetSpaceTokenResponse\022$\n\006header\030\001" +
+      " \001(\0132\024.mspb.ResponseHeader\022\r\n\005token\030\002 \001(" +
+      "\t\"V\n\021GroupListResponse\022$\n\006header\030\001 \001(\0132\024" +
+      ".mspb.ResponseHeader\022\033\n\006groups\030\002 \003(\0132\013.m" +
+      "spb.Group\"I\n\020SpaceListRequest\022#\n\006header\030" +
+      "\001 \001(\0132\023.mspb.RequestHeader\022\020\n\010group_id\030\002" +
+      " \001(\005\"V\n\021SpaceListResponse\022$\n\006header\030\001 \001(" +
+      "\0132\024.mspb.ResponseHeader\022\033\n\006spaces\030\002 \003(\0132" +
+      "\013.mspb.Space\"H\n\017GetGroupRequest\022#\n\006heade" +
+      "r\030\001 \001(\0132\023.mspb.RequestHeader\022\020\n\010group_id" +
+      "\030\002 \001(\005\"T\n\020GetGroupResponse\022$\n\006header\030\001 \001" +
+      "(\0132\024.mspb.ResponseHeader\022\032\n\005group\030\002 \001(\0132" +
+      "\013.mspb.Group\"Z\n\017GetSpaceRequest\022#\n\006heade" +
+      "r\030\001 \001(\0132\023.mspb.RequestHeader\022\020\n\010group_id" +
+      "\030\002 \001(\005\022\020\n\010space_id\030\003 \001(\005\"T\n\020GetSpaceResp" +
+      "onse\022$\n\006header\030\001 \001(\0132\024.mspb.ResponseHead" +
+      "er\022\032\n\005Space\030\002 \001(\0132\013.mspb.Space\"H\n\017DelGro" +
+      "upRequest\022#\n\006header\030\001 \001(\0132\023.mspb.Request" +
+      "Header\022\020\n\010group_id\030\002 \001(\005\"Z\n\017DelSpaceRequ" +
+      "est\022#\n\006header\030\001 \001(\0132\023.mspb.RequestHeader" +
+      "\022\020\n\010group_id\030\002 \001(\005\022\020\n\010space_id\030\003 \001(\005\"E\n\016" +
+      "GetTopoRequest\022$\n\005route\030\001 \001(\0132\025.mspb.Get" +
+      "RouteRequest\022\r\n\005token\030\002 \001(\t*\365\006\n\tErrorTyp" +
+      "e\022\006\n\002No\020\000\022\014\n\010UnDefine\020\001\022\024\n\020ClusterIDNotS" +
+      "ame\020\002\022\022\n\016NoSelectedNode\020\003\022\021\n\rInternalErr" +
+      "or\020\004\022\t\n\005GenID\020\005\022\017\n\013DupDatabase\020\006\022\014\n\010DupT" +
+      "able\020\007\022\022\n\016NotRuningTable\020\010\022\024\n\020NotExistDa" +
+      "tabase\020\t\022\021\n\rNotExistTable\020\n\022\020\n\014NotExistN" +
+      "ode\020\013\022\021\n\rNotActiveNode\020\014\022\021\n\rNotExistRang" +
+      "e\020\r\022\017\n\013ExistsRange\020\016\022\020\n\014NotExistPeer\020\017\022\026" +
+      "\n\022NotEnoughResources\020\020\022\020\n\014InvalidParam\020\021" +
+      "\022\021\n\rInvalidColumn\020\022\022\020\n\014InvalidIndex\020\023\022\025\n" +
+      "\021ColumnNameTooLong\020\024\022\022\n\016ColumnNotExist\020\025" +
+      "\022\021\n\rDupColumnName\020\026\022\021\n\rPkMustNotNull\020\027\022\r" +
+      "\n\tMissingPk\020\030\022\034\n\030PkMustNotSetDefaultValu" +
+      "e\020\031\022\025\n\021NodeRejectNewPeer\020\032\022\017\n\013NodeBlocke" +
+      "d\020\033\022\025\n\021NodeStateConfused\020\034\022\021\n\rNodeNotEno" +
+      "ugh\020\035\022\024\n\020SchedulerExisted\020\036\022\025\n\021Scheduler" +
+      "NotFound\020\037\022\021\n\rWorkerExisted\020 \022\022\n\016WorkerN" +
+      "otFound\020!\022\023\n\017SqlReservedWord\020\"\022\022\n\016SQLSyn" +
+      "taxError\020#\022\025\n\021RangeMetaConflict\020$\022\014\n\010Not" +
+      "Found\020%\022\021\n\rNotAllowSplit\020&\022\r\n\tNotCancel\020" +
+      "\'\022\022\n\016NotAllowDelete\020(\022\022\n\016ClientIPNotSet\020" +
+      ")\022\024\n\020DatabaseNotEmpty\020*\022\030\n\024NodeStateNotE" +
+      "xpected\020+\022\030\n\024WatcherMasterHashErr\020,*C\n\rS" +
+      "torageEngine\022\017\n\013STE_Invalid\020\000\022\020\n\014STE_Mas" +
+      "sTree\020\001\022\017\n\013STE_RocksDB\020\002B\r\n\013io.jimdb.pbb" +
+      "\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -35598,7 +51211,7 @@ public final class Mspb {
     internal_static_mspb_RegisterNodeRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_mspb_RegisterNodeRequest_descriptor,
-        new java.lang.String[] { "Header", "ServerPort", "RaftPort", "AdminPort", "Version", "StEngine", "Ranges", });
+        new java.lang.String[] { "Header", "ServerPort", "RaftPort", "AdminPort", "Version", "StEngine", "Ranges", "ProtocolVersion", });
     internal_static_mspb_RegisterNodeResponse_descriptor =
       getDescriptor().getMessageTypes().get(16);
     internal_static_mspb_RegisterNodeResponse_fieldAccessorTable = new
@@ -35683,72 +51296,192 @@ public final class Mspb {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_mspb_CountTableResponse_descriptor,
         new java.lang.String[] { "Header", "List", });
-    internal_static_mspb_GeneralResponse_descriptor =
+    internal_static_mspb_GeneralRequest_descriptor =
       getDescriptor().getMessageTypes().get(30);
+    internal_static_mspb_GeneralRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_GeneralRequest_descriptor,
+        new java.lang.String[] { "Header", });
+    internal_static_mspb_GeneralResponse_descriptor =
+      getDescriptor().getMessageTypes().get(31);
     internal_static_mspb_GeneralResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_mspb_GeneralResponse_descriptor,
         new java.lang.String[] { "Header", });
     internal_static_mspb_Counter_descriptor =
-      getDescriptor().getMessageTypes().get(31);
+      getDescriptor().getMessageTypes().get(32);
     internal_static_mspb_Counter_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_mspb_Counter_descriptor,
         new java.lang.String[] { "DbId", "TableId", "Count", });
     internal_static_mspb_GetTableRequest_descriptor =
-      getDescriptor().getMessageTypes().get(32);
+      getDescriptor().getMessageTypes().get(33);
     internal_static_mspb_GetTableRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_mspb_GetTableRequest_descriptor,
         new java.lang.String[] { "Header", "DbId", "DbName", "TableId", "TableName", });
     internal_static_mspb_GetNodeInfoRequest_descriptor =
-      getDescriptor().getMessageTypes().get(33);
+      getDescriptor().getMessageTypes().get(34);
     internal_static_mspb_GetNodeInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_mspb_GetNodeInfoRequest_descriptor,
         new java.lang.String[] { "Header", });
     internal_static_mspb_GetNodeInfoResponse_descriptor =
-      getDescriptor().getMessageTypes().get(34);
+      getDescriptor().getMessageTypes().get(35);
     internal_static_mspb_GetNodeInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_mspb_GetNodeInfoResponse_descriptor,
         new java.lang.String[] { "Header", "NodeInfos", });
     internal_static_mspb_GetNodeInfo_descriptor =
-      getDescriptor().getMessageTypes().get(35);
+      getDescriptor().getMessageTypes().get(36);
     internal_static_mspb_GetNodeInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_mspb_GetNodeInfo_descriptor,
         new java.lang.String[] { "Err", "Node", "Info", });
     internal_static_mspb_CreateRangesRequest_descriptor =
-      getDescriptor().getMessageTypes().get(36);
+      getDescriptor().getMessageTypes().get(37);
     internal_static_mspb_CreateRangesRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_mspb_CreateRangesRequest_descriptor,
         new java.lang.String[] { "Header", "DbId", "TableId", "Replicas", "Ranges", });
     internal_static_mspb_DeleteRangesRequest_descriptor =
-      getDescriptor().getMessageTypes().get(37);
+      getDescriptor().getMessageTypes().get(38);
     internal_static_mspb_DeleteRangesRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_mspb_DeleteRangesRequest_descriptor,
         new java.lang.String[] { "Header", "DbId", "TableId", "RangeType", "IndexId", });
     internal_static_mspb_RequestHeader_descriptor =
-      getDescriptor().getMessageTypes().get(38);
+      getDescriptor().getMessageTypes().get(39);
     internal_static_mspb_RequestHeader_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_mspb_RequestHeader_descriptor,
         new java.lang.String[] { "ClusterId", });
     internal_static_mspb_ResponseHeader_descriptor =
-      getDescriptor().getMessageTypes().get(39);
+      getDescriptor().getMessageTypes().get(40);
     internal_static_mspb_ResponseHeader_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_mspb_ResponseHeader_descriptor,
         new java.lang.String[] { "ClusterId", "Error", });
     internal_static_mspb_Error_descriptor =
-      getDescriptor().getMessageTypes().get(40);
+      getDescriptor().getMessageTypes().get(41);
     internal_static_mspb_Error_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_mspb_Error_descriptor,
         new java.lang.String[] { "Code", "Message", });
+    internal_static_mspb_Group_descriptor =
+      getDescriptor().getMessageTypes().get(42);
+    internal_static_mspb_Group_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_Group_descriptor,
+        new java.lang.String[] { "GroupId", "GroupName", "CreateTime", });
+    internal_static_mspb_Space_descriptor =
+      getDescriptor().getMessageTypes().get(43);
+    internal_static_mspb_Space_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_Space_descriptor,
+        new java.lang.String[] { "GroupId", "SpaceId", "SpaceName", "Replicas", "CreateTime", });
+    internal_static_mspb_GenerateIdResponse_descriptor =
+      getDescriptor().getMessageTypes().get(44);
+    internal_static_mspb_GenerateIdResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_GenerateIdResponse_descriptor,
+        new java.lang.String[] { "Header", "GenerateId", });
+    internal_static_mspb_CreateGroupRequest_descriptor =
+      getDescriptor().getMessageTypes().get(45);
+    internal_static_mspb_CreateGroupRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_CreateGroupRequest_descriptor,
+        new java.lang.String[] { "Header", "GroupId", "GroupName", });
+    internal_static_mspb_CreateGroupResponse_descriptor =
+      getDescriptor().getMessageTypes().get(46);
+    internal_static_mspb_CreateGroupResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_CreateGroupResponse_descriptor,
+        new java.lang.String[] { "Header", "Group", });
+    internal_static_mspb_CreateSpaceRequest_descriptor =
+      getDescriptor().getMessageTypes().get(47);
+    internal_static_mspb_CreateSpaceRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_CreateSpaceRequest_descriptor,
+        new java.lang.String[] { "Header", "RangeRequest", "SpaceName", });
+    internal_static_mspb_CreateSpaceResponse_descriptor =
+      getDescriptor().getMessageTypes().get(48);
+    internal_static_mspb_CreateSpaceResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_CreateSpaceResponse_descriptor,
+        new java.lang.String[] { "Header", "Space", });
+    internal_static_mspb_GetSpaceTokenRequest_descriptor =
+      getDescriptor().getMessageTypes().get(49);
+    internal_static_mspb_GetSpaceTokenRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_GetSpaceTokenRequest_descriptor,
+        new java.lang.String[] { "Header", "GroupId", "SpaceId", });
+    internal_static_mspb_GetSpaceTokenResponse_descriptor =
+      getDescriptor().getMessageTypes().get(50);
+    internal_static_mspb_GetSpaceTokenResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_GetSpaceTokenResponse_descriptor,
+        new java.lang.String[] { "Header", "Token", });
+    internal_static_mspb_GroupListResponse_descriptor =
+      getDescriptor().getMessageTypes().get(51);
+    internal_static_mspb_GroupListResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_GroupListResponse_descriptor,
+        new java.lang.String[] { "Header", "Groups", });
+    internal_static_mspb_SpaceListRequest_descriptor =
+      getDescriptor().getMessageTypes().get(52);
+    internal_static_mspb_SpaceListRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_SpaceListRequest_descriptor,
+        new java.lang.String[] { "Header", "GroupId", });
+    internal_static_mspb_SpaceListResponse_descriptor =
+      getDescriptor().getMessageTypes().get(53);
+    internal_static_mspb_SpaceListResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_SpaceListResponse_descriptor,
+        new java.lang.String[] { "Header", "Spaces", });
+    internal_static_mspb_GetGroupRequest_descriptor =
+      getDescriptor().getMessageTypes().get(54);
+    internal_static_mspb_GetGroupRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_GetGroupRequest_descriptor,
+        new java.lang.String[] { "Header", "GroupId", });
+    internal_static_mspb_GetGroupResponse_descriptor =
+      getDescriptor().getMessageTypes().get(55);
+    internal_static_mspb_GetGroupResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_GetGroupResponse_descriptor,
+        new java.lang.String[] { "Header", "Group", });
+    internal_static_mspb_GetSpaceRequest_descriptor =
+      getDescriptor().getMessageTypes().get(56);
+    internal_static_mspb_GetSpaceRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_GetSpaceRequest_descriptor,
+        new java.lang.String[] { "Header", "GroupId", "SpaceId", });
+    internal_static_mspb_GetSpaceResponse_descriptor =
+      getDescriptor().getMessageTypes().get(57);
+    internal_static_mspb_GetSpaceResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_GetSpaceResponse_descriptor,
+        new java.lang.String[] { "Header", "Space", });
+    internal_static_mspb_DelGroupRequest_descriptor =
+      getDescriptor().getMessageTypes().get(58);
+    internal_static_mspb_DelGroupRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_DelGroupRequest_descriptor,
+        new java.lang.String[] { "Header", "GroupId", });
+    internal_static_mspb_DelSpaceRequest_descriptor =
+      getDescriptor().getMessageTypes().get(59);
+    internal_static_mspb_DelSpaceRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_DelSpaceRequest_descriptor,
+        new java.lang.String[] { "Header", "GroupId", "SpaceId", });
+    internal_static_mspb_GetTopoRequest_descriptor =
+      getDescriptor().getMessageTypes().get(60);
+    internal_static_mspb_GetTopoRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_mspb_GetTopoRequest_descriptor,
+        new java.lang.String[] { "Route", "Token", });
     io.jimdb.pb.Basepb.getDescriptor();
     io.jimdb.pb.Schedule.getDescriptor();
   }

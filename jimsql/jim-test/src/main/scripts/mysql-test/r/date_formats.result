@@ -1,0 +1,85 @@
+drop table if exists t1;
+SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
+create table t1 (date char(30) PRIMARY KEY, format char(30) not null)COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+insert into t1 values
+('2003-01-02 10:11:12', '%Y-%m-%d %H:%i:%S'),
+('03-01-02 8:11:2.123456', '%y-%m-%d %H:%i:%S.%#'),
+('0003-01-02 8:11:2.123456', '%Y-%m-%d %H:%i:%S.%#'),
+('03-01-02 8:11:2.123456',   '%Y-%m-%d %H:%i:%S.%#'),
+('2003-01-02 10:11:12 PM', '%Y-%m-%d %h:%i:%S %p'),
+('2003-01-02 01:11:12.12345AM', '%Y-%m-%d %h:%i:%S.%f%p'),
+('2003-01-02 02:11:12.12345AM', '%Y-%m-%d %h:%i:%S.%f %p'),
+('2003-01-02 12:11:12.12345 am', '%Y-%m-%d %h:%i:%S.%f%p'),
+('2003-01-02 11:11:12Pm', '%Y-%m-%d %h:%i:%S%p'),
+('10:20:10', '%H:%i:%s'),
+('10:20:10', '%h:%i:%s.%f'),
+('10:20:10', '%T'),
+('10:20:10AM', '%h:%i:%s%p'),
+('10:20:10AM', '%r'),
+('10:20:10.44AM', '%h:%i:%s.%f%p'),
+('15-01-2001 12:59:58', '%d-%m-%Y %H:%i:%S'),
+('15 September 2001', '%d %M %Y'),
+('15 SEPTEMB 2001', '%d %M %Y'),
+('15 MAY 2001', '%d %b %Y'),
+('15th May 2001', '%D %b %Y'),
+('Sunday 15 MAY 2001', '%W %d %b %Y'),
+('Sund 15 MAY 2001', '%W %d %b %Y'),
+('Tuesday 00 2002', '%W %U %Y'),
+('Thursday 53 1998', '%W %u %Y'),
+('Sunday 01 2001', '%W %v %x'),
+('Tuesday 52 2001', '%W %V %X'),
+('060 2004', '%j %Y'),
+('4 53 1998', '%w %u %Y'),
+('15-01-2001', '%d-%m-%Y %H:%i:%S'),
+('15-01-20', '%d-%m-%y'),
+('15-2001-1', '%d-%Y-%c');
+drop table t1;
+create table t1 (d date PRIMARY KEY)COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+insert into t1 values ('2004-07-14'),('2005-07-14');
+drop table t1;
+SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
+create table t1 (f1 datetime primary key)COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+insert into t1 (f1) values ("2005-01-01");
+insert into t1 (f1) values ("2005-02-01");
+drop table t1;
+"End of 4.1 tests"
+"End of 5.0 tests"
+#
+# Start of 5.1 tests
+#
+#
+# Bug#58005 utf8 + get_format causes failed assertion: !str || str != Ptr'
+#
+#
+# End of 5.1 tests
+#
+#
+# Start of 5.6 tests
+#
+#
+# WL#946 Fractional seconds precision
+# Testing Item_func_date_format with NULL argument.
+#
+#
+# End of 5.6 tests
+#
+#
+# Bug#19047644 EXTRACT_DATE_TIME MISBEHAVES WITH
+#              UNINITIALISED VALUE ON GARBAGE INPUTS
+#
+#
+# Bug#19047488 MAKE_DATE_TIME WITH TOO BIG STRING ARGUMENT,
+#              INVALID MEMORY READS
+#
+#
+# Bug #25949639: DATE FORMAT 'YYYYMMDD' ISN'T RECOGNIZED IN LEFT JOIN
+#
+CREATE TABLE t1 (a varchar(10), PRIMARY KEY (a))COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+CREATE TABLE t2 (a varchar(10), b date, PRIMARY KEY(a,b))COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+CREATE TABLE t3 (a varchar(10), b TIME, PRIMARY KEY(a,b))COMMENT REPLICA=1 ENGINE=memory AUTO_INCREMENT=1;
+INSERT INTO t1 VALUES ('test1');
+INSERT INTO t2 VALUES
+('test1','2016-12-13'),('test1','2016-12-14'),('test1','2016-12-15');
+INSERT INTO t3 VALUES
+('test1','11:13:14'), ('test1','12:13:14'), ('test1','10:13:14');
+DROP TABLE t1, t2, t3;

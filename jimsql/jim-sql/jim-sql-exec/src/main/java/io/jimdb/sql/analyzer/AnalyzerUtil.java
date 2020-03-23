@@ -189,7 +189,7 @@ public final class AnalyzerUtil {
       // convert over maxUnsignedLong or less minLong to bigDecimal
       if (bigInteger.compareTo(MAX_UNSIGNEDLONG) > 0 || bigInteger.compareTo(MIN_DEC_SIGNEDLONG.toBigInteger()) < 0) {
         BigDecimal dec = new BigDecimal(bigInteger);
-        value = DecimalValue.getInstance(dec, dec.precision(), 4);
+        value = DecimalValue.getInstance(dec, dec.precision(), 0);
         resultType = Types.buildSQLType(DataType.Decimal);
       } else if (bigInteger.compareTo(MAX_SIGNEDLONG) > 0) {
         value = UnsignedLongValue.getInstance(bigInteger);

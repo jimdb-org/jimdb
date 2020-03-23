@@ -83,23 +83,19 @@ public class ProjectionEliminateOptimizer implements IRuleOptimizer {
 //        break;
 //    }
 
-    logicalOperator.getSchema().getColumns().forEach(e -> {
+    for (ColumnExpr e : logicalOperator.getSchema().getColumns()) {
       resolveColumnAndReplace(e, replace);
-    });
+    }
 
     logicalOperator.acceptVisitor(eliminatedVisitor);
 
-    if (isProjection) {
-      if (logicalOperator.hasChildren()) {
-        if (logicalOperator.getChildren()[0] instanceof Projection) {
-          Projection child = (Projection) logicalOperator.getChildren()[0];
-          if (hasVarSet(child.getExpressions())) {
-            for (int i = 0; i < projection.getExpressions().length; i++) {
-              projection.getExpressions()[i] = resolveExprAndReplaceInProj(projection.getExpressions()[i], child);
-            }
-            logicalOperator.getChildren()[0] = child.getChildren()[0];
-          }
+    if (isProjection && logicalOperator.hasChildren() && logicalOperator.getChildren()[0] instanceof Projection) {
+      Projection child = (Projection) logicalOperator.getChildren()[0];
+      if (hasVarSet(child.getExpressions())) {
+        for (int i = 0; i < projection.getExpressions().length; i++) {
+          projection.getExpressions()[i] = resolveExprAndReplaceInProj(projection.getExpressions()[i], child);
         }
+        logicalOperator.getChildren()[0] = child.getChildren()[0];
       }
     }
 

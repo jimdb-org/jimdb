@@ -149,4 +149,36 @@ public class OnUpdateTest extends SqlTestBase {
 
     deleteCatalog(DB_NAME);
   }
+
+  @Test
+  public void testUpdate() {
+    String DBNAME = "testupdate";
+    createCatalog(DBNAME);
+    String TEST_TABLENAME = DBNAME + "." + "test01";
+
+    execUpdate(String.format("DROP TABLE IF EXISTS %s ", TEST_TABLENAME), 0, true);
+
+    String sql = "CREATE TABLE IF NOT EXISTS " + TEST_TABLENAME + " ("
+            + "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,"
+            + "t_int INT DEFAULT 1,"
+            + "t_datetime datetime DEFAULT NULL,"
+            + "INDEX name_idx (t_int) "
+            + ")COMMENT 'REPLICA=1' ENGINE=memory AUTO_INCREMENT=0;";
+    execUpdate(sql, 0, true);
+
+    int size = 100;
+
+    for (int i = 0; i < size; i++) {
+      sql = String.format("INSERT INTO %s(t_datetime) VALUE('2020-10-10 09:29:09')", TEST_TABLENAME);
+      execUpdate(sql, 1, true);
+    }
+
+    execUpdate(String.format("update %s set t_int = 2 where t_datetime = '2020-10-10 09:29:09'", TEST_TABLENAME), true);
+
+    List<String> expected = expectedStr(new String[]{ String.format("COUNT(1)=%d", size) });
+    execQuery(String.format("select count(1) from %s where t_int = 2 ", TEST_TABLENAME), expected, false);
+    deleteCatalog(DBNAME);
+  }
+
+
 }

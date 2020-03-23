@@ -16,6 +16,7 @@
 package io.jimdb.core.expression;
 
 import io.jimdb.core.Session;
+import io.jimdb.core.types.ValueType;
 import io.jimdb.core.values.Value;
 import io.jimdb.core.values.ValueConvertor;
 import io.jimdb.pb.Metapb.SQLType;
@@ -81,7 +82,7 @@ public class Point {
   }
 
   // Convert the given point to a specific type
-  public Point castType(Session session, SQLType type) {
+  public Point castType(Session session, SQLType type, ValueType valueType) {
 
     // TODO if the point's value is 'max' value or 'min not null' value we should simply return itself
     if (this.value.isMin() || this.value.isMax()) {
@@ -89,7 +90,7 @@ public class Point {
     }
 
     Value originalValue = this.value;
-    Value convertedValue = ValueConvertor.convertType(session, originalValue, type);
+    Value convertedValue = ValueConvertor.convertType(session, originalValue, valueType, type);
 
     final int compared = originalValue.compareTo(session, convertedValue);
     if (compared == 0) {

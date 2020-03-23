@@ -68,11 +68,11 @@ public final class Update extends Operator {
   @Override
   public Flux<ExecResult> execute(Session session) throws BaseException {
     if (this.select == null) {
-      return session.getTxn().update(table, assignments, null);
+      return session.getStoreEngine().update(session, table, assignments, null);
     }
 
     return this.select.execute(session)
-            .flatMap(r -> session.getTxn().update(table, assignments, (QueryResult) r));
+            .flatMap(r -> session.getStoreEngine().update(session, table, assignments, (QueryResult) r));
   }
 
   @Override

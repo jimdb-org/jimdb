@@ -599,6 +599,14 @@ public final class Basepb {
      * <code>RNG_Data = 2;</code>
      */
     RNG_Data(2),
+    /**
+     * <pre>
+     * kv range
+     * </pre>
+     *
+     * <code>RNG_Kv = 3;</code>
+     */
+    RNG_Kv(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -626,6 +634,14 @@ public final class Basepb {
      * <code>RNG_Data = 2;</code>
      */
     public static final int RNG_Data_VALUE = 2;
+    /**
+     * <pre>
+     * kv range
+     * </pre>
+     *
+     * <code>RNG_Kv = 3;</code>
+     */
+    public static final int RNG_Kv_VALUE = 3;
 
 
     public final int getNumber() {
@@ -649,6 +665,7 @@ public final class Basepb {
         case 0: return RNG_Invalid;
         case 1: return RNG_Index;
         case 2: return RNG_Data;
+        case 3: return RNG_Kv;
         default: return null;
       }
     }
@@ -2023,6 +2040,11 @@ public final class Basepb {
      * <code>.basepb.StoreType type = 10;</code>
      */
     io.jimdb.pb.Basepb.StoreType getType();
+
+    /**
+     * <code>int32 protocol_version = 11;</code>
+     */
+    int getProtocolVersion();
   }
   /**
    * Protobuf type {@code basepb.Node}
@@ -2047,6 +2069,7 @@ public final class Basepb {
       rangePeers_ = java.util.Collections.emptyList();
       lastUpdateTime_ = 0L;
       type_ = 0;
+      protocolVersion_ = 0;
     }
 
     @java.lang.Override
@@ -2128,6 +2151,11 @@ public final class Basepb {
               int rawValue = input.readEnum();
 
               type_ = rawValue;
+              break;
+            }
+            case 88: {
+
+              protocolVersion_ = input.readInt32();
               break;
             }
             default: {
@@ -2323,6 +2351,15 @@ public final class Basepb {
       return result == null ? io.jimdb.pb.Basepb.StoreType.UNRECOGNIZED : result;
     }
 
+    public static final int PROTOCOL_VERSION_FIELD_NUMBER = 11;
+    private int protocolVersion_;
+    /**
+     * <code>int32 protocol_version = 11;</code>
+     */
+    public int getProtocolVersion() {
+      return protocolVersion_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2366,6 +2403,9 @@ public final class Basepb {
       }
       if (type_ != io.jimdb.pb.Basepb.StoreType.Store_Invalid.getNumber()) {
         output.writeEnum(10, type_);
+      }
+      if (protocolVersion_ != 0) {
+        output.writeInt32(11, protocolVersion_);
       }
       unknownFields.writeTo(output);
     }
@@ -2415,6 +2455,10 @@ public final class Basepb {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(10, type_);
       }
+      if (protocolVersion_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(11, protocolVersion_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2449,6 +2493,8 @@ public final class Basepb {
       result = result && (getLastUpdateTime()
           == other.getLastUpdateTime());
       result = result && type_ == other.type_;
+      result = result && (getProtocolVersion()
+          == other.getProtocolVersion());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -2485,6 +2531,8 @@ public final class Basepb {
           getLastUpdateTime());
       hash = (37 * hash) + TYPE_FIELD_NUMBER;
       hash = (53 * hash) + type_;
+      hash = (37 * hash) + PROTOCOL_VERSION_FIELD_NUMBER;
+      hash = (53 * hash) + getProtocolVersion();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2643,6 +2691,8 @@ public final class Basepb {
 
         type_ = 0;
 
+        protocolVersion_ = 0;
+
         return this;
       }
 
@@ -2689,6 +2739,7 @@ public final class Basepb {
         }
         result.lastUpdateTime_ = lastUpdateTime_;
         result.type_ = type_;
+        result.protocolVersion_ = protocolVersion_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -2791,6 +2842,9 @@ public final class Basepb {
         }
         if (other.type_ != 0) {
           setTypeValue(other.getTypeValue());
+        }
+        if (other.getProtocolVersion() != 0) {
+          setProtocolVersion(other.getProtocolVersion());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -3373,6 +3427,32 @@ public final class Basepb {
       public Builder clearType() {
         
         type_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int protocolVersion_ ;
+      /**
+       * <code>int32 protocol_version = 11;</code>
+       */
+      public int getProtocolVersion() {
+        return protocolVersion_;
+      }
+      /**
+       * <code>int32 protocol_version = 11;</code>
+       */
+      public Builder setProtocolVersion(int value) {
+        
+        protocolVersion_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 protocol_version = 11;</code>
+       */
+      public Builder clearProtocolVersion() {
+        
+        protocolVersion_ = 0;
         onChanged();
         return this;
       }
@@ -12383,69 +12463,70 @@ public final class Basepb {
     java.lang.String[] descriptorData = {
       "\n\023basepb/basepb.proto\022\006basepb\"U\n\tRangePe" +
       "er\022\020\n\010range_id\030\001 \001(\004\022\017\n\007peer_id\030\002 \001(\004\022%\n" +
-      "\005state\030\003 \001(\0162\026.basepb.RangePeerState\"\360\001\n" +
+      "\005state\030\003 \001(\0162\026.basepb.RangePeerState\"\212\002\n" +
       "\004Node\022\n\n\002id\030\001 \001(\004\022\n\n\002ip\030\002 \001(\t\022\023\n\013server_" +
       "port\030\003 \001(\r\022\021\n\traft_port\030\004 \001(\r\022\022\n\nadmin_p" +
       "ort\030\005 \001(\r\022 \n\005state\030\006 \001(\0162\021.basepb.NodeSt" +
       "ate\022\017\n\007version\030\007 \001(\003\022&\n\013range_peers\030\010 \003(" +
       "\0132\021.basepb.RangePeer\022\030\n\020last_update_time" +
-      "\030\t \001(\003\022\037\n\004type\030\n \001(\0162\021.basepb.StoreType\"" +
-      "C\n\004Peer\022\n\n\002id\030\001 \001(\004\022\017\n\007node_id\030\002 \001(\004\022\036\n\004" +
-      "type\030\003 \001(\0162\020.basepb.PeerType\"\204\001\n\nPeerSta" +
-      "tus\022\032\n\004peer\030\001 \001(\0132\014.basepb.Peer\022\r\n\005index" +
-      "\030\002 \001(\004\022\016\n\006commit\030\003 \001(\004\022\024\n\014down_seconds\030\004" +
-      " \001(\004\022\024\n\014snapshotting\030\005 \001(\010\022\017\n\007applied\030\006 " +
-      "\001(\004\"[\n\007Replica\022\020\n\010range_id\030\001 \001(\004\022\032\n\004peer" +
-      "\030\002 \001(\0132\014.basepb.Peer\022\021\n\tstart_key\030\003 \001(\014\022" +
-      "\017\n\007end_key\030\004 \001(\014\"/\n\nRangeEpoch\022\020\n\010conf_v" +
-      "er\030\001 \001(\004\022\017\n\007version\030\002 \001(\004\"\317\001\n\tKeySchema\022" +
-      ".\n\010key_cols\030\001 \003(\0132\034.basepb.KeySchema.Col" +
-      "umnInfo\022\024\n\014unique_index\030\002 \001(\010\0220\n\nextra_c" +
-      "ols\030\003 \003(\0132\034.basepb.KeySchema.ColumnInfo\032" +
-      "J\n\nColumnInfo\022\n\n\002id\030\001 \001(\005\022\036\n\004type\030\002 \001(\0162" +
-      "\020.basepb.DataType\022\020\n\010unsigned\030\003 \001(\010\"\334\002\n\005" +
-      "Range\022\n\n\002id\030\001 \001(\004\022\021\n\tstart_key\030\002 \001(\014\022\017\n\007" +
-      "end_key\030\003 \001(\014\022\'\n\013range_epoch\030\004 \001(\0132\022.bas" +
-      "epb.RangeEpoch\022\033\n\005peers\030\005 \003(\0132\014.basepb.P" +
-      "eer\022\r\n\005db_id\030\006 \001(\005\022\020\n\010table_id\030\007 \001(\005\022%\n\n" +
-      "key_schema\030\010 \001(\0132\021.basepb.KeySchema\022\016\n\006l" +
-      "eader\030\t \001(\004\022%\n\nrange_type\030\n \001(\0162\021.basepb" +
-      ".RangeType\022%\n\nstore_type\030\013 \001(\0162\021.basepb." +
-      "StoreType\022\014\n\004term\030\014 \001(\004\022\027\n\017parent_range_" +
-      "id\030\r \001(\004\022\020\n\010index_id\030\016 \001(\005\">\n\006Leader\022\020\n\010" +
-      "range_id\030\001 \001(\004\022\017\n\007node_id\030\002 \001(\004\022\021\n\tnode_" +
-      "addr\030\003 \001(\t\"\304\001\n\014WatcherEvent\022)\n\014watcher_t" +
-      "ype\030\001 \001(\0162\023.basepb.WatcherType\022%\n\nevent_" +
-      "type\030\002 \001(\0162\021.basepb.EventType\022\017\n\007node_id" +
-      "\030\003 \001(\004\022\r\n\005db_id\030\004 \001(\005\022\020\n\010table_id\030\005 \001(\005\022" +
-      "\020\n\010range_id\030\006 \001(\004\022\r\n\005value\030\007 \001(\014\022\017\n\007vers" +
-      "ion\030\010 \001(\004*\216\003\n\010DataType\022\013\n\007Invalid\020\000\022\013\n\007T" +
-      "inyInt\020\001\022\014\n\010SmallInt\020\002\022\r\n\tMediumInt\020\003\022\007\n" +
-      "\003Int\020\004\022\n\n\006BigInt\020\005\022\007\n\003Bit\020\006\022\t\n\005Float\020\n\022\n" +
-      "\n\006Double\020\013\022\013\n\007Decimal\020\014\022\010\n\004Date\020\024\022\r\n\tTim" +
-      "eStamp\020\025\022\014\n\010DateTime\020\026\022\010\n\004Time\020\027\022\010\n\004Year" +
-      "\020\030\022\013\n\007Varchar\020\036\022\n\n\006Binary\020\037\022\010\n\004Char\020 \022\t\n" +
-      "\005NChar\020!\022\r\n\tVarBinary\020\"\022\014\n\010TinyBlob\020#\022\010\n" +
-      "\004Blob\020$\022\016\n\nMediumBlob\020%\022\014\n\010LongBlob\020&\022\010\n" +
-      "\004Json\020\'\022\014\n\010TinyText\020(\022\010\n\004Text\020)\022\016\n\nMediu" +
-      "mText\020*\022\014\n\010LongText\020+\022\010\n\004Enum\020,\022\007\n\003Set\020-" +
-      "\022\010\n\004Null\0202*L\n\tStoreType\022\021\n\rStore_Invalid" +
-      "\020\000\022\r\n\tStore_Hot\020\001\022\016\n\nStore_Warm\020\002\022\r\n\tSto" +
-      "re_Mix\020\003*9\n\tRangeType\022\017\n\013RNG_Invalid\020\000\022\r" +
-      "\n\tRNG_Index\020\001\022\014\n\010RNG_Data\020\002*X\n\tNodeState" +
-      "\022\r\n\tN_Invalid\020\000\022\014\n\010N_Online\020\001\022\r\n\tN_Offli" +
-      "ne\020\002\022\016\n\nN_Updating\020\003\022\017\n\013N_Offlining\020\004*U\n" +
-      "\016RangePeerState\022\017\n\013RPS_Invalid\020\000\022\020\n\014RPS_" +
-      "NoLeader\020\001\022\020\n\014RPS_Follower\020\002\022\016\n\nRPS_Lead" +
-      "er\020\003*K\n\010PeerType\022\024\n\020PeerType_Invalid\020\000\022\023" +
-      "\n\017PeerType_Normal\020\001\022\024\n\020PeerType_Learner\020" +
-      "\002*N\n\tEventType\022\026\n\022Event_Type_Invalid\020\000\022\022" +
-      "\n\016Event_Type_PUT\020\001\022\025\n\021Event_Type_DELETE\020" +
-      "\002*\211\001\n\013WatcherType\022\030\n\024Watcher_Type_Invali" +
-      "d\020\000\022\025\n\021Watcher_Type_Node\020\001\022\031\n\025Watcher_Ty" +
-      "pe_Database\020\002\022\026\n\022Watcher_Type_Table\020\003\022\026\n" +
-      "\022Watcher_Type_Range\020\004B\r\n\013io.jimdb.pbb\006pr" +
-      "oto3"
+      "\030\t \001(\003\022\037\n\004type\030\n \001(\0162\021.basepb.StoreType\022" +
+      "\030\n\020protocol_version\030\013 \001(\005\"C\n\004Peer\022\n\n\002id\030" +
+      "\001 \001(\004\022\017\n\007node_id\030\002 \001(\004\022\036\n\004type\030\003 \001(\0162\020.b" +
+      "asepb.PeerType\"\204\001\n\nPeerStatus\022\032\n\004peer\030\001 " +
+      "\001(\0132\014.basepb.Peer\022\r\n\005index\030\002 \001(\004\022\016\n\006comm" +
+      "it\030\003 \001(\004\022\024\n\014down_seconds\030\004 \001(\004\022\024\n\014snapsh" +
+      "otting\030\005 \001(\010\022\017\n\007applied\030\006 \001(\004\"[\n\007Replica" +
+      "\022\020\n\010range_id\030\001 \001(\004\022\032\n\004peer\030\002 \001(\0132\014.basep" +
+      "b.Peer\022\021\n\tstart_key\030\003 \001(\014\022\017\n\007end_key\030\004 \001" +
+      "(\014\"/\n\nRangeEpoch\022\020\n\010conf_ver\030\001 \001(\004\022\017\n\007ve" +
+      "rsion\030\002 \001(\004\"\317\001\n\tKeySchema\022.\n\010key_cols\030\001 " +
+      "\003(\0132\034.basepb.KeySchema.ColumnInfo\022\024\n\014uni" +
+      "que_index\030\002 \001(\010\0220\n\nextra_cols\030\003 \003(\0132\034.ba" +
+      "sepb.KeySchema.ColumnInfo\032J\n\nColumnInfo\022" +
+      "\n\n\002id\030\001 \001(\005\022\036\n\004type\030\002 \001(\0162\020.basepb.DataT" +
+      "ype\022\020\n\010unsigned\030\003 \001(\010\"\334\002\n\005Range\022\n\n\002id\030\001 " +
+      "\001(\004\022\021\n\tstart_key\030\002 \001(\014\022\017\n\007end_key\030\003 \001(\014\022" +
+      "\'\n\013range_epoch\030\004 \001(\0132\022.basepb.RangeEpoch" +
+      "\022\033\n\005peers\030\005 \003(\0132\014.basepb.Peer\022\r\n\005db_id\030\006" +
+      " \001(\005\022\020\n\010table_id\030\007 \001(\005\022%\n\nkey_schema\030\010 \001" +
+      "(\0132\021.basepb.KeySchema\022\016\n\006leader\030\t \001(\004\022%\n" +
+      "\nrange_type\030\n \001(\0162\021.basepb.RangeType\022%\n\n" +
+      "store_type\030\013 \001(\0162\021.basepb.StoreType\022\014\n\004t" +
+      "erm\030\014 \001(\004\022\027\n\017parent_range_id\030\r \001(\004\022\020\n\010in" +
+      "dex_id\030\016 \001(\005\">\n\006Leader\022\020\n\010range_id\030\001 \001(\004" +
+      "\022\017\n\007node_id\030\002 \001(\004\022\021\n\tnode_addr\030\003 \001(\t\"\304\001\n" +
+      "\014WatcherEvent\022)\n\014watcher_type\030\001 \001(\0162\023.ba" +
+      "sepb.WatcherType\022%\n\nevent_type\030\002 \001(\0162\021.b" +
+      "asepb.EventType\022\017\n\007node_id\030\003 \001(\004\022\r\n\005db_i" +
+      "d\030\004 \001(\005\022\020\n\010table_id\030\005 \001(\005\022\020\n\010range_id\030\006 " +
+      "\001(\004\022\r\n\005value\030\007 \001(\014\022\017\n\007version\030\010 \001(\004*\216\003\n\010" +
+      "DataType\022\013\n\007Invalid\020\000\022\013\n\007TinyInt\020\001\022\014\n\010Sm" +
+      "allInt\020\002\022\r\n\tMediumInt\020\003\022\007\n\003Int\020\004\022\n\n\006BigI" +
+      "nt\020\005\022\007\n\003Bit\020\006\022\t\n\005Float\020\n\022\n\n\006Double\020\013\022\013\n\007" +
+      "Decimal\020\014\022\010\n\004Date\020\024\022\r\n\tTimeStamp\020\025\022\014\n\010Da" +
+      "teTime\020\026\022\010\n\004Time\020\027\022\010\n\004Year\020\030\022\013\n\007Varchar\020" +
+      "\036\022\n\n\006Binary\020\037\022\010\n\004Char\020 \022\t\n\005NChar\020!\022\r\n\tVa" +
+      "rBinary\020\"\022\014\n\010TinyBlob\020#\022\010\n\004Blob\020$\022\016\n\nMed" +
+      "iumBlob\020%\022\014\n\010LongBlob\020&\022\010\n\004Json\020\'\022\014\n\010Tin" +
+      "yText\020(\022\010\n\004Text\020)\022\016\n\nMediumText\020*\022\014\n\010Lon" +
+      "gText\020+\022\010\n\004Enum\020,\022\007\n\003Set\020-\022\010\n\004Null\0202*L\n\t" +
+      "StoreType\022\021\n\rStore_Invalid\020\000\022\r\n\tStore_Ho" +
+      "t\020\001\022\016\n\nStore_Warm\020\002\022\r\n\tStore_Mix\020\003*E\n\tRa" +
+      "ngeType\022\017\n\013RNG_Invalid\020\000\022\r\n\tRNG_Index\020\001\022" +
+      "\014\n\010RNG_Data\020\002\022\n\n\006RNG_Kv\020\003*X\n\tNodeState\022\r" +
+      "\n\tN_Invalid\020\000\022\014\n\010N_Online\020\001\022\r\n\tN_Offline" +
+      "\020\002\022\016\n\nN_Updating\020\003\022\017\n\013N_Offlining\020\004*U\n\016R" +
+      "angePeerState\022\017\n\013RPS_Invalid\020\000\022\020\n\014RPS_No" +
+      "Leader\020\001\022\020\n\014RPS_Follower\020\002\022\016\n\nRPS_Leader" +
+      "\020\003*K\n\010PeerType\022\024\n\020PeerType_Invalid\020\000\022\023\n\017" +
+      "PeerType_Normal\020\001\022\024\n\020PeerType_Learner\020\002*" +
+      "N\n\tEventType\022\026\n\022Event_Type_Invalid\020\000\022\022\n\016" +
+      "Event_Type_PUT\020\001\022\025\n\021Event_Type_DELETE\020\002*" +
+      "\211\001\n\013WatcherType\022\030\n\024Watcher_Type_Invalid\020" +
+      "\000\022\025\n\021Watcher_Type_Node\020\001\022\031\n\025Watcher_Type" +
+      "_Database\020\002\022\026\n\022Watcher_Type_Table\020\003\022\026\n\022W" +
+      "atcher_Type_Range\020\004B\r\n\013io.jimdb.pbb\006prot" +
+      "o3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -12470,7 +12551,7 @@ public final class Basepb {
     internal_static_basepb_Node_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_basepb_Node_descriptor,
-        new java.lang.String[] { "Id", "Ip", "ServerPort", "RaftPort", "AdminPort", "State", "Version", "RangePeers", "LastUpdateTime", "Type", });
+        new java.lang.String[] { "Id", "Ip", "ServerPort", "RaftPort", "AdminPort", "State", "Version", "RangePeers", "LastUpdateTime", "Type", "ProtocolVersion", });
     internal_static_basepb_Peer_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_basepb_Peer_fieldAccessorTable = new

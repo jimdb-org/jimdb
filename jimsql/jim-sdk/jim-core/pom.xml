@@ -33,6 +33,11 @@
             <artifactId>jim-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.jimdb</groupId>
+            <artifactId>jim-parser</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>

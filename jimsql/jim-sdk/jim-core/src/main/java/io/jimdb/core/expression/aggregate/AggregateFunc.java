@@ -157,7 +157,7 @@ public abstract class AggregateFunc {
     Cell init(SQLType sqlType, boolean hasDistinct);
   }
 
-  private static InitCellFunc initIntegerCellFunc = (sqlType, hasDistinct) -> new CommonCell(LongValue.getInstance(0), hasDistinct);
+  protected static InitCellFunc initIntegerCellFunc = (sqlType, hasDistinct) -> new CommonCell(LongValue.getInstance(0), hasDistinct);
   private static InitCellFunc initStringCellFunc = (sqlType, hasDistinct) -> new CommonCell(StringValue.getInstance(""), hasDistinct);
   private static InitCellFunc initBinaryCellFunc = (sqlType, hasDistinct) -> new CommonCell(BinaryValue.getInstance(new byte[]{}), hasDistinct);
   private static InitCellFunc initDoubleCellFunc = (sqlType, hasDistinct) -> new CommonCell(DoubleValue.getInstance(0.0d), hasDistinct);

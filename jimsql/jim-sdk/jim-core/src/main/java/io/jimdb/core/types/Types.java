@@ -90,7 +90,9 @@ public final class Types {
   public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
   public static final String DEFAULT_CHARSET_STR = DEFAULT_CHARSET.name();
   public static final String DEFAULT_COLLATE = "utf8_bin";
-  public static final SQLType UNDEFINE_TYPE = buildSQLType(DataType.Invalid);
+  private static final SQLType[] SQL_TYPES_SIGNED = initSQLType(false);
+  private static final SQLType[] SQL_TYPES_UNSIGNED = initSQLType(true);
+  public static final SQLType UNDEFINE_SQLTYPE = buildSQLType(DataType.Invalid);
 
   public static final int UNDEFINE_WIDTH = -1;
   public static final int NOTFIX_DEC_WIDTH = 31;
@@ -161,9 +163,7 @@ public final class Types {
     TYPE_MAP.put("TINYTEXT", DataType.TinyText);
     TYPE_MAP.put("MEDIUMTEXT", DataType.MediumText);
     TYPE_MAP.put("LONGTEXT", DataType.LongText);
-  }
 
-  static {
     TYPE_DESC_MAP = new HashMap<>();
     TYPE_DESC_MAP.put(DataType.Invalid, "unspecified");
     TYPE_DESC_MAP.put(DataType.TinyInt, "tinyint");
@@ -194,9 +194,7 @@ public final class Types {
     TYPE_DESC_MAP.put(DataType.MediumText, "mediumtext");
     TYPE_DESC_MAP.put(DataType.LongText, "longtext");
     TYPE_DESC_MAP.put(DataType.Json, "json");
-  }
 
-  static {
     TYPE_DEFAULT_PRECISION_MAP = new HashMap<>();
     TYPE_DEFAULT_PRECISION_MAP.put(DataType.Null, new long[]{ 0, 0 });
     TYPE_DEFAULT_PRECISION_MAP.put(DataType.Bit, new long[]{ 1, 0 });
@@ -225,159 +223,36 @@ public final class Types {
     TYPE_DEFAULT_PRECISION_MAP.put(DataType.Json, new long[]{ 4294967295L, 0 });
   }
 
-//  private static final EnumMap<DataType, EnumMap<DataType, DataType>> TYPE_MERGE_MAP;
-//
-//  static {
-//    TYPE_MERGE_MAP = new EnumMap<>(DataType.class);
-//    // Tinyint
-//    EnumMap<DataType, DataType> tinyIntMap = new EnumMap<>(DataType.class);
-//    tinyIntMap.put(Tinyint, Tinyint);
-//    tinyIntMap.put(Null, Tinyint);
-//    tinyIntMap.put(DataType.Boolean, Tinyint);
-//    tinyIntMap.put(Smallint, Smallint);
-//    tinyIntMap.put(Int, Int);
-//    tinyIntMap.put(BigInt, BigInt);
-//    tinyIntMap.put(DataType.Float, DataType.Float);
-//    tinyIntMap.put(DataType.Double, DataType.Double);
-//    tinyIntMap.put(Varchar, Varchar);
-//    tinyIntMap.put(Date, Varchar);
-//    tinyIntMap.put(TimeStamp, Varchar);
-//    tinyIntMap.put(Decimal, Decimal);
-//    tinyIntMap.put(DataType.Number, Decimal);
-//    tinyIntMap.put(Char, Char);
-//    tinyIntMap.put(NChar, NChar);
-//    tinyIntMap.put(Text, Varchar);
-//    tinyIntMap.put(Binary, Binary);
-//    tinyIntMap.put(VarBinary, VarBinary);
-//    tinyIntMap.put(Time, Varchar);
-//    tinyIntMap.put(Xml, Varchar);
-//    tinyIntMap.put(Json, Varchar);
-//    TYPE_MERGE_MAP.put(Tinyint, tinyIntMap);
-//    // Smallint
-//    EnumMap<DataType, DataType> smallIntMap = new EnumMap<>(DataType.class);
-//    smallIntMap.put(Tinyint, Smallint);
-//    smallIntMap.put(Null, Smallint);
-//    smallIntMap.put(DataType.Boolean, Smallint);
-//    smallIntMap.put(Smallint, Smallint);
-//    smallIntMap.put(Int, Int);
-//    smallIntMap.put(BigInt, BigInt);
-//    smallIntMap.put(DataType.Float, DataType.Float);
-//    smallIntMap.put(DataType.Double, DataType.Double);
-//    smallIntMap.put(Varchar, Varchar);
-//    smallIntMap.put(Char, Char);
-//    smallIntMap.put(NChar, NChar);
-//    smallIntMap.put(Text, Varchar);
-//    smallIntMap.put(Time, Varchar);
-//    smallIntMap.put(Date, Varchar);
-//    smallIntMap.put(TimeStamp, Varchar);
-//    smallIntMap.put(Decimal, Decimal);
-//    smallIntMap.put(DataType.Number, Decimal);
-//    smallIntMap.put(Binary, Binary);
-//    smallIntMap.put(VarBinary, VarBinary);
-//    smallIntMap.put(Xml, Varchar);
-//    smallIntMap.put(Json, Varchar);
-//    TYPE_MERGE_MAP.put(Smallint, smallIntMap);
-//    // Int
-//    EnumMap<DataType, DataType> intMap = new EnumMap<>(DataType.class);
-//    intMap.put(Tinyint, Int);
-//    intMap.put(Null, Int);
-//    intMap.put(DataType.Boolean, Int);
-//    intMap.put(Smallint, Int);
-//    intMap.put(Int, Int);
-//    intMap.put(BigInt, BigInt);
-//    intMap.put(DataType.Float, DataType.Double);
-//    intMap.put(DataType.Double, DataType.Double);
-//    intMap.put(Varchar, Varchar);
-//    intMap.put(Date, Varchar);
-//    intMap.put(TimeStamp, Varchar);
-//    intMap.put(Decimal, Decimal);
-//    intMap.put(DataType.Number, Decimal);
-//    intMap.put(Char, Char);
-//    intMap.put(NChar, NChar);
-//    intMap.put(Text, Varchar);
-//    intMap.put(Binary, Binary);
-//    intMap.put(VarBinary, VarBinary);
-//    intMap.put(Time, Varchar);
-//    intMap.put(Xml, Varchar);
-//    intMap.put(Json, Varchar);
-//    TYPE_MERGE_MAP.put(Int, intMap);
-//    // BigInt
-//    EnumMap<DataType, DataType> bigIntMap = new EnumMap<>(DataType.class);
-//    bigIntMap.put(Tinyint, BigInt);
-//    bigIntMap.put(Null, BigInt);
-//    bigIntMap.put(DataType.Boolean, BigInt);
-//    bigIntMap.put(Smallint, BigInt);
-//    bigIntMap.put(Int, BigInt);
-//    bigIntMap.put(BigInt, BigInt);
-//    bigIntMap.put(DataType.Float, DataType.Double);
-//    bigIntMap.put(DataType.Double, DataType.Double);
-//    bigIntMap.put(Varchar, Varchar);
-//    bigIntMap.put(Binary, Binary);
-//    bigIntMap.put(Date, Varchar);
-//    bigIntMap.put(TimeStamp, Varchar);
-//    bigIntMap.put(Decimal, Decimal);
-//    bigIntMap.put(DataType.Number, Decimal);
-//    bigIntMap.put(Char, Char);
-//    bigIntMap.put(NChar, NChar);
-//    bigIntMap.put(Text, Varchar);
-//    bigIntMap.put(VarBinary, VarBinary);
-//    bigIntMap.put(Time, Varchar);
-//    bigIntMap.put(Xml, Varchar);
-//    bigIntMap.put(Json, Varchar);
-//    TYPE_MERGE_MAP.put(BigInt, bigIntMap);
-//    // Float
-//    EnumMap<DataType, DataType> floatMap = new EnumMap<>(DataType.class);
-//    floatMap.put(Tinyint, DataType.Float);
-//    floatMap.put(Null, DataType.Float);
-//    floatMap.put(DataType.Boolean, DataType.Float);
-//    floatMap.put(Smallint, DataType.Float);
-//    floatMap.put(Int, DataType.Double);
-//    floatMap.put(BigInt, DataType.Double);
-//    floatMap.put(DataType.Float, DataType.Float);
-//    floatMap.put(DataType.Double, DataType.Double);
-//    floatMap.put(Varchar, Varchar);
-//    floatMap.put(Binary, Binary);
-//    floatMap.put(Date, Varchar);
-//    floatMap.put(TimeStamp, Varchar);
-//    floatMap.put(Decimal, DataType.Double);
-//    floatMap.put(DataType.Number, DataType.Double);
-//    floatMap.put(Char, Char);
-//    floatMap.put(NChar, NChar);
-//    floatMap.put(Text, Varchar);
-//    floatMap.put(VarBinary, VarBinary);
-//    floatMap.put(Time, VarBinary);
-//    floatMap.put(Xml, Varchar);
-//    floatMap.put(Json, Varchar);
-//    TYPE_MERGE_MAP.put(DataType.Float, floatMap);
-//    // Double
-//    EnumMap<DataType, DataType> doubleMap = new EnumMap<>(DataType.class);
-//    doubleMap.put(Tinyint, DataType.Double);
-//    doubleMap.put(Null, DataType.Double);
-//    doubleMap.put(DataType.Boolean, DataType.Double);
-//    doubleMap.put(Smallint, DataType.Double);
-//    doubleMap.put(Int, DataType.Double);
-//    doubleMap.put(BigInt, DataType.Double);
-//    doubleMap.put(DataType.Float, DataType.Double);
-//    doubleMap.put(DataType.Double, DataType.Double);
-//    doubleMap.put(Varchar, Varchar);
-//    doubleMap.put(Binary, Binary);
-//    doubleMap.put(Date, Varchar);
-//    doubleMap.put(TimeStamp, Varchar);
-//    doubleMap.put(Decimal, DataType.Double);
-//    doubleMap.put(DataType.Number, DataType.Double);
-//    doubleMap.put(Char, Char);
-//    doubleMap.put(NChar, NChar);
-//    doubleMap.put(Text, Varchar);
-//    doubleMap.put(VarBinary, VarBinary);
-//    doubleMap.put(Time, Varchar);
-//    doubleMap.put(Xml, Varchar);
-//    doubleMap.put(Json, Varchar);
-//    TYPE_MERGE_MAP.put(DataType.Double, doubleMap);
-//    // Varchar
-//
-//  }
+  /**
+   * init SQL_TYPES_SIGNED and SQL_TYPES_UNSIGNED
+   */
+  private static SQLType[] initSQLType(boolean unsigned) {
+    DataType[] dataTypes = DataType.values();
+    int maxOrdinal = 0;
+    for (DataType dataType : dataTypes) {
+      if (dataType.ordinal() > maxOrdinal) {
+        maxOrdinal = dataType.ordinal();
+      }
+    }
 
-  private Types() {
+    SQLType[] sqlTypes = new SQLType[maxOrdinal];
+    for (DataType dataType : dataTypes) {
+      if (dataType != DataType.UNRECOGNIZED) {
+        sqlTypes[dataType.ordinal()] = createSQLType(dataType, unsigned);
+      }
+    }
+    return sqlTypes;
+  }
+
+  private static SQLType createSQLType(DataType type, boolean unsigned) {
+    SQLType.Builder builder = SQLType.newBuilder();
+    builder.setType(type)
+            .setUnsigned(unsigned)
+            .setScale(UNDEFINE_WIDTH)
+            .setPrecision(UNDEFINE_WIDTH)
+            .setCharset(DEFAULT_CHARSET_STR)
+            .setCollate(DEFAULT_COLLATE);
+    return builder.build();
   }
 
   public static SQLType buildSQLType(SQLDataType sqlType, String colName) {
@@ -418,8 +293,14 @@ public final class Types {
           break;
       }
     }
-    SQLType.Builder builder = buildPrecisionAndScale(sqlType.getArguments(), dt, typeName, colName);
-    return builder.setCharset(DEFAULT_CHARSET_STR)
+
+    DataType[] dts = new DataType[]{ dt };
+
+    long[] precisionAndScale = buildPrecisionAndScale(sqlType.getArguments(), dts, typeName, colName);
+    return SQLType.newBuilder().setType(dts[0])
+            .setPrecision(precisionAndScale[0])
+            .setScale((int) precisionAndScale[1])
+            .setCharset(DEFAULT_CHARSET_STR)
             .setCollate(DEFAULT_COLLATE)
             .setUnsigned(unsigned)
             .setZerofill(zerofill)
@@ -438,14 +319,11 @@ public final class Types {
     }
   }
 
-  private static SQLType.Builder buildPrecisionAndScale(List<SQLExpr> argList, DataType dt, String typeName, String colName) {
+  private static long[] buildPrecisionAndScale(List<SQLExpr> argList, DataType[] dts, String typeName, String colName) {
     if (argList.isEmpty()) {
-      long[] defaults = TYPE_DEFAULT_PRECISION_MAP.get(dt);
+      long[] defaults = TYPE_DEFAULT_PRECISION_MAP.get(dts[0]);
       if (defaults != null) {
-        return SQLType.newBuilder()
-                .setType(dt)
-                .setPrecision(defaults[0])
-                .setScale((int) defaults[1]);
+        return defaults;
       }
       throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_PARSE_TYPE_ERROR, typeName + "(" + argList + ")");
     }
@@ -456,7 +334,7 @@ public final class Types {
 
     long precision = UNDEFINE_WIDTH;
     int scale = UNDEFINE_WIDTH;
-    switch (dt) {
+    switch (dts[0]) {
       //tiny/small/medium/int/bigint(M), 0~255
       case TinyInt:
       case SmallInt:
@@ -504,10 +382,8 @@ public final class Types {
           validScaleBound(scale, (int) precision, ErrorCode.ER_M_BIGGER_THAN_D, typeName);
         } else {
           // float (p)
-          if (precision < 24) {
-            dt = DataType.Float;
-          } else if (precision < 53) {
-            dt = DataType.Double;
+          if (precision >= 24 && precision < 53) {
+            dts[0] = DataType.Double;
           } else {
             throw DBException.get(ErrorModule.EXPR, ErrorCode.ER_WRONG_FIELD_SPEC, colName);
           }
@@ -583,7 +459,7 @@ public final class Types {
         break;
     }
 
-    return SQLType.newBuilder().setType(dt).setPrecision(precision).setScale(scale);
+    return new long[]{ precision, scale };
   }
 
   private static void validArgNeg(String typeName, long arg, List<SQLExpr> argList) {
@@ -601,13 +477,7 @@ public final class Types {
   }
 
   public static SQLType buildSQLType(DataType type) {
-    SQLType.Builder builder = SQLType.newBuilder();
-    builder.setType(type)
-            .setScale(UNDEFINE_WIDTH)
-            .setPrecision(UNDEFINE_WIDTH)
-            .setCharset(DEFAULT_CHARSET_STR)
-            .setCollate(DEFAULT_COLLATE);
-    return builder.build();
+    return buildSQLType(type, false);
   }
 
   public static SQLType buildSQLType(DataType type, int precision, int scale) {
@@ -621,14 +491,10 @@ public final class Types {
   }
 
   public static SQLType buildSQLType(DataType type, boolean unsigned) {
-    SQLType.Builder builder = SQLType.newBuilder();
-    builder.setType(type)
-            .setUnsigned(unsigned)
-            .setScale(UNDEFINE_WIDTH)
-            .setPrecision(UNDEFINE_WIDTH)
-            .setCharset(DEFAULT_CHARSET_STR)
-            .setCollate(DEFAULT_COLLATE);
-    return builder.build();
+    if (unsigned) {
+      return SQL_TYPES_UNSIGNED[type.ordinal()];
+    }
+    return SQL_TYPES_SIGNED[type.ordinal()];
   }
 
   public static boolean isNumberType(SQLType sqlType) {

@@ -65,8 +65,6 @@ public final class DateValue extends Value<DateValue> {
 
   private static final String DATE_FORMAT = "yyyy-MM-dd";
   private static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-  private static final SimpleDateFormat DATE_FORMATER = new SimpleDateFormat(DATE_FORMAT);
-  private static final SimpleDateFormat DATETIME_FORMATER = new SimpleDateFormat(DATETIME_FORMAT);
 
   private int fsp;
   private final Timestamp value;
@@ -101,7 +99,11 @@ public final class DateValue extends Value<DateValue> {
         break;
       case TimeStamp:
         this.value = buildTimestampFromString(valueS, this.dateType, fsp, zone);
-        this.valueString = DATETIME_FORMATER.format(this.value);
+        if (this.value == null) {
+          this.valueString = valueS;
+        } else {
+          this.valueString = new SimpleDateFormat(DATETIME_FORMAT).format(this.value);
+        }
         this.fsp = fsp;
         break;
       default: {   // Date
@@ -487,14 +489,29 @@ public final class DateValue extends Value<DateValue> {
       dataEncode = "0000-00-00 00:00:00";
       fspPart = "000000";
     } else {
-      dataEncode = DATETIME_FORMATER.format(value);
-      fspPart = String.format("%06d", value.getNanos() / 1000);
+      dataEncode = new SimpleDateFormat(DATETIME_FORMAT).format(value);
+      fspPart = getFspPart(value.getNanos() / 1000);
     }
     if (this.fsp > 0) {
-      dataEncode = String.format("%s.%s", dataEncode, fspPart.substring(0, fsp));
+      dataEncode = dataEncode + "." + (fspPart.length() > this.fsp ? fspPart.substring(0, fsp) : fspPart);
     }
 
     return dataEncode;
+  }
+
+  private String getFspPart(int nanos) {
+    if (nanos >= 0 && nanos < 10) {
+      return "00000" + nanos;
+    } else if (nanos >= 10 && nanos < 100) {
+      return "0000" + nanos;
+    } else if (nanos >= 100 && nanos < 1000) {
+      return "000" + nanos;
+    } else if (nanos >= 1000 && nanos < 10000) {
+      return "00" + nanos;
+    } else if (nanos >= 10000 && nanos < 100000) {
+      return "0" + nanos;
+    }
+    return Integer.toString(nanos);
   }
 
   public static DateValue getNow(DataType dateType, int fsp, TimeZone fromZone) {
@@ -508,7 +525,7 @@ public final class DateValue extends Value<DateValue> {
     }
     int micros = 0;
     if (fsp > 0) {
-      micros = TimeUtil.handleFractionalPart(fsp, String.format("%d", now.getNanos() / 1000));
+      micros = TimeUtil.handleFractionalPart(fsp, Integer.toString(now.getNanos() / 1000));
     }
     now.setNanos(micros * 1000);
 
@@ -522,7 +539,7 @@ public final class DateValue extends Value<DateValue> {
     Timestamp value = (Timestamp) dateValue.value.clone();
     int micros = 0;
     if (fsp > 0) {
-      String fractionalPartStr = String.format("%d", value.getNanos() / 1000);
+      String fractionalPartStr = Integer.toString(value.getNanos() / 1000);
       micros = Integer.parseInt(fractionalPartStr.substring(0, fsp + 1));
     }
     value.setNanos(micros * 1000);
@@ -570,7 +587,7 @@ public final class DateValue extends Value<DateValue> {
 
   @Override
   public String getString() {
-    return String.format("%d", TimeUtil.encodeTimestampToUint64(this.value));
+    return Long.toString(TimeUtil.encodeTimestampToUint64(this.value));
   }
 
   @Override
@@ -616,14 +633,14 @@ public final class DateValue extends Value<DateValue> {
   }
 
   public String formatToString() {
-    if (valueString != null) {
-      return valueString;
+    if (valueString == null) {
+      if (this.dateType == DataType.Date) {
+        valueString = new SimpleDateFormat(DATE_FORMAT).format(this.value.getTime());
+      } else {
+        valueString = new SimpleDateFormat(DATETIME_FORMAT).format(this.value.getTime());
+      }
     }
-    if (this.dateType == DataType.Date) {
-      return DATE_FORMATER.format(this.value.getTime());
-    } else {
-      return DATETIME_FORMATER.format(this.value.getTime());
-    }
+    return valueString;
   }
 
   @Override

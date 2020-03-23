@@ -340,9 +340,7 @@ public final class ExpressionUtil {
         case FUNC:
           final FuncExpr funcExpr = (FuncExpr) expression;
           // TODO ger rid of this conversion
-          List<Expression> argList = Arrays.stream(funcExpr.getArgs()).collect(Collectors.toList());
-          Set<Long> ids = extractColumnIds(argList);
-          result.addAll(ids);
+          result.addAll(extractColumnIds(Arrays.asList(funcExpr.getArgs())));
           break;
 
         default:

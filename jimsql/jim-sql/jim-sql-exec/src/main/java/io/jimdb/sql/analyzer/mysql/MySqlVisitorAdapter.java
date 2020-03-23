@@ -96,6 +96,7 @@ import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowCreateTableSta
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowCreateTriggerStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowCreateViewStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowDatabasePartitionStatusStatement;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowDatabasesInfoStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowDatabasesStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowEngineStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlShowEnginesStatement;
@@ -133,9 +134,12 @@ import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlUpdateTableSource;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MysqlDeallocatePrepareStatement;
 import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlASTVisitor;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @version V1.0
  */
+@SuppressFBWarnings("ACEM_ABSTRACT_CLASS_EMPTY_METHODS")
 abstract class MySqlVisitorAdapter extends StatementAnalyzer implements MySqlASTVisitor {
 
   @Override
@@ -1337,5 +1341,15 @@ abstract class MySqlVisitorAdapter extends StatementAnalyzer implements MySqlAST
   @Override
   public void endVisit(MySqlChecksumTableStatement x) {
 
+  }
+
+  @Override
+  public void endVisit(MySqlShowDatabasesInfoStatement x) {
+
+  }
+
+  @Override
+  public boolean visit(MySqlShowDatabasesInfoStatement x) {
+    return true;
   }
 }

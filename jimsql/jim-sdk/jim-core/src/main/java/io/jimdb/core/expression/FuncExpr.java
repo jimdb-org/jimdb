@@ -66,7 +66,7 @@ public final class FuncExpr extends Expression {
 
     Func func = funcType.buildFunction(session, args);
     SQLType retType = type;
-    if (func.getResultType() != Types.UNDEFINE_TYPE) {
+    if (func.getResultType() != Types.UNDEFINE_SQLTYPE) {
       retType = func.getResultType();
     }
 
@@ -117,7 +117,7 @@ public final class FuncExpr extends Expression {
   }
 
   private List<Point> extractFromBinaryOp() {
-    List<Point> points = new ArrayList<>(4);
+
     Expression[] args = func.getArgs();
 
     Value value = null;
@@ -151,6 +151,7 @@ public final class FuncExpr extends Expression {
       }
     }
 
+    List<Point> points = new ArrayList<>(4);
     switch (funcType) {
       case Equality:
         Point startPointEq = new Point(value, true);

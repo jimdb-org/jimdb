@@ -63,7 +63,7 @@ public final class KeyGet extends RelOperator {
 
   @Override
   public Flux<ExecResult> execute(Session session) throws BaseException {
-    return session.getTxn().get(indices, values, schema.getColumns().toArray(new ColumnExpr[schema.getColumns().size()]));
+    return session.getStoreEngine().get(session, indices, values, schema.getColumns().toArray(new ColumnExpr[schema.getColumns().size()]));
   }
 
   public String getName() {

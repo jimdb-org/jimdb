@@ -106,7 +106,8 @@ public final class DDLExecutor {
   }
 
   public static Flux<Boolean> createCatalog(CatalogInfo catalogInfo) {
-    int catalogID = metaStore.allocMetaID();
+//    int catalogID = metaStore.allocMetaID();
+    int catalogID = routerStore.generateId();
     CatalogInfo.Builder catalogBuilder = catalogInfo.toBuilder();
     catalogBuilder.setId(catalogID);
     return executeCommand(catalogID, 0, OpType.CreateCatalog, catalogBuilder.build());
@@ -117,7 +118,8 @@ public final class DDLExecutor {
   }
 
   public static Flux<Boolean> createTable(TableInfo tableInfo) {
-    int tableID = metaStore.allocMetaID();
+//    int tableID = metaStore.allocMetaID();
+    int tableID = routerStore.generateId();
     TableInfo.Builder tableBuilder = tableInfo.toBuilder();
     tableBuilder.setId(tableID)
             .setState(MetaState.Absent);

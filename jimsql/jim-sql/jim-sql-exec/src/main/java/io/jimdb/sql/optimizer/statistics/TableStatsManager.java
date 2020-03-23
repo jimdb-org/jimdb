@@ -309,7 +309,7 @@ public class TableStatsManager {
     // first try to get the stats from the cache
     TableStats tableStats = tableStatsCache.getIfPresent(table);
 
-    if (tableStats != null || enableBackgroundStatsCollector) {
+    if (tableStats != null || !enableBackgroundStatsCollector) {
       return tableStats;
     }
 
@@ -357,7 +357,7 @@ public class TableStatsManager {
       ColumnExpr[] columnExprs = Arrays.stream(table.getReadableColumns())
               .map(column -> new ColumnExpr(session.allocColumnID(), column)).toArray(ColumnExpr[]::new);
 
-      return transaction.select(table, Lists.newArrayList(processorBuilder), columnExprs, outputOffsets);
+      return session.getStoreEngine().select(session, table, Lists.newArrayList(processorBuilder), columnExprs, outputOffsets);
     }
 
     private List<Exprpb.ColumnInfo> getAllColumns(Column[] columns) {

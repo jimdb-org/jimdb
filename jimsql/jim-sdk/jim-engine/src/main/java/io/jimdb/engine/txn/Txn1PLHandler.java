@@ -15,12 +15,13 @@
  */
 package io.jimdb.engine.txn;
 
-import static io.jimdb.engine.txn.PrepareHandler.PREPARE_PRIMARY_FUNC;
+import static io.jimdb.engine.txn.Preparer.PREPARE_PRIMARY_FUNC;
 
 import java.util.function.Consumer;
 
+import io.jimdb.engine.ShardSender;
 import io.jimdb.engine.StoreCtx;
-import io.jimdb.engine.txn.TxnHandler.CommitSubscriber;
+import io.jimdb.engine.txn.TransactionImpl.CommitSubscriber;
 import io.jimdb.core.model.result.ExecResult;
 
 import org.slf4j.Logger;
@@ -36,24 +37,24 @@ import reactor.core.publisher.FluxSink;
 public final class Txn1PLHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(Txn1PLHandler.class);
 
-  public static Flux<ExecResult> commit(TxnConfig config, StoreCtx context) {
+  public static Flux<ExecResult> commit(ShardSender shardSender, TxnConfig config, StoreCtx context) {
     if (LOGGER.isInfoEnabled()) {
       LOGGER.info("start to commit txn {}.", config.getTxnId());
     }
     return Flux.create(sink ->
-            sink.onRequest(r -> prepare(sink, config, context)));
+            sink.onRequest(r -> prepare(shardSender, sink, config, context)));
   }
 
-  public static void prepare(FluxSink sink, TxnConfig config, StoreCtx context) {
-    PREPARE_PRIMARY_FUNC.apply(context, config).onErrorResume(
-            PrepareHandler.getErrHandler(context, PREPARE_PRIMARY_FUNC, config)).subscribe(
+  public static void prepare(ShardSender shardSender, FluxSink sink, TxnConfig config, StoreCtx context) {
+    PREPARE_PRIMARY_FUNC.apply(shardSender, context, config).onErrorResume(
+            Preparer.getErrHandler(shardSender, context, PREPARE_PRIMARY_FUNC, config)).subscribe(
             new CommitSubscriber<>((Consumer<ExecResult>) sink::next, sink::error));
   }
 
-  public static Flux<ExecResult> rollback(TxnConfig config, StoreCtx context) {
+  public static Flux<ExecResult> rollback(ShardSender shardSender, TxnConfig config, StoreCtx context) {
     return Flux.create(sink ->
             sink.onRequest(r -> {
-              RecoverHandler.recoverFromPrimary(sink, config, context);
+              Restorer.recoverFromPrimary(shardSender, sink, config, context);
             }));
   }
 }

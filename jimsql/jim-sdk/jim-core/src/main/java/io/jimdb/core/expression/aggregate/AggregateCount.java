@@ -72,6 +72,11 @@ public class AggregateCount extends AggregateFunc {
   }
 
   @Override
+  protected void initCellFunc() {
+    curInitCellFunc = AggregateFunc.initIntegerCellFunc;
+  }
+
+  @Override
   public void initCalculateFunc() {
     if (isOriginal) {
       currentFunction = valueOriginalFunction;

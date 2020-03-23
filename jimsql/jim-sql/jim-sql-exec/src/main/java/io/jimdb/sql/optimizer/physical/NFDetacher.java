@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
@@ -282,8 +281,13 @@ public class NFDetacher {
     }
 
     // remove conditions in truncatedAccessConditions from newConditions
-    List<Expression> filteredConditions =
-        newConditions.stream().filter(condition -> !ExpressionUtil.containsExpr(truncatedAccessConditions, condition)).collect(Collectors.toList());
+    List<Expression> filteredConditions = new ArrayList<>(newConditions.size());
+
+    for (Expression condition : newConditions) {
+      if (!ExpressionUtil.containsExpr(truncatedAccessConditions, condition)) {
+        filteredConditions.add(condition);
+      }
+    }
 
     return Tuples.of(truncatedAccessConditions, filteredConditions, Boolean.FALSE);
   }
@@ -372,7 +376,10 @@ public class NFDetacher {
       return DetacherResult.empty().unwrap();
     }
 
-    List<Metapb.SQLType> returnTypes = indexCols.stream().map(ColumnExpr::getResultType).collect(Collectors.toList());
+    List<Metapb.SQLType> returnTypes = new ArrayList<>(indexCols.size());
+    for (ColumnExpr col : indexCols) {
+      returnTypes.add(col.getResultType());
+    }
 
     // TODO add prefix length
     // currently we do not support prefix indexing therefore the prefix length of a column is always UNSPECIFIED_LENGTH

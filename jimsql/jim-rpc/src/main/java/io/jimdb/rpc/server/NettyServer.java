@@ -19,6 +19,7 @@ import io.jimdb.common.config.NettyServerConfig;
 import io.jimdb.rpc.ChannelPipeline;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.WriteBufferWaterMark;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
@@ -64,7 +65,8 @@ public final class NettyServer {
             .option(ChannelOption.SO_SNDBUF, config.getSocketBufferSize())
             .option(ChannelOption.SO_BACKLOG, config.getBacklog())
             .option(ChannelOption.ALLOCATOR, config.getAllocatorFactory().getByteBufAllocator())
-            .option(ChannelOption.RCVBUF_ALLOCATOR, config.getAllocatorFactory().getRecvByteBufAllocator());
+            .option(ChannelOption.RCVBUF_ALLOCATOR, config.getAllocatorFactory().getRecvByteBufAllocator())
+            .option(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(128 * 1024, 1024 * 1024));
 
     if (StringUtils.isBlank(config.getHost())) {
       bootStrap.localAddress(config.getPort());

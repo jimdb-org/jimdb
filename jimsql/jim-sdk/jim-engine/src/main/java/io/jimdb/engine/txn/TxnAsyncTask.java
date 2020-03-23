@@ -17,6 +17,7 @@ package io.jimdb.engine.txn;
 
 import java.util.List;
 
+import io.jimdb.engine.ShardSender;
 import io.jimdb.engine.StoreCtx;
 import io.jimdb.engine.client.RequestContext;
 import io.jimdb.pb.Txn;
@@ -119,9 +120,11 @@ final class TxnCallbackSubscriber extends BaseSubscriber<Object> {
  */
 class CommitSuccessTask extends TxnAsyncTask {
   private static final Logger LOGGER = LoggerFactory.getLogger(CommitSuccessTask.class);
+  ShardSender shardSender;
 
-  CommitSuccessTask(TxnConfig config, StoreCtx context) {
+  CommitSuccessTask(ShardSender shardSender, TxnConfig config, StoreCtx context) {
     super(config, context);
+    this.shardSender = shardSender;
   }
 
   @Override
@@ -140,10 +143,10 @@ class CommitSuccessTask extends TxnAsyncTask {
   }
 
   //decide secondary intents: cannot rollback, if execute failure
-  public void decideSecondary(FluxSink sink) {
-    DecideHandler.decideSecondary(this.context, this.config.getTxnId(), this.config.getSecKeys(), Txn.TxnStatus.COMMITTED)
+  private void decideSecondary(FluxSink sink) {
+    DecisionMaker.decideSecondary(shardSender, this.context, this.config.getTxnId(), this.config.getSecKeys(), Txn.TxnStatus.COMMITTED)
             .subscribe(
-                    new TxnHandler.CommitSubscriber<>(flag -> {
+                    new TransactionImpl.CommitSubscriber<>(flag -> {
                       if (!flag) {
                         sink.next(flag);
                       } else {
@@ -156,14 +159,14 @@ class CommitSuccessTask extends TxnAsyncTask {
     if (LOGGER.isInfoEnabled()) {
       LOGGER.info("start to clear txn {}", this.config.getTxnId());
     }
-    CleanupHandler.CleanupFunc cleanUpFunc = (ctx, conf) -> cleanup(ctx, conf);
+    Cleaner.CleanupFunc cleanUpFunc = (ctx, conf) -> cleanup(ctx, conf);
     cleanUpFunc.apply(this.context, this.config).onErrorResume(
-        CleanupHandler.getErrHandler(this.context, cleanUpFunc, this.config)).subscribe(
-            new TxnHandler.CommitSubscriber<>(rs -> sink.next(rs), err -> sink.error(err)));
+        Cleaner.getErrHandler(this.context, cleanUpFunc, this.config)).subscribe(
+            new TransactionImpl.CommitSubscriber<>(rs -> sink.next(rs), err -> sink.error(err)));
   }
 
   private Flux<Txn.ClearupResponse> cleanup(StoreCtx context, TxnConfig config) {
-    RequestContext reqCtx = CleanupHandler.buildCleanupReqCtx(config, context);
-    return CleanupHandler.cleanup(reqCtx, this.context.getSender());
+    RequestContext reqCtx = Cleaner.buildCleanupReqCtx(config, context);
+    return Cleaner.cleanup(shardSender, reqCtx);
   }
 }

@@ -29,6 +29,7 @@
             <scope>runtime</scope>
             <excludes>
                 <exclude>com.google.protobuf:protobuf-java</exclude>
+                <exclude>com.alibaba:druid</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

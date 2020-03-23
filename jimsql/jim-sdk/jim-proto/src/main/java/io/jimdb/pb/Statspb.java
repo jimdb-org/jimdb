@@ -88,11 +88,11 @@ public final class Statspb {
     /**
      * <code>.dspb.KeyRange range = 5;</code>
      */
-    io.jimdb.pb.Processorpb.KeyRange getRange();
+    io.jimdb.pb.Kv.KeyRange getRange();
     /**
      * <code>.dspb.KeyRange range = 5;</code>
      */
-    io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder();
+    io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder();
 
     /**
      * <pre>
@@ -172,11 +172,11 @@ public final class Statspb {
               break;
             }
             case 42: {
-              io.jimdb.pb.Processorpb.KeyRange.Builder subBuilder = null;
+              io.jimdb.pb.Kv.KeyRange.Builder subBuilder = null;
               if (range_ != null) {
                 subBuilder = range_.toBuilder();
               }
-              range_ = input.readMessage(io.jimdb.pb.Processorpb.KeyRange.parser(), extensionRegistry);
+              range_ = input.readMessage(io.jimdb.pb.Kv.KeyRange.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(range_);
                 range_ = subBuilder.buildPartial();
@@ -312,7 +312,7 @@ public final class Statspb {
     }
 
     public static final int RANGE_FIELD_NUMBER = 5;
-    private io.jimdb.pb.Processorpb.KeyRange range_;
+    private io.jimdb.pb.Kv.KeyRange range_;
     /**
      * <code>.dspb.KeyRange range = 5;</code>
      */
@@ -322,13 +322,13 @@ public final class Statspb {
     /**
      * <code>.dspb.KeyRange range = 5;</code>
      */
-    public io.jimdb.pb.Processorpb.KeyRange getRange() {
-      return range_ == null ? io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+    public io.jimdb.pb.Kv.KeyRange getRange() {
+      return range_ == null ? io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
     }
     /**
      * <code>.dspb.KeyRange range = 5;</code>
      */
-    public io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder() {
+    public io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder() {
       return getRange();
     }
 
@@ -1192,9 +1192,9 @@ public final class Statspb {
         return this;
       }
 
-      private io.jimdb.pb.Processorpb.KeyRange range_ = null;
+      private io.jimdb.pb.Kv.KeyRange range_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
-          io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder> rangeBuilder_;
+          io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder> rangeBuilder_;
       /**
        * <code>.dspb.KeyRange range = 5;</code>
        */
@@ -1204,9 +1204,9 @@ public final class Statspb {
       /**
        * <code>.dspb.KeyRange range = 5;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRange getRange() {
+      public io.jimdb.pb.Kv.KeyRange getRange() {
         if (rangeBuilder_ == null) {
-          return range_ == null ? io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+          return range_ == null ? io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
         } else {
           return rangeBuilder_.getMessage();
         }
@@ -1214,7 +1214,7 @@ public final class Statspb {
       /**
        * <code>.dspb.KeyRange range = 5;</code>
        */
-      public Builder setRange(io.jimdb.pb.Processorpb.KeyRange value) {
+      public Builder setRange(io.jimdb.pb.Kv.KeyRange value) {
         if (rangeBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1231,7 +1231,7 @@ public final class Statspb {
        * <code>.dspb.KeyRange range = 5;</code>
        */
       public Builder setRange(
-          io.jimdb.pb.Processorpb.KeyRange.Builder builderForValue) {
+          io.jimdb.pb.Kv.KeyRange.Builder builderForValue) {
         if (rangeBuilder_ == null) {
           range_ = builderForValue.build();
           onChanged();
@@ -1244,11 +1244,11 @@ public final class Statspb {
       /**
        * <code>.dspb.KeyRange range = 5;</code>
        */
-      public Builder mergeRange(io.jimdb.pb.Processorpb.KeyRange value) {
+      public Builder mergeRange(io.jimdb.pb.Kv.KeyRange value) {
         if (rangeBuilder_ == null) {
           if (range_ != null) {
             range_ =
-              io.jimdb.pb.Processorpb.KeyRange.newBuilder(range_).mergeFrom(value).buildPartial();
+              io.jimdb.pb.Kv.KeyRange.newBuilder(range_).mergeFrom(value).buildPartial();
           } else {
             range_ = value;
           }
@@ -1276,7 +1276,7 @@ public final class Statspb {
       /**
        * <code>.dspb.KeyRange range = 5;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRange.Builder getRangeBuilder() {
+      public io.jimdb.pb.Kv.KeyRange.Builder getRangeBuilder() {
         
         onChanged();
         return getRangeFieldBuilder().getBuilder();
@@ -1284,23 +1284,23 @@ public final class Statspb {
       /**
        * <code>.dspb.KeyRange range = 5;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder() {
+      public io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder() {
         if (rangeBuilder_ != null) {
           return rangeBuilder_.getMessageOrBuilder();
         } else {
           return range_ == null ?
-              io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+              io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
         }
       }
       /**
        * <code>.dspb.KeyRange range = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder> 
+          io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder> 
           getRangeFieldBuilder() {
         if (rangeBuilder_ == null) {
           rangeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder>(
+              io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder>(
                   getRange(),
                   getParentForChildren(),
                   isClean());
@@ -1491,11 +1491,11 @@ public final class Statspb {
     /**
      * <code>.dspb.KeyRange range = 7;</code>
      */
-    io.jimdb.pb.Processorpb.KeyRange getRange();
+    io.jimdb.pb.Kv.KeyRange getRange();
     /**
      * <code>.dspb.KeyRange range = 7;</code>
      */
-    io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder();
+    io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder();
   }
   /**
    * Protobuf type {@code dspb.ColumnsStatsRequest}
@@ -1577,11 +1577,11 @@ public final class Statspb {
               break;
             }
             case 58: {
-              io.jimdb.pb.Processorpb.KeyRange.Builder subBuilder = null;
+              io.jimdb.pb.Kv.KeyRange.Builder subBuilder = null;
               if (range_ != null) {
                 subBuilder = range_.toBuilder();
               }
-              range_ = input.readMessage(io.jimdb.pb.Processorpb.KeyRange.parser(), extensionRegistry);
+              range_ = input.readMessage(io.jimdb.pb.Kv.KeyRange.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(range_);
                 range_ = subBuilder.buildPartial();
@@ -1738,7 +1738,7 @@ public final class Statspb {
     }
 
     public static final int RANGE_FIELD_NUMBER = 7;
-    private io.jimdb.pb.Processorpb.KeyRange range_;
+    private io.jimdb.pb.Kv.KeyRange range_;
     /**
      * <code>.dspb.KeyRange range = 7;</code>
      */
@@ -1748,13 +1748,13 @@ public final class Statspb {
     /**
      * <code>.dspb.KeyRange range = 7;</code>
      */
-    public io.jimdb.pb.Processorpb.KeyRange getRange() {
-      return range_ == null ? io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+    public io.jimdb.pb.Kv.KeyRange getRange() {
+      return range_ == null ? io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
     }
     /**
      * <code>.dspb.KeyRange range = 7;</code>
      */
-    public io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder() {
+    public io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder() {
       return getRange();
     }
 
@@ -2699,9 +2699,9 @@ public final class Statspb {
         return this;
       }
 
-      private io.jimdb.pb.Processorpb.KeyRange range_ = null;
+      private io.jimdb.pb.Kv.KeyRange range_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
-          io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder> rangeBuilder_;
+          io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder> rangeBuilder_;
       /**
        * <code>.dspb.KeyRange range = 7;</code>
        */
@@ -2711,9 +2711,9 @@ public final class Statspb {
       /**
        * <code>.dspb.KeyRange range = 7;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRange getRange() {
+      public io.jimdb.pb.Kv.KeyRange getRange() {
         if (rangeBuilder_ == null) {
-          return range_ == null ? io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+          return range_ == null ? io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
         } else {
           return rangeBuilder_.getMessage();
         }
@@ -2721,7 +2721,7 @@ public final class Statspb {
       /**
        * <code>.dspb.KeyRange range = 7;</code>
        */
-      public Builder setRange(io.jimdb.pb.Processorpb.KeyRange value) {
+      public Builder setRange(io.jimdb.pb.Kv.KeyRange value) {
         if (rangeBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2738,7 +2738,7 @@ public final class Statspb {
        * <code>.dspb.KeyRange range = 7;</code>
        */
       public Builder setRange(
-          io.jimdb.pb.Processorpb.KeyRange.Builder builderForValue) {
+          io.jimdb.pb.Kv.KeyRange.Builder builderForValue) {
         if (rangeBuilder_ == null) {
           range_ = builderForValue.build();
           onChanged();
@@ -2751,11 +2751,11 @@ public final class Statspb {
       /**
        * <code>.dspb.KeyRange range = 7;</code>
        */
-      public Builder mergeRange(io.jimdb.pb.Processorpb.KeyRange value) {
+      public Builder mergeRange(io.jimdb.pb.Kv.KeyRange value) {
         if (rangeBuilder_ == null) {
           if (range_ != null) {
             range_ =
-              io.jimdb.pb.Processorpb.KeyRange.newBuilder(range_).mergeFrom(value).buildPartial();
+              io.jimdb.pb.Kv.KeyRange.newBuilder(range_).mergeFrom(value).buildPartial();
           } else {
             range_ = value;
           }
@@ -2783,7 +2783,7 @@ public final class Statspb {
       /**
        * <code>.dspb.KeyRange range = 7;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRange.Builder getRangeBuilder() {
+      public io.jimdb.pb.Kv.KeyRange.Builder getRangeBuilder() {
         
         onChanged();
         return getRangeFieldBuilder().getBuilder();
@@ -2791,23 +2791,23 @@ public final class Statspb {
       /**
        * <code>.dspb.KeyRange range = 7;</code>
        */
-      public io.jimdb.pb.Processorpb.KeyRangeOrBuilder getRangeOrBuilder() {
+      public io.jimdb.pb.Kv.KeyRangeOrBuilder getRangeOrBuilder() {
         if (rangeBuilder_ != null) {
           return rangeBuilder_.getMessageOrBuilder();
         } else {
           return range_ == null ?
-              io.jimdb.pb.Processorpb.KeyRange.getDefaultInstance() : range_;
+              io.jimdb.pb.Kv.KeyRange.getDefaultInstance() : range_;
         }
       }
       /**
        * <code>.dspb.KeyRange range = 7;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder> 
+          io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder> 
           getRangeFieldBuilder() {
         if (rangeBuilder_ == null) {
           rangeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              io.jimdb.pb.Processorpb.KeyRange, io.jimdb.pb.Processorpb.KeyRange.Builder, io.jimdb.pb.Processorpb.KeyRangeOrBuilder>(
+              io.jimdb.pb.Kv.KeyRange, io.jimdb.pb.Kv.KeyRange.Builder, io.jimdb.pb.Kv.KeyRangeOrBuilder>(
                   getRange(),
                   getParentForChildren(),
                   isClean());
@@ -10905,36 +10905,36 @@ public final class Statspb {
   static {
     java.lang.String[] descriptorData = {
       "\n\020dspb/stats.proto\022\004dspb\032\017dspb/expr.prot" +
-      "o\032\026dspb/processorpb.proto\"\256\001\n\021IndexStats" +
-      "Request\022\022\n\nbucket_max\030\001 \001(\003\022&\n\014columns_i" +
-      "nfo\030\002 \003(\0132\020.dspb.ColumnInfo\022\026\n\016cmsketch_" +
-      "depth\030\003 \001(\005\022\026\n\016cmsketch_width\030\004 \001(\005\022\035\n\005r" +
-      "ange\030\005 \001(\0132\016.dspb.KeyRange\022\016\n\006unique\030\006 \001" +
-      "(\010\"\310\001\n\023ColumnsStatsRequest\022\022\n\nbucket_max" +
-      "\030\001 \001(\003\022\022\n\nsample_max\030\002 \001(\003\022\022\n\nsketch_max" +
-      "\030\003 \001(\003\022&\n\014columns_info\030\004 \003(\0132\020.dspb.Colu" +
-      "mnInfo\022\026\n\016cmsketch_depth\030\005 \001(\005\022\026\n\016cmsket" +
-      "ch_width\030\006 \001(\005\022\035\n\005range\030\007 \001(\0132\016.dspb.Key" +
-      "Range\"q\n\024ColumnsStatsResponse\022\014\n\004code\030\001 " +
-      "\001(\005\022 \n\007pk_hist\030\002 \001(\0132\017.dspb.Histogram\022)\n" +
-      "\ncollectors\030\003 \003(\0132\025.dspb.SampleCollector" +
-      "\"r\n\022IndexStatsResponse\022\014\n\004code\030\001 \001(\005\022\035\n\004" +
-      "hist\030\002 \001(\0132\017.dspb.Histogram\022\033\n\003cms\030\003 \001(\013" +
-      "2\016.dspb.CMSketch\022\022\n\nnull_count\030\004 \001(\004\"R\n\006" +
-      "Bucket\022\r\n\005count\030\001 \001(\003\022\023\n\013lower_bound\030\002 \001" +
-      "(\014\022\023\n\013upper_bound\030\003 \001(\014\022\017\n\007repeats\030\004 \001(\003" +
-      "\"<\n\tHistogram\022\020\n\010num_dist\030\001 \001(\003\022\035\n\007bucke" +
-      "ts\030\002 \003(\0132\014.dspb.Bucket\"%\n\010FMSketch\022\014\n\004ma" +
-      "sk\030\001 \001(\004\022\013\n\003set\030\002 \003(\004\"\237\001\n\017SampleCollecto" +
-      "r\022\022\n\nnull_count\030\001 \001(\003\022\r\n\005count\030\002 \001(\003\022!\n\t" +
-      "fm_sketch\030\003 \001(\0132\016.dspb.FMSketch\022!\n\tcm_sk" +
-      "etch\030\004 \001(\0132\016.dspb.CMSketch\022\022\n\ntotal_size" +
-      "\030\005 \001(\003\022\017\n\007samples\030\006 \003(\014\"\037\n\013CMSketchRow\022\020" +
-      "\n\010counters\030\001 \003(\r\"+\n\014CMSketchTopN\022\014\n\004data" +
-      "\030\001 \001(\014\022\r\n\005count\030\002 \001(\004\"e\n\010CMSketch\022\037\n\004row" +
-      "s\030\001 \003(\0132\021.dspb.CMSketchRow\022!\n\005top_n\030\002 \003(" +
-      "\0132\022.dspb.CMSketchTopN\022\025\n\rdefault_value\030\003" +
-      " \001(\004B\026\n\013io.jimdb.pbB\007Statspbb\006proto3"
+      "o\032\rdspb/kv.proto\"\256\001\n\021IndexStatsRequest\022\022" +
+      "\n\nbucket_max\030\001 \001(\003\022&\n\014columns_info\030\002 \003(\013" +
+      "2\020.dspb.ColumnInfo\022\026\n\016cmsketch_depth\030\003 \001" +
+      "(\005\022\026\n\016cmsketch_width\030\004 \001(\005\022\035\n\005range\030\005 \001(" +
+      "\0132\016.dspb.KeyRange\022\016\n\006unique\030\006 \001(\010\"\310\001\n\023Co" +
+      "lumnsStatsRequest\022\022\n\nbucket_max\030\001 \001(\003\022\022\n" +
+      "\nsample_max\030\002 \001(\003\022\022\n\nsketch_max\030\003 \001(\003\022&\n" +
+      "\014columns_info\030\004 \003(\0132\020.dspb.ColumnInfo\022\026\n" +
+      "\016cmsketch_depth\030\005 \001(\005\022\026\n\016cmsketch_width\030" +
+      "\006 \001(\005\022\035\n\005range\030\007 \001(\0132\016.dspb.KeyRange\"q\n\024" +
+      "ColumnsStatsResponse\022\014\n\004code\030\001 \001(\005\022 \n\007pk" +
+      "_hist\030\002 \001(\0132\017.dspb.Histogram\022)\n\ncollecto" +
+      "rs\030\003 \003(\0132\025.dspb.SampleCollector\"r\n\022Index" +
+      "StatsResponse\022\014\n\004code\030\001 \001(\005\022\035\n\004hist\030\002 \001(" +
+      "\0132\017.dspb.Histogram\022\033\n\003cms\030\003 \001(\0132\016.dspb.C" +
+      "MSketch\022\022\n\nnull_count\030\004 \001(\004\"R\n\006Bucket\022\r\n" +
+      "\005count\030\001 \001(\003\022\023\n\013lower_bound\030\002 \001(\014\022\023\n\013upp" +
+      "er_bound\030\003 \001(\014\022\017\n\007repeats\030\004 \001(\003\"<\n\tHisto" +
+      "gram\022\020\n\010num_dist\030\001 \001(\003\022\035\n\007buckets\030\002 \003(\0132" +
+      "\014.dspb.Bucket\"%\n\010FMSketch\022\014\n\004mask\030\001 \001(\004\022" +
+      "\013\n\003set\030\002 \003(\004\"\237\001\n\017SampleCollector\022\022\n\nnull" +
+      "_count\030\001 \001(\003\022\r\n\005count\030\002 \001(\003\022!\n\tfm_sketch" +
+      "\030\003 \001(\0132\016.dspb.FMSketch\022!\n\tcm_sketch\030\004 \001(" +
+      "\0132\016.dspb.CMSketch\022\022\n\ntotal_size\030\005 \001(\003\022\017\n" +
+      "\007samples\030\006 \003(\014\"\037\n\013CMSketchRow\022\020\n\010counter" +
+      "s\030\001 \003(\r\"+\n\014CMSketchTopN\022\014\n\004data\030\001 \001(\014\022\r\n" +
+      "\005count\030\002 \001(\004\"e\n\010CMSketch\022\037\n\004rows\030\001 \003(\0132\021" +
+      ".dspb.CMSketchRow\022!\n\005top_n\030\002 \003(\0132\022.dspb." +
+      "CMSketchTopN\022\025\n\rdefault_value\030\003 \001(\004B\026\n\013i" +
+      "o.jimdb.pbB\007Statspbb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -10948,7 +10948,7 @@ public final class Statspb {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           io.jimdb.pb.Exprpb.getDescriptor(),
-          io.jimdb.pb.Processorpb.getDescriptor(),
+          io.jimdb.pb.Kv.getDescriptor(),
         }, assigner);
     internal_static_dspb_IndexStatsRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -11017,7 +11017,7 @@ public final class Statspb {
         internal_static_dspb_CMSketch_descriptor,
         new java.lang.String[] { "Rows", "TopN", "DefaultValue", });
     io.jimdb.pb.Exprpb.getDescriptor();
-    io.jimdb.pb.Processorpb.getDescriptor();
+    io.jimdb.pb.Kv.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

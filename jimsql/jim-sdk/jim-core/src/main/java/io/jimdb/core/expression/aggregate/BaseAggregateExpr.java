@@ -15,6 +15,8 @@
  */
 package io.jimdb.core.expression.aggregate;
 
+import static io.jimdb.core.types.Types.MAX_INT_WIDTH;
+
 import io.jimdb.core.Session;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.ExpressionType;
@@ -40,7 +42,7 @@ public abstract class BaseAggregateExpr {
   public BaseAggregateExpr(Session session, String name, Expression[] args) {
     this.name = name;
     this.args = args;
-    this.aggType = AggregateType.valueOf(this.name);
+    this.aggType = AggregateType.valueOf(this.name.toUpperCase());
 
     buildRetType(session);
 
@@ -62,7 +64,7 @@ public abstract class BaseAggregateExpr {
       case COUNT:
         SQLType.Builder builder = SQLType.newBuilder();
         builder.setType(DataType.BigInt)
-                .setPrecision(21)
+                .setPrecision(MAX_INT_WIDTH)
                 .setBinary(true);
         this.type = builder.build();
         break;
@@ -97,10 +99,7 @@ public abstract class BaseAggregateExpr {
       case MediumInt:
       case Int:
       case BigInt:
-        builder.setType(DataType.BigInt);
-//                .setPrecision(Types.MAX_DEC_WIDTH)
-//                .setScale(0);
-        this.type = builder.build();
+        this.type = Types.buildSQLType(DataType.BigInt);
         break;
 
       case Decimal:
@@ -190,17 +189,11 @@ public abstract class BaseAggregateExpr {
     }
 
     SQLType.Builder builder = this.args[0].getResultType().toBuilder();
-    // TODO: && DataType.Bit
     if (aggType == AggregateType.MAX || aggType == AggregateType.MIN) {
-      // TODO: clone
       builder.setNotNull(true);
-
-      // TODO: enum, set
     }
     this.type = builder.build();
 
-//    this.type = this.args[0].getResultType();
-//    this.type.setNotNull(true);
 
 //    // TODO: && DataType.Bit
 //    if (aggType == AggregateType.MAX || aggType == AggregateType.MIN) {

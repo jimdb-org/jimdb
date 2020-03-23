@@ -18,6 +18,7 @@ package io.jimdb.test.mysql.dml;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.Bidi;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,7 +32,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import io.jimdb.core.model.result.impl.QueryExecResult;
 import io.jimdb.test.TestUtil;
 import io.jimdb.test.mysql.SqlTestBase;
 
@@ -1067,6 +1070,27 @@ public class SelectIndexTest extends SqlTestBase {
 
     execPrepareQueryCheckEmpty("select " + select.select + " from " + select.tableName + " where i1 = ? or i1 = ? or i1 = ?"
             , expected, 25, 26, 27);
+  }
+
+
+  @Test
+  public void testSumDecimal() {
+    SelectCols select = new SelectCols(FLOAT_TABLE_DATARESULT, new String[] {"decimal1", "decimal2", "decimal3" } );
+    final BigDecimal[] decimal1 = { BigDecimal.ZERO };
+    final BigDecimal[] decimal2 = { BigDecimal.ZERO };
+    final BigDecimal[] decimal3 = { BigDecimal.ZERO };
+    select.getResult().stream().filter(row -> row.get("d1").compareTo(13.5) == 0
+            && row.get("d2").compareTo(15000.0) > 0
+            && row.get("d2").compareTo(24000.0) < 0)
+            .forEach(row->{
+              decimal1[0] = ((BigDecimal) row.get("decimal1")).add(decimal1[0]);
+              decimal2[0] = ((BigDecimal) row.get("decimal2")).add(decimal2[0]);
+              decimal3[0] = ((BigDecimal) row.get("decimal3")).add(decimal3[0]);
+            });
+    List<String> expected = new ArrayList<>();
+    expected.add(String.format("SUM(decimal1)=%s; SUM(decimal2)=%s; SUM(decimal3)=%s", decimal1[0],decimal2[0],decimal3[0]));
+    execQueryCheckEmpty("select sum(decimal1),sum(decimal2),sum(decimal3) from " + select.tableName + " where d1 = 13"
+            + ".5 and d2 > 15000.0 and d2 < 24000.0 ", expected);
   }
 
   @Test

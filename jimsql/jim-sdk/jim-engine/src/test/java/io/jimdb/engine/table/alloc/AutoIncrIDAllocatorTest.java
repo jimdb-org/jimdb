@@ -27,7 +27,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import io.jimdb.core.config.JimConfig;
-import io.jimdb.meta.RouterManager;
+import io.jimdb.meta.Router;
 import io.jimdb.meta.client.MasterClient;
 import io.jimdb.core.values.UnsignedLongValue;
 import io.jimdb.core.values.Value;
@@ -44,7 +44,7 @@ import reactor.util.function.Tuples;
  *
  * @version 1.0
  */
-public class AutoIncrIDAllocatorTest {
+public class AutoIncrIdAllocatorTest {
 
   private List<Tuple2<Integer, Integer>> scope = new ArrayList<>();
   private int step = 5000;
@@ -55,7 +55,7 @@ public class AutoIncrIDAllocatorTest {
 
   private ThreadPoolExecutor executor;
   private int num = 1000000;
-  private RouterManager routerManager;
+  private Router router;
 
   @Before
   public void before() throws Exception {
@@ -74,7 +74,7 @@ public class AutoIncrIDAllocatorTest {
 
     MasterClient msHttpClient = new MasterClient("http://11.3.83.36:443", 2);
 
-    this.routerManager = new RouterManager(msHttpClient, config);
+    this.router = new Router(msHttpClient, config);
   }
 
   @After

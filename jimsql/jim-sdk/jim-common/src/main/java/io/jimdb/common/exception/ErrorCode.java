@@ -1190,7 +1190,7 @@ public enum ErrorCode {
   ER_STD_LENGTH_ERROR(3046, "HY000", "Length error"),
   ER_STD_INVALID_ARGUMENT(3047, "HY000", "Invalid argument error"),
   ER_STD_OUT_OF_RANGE_ERROR(3048, "HY000", "Out of range error"),
-  ER_STD_OVERFLOW_ERROR(3049, "HY000", "Overflow error error"),
+  ER_STD_OVERFLOW_ERROR(3049, "HY000", "Overflow error %s"),
   ER_STD_RANGE_ERROR(3050, "HY000", "Range error"),
   ER_STD_UNDERFLOW_ERROR(3051, "HY000", "Underflow error"),
   ER_STD_LOGIC_ERROR(3052, "HY000", "Logic error"),
@@ -1494,7 +1494,7 @@ public enum ErrorCode {
   ER_META_DELETE_RANGE(6023, "DELETE_RANGE", "table %s:[code: %s, error: %s]"),
   ER_META_GET_TABLE_STAT(6024, "META_GET_TABLE_STAT", "meta get all table stats error"),
   ER_META_GET_AUTO_INCR(6025, "META_GET_AUTO_INCR", "meta get auto incr id error"),
-  ER_META_GET_TABLE_STATS(6016, "META_GET_TABLE_STAT", "meta get all table stats error"),
+  ER_META_GET_TABLE_STATS(6016, "META_GET_TABLE_STAT", "meta get all table stats '%s' error"),
 
   ER_RPC_CONNECT_INACTIVE(7000, "RPC_CONNECT_INACTIVE", "rpc connection '%s' is inactive"),
   ER_RPC_CONNECT_TIMEOUT(7001, "RPC_CONNECT_TIMEOUT", "rpc connect to '%s' timeout"),

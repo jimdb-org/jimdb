@@ -143,10 +143,10 @@ public final class TableSource extends RelOperator {
     Flux<ExecResult> result;
 
     if (keyValueRange.isFullRange()) {
-      result = session.getTxn().select(table, processors, schema.getColumns().toArray(new ColumnExpr[size]),
+      result = session.getStoreEngine().select(session, table, processors, schema.getColumns().toArray(new ColumnExpr[size]),
               outputOffsets);
     } else {
-      result = session.getTxn().select(keyValueRange.getIndex(), processors, schema.getColumns().toArray(new
+      result = session.getStoreEngine().select(session, keyValueRange.getIndex(), processors, schema.getColumns().toArray(new
               ColumnExpr[size]), outputOffsets, keyValueRange.getValueRanges());
     }
 

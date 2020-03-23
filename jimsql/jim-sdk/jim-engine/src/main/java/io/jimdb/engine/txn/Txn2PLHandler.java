@@ -15,14 +15,15 @@
  */
 package io.jimdb.engine.txn;
 
-import static io.jimdb.engine.txn.PrepareHandler.PREPARE_PRIMARY_FUNC;
+import static io.jimdb.engine.txn.Preparer.PREPARE_PRIMARY_FUNC;
 
 import java.util.List;
 import java.util.Map;
 
+import io.jimdb.engine.ShardSender;
 import io.jimdb.engine.StoreCtx;
 import io.jimdb.engine.client.RequestContext;
-import io.jimdb.engine.txn.TxnHandler.CommitSubscriber;
+import io.jimdb.engine.txn.TransactionImpl.CommitSubscriber;
 import io.jimdb.core.model.meta.RangeInfo;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.AckExecResult;
@@ -43,8 +44,8 @@ public final class Txn2PLHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Txn2PLHandler.class);
 
-  private static final DecideHandler.DecidePrimaryFunc DECIDE_PRIMARY_FUNC = Txn2PLHandler::decidePrimary;
-  private static final PrepareHandler.PrepareSecondaryFunc PREPARE_SECONDARY_FUNC = Txn2PLHandler::prepareSecondary;
+  private static final DecisionMaker.DecidePrimaryFunc DECIDE_PRIMARY_FUNC = Txn2PLHandler::decidePrimary;
+  private static final Preparer.PrepareSecondaryFunc PREPARE_SECONDARY_FUNC = Txn2PLHandler::prepareSecondary;
 
   /**
    * commit
@@ -53,42 +54,42 @@ public final class Txn2PLHandler {
    * @param context TODO
    * @return TODO
    */
-  public static Flux<ExecResult> commit(TxnConfig config, StoreCtx context) {
+  public static Flux<ExecResult> commit(ShardSender shardSender, TxnConfig config, StoreCtx context) {
     if (LOGGER.isInfoEnabled()) {
       LOGGER.info("start to commit txn {}.", config.getTxnId());
     }
     return Flux.create(sink ->
-            sink.onRequest(r -> preparePrimaryIntents(sink, config, context)));
+            sink.onRequest(r -> preparePrimaryIntents(shardSender, sink, config, context)));
   }
 
   //prepare primary intents
-  public static void preparePrimaryIntents(FluxSink sink, TxnConfig config, StoreCtx context) {
+  public static void preparePrimaryIntents(ShardSender shardSender, FluxSink sink, TxnConfig config, StoreCtx context) {
     if (LOGGER.isInfoEnabled()) {
       LOGGER.info(" start to prepare txn {} primary.", config.getTxnId());
     }
 
-    PREPARE_PRIMARY_FUNC.apply(context, config).onErrorResume(PrepareHandler.getErrHandler(context, PREPARE_PRIMARY_FUNC, config))
-            .subscribe(new CommitSubscriber<>(rs -> prepareSecondaryIntents(sink, config, context, config.getSecIntents()), err -> sink.error(err)));
+    PREPARE_PRIMARY_FUNC.apply(shardSender, context, config).onErrorResume(Preparer.getErrHandler(shardSender, context, PREPARE_PRIMARY_FUNC, config))
+            .subscribe(new CommitSubscriber<>(rs -> prepareSecondaryIntents(shardSender, sink, config, context, config.getSecIntents()), err -> sink.error(err)));
   }
 
   //prepare secondary intents
-  public static void prepareSecondaryIntents(FluxSink sink, TxnConfig config, StoreCtx context, List<Txn.TxnIntent> secIntents) {
+  public static void prepareSecondaryIntents(ShardSender shardSender, FluxSink sink, TxnConfig config, StoreCtx context, List<Txn.TxnIntent> secIntents) {
     if (LOGGER.isInfoEnabled()) {
       LOGGER.info(" start to prepare txn {} secondary.", config.getTxnId());
     }
-    prepareSecondary(context, config, secIntents).subscribe(
-            new CommitSubscriber<>(rs -> decidePrimaryIntents(sink, config, context), err -> sink.error(err)));
+    prepareSecondary(shardSender, context, config, secIntents).subscribe(
+            new CommitSubscriber<>(rs -> decidePrimaryIntents(shardSender, sink, config, context), err -> sink.error(err)));
   }
 
   //decide primary intents
-  public static void decidePrimaryIntents(FluxSink sink, TxnConfig config, StoreCtx context) {
+  public static void decidePrimaryIntents(ShardSender shardSender, FluxSink sink, TxnConfig config, StoreCtx context) {
     Txn.TxnStatus txnStatus = Txn.TxnStatus.COMMITTED;
     CommitSubscriber subscriber = new CommitSubscriber<>(rs -> sink.next(rs), err -> sink.error(err));
-    DECIDE_PRIMARY_FUNC.apply(context, config, txnStatus).onErrorResume(
-            DecideHandler.getErrHandler(context, DECIDE_PRIMARY_FUNC, config, txnStatus)).subscribe(subscriber);
+    DECIDE_PRIMARY_FUNC.apply(shardSender, context, config, txnStatus).onErrorResume(
+            DecisionMaker.getErrHandler(shardSender, context, DECIDE_PRIMARY_FUNC, config, txnStatus)).subscribe(subscriber);
   }
 
-  public static Flux<ExecResult> prepareSecondary(StoreCtx context, TxnConfig config, List<Txn.TxnIntent> intentList) {
+  public static Flux<ExecResult> prepareSecondary(ShardSender shardSender, StoreCtx context, TxnConfig config, List<Txn.TxnIntent> intentList) {
 
     if (intentList == null || intentList.isEmpty()) {
       return Flux.just(AckExecResult.getInstance());
@@ -98,10 +99,10 @@ public final class Txn2PLHandler {
 
     Map<RangeInfo, List<Txn.TxnIntent>> intentGroupMap;
     try {
-      intentGroupMap = context.getRoutePolicy().regroupByRoute(intentList, intent -> intent.getKey().toByteArray());
+      intentGroupMap = context.getRoutingPolicy().regroupByRoute(intentList, intent -> intent.getKey().toByteArray());
     } catch (Throwable e) {
       LOGGER.warn("txn {} prepare Secondary {} error:{}", config.getTxnId(), intentList, e);
-      return PrepareHandler.getErrHandler(context, PREPARE_SECONDARY_FUNC, config, intentList, e);
+      return Preparer.getErrHandler(shardSender, context, PREPARE_SECONDARY_FUNC, config, intentList, e);
     }
 
     for (Map.Entry<RangeInfo, List<Txn.TxnIntent>> entry : intentGroupMap.entrySet()) {
@@ -110,8 +111,8 @@ public final class Txn2PLHandler {
         continue;
       }
       //OnErrorResume takes effect at each child flux,
-      Flux<ExecResult> child = PrepareHandler.txnPrepareSecondary(context, config, groupList, entry.getKey());
-      child = child.onErrorResume(PrepareHandler.getErrHandler(context, PREPARE_SECONDARY_FUNC, config, groupList));
+      Flux<ExecResult> child = Preparer.txnPrepareSecondary(shardSender, context, config, groupList, entry.getKey());
+      child = child.onErrorResume(Preparer.getErrHandler(shardSender, context, PREPARE_SECONDARY_FUNC, config, groupList));
       if (flux == null) {
         flux = child;
       } else {
@@ -121,12 +122,12 @@ public final class Txn2PLHandler {
     return flux;
   }
 
-  public static Flux<ExecResult> decidePrimary(StoreCtx context, TxnConfig config, Txn.TxnStatus status) {
+  public static Flux<ExecResult> decidePrimary(ShardSender shardSender, StoreCtx context, TxnConfig config, Txn.TxnStatus status) {
     if (LOGGER.isInfoEnabled()) {
       LOGGER.info("start to decide txn {} primary", config.getTxnId());
     }
-    RequestContext requestContext = DecideHandler.buildPrimaryDecideReqCtx(config, context, status);
-    return DecideHandler.txnDecidePrimary(requestContext, context.getSender())
+    RequestContext requestContext = DecisionMaker.buildPrimaryDecideReqCtx(config, context, status);
+    return DecisionMaker.txnDecidePrimary(shardSender, requestContext)
             .map(r -> AckExecResult.getInstance());
   }
 
@@ -136,9 +137,9 @@ public final class Txn2PLHandler {
    * @param context TODO
    * @return TODO
    */
-  public static Flux<ExecResult> rollback(TxnConfig config, StoreCtx context) {
+  public static Flux<ExecResult> rollback(ShardSender shardSender, TxnConfig config, StoreCtx context) {
     return Flux.create(sink ->
-            sink.onRequest(r -> RecoverHandler.recoverFromPrimary(sink, config, context)));
+            sink.onRequest(r -> Restorer.recoverFromPrimary(shardSender, sink, config, context)));
   }
 }
 

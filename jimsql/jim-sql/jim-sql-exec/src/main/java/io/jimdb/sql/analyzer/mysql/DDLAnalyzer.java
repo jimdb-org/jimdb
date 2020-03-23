@@ -709,10 +709,6 @@ final class DDLAnalyzer {
 
     for (String primary : primarys) {
       SQLColumnDefinition column = columns.get(primary);
-      if (column.getDefaultExpr() != null) {
-        throw DBException.get(ErrorModule.DDL, ErrorCode.ER_INVALID_DEFAULT, primary);
-      }
-
       List<SQLColumnConstraint> constraints = column.getConstraints();
       if (constraints != null && !constraints.isEmpty()) {
         for (SQLColumnConstraint constraint : constraints) {
@@ -745,7 +741,7 @@ final class DDLAnalyzer {
       hasAutoIncr = true;
 
       if (entry.getValue().getDefaultExpr() != null) {
-        throw DBException.get(ErrorModule.DDL, ErrorCode.ER_INVALID_DEFAULT, entry.getKey());
+        entry.getValue().setDefaultExpr(null);
       }
 
       boolean isKey = false;

@@ -15,29 +15,13 @@
  */
 package io.jimdb.test.mock.store;
 
-import java.util.List;
-import java.util.Map;
-
 import io.jimdb.common.exception.BaseException;
-import io.jimdb.core.expression.Assignment;
-import io.jimdb.core.expression.ColumnExpr;
-import io.jimdb.core.expression.Expression;
-import io.jimdb.core.expression.RowValueAccessor;
-import io.jimdb.core.expression.ValueAccessor;
-import io.jimdb.core.expression.ValueRange;
-import io.jimdb.core.model.meta.Column;
-import io.jimdb.core.model.meta.Index;
+import io.jimdb.core.codec.KvPair;
 import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.model.result.ExecResult;
-import io.jimdb.core.model.result.QueryResult;
 import io.jimdb.core.model.result.impl.AckExecResult;
-import io.jimdb.core.model.result.impl.DMLExecResult;
-import io.jimdb.core.model.result.impl.QueryExecResult;
 import io.jimdb.core.plugin.store.Transaction;
-import io.jimdb.core.values.BinaryValue;
-import io.jimdb.core.values.LongValue;
-import io.jimdb.core.values.Value;
-import io.jimdb.pb.Processorpb;
+import io.jimdb.pb.Txn;
 
 import reactor.core.publisher.Flux;
 
@@ -47,80 +31,7 @@ import reactor.core.publisher.Flux;
 public class MockTransaction implements Transaction {
 
   @Override
-  public Flux<ExecResult> insert(Table table, Column[] insertCols, List<Expression[]> rows, Assignment[] duplicate,
-                                 boolean hasRefColumn) throws BaseException {
-    if (rows == null || rows.isEmpty()) {
-      return Flux.create(sink -> sink.next(DMLExecResult.EMPTY));
-    }
 
-    int rowSize = rows.size();
-    return Flux.create(sink -> sink.next(new DMLExecResult(rowSize, 0)));
-  }
-
-  @Override
-  public Flux<ExecResult> update(Table table, Assignment[] assignments, QueryResult rows) throws BaseException {
-    if (rows == null || rows.size() == 0) {
-      return Flux.just(DMLExecResult.EMPTY);
-    }
-    int resultRowLength = rows.size();
-    ExecResult result = new DMLExecResult(resultRowLength);
-
-    return Flux.create(sink -> sink.next(result));
-  }
-
-  @Override
-  public Flux<ExecResult> delete(Table table, QueryResult rows) throws BaseException {
-    if (rows == null || rows.size() == 0) {
-      return Flux.just(DMLExecResult.EMPTY);
-    }
-    int resultRowLength = rows.size();
-    ExecResult execResult = new DMLExecResult(resultRowLength);
-    return Flux.create(sink -> sink.next(execResult));
-  }
-
-  @Override
-  public Flux<ExecResult> get(List<Index> indexes, List<Value[]> values, ColumnExpr[] resultColumns) {
-    int size = resultColumns.length;
-    ValueAccessor[] rows = new ValueAccessor[1];
-    Value[] colValues = { BinaryValue.getInstance("Tom".getBytes()),
-            LongValue.getInstance(30L),
-            BinaryValue.getInstance("13010010000".getBytes()),
-            LongValue.getInstance(90L),
-            LongValue.getInstance(5000L) };
-    ValueAccessor row = new RowValueAccessor(colValues);
-    rows[0] = row;
-    return Flux.just(new QueryExecResult(resultColumns, rows));
-  }
-
-  public Flux<ExecResult> getTableData(Table table, ColumnExpr[] resultColumns, Map<Object, Object> filter) {
-    return Flux.just(getExecResult(table, resultColumns, filter));
-  }
-
-  public ExecResult getExecResult(Table table, ColumnExpr[] resultColumns, Map<Object, Object> filter) {
-    ValueAccessor[] newRows = MockTableData.provideDatas(table, resultColumns, filter);
-    return new QueryExecResult(resultColumns, newRows);
-  }
-
-  @Override
-  public Flux<ExecResult> select(Table table, List<Processorpb.Processor.Builder> processors,
-                                 ColumnExpr[] resultColumns,
-                                 List<Integer> outputOffsetList) throws BaseException {
-    return getTableData(table, resultColumns, null);
-  }
-
-  @Override
-  public Flux<ExecResult> select(Index index, List<Processorpb.Processor.Builder> processors,
-                                 ColumnExpr[] resultColumns,
-                                 List<Integer> outputOffsetList, List<ValueRange> ranges) throws BaseException {
-    return getTableData(index.getTable(), resultColumns, null);
-  }
-
-  @Override
-  public byte[] addIndex(Index index, byte[] startKey, byte[] endKey, int limit) {
-    return null;
-  }
-
-  @Override
   public Flux<ExecResult> commit() throws BaseException {
     return Flux.just(AckExecResult.getInstance());
   }
@@ -128,6 +39,16 @@ public class MockTransaction implements Transaction {
   @Override
   public Flux<ExecResult> rollback() throws BaseException {
     return Flux.just(AckExecResult.getInstance());
+  }
+
+  @Override
+  public void addIntent(KvPair kvPair, Txn.OpType opType, boolean check, long version, Table table) {
+
+  }
+
+  @Override
+  public String getTxnId() {
+    return null;
   }
 
   @Override

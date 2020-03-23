@@ -37,7 +37,6 @@ import io.jimdb.core.model.meta.Table;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.QueryExecResult;
 import io.jimdb.core.plugin.store.Engine;
-import io.jimdb.core.plugin.store.Transaction;
 import io.jimdb.sql.executor.AnalyzeColumnsExecutor;
 import io.jimdb.sql.executor.AnalyzeExecutor;
 import io.jimdb.sql.executor.AnalyzeIndexExecutor;
@@ -90,7 +89,6 @@ public class Analyze extends Operator {
     final TableSource tableSource = tableSourceList.get(0);
     final Table table = tableSource.getTable();
     final Schema schema = tableSource.getSchema();
-    final Transaction transaction = session.getTxn();
 
     List<ColumnExpr> columnExprs = schema.getColumns();
     List<Integer> outputOffsets = columnExprs.stream().map(ColumnExpr::getOffset)
@@ -98,7 +96,7 @@ public class Analyze extends Operator {
 
     ColumnExpr[] resultColumns = columnExprs.toArray(new ColumnExpr[0]);
 
-    return transaction.select(table, tableSource.getProcessors(), resultColumns, outputOffsets).map(execResult -> {
+    return session.getStoreEngine().select(session, table, tableSource.getProcessors(), resultColumns, outputOffsets).map(execResult -> {
       TableStatsManager.updateTableStatsCache(session, table, (QueryExecResult) execResult);
       return convertToExecResult(session, TableStatsManager.getTableStats(table));
     });

@@ -1,0 +1,13 @@
+tables=[{
+    name:"test_tbl1",
+    replica:"1",
+    partition:"1",
+    engines:["memory"],
+    rows:["10000"],
+    fields:[{name:"f1", type:"varchar(20)", notnull:"true", default:"def_val"}, {name:"f2", type:"bigint", sign:"unsigned"}],
+    indices:[{name:"f1_idx", fields:["f1"], type:"index"}]
+}],
+datas={
+    number:["smallint", "12.991", "-9.183","null"],
+    string:["letter", "english"]
+}

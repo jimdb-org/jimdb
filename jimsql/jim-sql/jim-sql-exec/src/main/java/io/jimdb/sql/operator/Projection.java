@@ -15,10 +15,8 @@
  */
 package io.jimdb.sql.operator;
 
-import java.util.Arrays;
-
-import io.jimdb.core.Session;
 import io.jimdb.common.exception.BaseException;
+import io.jimdb.core.Session;
 import io.jimdb.core.expression.ColumnExpr;
 import io.jimdb.core.expression.Expression;
 import io.jimdb.core.expression.RowValueAccessor;
@@ -26,9 +24,9 @@ import io.jimdb.core.expression.Schema;
 import io.jimdb.core.expression.ValueAccessor;
 import io.jimdb.core.model.result.ExecResult;
 import io.jimdb.core.model.result.impl.QueryExecResult;
+import io.jimdb.core.values.Value;
 import io.jimdb.sql.optimizer.OperatorVisitor;
 import io.jimdb.sql.optimizer.ParameterizedOperatorVisitor;
-import io.jimdb.core.values.Value;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import reactor.core.publisher.Flux;
@@ -100,7 +98,9 @@ public final class Projection extends RelOperator {
   @Override
   public void resolveOffset() {
     if (hasChildren()) {
-      Arrays.stream(children).forEach(Operator::resolveOffset);
+      for (Operator operator : children) {
+        operator.resolveOffset();
+      }
     }
 
     Expression[] expressions = this.expressions;
